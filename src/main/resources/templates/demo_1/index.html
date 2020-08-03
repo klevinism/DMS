@@ -1,28 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Star Admin Premium Bootstrap Admin Dashboard Template</title>
-    <!-- plugins:css -->
-    <link rel="stylesheet" href="../assets/vendors/iconfonts/mdi/css/materialdesignicons.min.css">
-    <link rel="stylesheet" href="../assets/vendors/iconfonts/ionicons/css/ionicons.css">
-    <link rel="stylesheet" href="../assets/vendors/iconfonts/typicons/src/font/typicons.css">
-    <link rel="stylesheet" href="../assets/vendors/iconfonts/flag-icon-css/css/flag-icon.min.css">
-    <link rel="stylesheet" href="../assets/vendors/css/vendor.bundle.base.css">
-    <link rel="stylesheet" href="../assets/vendors/css/vendor.bundle.addons.css">
-    <!-- endinject -->
-    <!-- plugin css for this page -->
-    <!-- End plugin css for this page -->
-    <!-- inject:css -->
-    <link rel="stylesheet" href="../assets/css/shared/style.css">
-    <!-- endinject -->
-    <!-- Layout styles -->
-    <link rel="stylesheet" href="../assets/css/demo_1/style.css">
-    <!-- End Layout styles -->
-    <link rel="shortcut icon" href="../assets/images/favicon.png" />
-  </head>
+  <div th:replace="demo_1/partials/_header :: header">
+  </div>
   <body>
     <div class="container-scroller">
       <!-- partial:partials/_navbar.html -->
@@ -157,14 +136,14 @@
               <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
                 <div class="dropdown-header text-center">
                   <img class="img-md rounded-circle" src="../assets/images/faces/face8.jpg" alt="Profile image">
-                  <p class="mb-1 mt-3 font-weight-semibold">Allen Moreno</p>
+                  <p class="mb-1 mt-3 font-weight-semibold" th:text="${username}"> [[${#httpServletRequest.remoteUser}]]!</p>
                   <p class="font-weight-light text-muted mb-0">allenmoreno@gmail.com</p>
                 </div>
                 <a class="dropdown-item">My Profile <span class="badge badge-pill badge-danger">1</span><i class="dropdown-item-icon ti-dashboard"></i></a>
                 <a class="dropdown-item">Messages<i class="dropdown-item-icon ti-comment-alt"></i></a>
                 <a class="dropdown-item">Activity<i class="dropdown-item-icon ti-location-arrow"></i></a>
                 <a class="dropdown-item">FAQ<i class="dropdown-item-icon ti-help-alt"></i></a>
-                <a class="dropdown-item">Sign Out<i class="dropdown-item-icon ti-power-off"></i></a>
+                <a class="dropdown-item" href="/logout">Sign Out<i class="dropdown-item-icon ti-power-off"></i></a>
               </div>
             </li>
           </ul>
@@ -185,7 +164,7 @@
                   <div class="dot-indicator bg-success"></div>
                 </div>
                 <div class="text-wrapper">
-                  <p class="profile-name">Allen Moreno</p>
+                  <p class="profile-name" th:text="${username}"></p>
                   <p class="designation">Premium user</p>
                 </div>
               </a>
@@ -843,7 +822,7 @@
           <!-- partial:partials/_footer.html -->
           <footer class="footer">
             <div class="container-fluid clearfix">
-              <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright Â© 2019 <a href="http://www.bootstrapdash.com/" target="_blank">Bootstrapdash</a>. All rights reserved.</span>
+              <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2019 <a href="http://www.bootstrapdash.com/" target="_blank">Bootstrapdash</a>. All rights reserved.</span>
               <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i>
               </span>
             </div>
