@@ -1,57 +1,168 @@
 package com.visionaus.dms.controller;
-
-import java.util.Locale;
-
+/**
+ * @author delimeta
+ *
+ */
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.visionaus.dms.pojo.User;
+import com.visionaus.dms.configuration.helpers.AccountUtil;
+import com.visionaus.dms.pojo.Account;
+import com.visionaus.dms.repository.AccountRepository;
 
 @Controller
 public class GreetingController {
-
+	
+	private AccountRepository userRepository;
+	
+	/**
+	 * @param userRepository
+	 */
+	@Autowired
+	public GreetingController(AccountRepository userRepository) {
+		this.userRepository = userRepository;
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/")
-	public String greeting(@RequestParam(name="email", required=false) String email,
-			@RequestParam(name="password", required=false) String password,
-			Model model) {
+	public String greeting(Model model) {
+		
+		model.addAttribute("user", AccountUtil.currentLoggedInUser());
+
+		return "demo_1/index";
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/logout")
+	public String logout(Model model) {
+		Boolean auth = SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
+		if(auth != null) {
+			SecurityContextHolder.getContext().setAuthentication(null);
+		}
 		
 		return "demo_1/index";
 	}
-//	
-//	@PostMapping("/")
-//	public String auth(@RequestParam(name="username", required=true) String username,
-//			@RequestParam(name="password", required=true) String password,
-//			Model model) {
-//		
-//		model.addAttribute("username", username);
-//		
-//		System.out.println(username);
-//		
-//		return "demo_1/index";
-//	}
-//	
+	
+	/**
+	 * @param error
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/login")
-	public String login() {
-		return "demo_1/pages/samples/login";
+	public String login(@RequestParam(name="error", required=false) String error, Model model) {
+		if(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken) {
+			return "demo_1/pages/samples/login";
+		}else {
+			System.out.println(SecurityContextHolder.getContext().getAuthentication());
+			return "redirect:/";
+		}
 	}
 
+	/**
+	 * @return
+	 */
 	@GetMapping("/register")
 	public String register() {
 		return "demo_1/pages/samples/register";
 	}
 	
+	/**
+	 * @return
+	 */
+	@GetMapping("/form-elements")
+	public String formElements() {
+		return "demo_1/pages/forms/basic_elements";
+	}
+	
+	/**
+	 * @return
+	 */
+	@GetMapping("/dropdowns")
+	public String dropdowns() {
+		return "demo_1/pages/ui-features/dropdowns";
+	}
+
+	/**
+	 * @return
+	 */
+	@GetMapping("/buttons")
+	public String buttons() {
+		return "demo_1/pages/ui-features/buttons";
+	}
+	
+	/**
+	 * @return
+	 */
+	@GetMapping("/typography")
+	public String typography() {
+		return "demo_1/pages/ui-features/typography";
+	}
+	
+	/**
+	 * @return
+	 */
+	@GetMapping("/chartjs")
+	public String chartjs() {
+		return "demo_1/pages/charts/chartjs";
+	}
+	
+	/**
+	 * @return
+	 */
+	@GetMapping("/tables")
+	public String tables() {
+		return "demo_1/pages/tables/basic-table";
+	}
+	
+	/**
+	 * @return
+	 */
+	@GetMapping("/icons")
+	public String icons() {
+		return "demo_1/pages/icons/font-awesome";
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/admin/personnel")
+	public String personnel(Model model) {
+		model.addAttribute("user", AccountUtil.currentLoggedInUser());
+
+		return "demo_1/pages/personnel";
+	}
+	
+	/**
+	 * @param user
+	 * @param model
+	 * @return
+	 */
 	@PostMapping("/register")
-	public String register(@Valid User user,
+	public String register(@Valid Account user,
 			Model model) {
-		System.out.println(user.getUsername());
-		System.out.println(user.getPassword());
-		System.out.println(user.getTerms());
+		
+		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        userRepository.save(user);
+
+	    Iterable<Account> accounts = userRepository.findAll();
+	    		
+		model.addAttribute("user",accounts);
 		
 		return "demo_1/pages/samples/register";
 	}
