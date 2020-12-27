@@ -5,9 +5,12 @@ package com.visionaus.dms.configuration;
 
 import java.util.Collection;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.visionaus.dms.configuration.helpers.DmsCoreVersion;
 import com.visionaus.dms.pojo.Account;
 
 /**
@@ -15,41 +18,41 @@ import com.visionaus.dms.pojo.Account;
  *
  */
 public class AccountUserDetail extends Account implements UserDetails{
-	
+	private final Log logger = LogFactory.getLog(AccountUserDetail.class);
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -226938159041759468L;
-	private boolean enabled;
+	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
+	
 	private boolean accountNonExpired;
 	private boolean credentialsNonExpired;
 	private Collection<? extends GrantedAuthority> authorities;
 	private boolean accountNonLocked;
-
+	
+	
 	/**
-	 * @param username
-	 * @param password
-	 * @param enabled
+	 * @param account
 	 * @param accountNonExpired
 	 * @param credentialsNonExpired
 	 * @param accountNonLocked
 	 * @param authorities
 	 */
-	public AccountUserDetail(String username, String password, boolean enabled,
-			boolean accountNonExpired, boolean credentialsNonExpired,
-			boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
-		super.setUsername(username);
-		super.setPassword(password);
+	public AccountUserDetail(Account account, boolean accountNonExpired, 
+			boolean credentialsNonExpired, boolean accountNonLocked, 
+			Collection<? extends GrantedAuthority> authorities) {
 		
-		this.enabled = enabled;
+		super(account);
+		
 		this.accountNonExpired = accountNonExpired;
 		this.credentialsNonExpired = credentialsNonExpired;
+		this.accountNonLocked = accountNonLocked;
 		this.accountNonLocked = accountNonExpired;
 		this.authorities = authorities;
 	}
 	
 	/**
-	 *
+	 * @return authorities Collection<? extends GrantedAuthority>
 	 */
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -57,7 +60,7 @@ public class AccountUserDetail extends Account implements UserDetails{
 	}
 
 	/**
-	 *
+	 * @return accountNonExpired boolean
 	 */
 	@Override
 	public boolean isAccountNonExpired() {
@@ -65,7 +68,7 @@ public class AccountUserDetail extends Account implements UserDetails{
 	}
 
 	/**
-	 *
+	 * @return accountNonLocked boolean
 	 */
 	@Override
 	public boolean isAccountNonLocked() {
@@ -73,19 +76,11 @@ public class AccountUserDetail extends Account implements UserDetails{
 	}
 
 	/**
-	 *
+	 * @return credentialsNonExpired boolean
 	 */
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return this.credentialsNonExpired;
-	}
-
-	/**
-	 *
-	 */
-	@Override
-	public boolean isEnabled() {
-		return this.enabled;
 	}
 
 }

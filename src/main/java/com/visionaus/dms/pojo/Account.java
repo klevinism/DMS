@@ -1,4 +1,6 @@
 package com.visionaus.dms.pojo;
+import java.io.Serializable;
+
 /**
  * @author delimeta
  *
@@ -10,10 +12,17 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
 
+import com.visionaus.dms.configuration.helpers.DmsCoreVersion;
+
 @Entity
-public class Account {
+public class Account implements Serializable{
     
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USER_ID_SEQ")
     @SequenceGenerator(sequenceName = "user_id_seq", allocationSize = 1, name = "USER_ID_SEQ")    
     private Long id;
@@ -27,6 +36,8 @@ public class Account {
     private String terms;
     
     private boolean enabled;
+    
+    private boolean active;
 
 	/**
 	 * @param username
@@ -35,21 +46,38 @@ public class Account {
 	 * @param enabled
 	 */
 	public Account(@NotBlank(message = "Username is mandatory") String username,
-			@NotBlank(message = "Password is mandatory") String password, String terms, boolean enabled) {
-		super();
+			@NotBlank(message = "Password is mandatory") String password, String terms, boolean enabled, boolean active) {
 		this.username = username;
 		this.password = password;
 		this.terms = terms;
 		this.enabled = enabled;
+		this.active = active;
+	}
+	
+	/**
+	 * @param account
+	 */
+	public Account(Account account) {
+		this.username = account.username;
+		this.password = account.password;
+		this.terms = account.terms;
+		this.enabled = account.enabled;
+		this.active = account.active;
+	}
+	
+	
+	/**
+	 * Default constructor needed for entity
+	 */
+	public Account() {
 	}
 
 	/**
-	 * 
+	 * @param id
 	 */
-	public Account() {
-		super();
+	public void setId(Long id){
+		this.id = id;
 	}
-
 	/**
 	 * @return
 	 */
@@ -104,13 +132,13 @@ public class Account {
 	 */
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", username=" + username + ", password=" + password + ", terms=" + terms + "]";
+		return "User [id=" + id + ", username=" + username + ", password=" + password + ", terms=" + terms + ", enabled" + enabled + "]";
 	}
 
 	/**
 	 * @return
 	 */
-	public boolean getEnabled() {
+	public boolean isEnabled() {
 		return enabled;
 	}
 
@@ -119,6 +147,21 @@ public class Account {
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	/**
+	 * @param active
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+
+	/**
+	 * @return active boolean
+	 */
+	public boolean isActive() {
+		return active;
 	}
 	
 }
