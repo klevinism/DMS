@@ -1,8 +1,8 @@
 package com.visionaus.dms.configuration;
-/**
- * @author delimeta
- *
- */
+
+import java.util.Collection;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,16 +11,23 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.visionaus.dms.configuration.helpers.LandingPages;
 import com.visionaus.dms.service.AccountUserDetailService;
 
+/**
+ * @author delimeta
+ *
+ */
 @Configuration
 @EnableWebSecurity
 public class AuthConfiguration extends WebSecurityConfigurerAdapter {
-	
+	private final Log logger = LogFactory.getLog(AuthConfiguration.class);
+
 	private AccountUserDetailService accountUserDetailService;
 	
 	/**
@@ -36,9 +43,10 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
 	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-
+		logger.debug("Custom Configure(HttpSecurity) will override the default configuration of WebSecurityConfigurerAdapter");
+		
 		http
-			.authorizeRequests()
+			.authorizeRequests()			
 				.antMatchers(LandingPages.LOGIN.getValue(), 
 						LandingPages.REGISTER.getValue()).anonymous()
 				.antMatchers(LandingPages.INDEX.getValue(), 
@@ -61,7 +69,7 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
                 .invalidateHttpSession(true)        // set invalidation state when logout
                 .deleteCookies("JSESSIONID")
 				.permitAll();
-		
+				
 	}
 	
 	/**
@@ -80,6 +88,14 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
 	    DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
 	    daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
 	    daoAuthenticationProvider.setUserDetailsService(accountUserDetailService);
+	    
+	    //Lambda call to GrantedAuthoritiesMapper.mapAuthorities(Collection<? extends GrantedAuthority> authorities)
+	    daoAuthenticationProvider.setAuthoritiesMapper((Collection<? extends GrantedAuthority> authorities) -> {				
+			SimpleAuthorityMapper authorityMapper = new SimpleAuthorityMapper();
+			authorityMapper.setPrefix("ROLE_"); // Add 'Role_' Prefix to all authorities/roles.
+			return authorityMapper.mapAuthorities(authorities);
+	    });
+	    
 	    return daoAuthenticationProvider;
 	}
 	
@@ -92,7 +108,6 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
 		auth
 			.authenticationProvider(authenticationProvider())
 			.jdbcAuthentication()
-			.passwordEncoder(passwordEncoder())
-			.rolePrefix("ROLE_");
+			.passwordEncoder(passwordEncoder());
 	}
 }
