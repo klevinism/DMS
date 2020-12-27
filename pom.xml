@@ -82,6 +82,13 @@
 		    <version>12.2.0.1</version>
 		</dependency>
         
+    <dependency> <!-- Autoreload spring project on Eclipse -->
+	    <groupId>org.springframework.boot</groupId>
+	    <artifactId>spring-boot-devtools</artifactId>
+	    <scope>runtime</scope>
+	    <optional>true</optional>
+	</dependency>
+        
 	</dependencies>
 
 	<build>
