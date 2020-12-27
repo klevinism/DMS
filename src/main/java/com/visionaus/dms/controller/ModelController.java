@@ -9,21 +9,21 @@ import org.springframework.ui.Model;
  * @author delimeta
  *
  */
-public class ModelViewController {
+public class ModelController {
 	
 	private Model model;
 	
 	/**
 	 * @param model
 	 */
-	public ModelViewController(Model model) {
+	public ModelController(Model model) {
 		this.model = model;
 	}
 	
 	/**
 	 * Default Constructor
 	 */
-	public ModelViewController() {
+	public ModelController() {
 	}
 	
 	
@@ -32,7 +32,7 @@ public class ModelViewController {
 	 * @param value
 	 * @return
 	 */
-	protected ModelViewController addCollectionToView(String key, Object value) {
+	protected ModelController addCollectionToView(String key, Object value) {
 		this.model.addAttribute(key,value);
 		return this;
 	}
@@ -40,7 +40,7 @@ public class ModelViewController {
 	/**
 	 * 
 	 */
-	public ModelViewController setModel(Model model) {
+	public ModelController setModel(Model model) {
 		this.model = model;
 		return this;
 	}

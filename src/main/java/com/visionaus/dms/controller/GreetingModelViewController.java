@@ -1,5 +1,4 @@
 package com.visionaus.dms.controller;
-import java.util.Map;
 
 /**
  * @author delimeta
@@ -12,27 +11,22 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.visionaus.dms.configuration.helpers.AccountUtil;
 import com.visionaus.dms.pojo.Account;
-import com.visionaus.dms.repository.AccountRepository;
 
 @Controller
 @RequestMapping("/")
-public class GreetingController {
-	private final Log logger = LogFactory.getLog(GreetingController.class);
+public class GreetingModelViewController {
+	private final Log logger = LogFactory.getLog(GreetingModelViewController.class);
 
-	@Autowired
-	private PersonnelModelViewController personnelMvc;
 	
 	/**
 	 * @param model
@@ -147,35 +141,6 @@ public class GreetingController {
 	@GetMapping("/icons")
 	public String icons() {
 		return "demo_1/pages/icons/font-awesome";
-	}
-	
-	/**
-	 * @param model
-	 * @return
-	 */
-	@GetMapping("/admin/personnel")
-	public String personnel(Model model) {
-
-		System.out.println(" HEREREREERERERRE ");
-		personnelMvc.setModel(model).run(); // GetValuesForView
-		
-		return "demo_1/pages/personnel"; 
-	}
-	
-	/**
-	 * @param model
-	 * @return
-	 */
-	@GetMapping("/admin/personnel/edit/{id}")
-	public String personnelModal(@PathVariable("id") Long id,
-			@RequestParam(name="modal", required=false) boolean modal,
-			Model model) {
-		
-		System.out.println(modal);
-		
-		personnelMvc.setModel(model).run(); // GetValuesForView
-		
-		return "demo_1/pages/personnel";
 	}
 	
 	/**
