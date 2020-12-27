@@ -18,16 +18,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/admin/personnel")
 public class PersonnelModelViewController {
-
-
-	private PersonnelController personnelMvc;
+	
+	private PersonnelModelController personnelModelController;
 	
 	/**
 	 * 
 	 */
 	@Autowired
-	public PersonnelModelViewController(PersonnelController personnelMvc) {
-		this.personnelMvc = personnelMvc;
+	public PersonnelModelViewController(PersonnelModelController personnelModelMvc) {
+		this.personnelModelController = personnelModelMvc;
 	}
 	
 	/**
@@ -35,9 +34,21 @@ public class PersonnelModelViewController {
 	 * @return
 	 */
 	@GetMapping("")
-	public String personnel(Model model) {
+	public String personnelDefault(Model model) {
 
-		personnelMvc.setModel(model).run(); // GetValuesForView
+		personnelModelController.setViewModel(model).run(); // GetValuesForView
+		
+		return "demo_1/pages/personnel"; 
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/")
+	public String personnelIndex(Model model) {
+
+		personnelModelController.setViewModel(model).run(); // GetValuesForView
 		
 		return "demo_1/pages/personnel"; 
 	}
@@ -47,14 +58,15 @@ public class PersonnelModelViewController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/admin/personnel/edit/{id}")
-	public String personnelModal(@PathVariable("id") Long id,
-			@RequestParam(name="modal", required=false) boolean modal,
+	@GetMapping("/edit/{id}")
+	public String personnelModel(@PathVariable("id") Long id,
+			@RequestParam(name="modal", required=false) String modal,
 			Model model) {
 		
-		System.out.println(modal);
-		
-		personnelMvc.setModel(model).run(); // GetValuesForView
+		personnelModelController.addControllerParam("id",id)
+			.addControllerParam("modal", modal)
+			.setViewModel(model)
+			.run(); // GetValuesForView
 		
 		return "demo_1/pages/personnel";
 	}
