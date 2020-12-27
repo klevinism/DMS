@@ -1,10 +1,14 @@
 package com.visionaus.dms.controller;
+import java.util.Map;
+
 /**
  * @author delimeta
  *
  */
 import javax.validation.Valid;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,7 +16,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.visionaus.dms.configuration.helpers.AccountUtil;
@@ -20,16 +27,20 @@ import com.visionaus.dms.pojo.Account;
 import com.visionaus.dms.repository.AccountRepository;
 
 @Controller
+@RequestMapping("/")
 public class GreetingController {
-	
-	private AccountRepository userRepository;
+	private final Log logger = LogFactory.getLog(GreetingController.class);
+
+	@Autowired
+	private PersonnelModelViewController personnelMvc;
 	
 	/**
-	 * @param userRepository
+	 * @param model
+	 * @return
 	 */
-	@Autowired
-	public GreetingController(AccountRepository userRepository) {
-		this.userRepository = userRepository;
+	@GetMapping("/error")
+	public String error(Model model) {
+		return "demo_1/pages/samples/error-404";
 	}
 	
 	/**
@@ -38,6 +49,7 @@ public class GreetingController {
 	 */
 	@GetMapping("/")
 	public String greeting(Model model) {
+		logger.debug(AccountUtil.currentLoggedInUser());
 		
 		model.addAttribute("user", AccountUtil.currentLoggedInUser());
 
@@ -143,8 +155,26 @@ public class GreetingController {
 	 */
 	@GetMapping("/admin/personnel")
 	public String personnel(Model model) {
-		model.addAttribute("user", AccountUtil.currentLoggedInUser());
 
+		System.out.println(" HEREREREERERERRE ");
+		personnelMvc.setModel(model).run(); // GetValuesForView
+		
+		return "demo_1/pages/personnel"; 
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/admin/personnel/edit/{id}")
+	public String personnelModal(@PathVariable("id") Long id,
+			@RequestParam(name="modal", required=false) boolean modal,
+			Model model) {
+		
+		System.out.println(modal);
+		
+		personnelMvc.setModel(model).run(); // GetValuesForView
+		
 		return "demo_1/pages/personnel";
 	}
 	
@@ -157,12 +187,11 @@ public class GreetingController {
 	public String register(@Valid Account user,
 			Model model) {
 		
-		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-        userRepository.save(user);
-
-	    Iterable<Account> accounts = userRepository.findAll();
-	    		
-		model.addAttribute("user",accounts);
+//		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+//        userRepository.save(user);
+//
+//	    Iterable<Account> accounts = userRepository.findAll();
+//		model.addAttribute("user",accounts);
 		
 		return "demo_1/pages/samples/register";
 	}
