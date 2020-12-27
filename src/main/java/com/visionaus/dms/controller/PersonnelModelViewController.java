@@ -3,43 +3,59 @@
  */
 package com.visionaus.dms.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.visionaus.dms.configuration.helpers.AccountUtil;
-import com.visionaus.dms.pojo.Account;
-import com.visionaus.dms.repository.AccountRepository;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @author delimeta
  *
  */
-@Service
-public class PersonnelModelViewController extends ModelViewController implements ViewControllerImpl{
-	
-	private AccountRepository accountRepository;
+@Controller
+@RequestMapping("/admin/personnel")
+public class PersonnelModelViewController {
 
+
+	private PersonnelController personnelMvc;
+	
 	/**
-	 * @param accountRepository
+	 * 
 	 */
 	@Autowired
-	public PersonnelModelViewController(AccountRepository accountRepository) {
-		super();
-		this.accountRepository = accountRepository;
+	public PersonnelModelViewController(PersonnelController personnelMvc) {
+		this.personnelMvc = personnelMvc;
 	}
 	
 	/**
-	 *	Return PersonnelModelViewController
+	 * @param model
+	 * @return
 	 */
-	@Override
-	public void run() {
-		// add LoggedInUsers
-		// add userList
-		Iterable<Account> accounts = accountRepository.findAll();
-		super.addCollectionToView("accountList", accounts);
-		super.addCollectionToView("user", AccountUtil.currentLoggedInUser());
+	@GetMapping("")
+	public String personnel(Model model) {
+
+		personnelMvc.setModel(model).run(); // GetValuesForView
+		
+		return "demo_1/pages/personnel"; 
 	}
 	
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/admin/personnel/edit/{id}")
+	public String personnelModal(@PathVariable("id") Long id,
+			@RequestParam(name="modal", required=false) boolean modal,
+			Model model) {
+		
+		System.out.println(modal);
+		
+		personnelMvc.setModel(model).run(); // GetValuesForView
+		
+		return "demo_1/pages/personnel";
+	}
 }
