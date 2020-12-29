@@ -29,4 +29,8 @@ public enum Actions {
     public String getValue() {
         return action;
     }
+    
+    public static Actions[] getAll(){
+    	return new Actions[]{INFO,VIEW,EDIT,CREATE,DELETE};
+    }
 }

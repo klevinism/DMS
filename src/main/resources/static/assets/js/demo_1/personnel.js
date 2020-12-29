@@ -1,24 +1,27 @@
 
 var url = new URL(window.location);
-var c = url.searchParams.get("modal");
+var isModal = url.searchParams.get("modal");
+var action = url.searchParams.get("action");
 
-if(c != null){
-	document.getElementById("myModal").style.display = "block";
-	console.log("MODAL IS HERE");
-}else{
-	console.log("NO MODAL");
-}
-
+$(document).ready(function(){
+	if(isModal){
+		$('#'+action.toLowerCase()+'Modal').modal('show');
+	}
+	
+	var selectedPersonnel = $('input[name="accountRadio"]:checked');
+	if(selectedPersonnel.val() != null)
+		selectPersonnel( selectedPersonnel.val());
+		
+	
+});
 
 function submitEditPersonnel(id){
-	console.log(id);
 	document.getElementById("editPersonnel"+id).submit();
 }
 
 function selectPersonnel(id){
 	clearSelected();
 	document.getElementById('accountRadioCheck' + id).checked  = true;
-	console.log(document.getElementById('actionButton' + id));
 	document.getElementById('actionButton' + id).style.display = 'block';
 }
 

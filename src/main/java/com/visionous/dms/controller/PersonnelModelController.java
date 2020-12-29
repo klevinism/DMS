@@ -61,7 +61,7 @@ public class PersonnelModelController extends ModelController{
 	 * 
 	 */
 	private void mapModelToModalActionView() {
-		
+		super.addModelCollectionToView("action", super.getAllControllerParams().get("action").toString().toLowerCase());
 		String idControllerParamValue = super.getAllControllerParams().get("id").toString();
 		Optional<Account> accountById = accountRepository.findById(Long.valueOf(idControllerParamValue));
 		

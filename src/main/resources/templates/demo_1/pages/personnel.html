@@ -119,52 +119,14 @@
         <!-- main-panel ends -->
         
       </div>
-      
-     	<!-- Edit Modal -->
-		<div id="editModal" class="modal fade" role="dialog">
-		  <div class="modal-dialog">
+    
+    <div th:if="${action}" >
+	    <section th:replace="demo_1/partials/personnel/_genericModals :: modals">
+		 	<!-- Personnel Page Modals -->
+		</section>
+    </div>
 		
-		    <!-- Modal content-->
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <h4 class="modal-title">Quick Edit </h4>
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
-		      </div>
-		      <div class="modal-body">
-		      		  <section th:if="${selectedAccount?}" th:replace="demo_1/partials/personnel/_edit :: edit">
-				  	<!-- partial:partials/_footer.html -->
-				  </section>
-		      </div>
-		    </div>
-			<div class="modal-footer">
-		    </div>
-		  </div>
-		</div>
-		
-		<!-- Delete Modal -->
-		<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog" role="document">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		          <span aria-hidden="true">&times;</span>
-		        </button>
-		      </div>
-		      <div class="modal-body">
-	      		  <section th:if="${selectedAccount?}" th:replace="demo_1/partials/personnel/_delete :: delete">
-				  	<!-- partial:partials/_footer.html -->
-				  </section>
-		      </div>
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		        <button type="button" class="btn btn-danger">Delete</button>
-		      </div>
-		    </div>
-		  </div>
-		</div>
-		
-      <!-- page-body-wrapper ends -->
+    <!-- page-body-wrapper ends -->
     </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
