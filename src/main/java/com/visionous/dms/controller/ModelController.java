@@ -14,6 +14,9 @@ import org.springframework.ui.Model;
  */
 public class ModelController implements ModelControllerImpl{
 	
+	/**
+	 * 
+	 */
 	private Map<String, Object> paramMap;
 	private Model viewModel;
 	
@@ -48,6 +51,15 @@ public class ModelController implements ModelControllerImpl{
 	 */
 	public ModelController setViewModel(Model model) {
 		this.viewModel = model;
+		return this;
+	}
+	
+	/**
+	 * Clears the model parameters of the current {@link ModelController}. 
+	 * @return this ModelController
+	 */
+	public ModelController init() {
+		this.paramMap.clear();
 		return this;
 	}
 
@@ -85,7 +97,10 @@ public class ModelController implements ModelControllerImpl{
 	}
 
 	/**
-	 * @return this ModelController
+	 * Replaces an already present model parameter value with a newValue
+	 * @param key The String parameter key
+	 * @param newValue The new value of the parameter to replace
+	 * @return this {@link ModelController} object
 	 */
 	@Override
 	public ModelController setControllerParam(String key, Object newValue) {

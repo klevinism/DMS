@@ -40,12 +40,13 @@ public class PersonnelModelController extends ModelController{
 	 */
 	@Override
 	public void run() {
+		
 		// add LoggedInUsers
 		// add userList
 		Iterable<Account> accounts = accountRepository.findAll();
 		super.addModelCollectionToView("accountList", accounts);
 		super.addModelCollectionToView("currentLoggedInUser", AccountUtil.currentLoggedInUser());
-			
+		
 		//If view is on modal
 		if(super.getAllControllerParams().containsKey("modal")) {
 			mapModelToModalActionView();
@@ -60,6 +61,7 @@ public class PersonnelModelController extends ModelController{
 	 * 
 	 */
 	private void mapModelToModalActionView() {
+		
 		String idControllerParamValue = super.getAllControllerParams().get("id").toString();
 		Optional<Account> accountById = accountRepository.findById(Long.valueOf(idControllerParamValue));
 		
@@ -74,9 +76,10 @@ public class PersonnelModelController extends ModelController{
 	 */
 	private void mapModelToActionView(String actionViewType) {
 		Actions action = Actions.valueOf(actionViewType);
+		
 		switch(action) {
 			case INFO : break;
-			case VIEW :  break;
+			case VIEW : break;
 			case EDIT : editPersonnelModel(); break;
 			case CREATE : break;
 			case DELETE : deletePersonnelModel(); break;
@@ -91,7 +94,7 @@ public class PersonnelModelController extends ModelController{
 	private void editPersonnelModel() {
 		String idControllerParamValue = super.getAllControllerParams().get("id").toString();
 		Optional<Account> accountById = accountRepository.findById(Long.valueOf(idControllerParamValue));
-		
+			
 		if(accountById.isPresent()) {
 			Account selectedAccount = accountById.get();
 			super.addModelCollectionToView("selectedAccount", selectedAccount);
@@ -109,5 +112,5 @@ public class PersonnelModelController extends ModelController{
 		//Optional<Account> accountById = accountRepository.findById(Long.valueOf(idControllerParamValue));
 		
 	}
-
+	
 }

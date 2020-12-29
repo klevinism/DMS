@@ -3,10 +3,6 @@
  */
 package com.visionous.dms.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.visionous.dms.configuration.helpers.Actions;
 
 /**
  * @author delimeta
@@ -33,6 +31,28 @@ public class PersonnelModelViewController {
 	@Autowired
 	public PersonnelModelViewController(PersonnelModelController personnelModelMvc) {
 		this.personnelModelController = personnelModelMvc;
+	}
+	
+
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/{id}")
+	public String personnelEdit(@PathVariable("id") Long id,
+			@RequestParam(name="action", required=true) Actions action,
+			@RequestParam(name="modal", required=false) boolean modal,
+			Model model) {
+		
+		personnelModelController.init() // Re-initialize Model
+			.addControllerParam("id", id)
+			.addControllerParam("modal", modal)
+			.addControllerParam("action", action)
+			.setViewModel(model)
+			.run(); // GetValuesForView
+
+		return "demo_1/pages/personnel";
 	}
 	
 	/**
@@ -65,29 +85,11 @@ public class PersonnelModelViewController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/{id}")
-	public String personnelEdit(@PathVariable("id") Long id,
-			@RequestParam(name="action", required=true) String action,
-			@RequestParam(name="modal", required=false) boolean modal,
-			Model model) {
-		
-		personnelModelController.addControllerParam("id",id)
-			.addControllerParam("modal", modal)
-			.addControllerParam("action", action)
-			.setViewModel(model)
-			.run(); // GetValuesForView
-
-		return "demo_1/pages/personnel";
-	}
-	
-	/**
-	 * @param model
-	 * @return
-	 */
 	@GetMapping("/edit/{id}")
 	public String personnelEdit(@PathVariable("id") Long id, Model model) {
 		
-		personnelModelController.addControllerParam("id",id)
+		personnelModelController
+			.addControllerParam("id",id)
 			.setViewModel(model)
 			.run(); // GetValuesForView
 		
