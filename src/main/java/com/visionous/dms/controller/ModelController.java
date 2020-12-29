@@ -1,0 +1,106 @@
+/**
+ * 
+ */
+package com.visionous.dms.controller;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.ui.Model;
+
+/**
+ * @author delimeta
+ *
+ */
+public class ModelController implements ModelControllerImpl{
+	
+	private Map<String, Object> paramMap;
+	private Model viewModel;
+	
+	/**
+	 * @param model
+	 */
+	public ModelController(Model model) {
+		this.viewModel = model;
+		paramMap = new HashMap<>();
+	}
+	
+	/**
+	 * Default Constructor
+	 */
+	public ModelController() {
+		paramMap = new HashMap<>();
+	}
+	
+	
+	/**
+	 * @param key String
+	 * @param value Object
+	 * @return this ModelController
+	 */
+	protected ModelController addModelCollectionToView(String key, Object value) {
+		this.viewModel.addAttribute(key,value);
+		return this;
+	}
+	
+	/**
+	 * 
+	 */
+	public ModelController setViewModel(Model model) {
+		this.viewModel = model;
+		return this;
+	}
+
+	/**
+	 * 
+	 */
+	public void run() {
+		/*
+		 * Method will be overridden by subclasses
+		 * For quick example ONLY, uncomment the line below and a test parameter will be
+		 * added to the html page shown.
+		 * 
+		 * addCollectionToView("testParameter", "Hello World");
+		 */
+	}
+	
+	/**
+	 * @return this ModelController
+	 */
+	@Override
+	public ModelController addControllerParam(String key, Object value) {
+		if(value != null && !value.equals("")
+				&& key != null && !key.equals("")) paramMap.put(key, value) ;
+		return this;
+	}
+
+	/**
+	 * @return this ModelController
+	 */
+	@Override
+	public ModelController removeControllerParam(String key) {
+		if(key != null && !key.equals("")) 
+			paramMap.remove(key);
+		return this;
+	}
+
+	/**
+	 * @return this ModelController
+	 */
+	@Override
+	public ModelController setControllerParam(String key, Object newValue) {
+		if(newValue != null && !newValue.equals("")
+				&& key != null && !key.equals("")) 
+			paramMap.replace(key, paramMap.get(key), newValue);
+		return this;
+	}
+	
+	/**
+	 * @return paramMap Map<String, Object>
+	 */
+	@Override
+	public Map<String, Object> getAllControllerParams(){
+		return this.paramMap;
+	}
+	
+}

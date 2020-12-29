@@ -1,0 +1,50 @@
+<div class="card" th:fragment="edit">
+  <div class="card-body">
+    <h4 class="card-title">Edit Account <u>[[${selectedAccount?.username}]]</u></h4>
+    <hr/>
+    <form class="forms-sample" th:action="@{/admin/personnel}" method="POST">
+      <div class="form-group">
+        <label for="username">Name</label>
+        <input type="text" class="form-control" id="username" name="username" th:placeholder="${selectedAccount?.username}">
+      </div>
+      
+      <div class="form-group">
+        <label for="roles">Roles</label>
+        <div class="bootstrap-tagsinput" id="bootstrap-tags-role" style="width:100%" >
+        <span th:each="role: ${selectedAccount?.roles}">
+      		<span class="tag badge badge-info" th:id="'role'+${role.id}" th:name="'role' + ${role.id}">
+      			[[${role.name}]]
+      			<span th:id="'removeRole'+${role.id}" data-role="remove"></span>
+      		</span>
+      	</span> 
+ 	  	</div>
+ 	  	<input type="hidden" id="role_hidden_input" name="roles" value="">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword4">Password</label>
+        <input type="password" class="form-control" id="exampleInputPassword4" th:placeholder="${selectedAccount?.password}">       
+      </div>
+      <div class="form-group">
+        <label>File upload</label>
+        <!-- <input type="file" name="img[]" class="file-upload-default">
+        <div class="input-group col-xs-12">
+          <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">
+          <span class="input-group-append">
+            <button class="file-upload-browse btn btn-info" type="button">Upload</button>
+          </span>
+        </div>
+         -->
+      </div>
+      <div class="form-group">
+        <label for="exampleInputCity1">City</label>
+        <input type="text" name="city" class="form-control" id="exampleInputCity1" placeholder="Location">
+      </div>
+      <div class="form-group">
+        <label for="exampleTextarea1">Textarea</label>
+        <textarea class="form-control"  name="textarea" id="exampleTextarea1" rows="2"></textarea>
+      </div>
+      <button type="submit" class="btn btn-success mr-2">Submit</button>
+      <button type="reset" class="btn btn-light" onclick="window.history.back();">Cancel</button>
+    </form>
+  </div>
+</div>
