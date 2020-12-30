@@ -5,10 +5,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 import com.visionous.dms.configuration.helpers.DmsCoreVersion;
@@ -33,8 +37,10 @@ public class Role implements Serializable{
     @ManyToMany
     private Set<Account> accounts = new HashSet<>();
 	
+    @ManyToMany
+	private Set<Personnel> personnels;
+    
 	private String name;
-
 
 	/**
 	 * @return the id
@@ -42,7 +48,6 @@ public class Role implements Serializable{
 	public Long getId() {
 		return id;
 	}
-
 
 	/**
 	 * @param id the id to set
@@ -59,14 +64,12 @@ public class Role implements Serializable{
 		return name;
 	}
 
-
 	/**
 	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
-
 
 	/**
 	 * @return the authority
@@ -82,12 +85,4 @@ public class Role implements Serializable{
 		this.accounts = accounts;
 	}
 
-
-	@Override
-	public String toString() {
-		return "Role [id=" + id + ", accounts=" + accounts + ", name=" + name + "]";
-	}
-	
-	
-	
 }

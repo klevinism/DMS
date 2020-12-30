@@ -55,9 +55,10 @@
 	                        </tr>
 	                      </thead>
 	                      <tbody>
-	                        <tr th:each="personnel: ${personnelList}" th:onclick="'javascript:selectPersonnel('+${personnel.id}+')'"
+	                        <tr th:each="personnel: ${personnelList}" 
+	                        	th:onclick="'javascript:selectPersonnel('+${personnel.id}+')'"
 	                        	th:with="
-	                        		user = ${personnel.getAccount()},
+	                        		user = ${personnel.account},
 	                        		enabledLabel = ${user.enabled} ? 'Enabled' : 'Disabled', 
 	                        		enabledClass = ${user.enabled} ? badge-success : badge-danger,
 	                        		activeLabel = ${user.active} ? 'Active' : 'Inactive', 
@@ -65,7 +66,7 @@
 	                          <td width="1%">
 		                          <div class="form-radio">
 	                              	<label class="form-check-label">
-	                                	<input type="radio" class="form-check-input" name="accountRadio" th:id="'accountRadioCheck'+${user.id}" th:checked="${selectedAccount?.id} == ${user.id}" th:value="${user.id}" >
+	                                	<input type="radio" class="form-check-input" name="accountRadio" th:id="'accountRadioCheck'+${user.id}" th:checked="${user.id} == ${user.id}" th:value="${user.id}" >
 	                              	</label>
 	                              </div>
 		                      </td>
@@ -122,7 +123,7 @@
         
       </div>
     
-    <div th:if="${action}" >
+    <div th:if="${action != null}" >
 	    <section th:replace="demo_1/partials/personnel/_genericModals :: modals">
 		 	<!-- Personnel Page Modals -->
 		</section>

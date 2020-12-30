@@ -7,7 +7,7 @@
           <div class="dot-indicator bg-success"></div>
         </div>
         <div class="text-wrapper">
-          <p class="profile-name">[[${currentLoggedInUser.username}]]</p>
+          <p class="profile-name">[[${#httpServletRequest.remoteUser}]]</p>
           <p class="designation">Premium user</p>
           <p id="user"> [[${#httpServletRequest.remoteUser}]]!</p>
         </div>

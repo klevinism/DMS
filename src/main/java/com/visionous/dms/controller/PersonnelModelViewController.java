@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.visionous.dms.configuration.helpers.Actions;
+import com.visionous.dms.model.PersonnelModelController;
 
 /**
  * @author delimeta
@@ -59,8 +60,7 @@ public class PersonnelModelViewController {
 	 */
 	@GetMapping("")
 	public String personnelDefault(Model model) {
-		System.out.println("GET");
-		personnelModelController.setViewModel(model).run(); // GetValuesForView
+		personnelModelController.init().setViewModel(model).run(); // GetValuesForView
 		
 		return "demo_1/pages/personnel"; 
 	}
@@ -78,7 +78,6 @@ public class PersonnelModelViewController {
 		return "demo_1/pages/personnel"; 
 	}
 	
-	
 	/**
 	 * @param model
 	 * @return
@@ -86,7 +85,7 @@ public class PersonnelModelViewController {
 	@GetMapping("/edit/{id}")
 	public String personnelEdit(@PathVariable("id") Long id, Model model) {
 		
-		personnelModelController
+		personnelModelController.init()
 			.addControllerParam("id",id)
 			.setViewModel(model)
 			.run(); // GetValuesForView

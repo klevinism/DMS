@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.visionous.dms.controller;
+package com.visionous.dms.model;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -52,7 +52,7 @@ public class Account implements Serializable{
     
     private boolean active;
     
-	@OneToOne(mappedBy = "account")
+	@OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
 	@PrimaryKeyJoinColumn
 	private Personnel personnel;
     
@@ -82,7 +82,6 @@ public class Account implements Serializable{
 		this.enabled = account.enabled;
 		this.active = account.active;
 	}
-	
 	
 	/**
 	 * Default constructor needed for entity
@@ -186,7 +185,4 @@ public class Account implements Serializable{
 	public boolean isActive() {
 		return active;
 	}
-	
-	
-	
 }
