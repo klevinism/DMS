@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.visionous.dms.controller;
 
 import java.util.Optional;
@@ -12,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.repository.AccountRepository;
+import com.visionous.dms.pojo.Personnel;
+import com.visionous.dms.repository.PersonnelRepository;
 
 /**
  * @author delimeta
@@ -24,15 +21,15 @@ public class PersonnelModelController extends ModelController{
 	
 	private final Log logger = LogFactory.getLog(PersonnelModelController.class);
 	
-	private AccountRepository accountRepository;
+	private PersonnelRepository personnelRepository;
 
 	/**
 	 * @param accountRepository
 	 */
 	@Autowired
-	public PersonnelModelController(AccountRepository accountRepository) {
+	public PersonnelModelController(PersonnelRepository personnelRepository) {
 		super();
-		this.accountRepository = accountRepository;
+		this.personnelRepository = personnelRepository;
 	}
 	
 	/**
@@ -43,8 +40,8 @@ public class PersonnelModelController extends ModelController{
 		
 		// add LoggedInUsers
 		// add userList
-		Iterable<Account> accounts = accountRepository.findAll();
-		super.addModelCollectionToView("accountList", accounts);
+		Iterable<Personnel> personnels = personnelRepository.findAll();
+		super.addModelCollectionToView("personnelList", personnels);
 		super.addModelCollectionToView("currentLoggedInUser", AccountUtil.currentLoggedInUser());
 		
 		//If view is on modal
@@ -63,19 +60,17 @@ public class PersonnelModelController extends ModelController{
 	private void mapModelToModalActionView() {
 		super.addModelCollectionToView("action", super.getAllControllerParams().get("action").toString().toLowerCase());
 		String idControllerParamValue = super.getAllControllerParams().get("id").toString();
-		Optional<Account> accountById = accountRepository.findById(Long.valueOf(idControllerParamValue));
-		
-		if(accountById.isPresent()) {
-			Account selectedAccount = accountById.get();
-			super.addModelCollectionToView("selectedAccount", selectedAccount);
-		}
+		Optional<Personnel> personnel = personnelRepository.findById(Long.valueOf(idControllerParamValue));
+		personnel.ifPresent(x -> {
+			super.addModelCollectionToView("selectedAccount", personnel.get().getAccount());
+		});
 	}
 
 	/**
 	 * 
 	 */
-	private void mapModelToActionView(String actionViewType) {
-		Actions action = Actions.valueOf(actionViewType);
+	private void mapModelToActionView(String actionType) {
+		Actions action = Actions.valueOf(actionType);
 		
 		switch(action) {
 			case INFO : break;
@@ -93,12 +88,10 @@ public class PersonnelModelController extends ModelController{
 	 */
 	private void editPersonnelModel() {
 		String idControllerParamValue = super.getAllControllerParams().get("id").toString();
-		Optional<Account> accountById = accountRepository.findById(Long.valueOf(idControllerParamValue));
-			
-		if(accountById.isPresent()) {
-			Account selectedAccount = accountById.get();
-			super.addModelCollectionToView("selectedAccount", selectedAccount);
-		}
+		Optional<Personnel> personnel = personnelRepository.findById(Long.valueOf(idControllerParamValue));
+		personnel.ifPresent(x -> {
+			super.addModelCollectionToView("selectedAccount", personnel.get().getAccount());
+		});
 	}
 	
 
@@ -110,7 +103,6 @@ public class PersonnelModelController extends ModelController{
 		
 		//TODO Delete Personnel
 		//Optional<Account> accountById = accountRepository.findById(Long.valueOf(idControllerParamValue));
-		
 	}
 	
 }

@@ -55,8 +55,10 @@
 	                        </tr>
 	                      </thead>
 	                      <tbody>
-	                        <tr th:each="user: ${accountList}" th:onclick="'javascript:selectPersonnel('+${user.id}+')'"
-	                        	th:with="enabledLabel = ${user.enabled} ? 'Enabled' : 'Disabled', 
+	                        <tr th:each="personnel: ${personnelList}" th:onclick="'javascript:selectPersonnel('+${personnel.id}+')'"
+	                        	th:with="
+	                        		user = ${personnel.getAccount()},
+	                        		enabledLabel = ${user.enabled} ? 'Enabled' : 'Disabled', 
 	                        		enabledClass = ${user.enabled} ? badge-success : badge-danger,
 	                        		activeLabel = ${user.active} ? 'Active' : 'Inactive', 
 	                        		activeClass = ${user.active} ? badge-success : badge-danger">

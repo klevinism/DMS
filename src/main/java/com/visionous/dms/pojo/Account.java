@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
 
@@ -49,6 +51,11 @@ public class Account implements Serializable{
     private boolean enabled;
     
     private boolean active;
+    
+	@OneToOne(mappedBy = "account")
+	@PrimaryKeyJoinColumn
+	private Personnel personnel;
+    
 
 	/**
 	 * @param username
@@ -139,6 +146,20 @@ public class Account implements Serializable{
 	}
 
 	/**
+	 * @return the personnel
+	 */
+	public Personnel getPersonnel() {
+		return personnel;
+	}
+
+	/**
+	 * @param personnel the personnel to set
+	 */
+	public void setPersonnel(Personnel personnel) {
+		this.personnel = personnel;
+	}
+
+	/**
 	 * @return
 	 */
 	public boolean isEnabled() {
@@ -165,5 +186,7 @@ public class Account implements Serializable{
 	public boolean isActive() {
 		return active;
 	}
+	
+	
 	
 }

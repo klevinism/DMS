@@ -33,8 +33,6 @@ public class PersonnelModelViewController {
 		this.personnelModelController = personnelModelMvc;
 	}
 	
-
-	
 	/**
 	 * @param model
 	 * @return
