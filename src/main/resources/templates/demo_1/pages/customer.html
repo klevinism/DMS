@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <div th:replace="demo_1/partials/_header :: header">
+  </div>
+  <body>
+    <div class="container-scroller">
+      <section th:replace="demo_1/partials/_navbar :: navbar">
+  	  </section>
+      <!-- partial:partials/_navbar.html -->
+      
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        
+        <section th:replace="demo_1/partials/_sidebar :: sidebar">
+        <!-- partial:partials/_sidebar.html -->
+        </section>
+        
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <!-- Page Title Header Starts-->
+            <div class="row page-title-header">
+              <div class="col-12">
+                <div class="page-header">
+                    <h4 class="page-title">Customer</h4>
+					
+                </div>
+
+              </div>
+				<nav aria-label="breadcrumb">
+				  <ol class="breadcrumb">
+				    <li class="breadcrumb-item"><a href="/">Home</a></li>
+				    <li class="breadcrumb-item"><a href="/admin">Admin</a></li>
+				    <li class="breadcrumb-item active" aria-current="page">Customer</li>
+				  </ol>
+				</nav>
+            </div>
+            <!-- Page Title Header Ends-->
+            <div class="row">
+              <div class="col grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col">
+                        <table class="table table-hover">
+	                      <thead>
+	                        <tr>
+	                          <th><!-- Selection column --></th>
+	                          <th>Id</th>
+	                          <th>Username</th>
+	                          <th>Register Date</th>
+	                          <th><!-- Actions column --></th>
+	                        </tr>
+	                      </thead>
+	                      <tbody>
+	                        <tr th:each="customer: ${customers}" 
+	                        	th:onclick="'javascript:selectPersonnel('+${customer.id}+')'"
+	                        	th:with="
+	                        		user = ${customer.account},
+	                        		enabledLabel = ${user.enabled} ? 'Enabled' : 'Disabled', 
+	                        		enabledClass = ${user.enabled} ? badge-success : badge-danger,
+	                        		activeLabel = ${user.active} ? 'Active' : 'Inactive', 
+	                        		activeClass = ${user.active} ? badge-success : badge-danger">
+	                          <td width="1%">
+		                          <div class="form-radio">
+	                              	<label class="form-check-label">
+	                                	<input type="radio" class="form-check-input" name="accountRadio" th:id="'accountRadioCheck'+${user.id}" th:checked="${user.id} == ${user.id}" th:value="${user.id}" >
+	                              	</label>
+	                              </div>
+		                      </td>
+							  <td width="1%" th:text="${user.id}">id</td>
+	                          <td th:text="${user.username}">username</td>
+	                          <td >
+							  	<h5 th:text="${customer.registerdate}">
+							  		
+							  	</h5>
+							  </td>
+	                          
+	                          <td width="2%">
+	                          
+	                              <div class="btn-group" style="display:none;" name="actionButton" th:id="'actionButton' + ${user.id}">
+		                        	<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			                          	<span class="sr-only">Toggle Action</span>
+										<a class="btn btn-primary" th:href="'/admin/customer/edit/' + ${user.id} " >Edit</a>
+			                        </button>
+			                        <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
+			                          <h6 class="dropdown-header">Quick Actions</h6>
+			                          <a class="dropdown-item" th:href="'/admin/customer/' + ${user.id} + '/?modal=true&action=' + ${T(com.visionous.dms.configuration.helpers.Actions).EDIT} +'' ">Edit</a>
+			                          <a class="dropdown-item"  th:href="'/admin/customer/' + ${user.id} + '/?modal=true&action=' + ${T(com.visionous.dms.configuration.helpers.Actions).DELETE} +'' ">Delete</a>
+			                          <div class="dropdown-divider"></div>
+			                          <a class="dropdown-item" href="#">Change Permissions</a>
+			                        </div>
+			                      </div>
+	                          </td>
+	                        </tr>
+	                      </tbody>
+	                    </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          <!-- content-wrapper ends -->
+		  
+		  <section th:replace="demo_1/partials/_footer :: footer">
+		  	<!-- partial:partials/_footer.html -->
+		  </section>
+          <!-- partial -->
+          
+        </div>
+        <!-- main-panel ends -->
+        
+      </div>
+    
+    <div th:if="${action != null}" >
+	    <section th:replace="demo_1/partials/customer/_genericModals :: modals">
+		 	<!-- Personnel Page Modals -->
+		</section>
+    </div>
+		
+    <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="/assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="/assets/vendors/js/vendor.bundle.addons.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page-->
+        <script type="text/javascript" src="/assets/vendors/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>    
+    <!-- End plugin js for this page-->
+    <!-- inject:js -->
+    <script src="/assets/js/shared/off-canvas.js"></script>
+    <script src="/assets/js/shared/misc.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    <script src="/assets/js/demo_1/customer.js"></script>
+    <!-- End custom js for this page-->
+  </body>
+</html>

@@ -55,7 +55,10 @@ public class Account implements Serializable{
 	@OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
 	@PrimaryKeyJoinColumn
 	private Personnel personnel;
-    
+
+	@OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
+	@PrimaryKeyJoinColumn
+	private Customer customer;
 
 	/**
 	 * @param username
@@ -184,5 +187,19 @@ public class Account implements Serializable{
 	 */
 	public boolean isActive() {
 		return active;
+	}
+
+	/**
+	 * @return the customer
+	 */
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	/**
+	 * @param customer the customer to set
+	 */
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 }

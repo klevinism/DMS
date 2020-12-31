@@ -1,0 +1,10 @@
+<div class="card" th:fragment="edit">
+  <div class="card-body">
+    <h4 class="card-title">Edit Customer <u>[[*{account.username}]]</u></h4>
+    <hr/>
+     <div class="form-group">
+        <label for="username">Name</label>
+        <input type="text" class="form-control" id="username" name="username" th:placeholder="*{account.username}">
+      </div>
+  </div>
+</div>

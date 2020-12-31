@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <div th:replace="demo_1/partials/_header :: header">
+  </div>
+  <body>
+    <div class="container-scroller">
+      <section th:replace="demo_1/partials/_navbar :: navbar">
+  	  </section>
+      <!-- partial:partials/_navbar.html -->
+      
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        
+        <section th:replace="demo_1/partials/_sidebar :: sidebar">
+        <!-- partial:partials/_sidebar.html -->
+        </section>
+        
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <!-- Page Title Header Starts-->
+            <div class="row page-title-header">
+              <div class="col-12">
+                <div class="page-header">
+                  <h4 class="page-title" th:text="'Edit Customer with Id: ' + ${selectedAccount.id}">Edit Account accountid</h4>
+                </div>
+              </div>
+              <div class="col-md-12">
+                
+              </div>
+            </div>
+            <!-- Page Title Header Ends-->
+            <div class="row">
+              <div class="col grid-margin stretch-card">
+          			<section th:replace="demo_1/partials/personnel/_edit :: edit">
+					  	<!-- partial:partials/_footer.html -->
+		  			</section>
+              </div>
+            </div>
+          </div>
+          <!-- content-wrapper ends -->
+		  
+		  <section th:replace="demo_1/partials/_footer :: footer">
+		  	<!-- partial:partials/_footer.html -->
+		  </section>
+          <!-- partial -->
+          
+        </div>
+        <!-- main-panel ends -->
+        
+      </div>
+      
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="/assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="/assets/vendors/js/vendor.bundle.addons.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page-->
+    <!-- End plugin js for this page-->
+    <!-- inject:js -->
+    <script src="/assets/js/shared/off-canvas.js"></script>
+    <script src="/assets/js/shared/misc.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    <script src="/assets/js/demo_1/personnel.js"></script>
+    <!-- End custom js for this page-->
+  </body>
+</html>
