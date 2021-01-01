@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 
 import com.visionous.dms.configuration.helpers.DmsCoreVersion;
 
@@ -38,6 +39,9 @@ public class Customer implements Serializable{
     @MapsId
     @JoinColumn(name="id")
 	private Account account;
+	
+    @OneToOne(mappedBy="supervisor")
+    private History history;
 
 	/**
 	 * @return the id
@@ -80,4 +84,19 @@ public class Customer implements Serializable{
 	public void setRegisterdate(Date registerdate) {
 		this.registerdate = registerdate;
 	}
+
+	/**
+	 * @return the history
+	 */
+	public History getHistory() {
+		return history;
+	}
+
+	/**
+	 * @param history the history to set
+	 */
+	public void setHistory(History history) {
+		this.history = history;
+	}
+	
 }
