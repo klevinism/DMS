@@ -3,7 +3,11 @@
  */
 package com.visionous.dms.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.visionous.dms.configuration.helpers.Actions;
+import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.model.PersonnelModelController;
 
 /**
@@ -25,7 +32,6 @@ import com.visionous.dms.model.PersonnelModelController;
 public class PersonnelModelViewController {
 	
 	private PersonnelModelController personnelModelController;
-	
 	/**
 	 * 
 	 */
@@ -43,7 +49,7 @@ public class PersonnelModelViewController {
 			@RequestParam(name="action", required=true) Actions action,
 			@RequestParam(name="modal", required=false) boolean modal,
 			Model model) {
-		
+
 		personnelModelController.init() // Re-initialize Model
 			.addControllerParam("id", id)
 			.addControllerParam("modal", modal)
@@ -87,6 +93,7 @@ public class PersonnelModelViewController {
 		
 		personnelModelController.init()
 			.addControllerParam("id",id)
+			.addControllerParam("action", Actions.EDIT)
 			.setViewModel(model)
 			.run(); // GetValuesForView
 		

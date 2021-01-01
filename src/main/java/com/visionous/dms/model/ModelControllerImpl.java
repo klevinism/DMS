@@ -11,10 +11,9 @@ import java.util.Map;
  */
 public interface ModelControllerImpl {
 	/**
-	 * 
+	 * A custom implementation of model view mappings. 
 	 */
 	void run();
-	
 	
 	/**
 	 * @return ModelControllerImpl

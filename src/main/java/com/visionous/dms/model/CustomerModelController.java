@@ -5,11 +5,16 @@ package com.visionous.dms.model;
 
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.repository.CustomerRepository;
 
@@ -23,6 +28,9 @@ public class CustomerModelController extends ModelController{
 	private final Log logger = LogFactory.getLog(CustomerModelController.class);
 
 	private CustomerRepository customerRepository;
+	
+	private static String currentPage = LandingPages.CUSTOMER.value();
+
 	
 	/**
 	 * @param customerRepository
@@ -38,12 +46,20 @@ public class CustomerModelController extends ModelController{
 	 */
 	@Override
 	public void run() {
-		buildCustomerViewModel();
+		HttpServletRequest path = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+
+		super.addModelCollectionToView("currentPagePath", path.getRequestURI());
+		super.addModelCollectionToView("currentPage", currentPage);
 		
-		//If view has action
-		if(super.getAllControllerParams().containsKey("action")) {
-			logger.info(" ACTION ");
+		if(!super.getAllControllerParams().containsKey("modal") &&
+				super.getAllControllerParams().containsKey("action")) {
 			buildCustomerActionViewModel();
+		}else {
+			buildCustomerViewModel();
+			
+			if(super.getAllControllerParams().containsKey("action")) {
+				buildCustomerActionViewModel();	
+			}
 		}
 	}
 
@@ -56,7 +72,7 @@ public class CustomerModelController extends ModelController{
 		
 		String customerId = super.getAllControllerParams().get("id").toString();
 		Optional<Customer> customer = customerRepository.findById(Long.valueOf(customerId));
-		customer.ifPresent(x -> super.addModelCollectionToView("selectedCustomer", customer.get()));
+		customer.ifPresent(x -> super.addModelCollectionToView("selected", customer.get()));
 	}
 	
 	/**

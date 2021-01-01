@@ -10,7 +10,9 @@ public enum LandingPages {
     INDEX("/index"),
     DASHBOARD("/dashboard"),
     ADMIN("/admin"),
-    REGISTER("/register"); 
+    REGISTER("/register"),
+    PERSONNEL("/personnel"), 
+    CUSTOMER("/customer"); 
     
     private final String landingPage;
     
