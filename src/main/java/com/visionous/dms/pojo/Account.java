@@ -1,9 +1,11 @@
 package com.visionous.dms.pojo;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,12 +14,19 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import org.springframework.lang.Nullable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.visionous.dms.configuration.helpers.DmsCoreVersion;
+import com.visionous.dms.configuration.helpers.annotations.ValidEmail;
 
 /**
  * @author delimeta
@@ -32,32 +41,47 @@ public class Account implements Serializable{
 	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USER_ID_SEQ")
-    @SequenceGenerator(sequenceName = "user_id_seq", allocationSize = 1, name = "USER_ID_SEQ")    
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ACC_SEQ")
+    @SequenceGenerator(sequenceName = "account_seq", allocationSize = 1, name = "ACC_SEQ")
     private Long id;
+	
+	private String name;
+	
+	private String surname;
+	
+	private int age;
+	
+	private String gender;
+	
+	@ValidEmail(message = "Email must be valid, example@example.com")
+    @NotNull
+    @NotEmpty
+	private String email;
+	
+	private Long phone;
     
-    @NotBlank(message = "Username is mandatory")
     private String username;
     
-    @NotBlank(message = "Password is mandatory")
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "authority",
-            joinColumns = @JoinColumn(name = "accountid", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "roleid", referencedColumnName = "id"))
-    private Set<Role> roles;
+            joinColumns = @JoinColumn(name = "accountid"),
+            inverseJoinColumns = @JoinColumn(name = "roleid"))
+    private Set<Role> roles  = new HashSet<>();
     
     private boolean enabled;
     
     private boolean active;
     
-	@OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
-	@PrimaryKeyJoinColumn
+    @OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @PrimaryKeyJoinColumn
+    @Nullable
 	private Personnel personnel;
 
-	@OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
-	@PrimaryKeyJoinColumn
+    @OneToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @PrimaryKeyJoinColumn
+    @Nullable
 	private Customer customer;
 
 	/**
@@ -90,6 +114,8 @@ public class Account implements Serializable{
 	 * Default constructor needed for entity
 	 */
 	public Account() {
+		this.personnel = new Personnel();
+		this.customer = new Customer();
 	}
 
 	/**
@@ -103,6 +129,91 @@ public class Account implements Serializable{
 	 */
 	public Long getId() {
 		return id;
+	}
+
+	
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @return the surname
+	 */
+	public String getSurname() {
+		return surname;
+	}
+
+	/**
+	 * @param surname the surname to set
+	 */
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	/**
+	 * @return the age
+	 */
+	public int getAge() {
+		return age;
+	}
+
+	/**
+	 * @param age the age to set
+	 */
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/**
+	 * @return the phone
+	 */
+	public Long getPhone() {
+		return phone;
+	}
+
+	/**
+	 * @param phone the phone to set
+	 */
+	public void setPhone(Long phone) {
+		this.phone = phone;
+	}
+	
+	/**
+	 * @return the gender
+	 */
+	public String getGender() {
+		return gender;
+	}
+
+	/**
+	 * @param gender the gender to set
+	 */
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 
 	/**
@@ -130,7 +241,7 @@ public class Account implements Serializable{
 	 * @param password
 	 */
 	public void setPassword(String password) {
-		this.password = password;
+		this.password = new BCryptPasswordEncoder().encode(password);
 	}
 
 	/**
@@ -145,6 +256,11 @@ public class Account implements Serializable{
 	 */
 	public void setRoles(Set<Role> authority) {
 		this.roles = authority;
+	}
+	
+	public void addRole(Role role) {
+		this.roles.add(role);
+		role.getAccounts().add(this);
 	}
 
 	/**
@@ -202,4 +318,10 @@ public class Account implements Serializable{
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
+
+	public String string() {
+		return "Account [id=" + id + ", name=" + name + ", surname=" + surname + "]";
+	}
+	
+	
 }

@@ -2,6 +2,7 @@ package com.visionous.dms.pojo;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -34,11 +35,8 @@ public class Role implements Serializable{
     @SequenceGenerator(sequenceName = "user_id_seq", allocationSize = 1, name = "USER_ID_SEQ")    
     private Long id;
     
-    @ManyToMany
-    private Set<Account> accounts = new HashSet<>();
-	
-    @ManyToMany
-	private Set<Personnel> personnels;
+    @ManyToMany(mappedBy = "roles")
+    private Set<Account> accounts;
     
 	private String name;
 
@@ -72,17 +70,23 @@ public class Role implements Serializable{
 	}
 
 	/**
-	 * @return the authority
+	 * @return the accounts
 	 */
-	public Set<Account> getAuthority() {
+	public Set<Account> getAccounts() {
 		return accounts;
 	}
 
 	/**
-	 * @param authority the authority to set
+	 * @param accounts the accounts to set
 	 */
-	public void setAuthority(Set<Account> accounts) {
+	public void setAccounts(Set<Account> accounts) {
 		this.accounts = accounts;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Role [id=" + id + ", name=" + name + "]";
 	}
 
 }

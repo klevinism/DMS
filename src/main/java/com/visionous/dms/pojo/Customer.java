@@ -8,13 +8,21 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SequenceGenerator;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.thymeleaf.expression.Dates;
 
 import com.visionous.dms.configuration.helpers.DmsCoreVersion;
 
@@ -31,18 +39,20 @@ public class Customer implements Serializable{
 	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
 	
 	@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CUSTOMER_SEQ2")
+    @SequenceGenerator(sequenceName = "customer_seq2", allocationSize = 1, name = "CUSTOMER_SEQ2")
     private Long id;
 	
+	@DateTimeFormat (pattern="dd-MMM-YYYY")
 	private Date registerdate;
 	
-    @OneToOne(optional = false)
-    @MapsId
+	@MapsId
+	@OneToOne(mappedBy = "customer", optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name="id")
 	private Account account;
-	
-    @OneToOne(mappedBy="supervisor")
-    private History history;
-
+    
+    @OneToOne(mappedBy="customer")
+    private History customerHistory;
 	/**
 	 * @return the id
 	 */
@@ -86,17 +96,30 @@ public class Customer implements Serializable{
 	}
 
 	/**
-	 * @return the history
+	 * @param registerdate the registerdate to set
 	 */
-	public History getHistory() {
-		return history;
+	public void setRegisterdate(String registerdate) {
+		try {
+			this.registerdate = new SimpleDateFormat("DD-MMM-YY").parse(registerdate);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * @return the customerHistory
+	 */
+	public History getCustomerHistory() {
+		return customerHistory;
 	}
 
 	/**
-	 * @param history the history to set
+	 * @param customerHistory the customerHistory to set
 	 */
-	public void setHistory(History history) {
-		this.history = history;
+	public void setCustomerHistory(History customerHistory) {
+		this.customerHistory = customerHistory;
 	}
+
 	
 }

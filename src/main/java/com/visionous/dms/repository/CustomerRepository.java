@@ -3,7 +3,8 @@
  */
 package com.visionous.dms.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.visionous.dms.pojo.Customer;
 
@@ -11,6 +12,7 @@ import com.visionous.dms.pojo.Customer;
  * @author delimeta
  *
  */
-public interface CustomerRepository extends CrudRepository<Customer, Long> {
+@Repository
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	
 }

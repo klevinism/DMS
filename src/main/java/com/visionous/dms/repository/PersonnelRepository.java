@@ -3,7 +3,8 @@
  */
 package com.visionous.dms.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.visionous.dms.pojo.Personnel;
 
@@ -11,6 +12,13 @@ import com.visionous.dms.pojo.Personnel;
  * @author delimeta
  *
  */
-public interface PersonnelRepository extends CrudRepository<Personnel, Long> {
+@Repository
+public interface PersonnelRepository extends JpaRepository<Personnel, Long> {
+
+	/**
+	 * @param id
+	 * @return Long
+	 */
+	void deleteById(Long id);
 	
 }

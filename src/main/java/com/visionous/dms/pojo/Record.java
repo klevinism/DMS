@@ -6,6 +6,7 @@ package com.visionous.dms.pojo;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -35,6 +36,9 @@ public class Record  implements Serializable{
 	
 	private Date servicedate;
 	
+	@Column(name = "historyid", insertable = false, updatable = false)
+	private Long historyId;
+	
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name="historyid")
 	private History history;
@@ -51,6 +55,20 @@ public class Record  implements Serializable{
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	/**
+	 * @return the historyId
+	 */
+	public Long getHistoryId() {
+		return historyId;
+	}
+
+	/**
+	 * @param historyId the historyId to set
+	 */
+	public void setHistoryId(Long historyId) {
+		this.historyId = historyId;
 	}
 
 	/**
