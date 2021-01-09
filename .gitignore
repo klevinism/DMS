@@ -18,7 +18,7 @@ target/
 *.iws
 *.iml
 *.ipr
-
+ 
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -34,3 +34,5 @@ build/
 .mvn/wrapper/maven-wrapper.jar
 .mvn/wrapper/maven-wrapper.properties
 .mvn/wrapper/MavenWrapperDownloader.java
+
+src/main/resources/application.properties
