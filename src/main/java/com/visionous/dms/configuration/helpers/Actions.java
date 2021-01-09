@@ -11,8 +11,8 @@ public enum Actions {
 	INFO("info"),
 	VIEW("view"),
 	EDIT("edit"),
-	CREATE("CREATE"),
-	DELETE("DELETE"); 
+	CREATE("create"),
+	DELETE("delete"); 
     
     private final String action;
     
