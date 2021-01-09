@@ -118,4 +118,13 @@ public class ModelController implements ModelControllerImpl{
 		return this.paramMap;
 	}
 	
+	/**
+	 * Add model to collection.
+	 */
+	@Override
+	public <T> ModelControllerImpl addModelAttributes(T object) {
+		addModelCollectionToView(object.getClass().getSimpleName(), object);
+		return this;
+	}
+	
 }

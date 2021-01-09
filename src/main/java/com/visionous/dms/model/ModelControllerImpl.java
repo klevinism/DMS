@@ -5,6 +5,8 @@ package com.visionous.dms.model;
 
 import java.util.Map;
 
+import org.springframework.ui.Model;
+
 /**
  * @author delimeta
  *
@@ -35,4 +37,18 @@ public interface ModelControllerImpl {
 	 * @return HashMap<String, Object>
 	 */
 	Map<String, Object> getAllControllerParams();
+
+
+	/**
+	 * @param <T>
+	 * @param object
+	 * @return
+	 */
+	<T> ModelControllerImpl addModelAttributes(T object);
+
+	/**
+	 * @param model
+	 * @return
+	 */
+	ModelControllerImpl setViewModel(Model model);
 }
