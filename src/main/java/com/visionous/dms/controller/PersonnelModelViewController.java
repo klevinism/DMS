@@ -1,27 +1,26 @@
-/**
- * 
- */
 package com.visionous.dms.controller;
 
-import javax.servlet.http.HttpServletRequest;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.visionous.dms.configuration.helpers.Actions;
-import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.model.PersonnelModelController;
+import com.visionous.dms.pojo.Personnel;
+import com.visionous.dms.repository.AccountRepository;
+import com.visionous.dms.repository.RoleRepository;
 
 /**
  * @author delimeta
@@ -32,12 +31,15 @@ import com.visionous.dms.model.PersonnelModelController;
 public class PersonnelModelViewController {
 	
 	private PersonnelModelController personnelModelController;
+	private AccountRepository accountRepository;
+
 	/**
 	 * 
 	 */
 	@Autowired
-	public PersonnelModelViewController(PersonnelModelController personnelModelMvc) {
+	public PersonnelModelViewController(PersonnelModelController personnelModelMvc, AccountRepository accountRepository) {
 		this.personnelModelController = personnelModelMvc;
+		this.accountRepository = accountRepository;
 	}
 	
 	/**
@@ -46,14 +48,14 @@ public class PersonnelModelViewController {
 	 */
 	@GetMapping("/{id}")
 	public String personnelEdit(@PathVariable("id") Long id,
-			@RequestParam(name="action", required=true) Actions action,
+			@RequestParam(name="view", required=true) Actions view,
 			@RequestParam(name="modal", required=false) boolean modal,
 			Model model) {
 
 		personnelModelController.init() // Re-initialize Model
 			.addControllerParam("id", id)
-			.addControllerParam("modal", modal)
-			.addControllerParam("action", action)
+			.addControllerParam("modal", view)
+			.addControllerParam("viewType", view)
 			.setViewModel(model)
 			.run(); // GetValuesForView
 
@@ -66,7 +68,10 @@ public class PersonnelModelViewController {
 	 */
 	@GetMapping("")
 	public String personnelDefault(Model model) {
-		personnelModelController.init().setViewModel(model).run(); // GetValuesForView
+		personnelModelController.init()
+		.addControllerParam("viewType", Actions.VIEW.getValue())
+		.setViewModel(model)
+		.run(); // GetValuesForView
 		
 		return "demo_1/pages/personnel"; 
 	}
@@ -75,11 +80,19 @@ public class PersonnelModelViewController {
 	 * @param model
 	 * @return
 	 */
-	@PostMapping("")
-	public String personnelPost(@RequestBody String username, Model model) {
-		System.out.println(username);
-		System.out.println("POST");
-		personnelModelController.setViewModel(model).run(); // GetValuesForView
+	@PostMapping("") 
+	public String personnelPost(@ModelAttribute Personnel personnel,
+			@RequestParam(required = false) String[] rolez,
+			@RequestParam(required = false) String action,
+			Model model) {
+		
+		personnelModelController.init()
+			.addControllerParam("roles", rolez)
+			.addControllerParam("action", action)
+			.addControllerParam("viewType", Actions.VIEW)
+			.addModelAttributes(personnel)
+			.setViewModel(model)
+			.run(); // GetValuesForView
 		
 		return "demo_1/pages/personnel"; 
 	}
@@ -89,15 +102,62 @@ public class PersonnelModelViewController {
 	 * @return
 	 */
 	@GetMapping("/edit/{id}")
-	public String personnelEdit(@PathVariable("id") Long id, Model model) {
+	public String personnelEdit(@Valid @PathVariable("id") Long id, Model model) {
 		
 		personnelModelController.init()
 			.addControllerParam("id",id)
-			.addControllerParam("action", Actions.EDIT)
+			.addControllerParam("viewType", Actions.EDIT.getValue())
 			.setViewModel(model)
 			.run(); // GetValuesForView
 		
-		return "demo_1/pages/edit_personnel.html";
+		return "demo_1/pages/edit_personnel";
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/delete/{id}")
+	public String personnelDelete(@Valid @PathVariable("id") Long id, Model model) {
+		
+		personnelModelController.init()
+			.addControllerParam("id",id)
+			.addControllerParam("viewType", Actions.DELETE.getValue())
+			.setViewModel(model)
+			.run(); // GetValuesForView
+		
+		return "demo_1/pages/edit_personnel";
+	}
+		
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/create")
+	public String personnelCreate(Model model) {
+		
+		personnelModelController.init()
+			.addControllerParam("viewType", Actions.CREATE.getValue())
+			.setViewModel(model)
+			.run(); // GetValuesForView
+		
+		return "demo_1/pages/create_personnel";
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/dashboard/{id}")
+	public String personnelDashboard(@Valid @PathVariable("id") Long id, Model model) {
+
+		personnelModelController.init()
+			.addControllerParam("id",id)
+			.addControllerParam("viewType", Actions.VIEW.getValue())
+			.setViewModel(model)
+			.run(); // GetValuesForView
+		
+		return "demo_1/pages/dashboard_personnel";
 	}
 	
 }
