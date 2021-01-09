@@ -20,13 +20,13 @@
         <span class="menu-title">Dashboard</span>
       </a>
     </li>
-    <li class="nav-item" >
+    <li class="nav-item" th:if="${currentRoles != null}">
       <a class="nav-link" href="/admin/personnel" th:if="${not currentRoles.?[name == 'ADMIN'].isEmpty()}">
         <i class="menu-icon typcn typcn-document-text" ></i>
         <span class="menu-title">Personnel</span>
       </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" th:if="${currentRoles != null}">
       <a class="nav-link" href="/admin/customer" th:if="${not currentRoles.?[name == 'ADMIN' or name == 'PERSONNEL'].isEmpty()}">
         <i class="menu-icon typcn typcn-document-text"></i>
         <span class="menu-title">Customer</span>
