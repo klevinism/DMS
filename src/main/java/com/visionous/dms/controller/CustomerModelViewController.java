@@ -88,6 +88,7 @@ public class CustomerModelViewController {
 		
 		customerModalController.init()
 			.addControllerParam("id",id)
+			.addControllerParam("action", Actions.EDIT)
 			.setViewModel(model)
 			.run(); // GetValuesForView
 		

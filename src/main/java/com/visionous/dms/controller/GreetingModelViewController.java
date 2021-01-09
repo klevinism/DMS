@@ -1,5 +1,6 @@
 package com.visionous.dms.controller;
 
+import javax.servlet.http.HttpServletRequest;
 /**
  * @author delimeta
  *
@@ -8,23 +9,29 @@ import javax.validation.Valid;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.pojo.Account;
+import com.visionous.dms.repository.AccountRepository;
 
 @Controller
 @RequestMapping("/")
 public class GreetingModelViewController {
 	private final Log logger = LogFactory.getLog(GreetingModelViewController.class);
-
+	@Autowired
+	private AccountRepository userRepository;
 	
 	/**
 	 * @param model
@@ -42,7 +49,10 @@ public class GreetingModelViewController {
 	@GetMapping("")
 	public String greeting(Model model) {
 		logger.debug(AccountUtil.currentLoggedInUser());
-		
+				
+		model.addAttribute("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
+			
+
 		model.addAttribute("currentLoggedInUser", AccountUtil.currentLoggedInUser());
 
 		return "demo_1/index";
@@ -114,7 +124,8 @@ public class GreetingModelViewController {
 	 */
 	@GetMapping("/typography")
 	public String typography() {
-		return "demo_1/pages/ui-features/typography";
+		
+		return "demo_1/pages/mouth";
 	}
 	
 	/**
@@ -150,11 +161,11 @@ public class GreetingModelViewController {
 	public String register(@Valid Account user,
 			Model model) {
 		
-//		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-//        userRepository.save(user);
-//
-//	    Iterable<Account> accounts = userRepository.findAll();
-//		model.addAttribute("user",accounts);
+		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        userRepository.save(user);
+
+	    Iterable<Account> accounts = userRepository.findAll();
+		model.addAttribute("user",accounts);
 		
 		return "demo_1/pages/samples/register";
 	}

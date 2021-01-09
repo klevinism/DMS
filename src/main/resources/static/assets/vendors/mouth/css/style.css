@@ -1,0 +1,329 @@
+.dentalFace{
+	width: 300px;
+}
+
+.face {
+  position: relative;
+  height: 250px;
+  background-color: #ffdab9;
+  border-radius: 50% / 0 0 100% 100%;
+  border: 2px solid #ffcc99;
+  box-shadow: 
+    inset -3vmin 0vmin #e39b6b;
+}
+
+.face .nose {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left:0;
+  margin: 10% auto;
+  width: 20%;
+  height: 30%;
+  background-color: transparent;
+  border-radius: 50%;
+  box-shadow: 
+    inset 2vmin 0vmin #ffb366,
+    inset 1vmin -1vmin #ffb366;
+}
+.nose:before {
+  bottom: 20%;
+  right: -10%;
+  width: 5vmin;
+  height: 5vmin;
+  border-radius: 50%;
+  border-right: 1vmin solid #ffb366;
+}
+
+.mouth {
+  overflow: hidden;
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left:0;
+  margin: 35% auto;
+  width: 67%;
+  height: 40%;
+  border-radius: 50% / 30% 30% 100% 115%;
+  border: 6px solid #ffbf80;
+  background:-webkit-radial-gradient(center
+ ellipse,  #7a1f21
+ 20%, #511516 100%);
+  background:radial-gradient(ellipse at center,  #7a1f21
+ 20%, #511516 100%);
+}
+
+.mouth:before {
+  content: '';
+  position: absolute;
+  left: 30%;
+  top: 20%;
+  width: 40%;
+  height: 70%;
+  background-color: #330000;
+  z-index: 0;
+  border-radius: 50% / 100% 100% 30% 30%;
+}
+
+.mouth:after {
+  content: '';
+  position: absolute;
+  left: 45%;
+  top: 20%;
+  width: 10%;
+  height: 40%;
+  background-color: #800000;
+  z-index: 0;
+  border-radius: 50% / 20% 20% 50% 50%;
+}
+
+
+.mouth .tongue {
+  position: absolute;
+  bottom: -3vmin;
+  left: 15%;
+  width: 70%;
+  height: 40%;
+  background-color: #c9666b;
+  border-radius: 50% / 100% 100% 0 0;
+  z-index: 1;
+}
+
+
+.teeth {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 25%;
+  list-style: none;
+  display: block;
+  background-color: #c9666b;
+  z-index:1;
+}
+
+.teeth li{
+  position: absolute;
+  top: 10%;
+  display: inline;
+  width: 6.33%;
+  height: 107%;
+  background-color: white;
+  border-radius: 50% / 10px 10px;
+}
+
+
+.teeth li:nth-child(1){
+  left: 0%;
+  top: 40%;
+  
+}
+
+.teeth > li:nth-of-type(2){
+  left: 6.33%;
+  top: 30%;
+}
+
+.teeth > li:nth-of-type(3){
+  top: 20%;
+  left: 12.66%;
+}
+
+.teeth > li:nth-of-type(4){
+  left: 19%;
+  top: 10%;
+}
+
+.teeth > li:nth-of-type(5){
+  left: 25.33%;
+  top: 0%;
+  
+}
+
+.teeth > li:nth-of-type(6){
+  left: 31.66%;
+  border-bottom-left-radius: 80%;
+  border-bottom-right-radius: 40%;
+  height: 120%;
+  
+  top: 0%;
+}
+
+.teeth > li:nth-of-type(7){
+  left: 38%;
+  top: 0%;
+}
+
+.teeth > li:nth-of-type(8){
+  left: 44.33%;
+  top: 0%;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  height: 120%;
+}
+
+.teeth > li:nth-of-type(9){
+  left: 50.66%;
+  
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  height: 120%;
+  top: 0%;
+}
+
+.teeth > li:nth-of-type(10){
+  left: 57%;
+  top: 0%;
+}
+
+.teeth > li:nth-of-type(11){
+  left: 63.33%;
+  top: 0%;
+  
+  border-bottom-left-radius: 20%;
+  border-bottom-right-radius: 80%;
+  height:120%;
+}
+
+.teeth > li:nth-of-type(12){
+  left: 69.66%;
+  top: 0%;
+}
+
+.teeth > li:nth-of-type(13){
+  left: 76%;
+  top: 10%;
+}
+.teeth > li:nth-of-type(14){
+  left: 82.33%;
+  top: 20%;
+}
+.teeth > li:nth-of-type(15){
+  left: 88.66%;
+  top: 30%;
+}
+.teeth > li:nth-of-type(16){
+  left: 94.90%;
+  top: 40%;
+}
+
+/* DOWN PART */
+
+
+.teethdown {
+  position: absolute;
+  top: 80%;
+  left: 2%;
+  width: 99%;
+  height: 25%;
+  list-style: none;
+  display: block;
+  background-color: #c9666b;
+  z-index:1;
+  transform: rotate(180deg);
+}
+
+.teethdown li{
+  position: absolute;
+  top: 10%;
+  display: inline;
+  width: 6.33%;
+  height: 107%;
+  background-color: white;
+  border-radius: 50% / 10px 10px;
+}
+
+
+.teethdown li:nth-child(1){
+  left: 0%;
+  top: 140%;
+}
+
+.teethdown > li:nth-of-type(2){
+  left: 6.33%;
+  top: 110%;
+}
+
+.teethdown > li:nth-of-type(3){
+  left: 12.66%;
+  top: 80%;
+}
+
+.teethdown > li:nth-of-type(4){
+  left: 18.99%;
+  top: 50%;
+}
+
+.teethdown > li:nth-of-type(5){
+  left: 25.32%;
+  top: 20%;
+}
+
+.teethdown > li:nth-of-type(6){
+  left: 31.65%;
+  top: 20%;
+  
+  border-bottom-left-radius: 80%;
+  border-bottom-right-radius: 40%;
+  height: 120%;
+  
+}
+
+.teethdown > li:nth-of-type(7){
+  top: 20%;
+  left: 37.98%;
+}
+
+.teethdown > li:nth-of-type(8){
+  left: 44.31%;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  height: 120%;
+  top: 20%;
+
+}
+
+.teethdown > li:nth-of-type(9){
+  left: 50.64%;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  height: 120%;
+  top: 20%;
+
+}
+
+.teethdown > li:nth-of-type(10){
+  left: 56.97%;
+  top: 20%;
+
+}
+
+.teethdown > li:nth-of-type(11){
+  left: 63.3%;
+  top: 20%;  
+
+  border-bottom-left-radius: 40%;
+  border-bottom-right-radius: 80%;
+  height: 120%;
+}
+
+.teethdown > li:nth-of-type(12){
+  left: 69.63%;
+  top: 20%;
+}
+
+.teethdown > li:nth-of-type(13){
+  left: 76.0%;
+  top: 50%;
+}
+
+.teethdown > li:nth-of-type(14){
+  left: 82.29%;
+  top: 80%;
+}
+
+.teethdown > li:nth-of-type(15){
+  left:  88.62%;
+  top: 110%;
+}
+
+.teethdown > li:nth-of-type(16){
+  left: 95%;
+  top: 140%;
+}
