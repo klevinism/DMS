@@ -3,15 +3,25 @@
  */
 package com.visionous.dms.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.Set;
 
-import com.visionous.dms.pojo.History;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+import com.visionous.dms.pojo.Record;
 
 /**
  * @author delimeta
  *
  */
-public interface RecordRepository extends CrudRepository<History, Long>{
+@Repository
+public interface RecordRepository extends CrudRepository<Record, Long>{
 	
+	/**
+	 * @param historyId
+	 * @return Set of {@link Record} object
+	 */
+	Set<Record> findByHistoryId(Long historyId);
+
 }
 
