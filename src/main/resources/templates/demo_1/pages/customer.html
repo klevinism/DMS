@@ -69,16 +69,16 @@
 	                              </div>
 		                      </td>
 							  <td width="1%" th:text="${user.id}">id</td>
-	                          <td th:text="${user.username}">username</td>
+	                          <td ><a th:href="'/admin'+${currentPage}+'/edit/'+${user.id}" th:text="${user.username}">username</a></td>
 	                          <td >
 							  	<h5 th:text="${customer.registerdate}">
 							  		
 							  	</h5>
 							  </td>
-	                          
 	                          <td width="2%">
-	                          
+	                          	
 	                              <div class="btn-group" style="display:none;" name="actionButton" th:id="'actionButton' + ${user.id}">
+									<a type="button" th:if="${customer.customerHistory}" th:href="'/admin/customer/history/' + ${user.id}" class="btn btn-secondary btn-sm">Dental History</a>
 		                        	<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			                          	<span class="sr-only">Toggle Action</span>
 										<a class="btn btn-primary" th:href="'/admin/customer/edit/' + ${user.id} " >Edit</a>
@@ -90,6 +90,7 @@
 			                          <div class="dropdown-divider"></div>
 			                          <a class="dropdown-item" href="#">Change Permissions</a>
 			                        </div>
+			                        
 			                      </div>
 	                          </td>
 	                        </tr>

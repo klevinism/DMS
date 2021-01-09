@@ -42,6 +42,8 @@
                   <div class="card-body">
                     <div class="row">
                       <div class="col">
+                      	<a class="btn btn-primary" th:href="'/admin'+${currentPage}+'/create'"> Add Personnel</a>
+                      	<hr/>
                         <table class="table table-hover">
 	                      <thead>
 	                        <tr>
@@ -66,12 +68,12 @@
 	                          <td width="1%">
 		                          <div class="form-radio">
 	                              	<label class="form-check-label">
-	                                	<input type="radio" class="form-check-input" name="accountRadio" th:id="'accountRadioCheck'+${user.id}" th:checked="${user.id} == ${user.id}" th:value="${user.id}" >
+	                                	<input type="radio" class="form-check-input" name="accountRadio" th:id="'accountRadioCheck'+${user.id}" th:checked="${user.id} == ${selected?.id}" th:value="${user.id}" >
 	                              	</label>
 	                              </div>
 		                      </td>
 							  <td width="1%" th:text="${user.id}">id</td>
-	                          <td th:text="${user.username}">username</td>
+	                          <td ><a th:href="'/admin'+${currentPage}+'/dashboard/'+${user.id}" th:text="${user.username}">username</a></td>
 	                          <td >
 							  	<h5 th:each="role: ${user.roles}">
 							  		<span class="badge badge-info" th:text="${role.name}"></span>
@@ -87,14 +89,16 @@
 	                          <td width="2%">
 	                          
 	                              <div class="btn-group" style="display:none;" name="actionButton" th:id="'actionButton' + ${user.id}">
+	                              	<a class="btn btn-primary" th:href="'/admin/personnel/edit/' + ${user.id} " >Edit</a>
+	                              
 		                        	<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			                          	<span class="sr-only">Toggle Action</span>
-										<a class="btn btn-primary" th:href="'/admin/personnel/edit/' + ${user.id} " >Edit</a>
+										
 			                        </button>
 			                        <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
 			                          <h6 class="dropdown-header">Quick Actions</h6>
-			                          <a class="dropdown-item" th:href="'/admin/personnel/' + ${user.id} + '/?modal=true&action=' + ${T(com.visionous.dms.configuration.helpers.Actions).EDIT} +'' ">Edit</a>
-			                          <a class="dropdown-item"  th:href="'/admin/personnel/' + ${user.id} + '/?modal=true&action=' + ${T(com.visionous.dms.configuration.helpers.Actions).DELETE} +'' ">Delete</a>
+			                          <a class="dropdown-item" th:href="'/admin/personnel/' + ${user.id} + '/?modal=true&view=' + ${T(com.visionous.dms.configuration.helpers.Actions).EDIT} +'' ">Edit</a>
+			                          <a class="dropdown-item"  th:href="'/admin/personnel/' + ${user.id} + '/?modal=true&view=' + ${T(com.visionous.dms.configuration.helpers.Actions).DELETE} +'' ">Delete</a>
 			                          <div class="dropdown-divider"></div>
 			                          <a class="dropdown-item" href="#">Change Permissions</a>
 			                        </div>
@@ -122,8 +126,10 @@
         <!-- main-panel ends -->
         
       </div>
+    	[[${viewType}]]
+    	[[${selected}]]
     
-    <div th:if="${action != null}" >
+    <div th:if="${viewType != null and selected != null}" >
 	    <section th:replace="demo_1/partials/_genericModals :: modals">
 		 	<!-- Personnel Page Modals -->
 		</section>

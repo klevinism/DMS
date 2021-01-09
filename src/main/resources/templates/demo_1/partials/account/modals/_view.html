@@ -1,0 +1,116 @@
+<div class="card" th:fragment="view">
+  <div class="card-body">
+	  <div class="d-flex flex-column flex-lg-row">
+    	  <h4 class="card-title">Profile of <u>[[*{account.username}]]</u></h4>
+	      <ul class="nav nav-tabs sales-mini-tabs ml-lg-auto mb-4 mb-md-0" role="tablist">
+	        <li class="nav-item">
+	          <a class="btn btn-primary" th:href="'/admin/account/edit/'+*{id}">Edit</a>
+	        </li>
+	      </ul>
+	    </div>
+    <hr/>   
+    	<input type="hidden" th:field="*{account.id}" >
+      <div class="form-group">      
+        <label for="username">Username</label>
+        <input type="text" class="form-control form-control-lg" readonly  th:value="*{account.username}" >
+      </div>
+
+      <div class="form-group">      
+        <label for="name">Name</label>
+        <input type="text" class="form-control form-control-lg" disabled th:value="*{account.name}">
+      </div>
+      
+      <div class="form-group">      
+        <label for="surname">Surname</label>
+        <input type="text" class="form-control form-control-lg" disabled th:value="*{account.surname}" >
+      </div>
+      
+      <div class="form-group">      
+        <label for="email">Email</label>
+        <input type="text" class="form-control form-control-lg" disabled th:value="*{account.email}" >
+      </div>
+      
+		<div class="form-group">
+		  <label for="gender">Gender</label>	
+		  <div class="form-radio form-radio-flat">
+		    <label class="form-check-label">
+		      <input type="radio" class="form-check-input form-control-lg" disabled value="male" th:checked="*{account.gender == 'male'}" > Male <i class="input-helper"></i>
+		    </label>
+		  </div>
+		  <div class="form-radio form-radio-flat">
+		    <label class="form-check-label">
+		      <input type="radio" class="form-check-input" disabled value="female" data- th:checked="*{account.gender == 'female'}" > Female <i class="input-helper"></i>
+		    </label>
+		  </div>
+		</div>
+      
+      <div class="form-group">
+        <label for="roles">Roles</label>
+        <input data-role="tagsinput" id="roles" disabled  />
+ 	  	<script th:inline="javascript" > 	  
+
+ 	  	/*<![CDATA[*/
+ 	  		
+  		var allRoles = new Array(/*[# th:each="role: ${allRoles}"]*/
+        	{"id":/*[[${role.id}]]*/ '',"name":/*[[${role.name}]]*/ ''},
+ 	 	    /*[/]*/);
+ 	  	
+		var roles = new Bloodhound({
+ 	  	    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+ 	  	    queryTokenizer: Bloodhound.tokenizers.whitespace,
+ 	  	    local: allRoles
+ 	  	});
+ 	    
+ 	    
+ 	    
+
+ 		/*]]>*/
+
+		</script>
+ 	  	<script >
+
+ 	  	$("#roles").tagsinput({
+	 	  	  itemValue: 'name',
+	 	  	  itemText: 'name',
+			  tagClass: function(item) {
+				return 'badge badge-info';
+			  },
+			  freeInput: false,
+			  cancelConfirmKeysOnEmpty: true,
+	 	  	  typeaheadjs: {
+	 	  		name: 'users',
+	 	        displayKey: 'name',
+	 	  	    source: roles.ttAdapter()
+	 	  	  }
+	 	  	});
+
+ 	  	
+ 	  	</script>
+ 	  	<script th:inline="javascript" > 	  	
+ 	  	/*<![CDATA[*/
+		
+ 	    /*[# th:each="role: *{account.roles}"]*/
+ 	        $("#roles").tagsinput('add',{"id":/*[[${role.id}]]*/ '',"name":/*[[${role.name}]]*/ ''}  );
+ 	    /*[/]*/
+ 	    
+ 		/*]]>*/
+
+		</script>
+      </div>
+      <div class="form-group">
+        <label>File upload</label>
+        <!-- <input type="file" name="img[]" class="file-upload-default">
+        <div class="input-group col-xs-12">
+          <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">
+          <span class="input-group-append">
+            <button class="file-upload-browse btn btn-info" type="button">Upload</button>
+          </span>
+        </div>
+         -->
+      </div>
+      <div class="form-group">
+        <label for="age">Age</label>
+        <input type="number" disabled class="form-control form-control-lg " th:value="*{account.age}" >
+      </div>
+  </div>
+</div>

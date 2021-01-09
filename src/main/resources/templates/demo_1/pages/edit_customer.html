@@ -22,7 +22,7 @@
             <div class="row page-title-header">
               <div class="col-12">
                 <div class="page-header">
-                  <h4 class="page-title" th:text="'Edit Customer with Id: ' + ${selectedAccount.id}">Edit Account accountid</h4>
+                  <h4 class="page-title" th:text="'Edit Customer with Id: ' + ${selected.id}">Edit Account accountid</h4>
                 </div>
               </div>
               <div class="col-md-12">
@@ -31,8 +31,8 @@
             </div>
             <!-- Page Title Header Ends-->
             <div class="row">
-              <div class="col grid-margin stretch-card">
-          			<section th:replace="demo_1/partials/personnel/_edit :: edit">
+              <div class="col grid-margin stretch-card" th:with="bodyUrl = 'demo_1/partials'+${currentPage}+'/_full'+${action}+' :: '+ ${action}">
+          			<section th:replace="__${bodyUrl}__">
 					  	<!-- partial:partials/_footer.html -->
 		  			</section>
               </div>

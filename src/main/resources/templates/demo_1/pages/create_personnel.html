@@ -22,7 +22,7 @@
             <div class="row page-title-header">
               <div class="col-12">
                 <div class="page-header">
-                  <h4 class="page-title" th:text="'Edit Account ' + ${selected.id}">Edit Account accountid</h4>
+                  <h4 class="page-title" >Add New Personnel</h4>
                 </div>
               </div>
               <div class="col-md-12">
@@ -31,15 +31,20 @@
             </div>
             <!-- Page Title Header Ends-->
             <div class="row">
-              <div class="col-md-8 grid-margin stretch-card"  th:with="bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
+              <div class="col-md-8 grid-margin stretch-card"  th:with="createAccountView = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType},
+              														createPersonnelView = 'demo_1/partials/personnel/modals/_'+${viewType}+' :: '+ ${viewType}" >
               	<div class="card"> 
               		<div class="card-body">
               	<form th:action="@{/admin/personnel}" th:object="${selected}" method="post" >
               	
-          			<section th:replace="__${bodyUrl}__">
+              		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
+              		
+          			<section th:replace="__${createAccountView}__">
 					  	<!-- partial:partials/_footer.html -->
 		  			</section>
-		  			
+		  			<section th:replace="__${createPersonnelView}__">
+					  	<!-- partial:partials/_footer.html -->
+		  			</section>
 			      <div >
 			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="'/admin'+${currentPage} + '/'">Close</a>
 			        <button type="submit" class="btn btn-primary">[[${#strings.capitalize(viewType)}]]</button>
