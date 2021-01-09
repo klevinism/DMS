@@ -1,6 +1,7 @@
 package com.visionous.dms.service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -10,7 +11,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.visionous.dms.configuration.AccountUserDetail;
@@ -39,14 +39,16 @@ public class AccountUserDetailService implements UserDetailsService{
 	 */
 	@Override
 	public UserDetails loadUserByUsername(String username){
-		Account acc = accountRepository.findByUsername(username);
-		if(acc == null) {
-			throw new UsernameNotFoundException(username);
+		Set<GrantedAuthority> authorities = new HashSet<>();
+		AccountUserDetail accountUserDetail = null;
+		Optional<Account> acc = accountRepository.findByUsername(username);
+		
+		if(acc.isPresent()) {
+			authorities.addAll(buildUserAuthority(acc.get().getRoles()));
+			accountUserDetail = buildUserForAuthentication(acc.get(), authorities);
 		}
 		
-		Set<GrantedAuthority> authorities = buildUserAuthority(acc.getRoles());
-		
-		return buildUserForAuthentication(acc, authorities);
+		return accountUserDetail;
 	}
 	
 	// Returns Account instead of spring.springframework.security.core.userdetails.User
