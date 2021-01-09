@@ -1,7 +1,7 @@
 
 var url = new URL(window.location);
 var isModal = url.searchParams.get("modal");
-var action = url.searchParams.get("action");
+var action = url.searchParams.get("view");
 
 $(document).ready(function(){
 	if(isModal){
@@ -12,7 +12,6 @@ $(document).ready(function(){
 	if(selectedPersonnel.val() != null)
 		selectPersonnel( selectedPersonnel.val());
 		
-	
 });
 
 function submitEditPersonnel(id){
