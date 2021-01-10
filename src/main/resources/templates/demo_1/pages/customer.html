@@ -42,6 +42,8 @@
                   <div class="card-body">
                     <div class="row">
                       <div class="col">
+                        <a class="btn btn-primary" th:href="'/admin'+${currentPage}+'/create'"> Add Customer</a>
+                        <hr />
                         <table class="table table-hover">
 	                      <thead>
 	                        <tr>
@@ -53,7 +55,7 @@
 	                        </tr>
 	                      </thead>
 	                      <tbody>
-	                        <tr th:each="customer: ${customers}" 
+	                        <tr th:each="customer: ${customerList}" 
 	                        	th:onclick="'javascript:selectPersonnel('+${customer.id}+')'"
 	                        	th:with="
 	                        		user = ${customer.account},
@@ -69,9 +71,9 @@
 	                              </div>
 		                      </td>
 							  <td width="1%" th:text="${user.id}">id</td>
-	                          <td ><a th:href="'/admin'+${currentPage}+'/edit/'+${user.id}" th:text="${user.username}">username</a></td>
+	                          <td ><a th:href="'/admin'+${currentPage}+'/dashboard/'+${user.id}" th:text="${user.username}">username</a></td>
 	                          <td >
-							  	<h5 th:text="${customer.registerdate}">
+							  	<h5 th:text="${#dates.format(customer.registerdate, 'dd-MM-yyyy HH:mm')}">
 							  		
 							  	</h5>
 							  </td>
@@ -85,8 +87,8 @@
 			                        </button>
 			                        <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
 			                          <h6 class="dropdown-header">Quick Actions</h6>
-			                          <a class="dropdown-item" th:href="'/admin/customer/' + ${user.id} + '/?modal=true&action=' + ${T(com.visionous.dms.configuration.helpers.Actions).EDIT} +'' ">Edit</a>
-			                          <a class="dropdown-item"  th:href="'/admin/customer/' + ${user.id} + '/?modal=true&action=' + ${T(com.visionous.dms.configuration.helpers.Actions).DELETE} +'' ">Delete</a>
+			                          <a class="dropdown-item" th:href="'/admin/customer/' + ${user.id} + '/?modal=true&view=' + ${T(com.visionous.dms.configuration.helpers.Actions).EDIT} +'' ">Edit</a>
+			                          <a class="dropdown-item"  th:href="'/admin/customer/' + ${user.id} + '/?modal=true&view=' + ${T(com.visionous.dms.configuration.helpers.Actions).DELETE} +'' ">Delete</a>
 			                          <div class="dropdown-divider"></div>
 			                          <a class="dropdown-item" href="#">Change Permissions</a>
 			                        </div>
@@ -116,7 +118,7 @@
         
       </div>
     
-    <div th:if="${action != null}" >
+    <div th:if="${viewType != null and selected != null}" >
 	    <section th:replace="demo_1/partials/_genericModals :: modals">
 		 	<!-- Personnel Page Modals -->
 		</section>

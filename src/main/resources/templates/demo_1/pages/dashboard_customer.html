@@ -22,7 +22,7 @@
             <div class="row page-title-header">
               <div class="col-12">
                 <div class="page-header">
-                  <h4 class="page-title" th:text="'Edit Customer with Id: ' + ${selected.id}">Edit Account accountid</h4>
+                  <h4 class="page-title" th:text="'Dashboard ' + ${selected.id}">Dashboard Customer accountid</h4>
                 </div>
               </div>
               <div class="col-md-12">
@@ -31,21 +31,23 @@
             </div>
             <!-- Page Title Header Ends-->
             <div class="row">
-              <div class="col-md-8 grid-margin stretch-card"  th:with="bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
+              <div class="col-md-8 grid-margin stretch-card"  th:with="accountUrl = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType},
+              														bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
               	<div class="card"> 
               		<div class="card-body">
-	              	<form th:action="@{/admin/__${currentPage}__}" th:object="${selected}" method="post" >
-	              	
-	          			<section th:replace="__${bodyUrl}__">
-						  	<!-- partial:partials/_footer.html -->
-			  			</section>
-			  			
-				      <div >
-				    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="'/admin'+${currentPage} + '/'">Close</a>
-				        <button type="submit" class="btn btn-primary">[[${#strings.capitalize(viewType)}]]</button>
-				      </div>
-			  			
-			  		</form>
+              	<form th:action="@{/admin/customer}" th:object="${selected}" method="post" >
+              	
+              		<section th:replace="__${accountUrl}__">
+					  	<!-- partial:partials/_footer.html -->
+		  			</section>
+		  			
+		  			<hr />
+		  			
+          			<section th:replace="__${bodyUrl}__">
+					  	<!-- partial:partials/_footer.html -->
+		  			</section>
+		  			
+		  		</form>
 		  			</div>
 		  		</div>
               </div>
@@ -79,5 +81,6 @@
     <!-- Custom js for this page-->
     <script src="/assets/js/demo_1/personnel.js"></script>
     <!-- End custom js for this page-->
+  
   </body>
 </html>
