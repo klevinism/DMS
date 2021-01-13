@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Role;
 
 /**
