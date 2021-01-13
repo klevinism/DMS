@@ -1,0 +1,13 @@
+<div class="card" th:fragment="delete">
+  <div class="card-body">
+    <input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).DELETE}">
+
+    <input type="hidden" th:field="*{id}">
+    <input type="hidden" th:field="*{registerdate}" >
+    
+    <h4 class="card-title">Delete Customer with Account Name <u th:text="*{account.username}"> ?</u></h4>
+    <p>You are about to delete account with username: <u th:text="*{account.username}"></u> 
+    These changes cannot be undone.</p>
+    <p>Are you sure you want to proceed?</p>
+  </div>
+</div>

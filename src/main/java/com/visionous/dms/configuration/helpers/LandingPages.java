@@ -15,7 +15,8 @@ public enum LandingPages {
     CUSTOMER("/customer"), 
     HISTORY("/history"), 
     RECORD("/record"), 
-    ACCOUNT("/account"); 
+    ACCOUNT("/account"), 
+    QUESTIONNAIRE("/questionnaire") ; 
     
     private final String landingPage;
     

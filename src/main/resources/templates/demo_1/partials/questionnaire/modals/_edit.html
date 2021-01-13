@@ -1,0 +1,12 @@
+<div class="card" th:fragment="edit">
+  <div class="card-body">
+    <h4 class="card-title">Edit Customer <u>[[*{account.username}]]</u></h4>
+    <hr/>
+      <input type="hidden" th:field="*{id}">
+      <input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).EDIT}">
+      <div class="form-group">
+        <input type="date" disabled th:field="*{registerdate}">
+      </div>
+      
+  </div>
+</div>
