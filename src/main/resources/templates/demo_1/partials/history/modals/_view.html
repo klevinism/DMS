@@ -1,0 +1,52 @@
+<div class="card" th:fragment="view">
+  <div class="card-body">
+      <div class="form-group" >      
+       <div class="d-flex flex-column flex-lg-row">
+    	  <h4 class="card-title">Dental History</h4>
+
+	    </div>
+        <hr />
+        
+        
+        <div class="row" th:if="*{customerHistory == null || customerHistory.records == null}">
+        	<div class="col-md-12 grid-margin"  >
+        		<div class="d-flex flex-row align-items-center">
+                  <i class="mdi mdi-alert icon-lg text-danger"></i>
+                  <p class="mb-0 ml-1"> <h4 class="text text-danger">There is no dental record for [[*{account.name}]]</h4></p>
+                </div>
+        	</div>
+        	<div class="col-md-12 grid-margin">
+        		<a th:href="'/admin/customer/'+*{id}+'/questionnaire/create'" class="btn btn-primary btn-sm">New Visit</a>
+        	</div>
+        </div>
+        
+        <div class="row" th:if="*{customerHistory != null && customerHistory.records != null}">
+        	<div class="col-md-12 grid-margin">
+        		<a th:href="'/admin/customer/history/'+*{customerHistory.id}+'/record/add'" class="btn btn-primary btn-sm">New Visit</a>
+        	</div>
+        	<div class="col-md-12 grid-margin">
+        		<table class="table table-hover" >
+					<thead>
+						<tr style="background:#ebf3ff">
+							<td>Service Date</td>
+							<td>Service Type</td>
+							<td>Service Comment</td>
+						</tr>
+					</thead>
+					<tbody th:each="record: *{customerHistory.records}" >
+						<tr class="clickable-tr" onclick="window.location='/admin/customer/history/record/'">
+							<td th:text="${#dates.format(record.servicedate, 'dd-MM-yyyy HH:mm')}"></td>
+							<td th:text="${record.servicetype}"></td>
+							<td th:text="${record.servicecomment}"></td>
+						</tr>
+					</tbody>
+				</table>
+        	</div>
+        </div>
+        	
+		
+      </div>
+    </div>
+
+  </div>
+</div>

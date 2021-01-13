@@ -55,12 +55,16 @@
 									<td>Service Comment</td>
 								</tr>
 							</thead>
-							<tbody th:each="records: ${selectedHistory.records}">
-								<tr>
-									<td th:text="${#dates.format(records.servicedate, 'dd-MM-yyyy HH:mm')}"></td>
-									<td th:text="${records.servicetype}"></td>
-									<td th:text="${records.servicecomment}"></td>
+							<tbody th:each="record: ${selectedHistory.records}">
+							
+								<tr >
+								<a href="/">
+									<td th:text="${#dates.format(record.servicedate, 'dd-MM-yyyy HH:mm')}"></td>
+									<td th:text="${record.servicetype}"></td>
+									<td th:text="${record.servicecomment}"></td>
+								</a>
 								</tr>
+								
 							</tbody>
 						</table>
 						
