@@ -119,7 +119,6 @@ public class CustomerModelController extends ModelController{
 					roleRepository.findByName(roleName).ifPresent(role -> {newCustomer.getAccount().addRole(role);});
 				}
 				
-				
 				Account newAccount = accountRepository.saveAndFlush(newCustomer.getAccount());
 				newCustomer.setAccount(newAccount);				
 				customerRepository.saveAndFlush(newCustomer);

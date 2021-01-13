@@ -42,6 +42,10 @@ public class Record  implements Serializable{
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name="historyid")
 	private History history;
+	
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name="personnelid")
+	private Personnel personnel;
 
 	/**
 	 * @return the id
@@ -126,4 +130,19 @@ public class Record  implements Serializable{
 	public void setHistory(History history) {
 		this.history = history;
 	}
+
+	/**
+	 * @return the personnel
+	 */
+	public Personnel getPersonnel() {
+		return personnel;
+	}
+
+	/**
+	 * @param personnel the personnel to set
+	 */
+	public void setPersonnel(Personnel personnel) {
+		this.personnel = personnel;
+	}
+	
 }

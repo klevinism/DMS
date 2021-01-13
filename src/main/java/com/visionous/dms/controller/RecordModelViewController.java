@@ -3,8 +3,6 @@
  */
 package com.visionous.dms.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.model.RecordModelController;
+import com.visionous.dms.pojo.Record;
 
 /**
  * @author delimeta
@@ -22,7 +21,7 @@ import com.visionous.dms.model.RecordModelController;
  */
 
 @Controller
-@RequestMapping("/admin/customer/history/record")
+@RequestMapping("/admin/customer/{customerId}/history/{historyId}/record")
 public class RecordModelViewController {
 	
 	private RecordModelController recordModelController;
@@ -41,14 +40,16 @@ public class RecordModelViewController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/{id}")
-	public String historyDefault(@PathVariable("id") Long id,
+	@GetMapping("")
+	public String recordDefault(@PathVariable("customerId") Long customerId,
+			@PathVariable("historyId") Long historyId,
 			@RequestParam(name="action", required=false) Actions action,
 			@RequestParam(name="modal", required=false) boolean modal,
 			Model model) {
 		
 		recordModelController.init() // Re-initialize Model
-			.addControllerParam("id", id)
+			.addControllerParam("customerId", customerId)
+			.addControllerParam("historyId", historyId)
 			.addControllerParam("modal", modal)
 			.setViewModel(model)
 			.run(); // GetValuesForView
@@ -60,10 +61,15 @@ public class RecordModelViewController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/add")
-	public String historyDefault(Model model) {
+	@GetMapping("/create")
+	public String recordDefault(@PathVariable("customerId") Long customerId,
+			@PathVariable("historyId") Long historyId, Model model) {
 		
+
 		recordModelController.init() // Re-initialize Model
+			.addControllerParam("customerId", customerId)
+			.addControllerParam("historyId", historyId)
+			.addControllerParam("viewType", Actions.CREATE)
 			.setViewModel(model)
 			.run(); // GetValuesForView
 
