@@ -10799,4 +10799,15 @@ ul {
 
 /*-------------------------------------------------------------------*/
 
+.avatar {
+	text-align:center;
+}
+.avatar img {
+	width: 45%;
+}
+
+
+.clickable-tr{
+	cursor : pointer;
+}
 /*# sourceMappingURL=style.css.map */
