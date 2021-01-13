@@ -30,6 +30,7 @@ import com.visionous.dms.repository.AccountRepository;
 @RequestMapping("/")
 public class GreetingModelViewController {
 	private final Log logger = LogFactory.getLog(GreetingModelViewController.class);
+	
 	@Autowired
 	private AccountRepository userRepository;
 	
@@ -125,7 +126,7 @@ public class GreetingModelViewController {
 	@GetMapping("/typography")
 	public String typography() {
 		
-		return "demo_1/pages/mouth";
+		return "demo_1/pages/ui-features/typography";
 	}
 	
 	/**

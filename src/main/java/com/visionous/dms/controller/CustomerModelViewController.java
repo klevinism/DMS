@@ -43,15 +43,15 @@ public class CustomerModelViewController {
 	 * @return
 	 */
 	@GetMapping("/{id}")
-	public String customerEdit(@PathVariable("id") Long id,
-			@RequestParam(name="view", required=true) Actions view,
+	public String customerView(@PathVariable("id") Long id,
+			@RequestParam(name="action", required=false) Actions action,
 			@RequestParam(name="modal", required=false) boolean modal,
 			Model model) {
 
 		customerModelController.init() // Re-initialize Model
 			.addControllerParam("id", id)
-			.addControllerParam("modal", view)
-			.addControllerParam("viewType", view)
+			.addControllerParam("modal", modal)
+			.addControllerParam("viewType", Actions.VIEW.getValue())
 			.setViewModel(model)
 			.run(); // GetValuesForView
 

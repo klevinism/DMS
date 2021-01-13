@@ -6,7 +6,7 @@
       <input type="hidden" th:field="*{id}">
       <input type="hidden" th:field="*{enabled}">
       <input type="hidden" th:field="*{active}">
-	  <input type="hidden" th:if="*{customer != null}" th:name="" th:field="*{customer.id}">
+	  <input type="hidden" th:if="*{customer != null}" th:field="*{customer.id}">
 	  <input type="hidden" th:if="*{customer != null}" th:field="*{customer.registerdate}">
 	  <input type="hidden" th:if="*{personnel != null}" th:field="*{personnel.id}">  
 	  <input type="hidden" th:if="*{personnel != null}" th:field="*{personnel.type}">  

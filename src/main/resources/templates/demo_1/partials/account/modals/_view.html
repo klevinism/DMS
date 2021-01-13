@@ -1,7 +1,7 @@
 <div class="card" th:fragment="view">
   <div class="card-body">
 	  <div class="d-flex flex-column flex-lg-row">
-    	  <h4 class="card-title">Profile of <u>[[*{account.username}]]</u></h4>
+    	  <h4 class="card-title">Profile of <u>[[*{account.name}]]</u></h4>
 	      <ul class="nav nav-tabs sales-mini-tabs ml-lg-auto mb-4 mb-md-0" role="tablist">
 	        <li class="nav-item">
 	          <a class="btn btn-primary" th:href="'/admin/account/edit/'+*{id}">Edit</a>
@@ -9,6 +9,9 @@
 	      </ul>
 	    </div>
     <hr/>   
+      <div class="avatar">
+        <img alt="" src="https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg">
+      </div>
     	<input type="hidden" th:field="*{account.id}" >
       <div class="form-group">      
         <label for="username">Username</label>

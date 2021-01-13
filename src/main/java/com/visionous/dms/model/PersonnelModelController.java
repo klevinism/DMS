@@ -6,9 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.h2.bnf.RuleRepeat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -20,6 +18,7 @@ import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Role;
 import com.visionous.dms.repository.AccountRepository;
+import com.visionous.dms.repository.HistoryRepository;
 import com.visionous.dms.repository.PersonnelRepository;
 import com.visionous.dms.repository.RoleRepository;
 
@@ -42,7 +41,9 @@ public class PersonnelModelController extends ModelController{
 	 * @param personnelRepository
 	 */
 	@Autowired
-	public PersonnelModelController(PersonnelRepository personnelRepository, RoleRepository roleRepository, AccountRepository accountRepository) {
+	public PersonnelModelController(PersonnelRepository personnelRepository, RoleRepository roleRepository,
+			AccountRepository accountRepository,
+			HistoryRepository historyRepository) {
 		this.personnelRepository = personnelRepository;
 		this.roleRepository = roleRepository;
 		this.accountRepository = accountRepository;
@@ -111,7 +112,6 @@ public class PersonnelModelController extends ModelController{
 				personnelRepository.saveAndFlush(newPersonnel);
 			}
 		}else if(action.equals(Actions.VIEW.getValue())) {
-			
 		}		
 
 	}

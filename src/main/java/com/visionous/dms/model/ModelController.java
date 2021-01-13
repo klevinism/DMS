@@ -46,6 +46,10 @@ public class ModelController implements ModelControllerImpl{
 		return this;
 	}
 	
+	public Object getModelCollectionToView(String key) {
+		return this.viewModel.getAttribute(key);
+	}
+	
 	/**
 	 * 
 	 */

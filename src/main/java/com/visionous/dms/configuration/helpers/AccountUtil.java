@@ -5,7 +5,7 @@ package com.visionous.dms.configuration.helpers;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.visionous.dms.pojo.Account;
+import com.visionous.dms.configuration.AccountUserDetail;
 
 /**
  * @author delimeta
@@ -16,7 +16,7 @@ public class AccountUtil {
 	private AccountUtil() {
 	}
 	
-	public static Account currentLoggedInUser(){
-		return (Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public static AccountUserDetail currentLoggedInUser(){
+		return (AccountUserDetail)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 }
