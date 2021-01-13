@@ -4,8 +4,9 @@
 package com.visionous.dms.repository;
 
 import java.util.Optional;
+import java.util.Set;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.visionous.dms.pojo.History;
@@ -15,13 +16,13 @@ import com.visionous.dms.pojo.History;
  *
  */
 @Repository
-public interface HistoryRepository extends CrudRepository<History, Long>{
+public interface HistoryRepository extends JpaRepository<History, Long>{
 
 	/**
 	 * @param supervisorId
 	 * @return Optional {@link History} object
 	 */
-	Optional<History> findBySupervisorId(Long supervisorId);
+	Set<History> findBySupervisorId(Long supervisorId);
 	
 	/**
 	 * @param customerId

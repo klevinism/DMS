@@ -10,11 +10,16 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SequenceGenerator;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.visionous.dms.configuration.helpers.DmsCoreVersion;
 
@@ -31,6 +36,8 @@ public class History implements Serializable{
 	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
 	
 	@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "HIS_SEQ")
+    @SequenceGenerator(sequenceName = "history_seq", allocationSize = 1, name = "HIS_SEQ")
 	private Long id;
 
 	@Column(name="customerid", insertable = false, updatable = false)
@@ -39,6 +46,7 @@ public class History implements Serializable{
 	@Column(name="supervisorid", insertable = false, updatable = false)
 	private Long supervisorId;
 	
+	@DateTimeFormat (pattern="dd-MMM-YYYY")
 	private Date startdate;
 
 	@OneToOne(optional = false, fetch = FetchType.EAGER)
