@@ -4,9 +4,6 @@ package com.visionous.dms.controller;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.model.PersonnelModelController;
 import com.visionous.dms.pojo.Personnel;
-import com.visionous.dms.repository.AccountRepository;
-import com.visionous.dms.repository.RoleRepository;
 
 /**
  * @author delimeta
@@ -31,15 +26,13 @@ import com.visionous.dms.repository.RoleRepository;
 public class PersonnelModelViewController {
 	
 	private PersonnelModelController personnelModelController;
-	private AccountRepository accountRepository;
 
 	/**
 	 * 
 	 */
 	@Autowired
-	public PersonnelModelViewController(PersonnelModelController personnelModelMvc, AccountRepository accountRepository) {
+	public PersonnelModelViewController(PersonnelModelController personnelModelMvc) {
 		this.personnelModelController = personnelModelMvc;
-		this.accountRepository = accountRepository;
 	}
 	
 	/**

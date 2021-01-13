@@ -4,6 +4,7 @@
 package com.visionous.dms.pojo;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
@@ -42,6 +44,10 @@ public class Personnel implements Serializable{
     
     @OneToOne(mappedBy="supervisor", optional = true)
     private History customerHistory;
+    
+    @OneToMany(mappedBy = "personnel", fetch = FetchType.EAGER)
+	@PrimaryKeyJoinColumn
+	private Set<Record> records;
 
 	/**
 	 * @return the id
@@ -98,4 +104,19 @@ public class Personnel implements Serializable{
 	public void setCustomerHistory(History customerHistory) {
 		this.customerHistory = customerHistory;
 	}
+
+	/**
+	 * @return the records
+	 */
+	public Set<Record> getRecords() {
+		return records;
+	}
+
+	/**
+	 * @param records the records to set
+	 */
+	public void setRecords(Set<Record> records) {
+		this.records = records;
+	}
+	
 }
