@@ -31,29 +31,42 @@
             </div>
             <!-- Page Title Header Ends-->
             <div class="row">
-              <div class="col-md-8 grid-margin stretch-card"  th:with="accountUrl = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType},
-              														bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
+           
+              <div class="col-md-7 grid-margin stretch-card">
               	<div class="card"> 
-              		<div class="card-body">
-              	<form th:action="@{/admin/customer}" th:object="${selected}" method="post" >
-              	
-              		<section th:replace="__${accountUrl}__">
-					  	<!-- partial:partials/_footer.html -->
-		  			</section>
-		  			
-		  			<hr />
-		  			
-          			<section th:replace="__${bodyUrl}__">
-					  	<!-- partial:partials/_footer.html -->
-		  			</section>
-		  			
-		  		</form>
+              		<div class="card-body"  th:with="historyUrl = 'demo_1/partials/history/modals/_'+${viewType}+' :: '+ ${viewType}">
+		              	<form th:action="@{/admin/history}" th:object="${selected}" method="post" >
+		              	
+		              		<section th:replace="__${historyUrl}__">
+							  	<!-- partial:partials/_historyUrl.html -->
+				  			</section>
+						  									  			
+						</form>
 		  			</div>
 		  		</div>
               </div>
+			  <div class="col-md-5 grid-margin stretch-card">
+			  	<div class="row">
+				  	<div class="col-md-12 grid-margin">
+						<div class="card"> 
+	              			<div class="card-body" th:with="accountUrl = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType}">
+	              				<form th:action="@{/admin/customer}" th:object="${selected}" method="post" >
+		              	
+				              		<section th:replace="__${accountUrl}__">
+									  	<!-- partial:partials/_accountUrl.html -->
+						  			</section>
+						  									  			
+						  		</form>
+	              			</div>
+	              		</div>
+	              	</div>
+			  	</div>             
+              </div>
+              
             </div>
           </div>
           <!-- content-wrapper ends -->
+				  			
 		  
 		  <section th:replace="demo_1/partials/_footer :: footer">
 		  	<!-- partial:partials/_footer.html -->

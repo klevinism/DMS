@@ -50,6 +50,10 @@ public class Customer implements Serializable{
     
     @OneToOne(mappedBy="customer")
     private History customerHistory;
+    
+    @OneToOne(mappedBy="customer")
+    private Questionnaire questionnaire;
+    
 	/**
 	 * @return the id
 	 */
@@ -118,5 +122,20 @@ public class Customer implements Serializable{
 		this.customerHistory = customerHistory;
 	}
 
+	/**
+	 * @return the questionnaire
+	 */
+	public Questionnaire getQuestionnaire() {
+		return questionnaire;
+	}
+
+	/**
+	 * @param questionnaire the questionnaire to set
+	 */
+	public void setQuestionnaire(Questionnaire questionnaire) {
+		this.questionnaire = questionnaire;
+	}
+
+	
 	
 }
