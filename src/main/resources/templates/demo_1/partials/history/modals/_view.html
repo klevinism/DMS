@@ -24,19 +24,28 @@
         	<div class="col-md-12 grid-margin">
         		<a th:href="'/customer/'+*{id}+'/history/'+*{customerHistory.id}+'/record/create'" class="btn btn-primary btn-sm">New Visit</a>
         	</div>
-        	<div class="col-md-12 grid-margin">
+        	
+        	<div class="col-md-4 grid-margin"> 
+        		<section th:replace="demo_1/partials/_mouth :: mouth">
+        		
+        		</section>
+        	</div>
+        	
+        	<div class="col-md-8 grid-margin">
         		<table class="table table-hover" >
 					<thead>
 						<tr style="background:#ebf3ff">
 							<td>Service Date</td>
 							<td>Service Type</td>
+							<td>Tooth</td>
 							<td>Service Comment</td>
 						</tr>
 					</thead>
-					<tbody th:each="record: *{customerHistory.records}" >
-						<tr class="clickable-tr" onclick="window.location='/customer/history/record/'">
+					<tbody >
+						<tr class="clickable-tr"  th:each="record: *{customerHistory.records}" onmouseout="clearRecordSelection()" th:onmouseover="'hoverRecord(\'__${record.tooth.name}__\')'" onclick="window.location='/customer/history/record/'">
 							<td th:text="${#dates.format(record.servicedate, 'dd-MM-yyyy HH:mm')}"></td>
 							<td th:text="${record.serviceType.name}"></td>
+							<td id="tooth" th:text="${record.tooth.name}"></td>
 							<td th:text="${record.servicecomment}"></td>
 						</tr>
 					</tbody>
