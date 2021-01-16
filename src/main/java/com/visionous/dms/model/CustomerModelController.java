@@ -3,7 +3,11 @@
  */
 package com.visionous.dms.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -168,14 +172,16 @@ public class CustomerModelController extends ModelController{
 	 * 
 	 */
 	private void buildCustomerGlobalViewModel() {
-		HttpServletRequest path = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-		super.addModelCollectionToView("currentPagePath", path.getRequestURI());
+		super.addModelCollectionToView("currentBreadcrumb", LandingPages.buildBreadCrumb(
+				((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest())
+		);
+		
 		super.addModelCollectionToView("currentPage", currentPage);
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
 		
 
-		Iterable<Customer> personnels = customerRepository.findAll();
-		super.addModelCollectionToView("customerList", personnels);
+		Iterable<Customer> customers = customerRepository.findAll();
+		super.addModelCollectionToView("customerList", customers);
 	}
 	
 	/**

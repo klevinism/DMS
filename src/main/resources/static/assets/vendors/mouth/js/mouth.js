@@ -6,7 +6,7 @@ function onClickTooth(element){
 	if($('option[id = "'+selectedToothId+'"]') != null){
 		var option = $("option[id = "+selectedToothId+"]");
 		$(option).attr("selected", "selected");
-		var selected_option = $('#toothSelect option:selected')[0];
+		var selected_option = $('#toothSelect option:selected');
 		
 		$("#selectedToothInput").val("");
 		$("#selectedToothInput").val($('#toothSelect option:selected').val());
@@ -31,7 +31,7 @@ function clearAllTeethSelection(){
 		tooth.setAttribute("fill-opacity", 0);
 	});
 
-	$("option[name='selectedToothInput']").each(function(index, toothOption){
+	$("option[name='selectedToothOption']").each(function(index, toothOption){
 		$(toothOption).removeAttr("selected");
 	});
 	

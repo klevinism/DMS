@@ -19,25 +19,9 @@
         <div class="main-panel">
           <div class="content-wrapper">
             <!-- Page Title Header Starts-->
-            <div class="row page-title-header">
-              <div class="col-12">
-                <div class="page-header">
-                    <h4 class="page-title">History</h4>
-					
-                </div>
-
-              </div>
-				<nav aria-label="breadcrumb">
-				  <ol class="breadcrumb">
-				    <li class="breadcrumb-item"><a href="/">Home</a></li>
-				    <li class="breadcrumb-item"><a href="/admin">Admin</a></li>
-				    <li class="breadcrumb-item ">Customer</li>
-				    <li class="breadcrumb-item ">History</li>
-				    <li class="breadcrumb-item ">Record</li>
-				    <li class="breadcrumb-item active" aria-current="page">New</li>
-				  </ol>
-				</nav>
-            </div>
+            <section th:replace="demo_1/partials/_breadcrumb :: breadcrumb">
+			  	<!-- partial:partials/_breadcrumb.html -->
+  			</section>
             <!-- Page Title Header Ends-->
             <div class="row">
               <div class="col-md-6 grid-margin stretch-card">

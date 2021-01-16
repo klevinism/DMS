@@ -19,16 +19,9 @@
         <div class="main-panel">
           <div class="content-wrapper">
             <!-- Page Title Header Starts-->
-            <div class="row page-title-header">
-              <div class="col-12">
-                <div class="page-header">
-                  <h4 class="page-title" >Add New Personnel</h4>
-                </div>
-              </div>
-              <div class="col-md-12">
-                
-              </div>
-            </div>
+            <section th:replace="demo_1/partials/_breadcrumb :: breadcrumb">
+			  	<!-- partial:partials/_breadcrumb.html -->
+  			</section>
             <!-- Page Title Header Ends-->
             <div class="row">
               <div class="card-body"  th:with="historyUrl = 'demo_1/partials/history/modals/_'+${viewType}+' :: '+ ${viewType}">

@@ -121,8 +121,9 @@ public class AccountModelController extends ModelController{
 	 * 
 	 */
 	private void buildAccountGlobalViewModel() {
-		HttpServletRequest path = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-		super.addModelCollectionToView("currentPagePath", path.getRequestURI());
+		super.addModelCollectionToView("currentBreadcrumb", LandingPages.buildBreadCrumb(
+				((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest())
+		);
 		super.addModelCollectionToView("currentPage", currentPage);
 			
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
