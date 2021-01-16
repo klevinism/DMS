@@ -6,12 +6,19 @@ package com.visionous.dms.pojo;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.visionous.dms.configuration.helpers.DmsCoreVersion;
 
@@ -28,25 +35,45 @@ public class Record  implements Serializable{
 	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
 	
 	@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RECORD_SEQ")
+    @SequenceGenerator(sequenceName = "record_seq", allocationSize = 1, name = "RECORD_SEQ")
 	private Long id;
 	
-	private String servicetype;
+	@Column(name = "serviceid", insertable = false, updatable =false)
+	private Long serviceId;
+	
+	@Column(name = "personnelid", insertable = false, updatable =false)
+	private Long personnelId;
+	
+	private String servicedetail;
 	
 	private String servicecomment;
 	
+	@DateTimeFormat (pattern="dd-MMM-YYYY")
 	private Date servicedate;
 	
 	@Column(name = "historyid", insertable = false, updatable = false)
 	private Long historyId;
 	
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@Column(name = "toothid", insertable = false, updatable = false)
+	private Long toothId;
+	
+	
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL,  optional = false)
 	@JoinColumn(name="historyid")
 	private History history;
 	
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
 	@JoinColumn(name="personnelid")
 	private Personnel personnel;
-
+	
+	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER) 
+	@JoinColumn(name = "serviceid")
+	private ServiceType serviceType;
+	
+	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	@JoinColumn(name = "toothid")
+	private Teeth tooth;
 	/**
 	 * @return the id
 	 */
@@ -75,18 +102,20 @@ public class Record  implements Serializable{
 		this.historyId = historyId;
 	}
 
+	
+	
 	/**
-	 * @return the servicetype
+	 * @return the personnelId
 	 */
-	public String getServicetype() {
-		return servicetype;
+	public Long getPersonnelId() {
+		return personnelId;
 	}
 
 	/**
-	 * @param servicetype the servicetype to set
+	 * @param personnelId the personnelId to set
 	 */
-	public void setServicetype(String servicetype) {
-		this.servicetype = servicetype;
+	public void setPersonnelId(Long personnelId) {
+		this.personnelId = personnelId;
 	}
 
 	/**
@@ -101,6 +130,20 @@ public class Record  implements Serializable{
 	 */
 	public void setServicecomment(String servicecomment) {
 		this.servicecomment = servicecomment;
+	}
+	
+	/**
+	 * @return the servicedetail
+	 */
+	public String getServicedetail() {
+		return servicedetail;
+	}
+
+	/**
+	 * @param servicedetail the servicedetail to set
+	 */
+	public void setServicedetail(String servicedetail) {
+		this.servicedetail = servicedetail;
 	}
 
 	/**
@@ -144,5 +187,62 @@ public class Record  implements Serializable{
 	public void setPersonnel(Personnel personnel) {
 		this.personnel = personnel;
 	}
+
+	/**
+	 * @return the serviceId
+	 */
+	public Long getServiceId() {
+		return serviceId;
+	}
+
+	/**
+	 * @param serviceId the serviceId to set
+	 */
+	public void setServiceId(Long serviceId) {
+		this.serviceId = serviceId;
+	}
+
+	/**
+	 * @return the serviceType
+	 */
+	public ServiceType getServiceType() {
+		return serviceType;
+	}
+
+	/**
+	 * @param serviceType the serviceType to set
+	 */
+	public void setServiceType(ServiceType serviceType) {
+		this.serviceType = serviceType;
+	}
+	
+	/**
+	 * @return the toothId
+	 */
+	public Long getToothId() {
+		return toothId;
+	}
+
+	/**
+	 * @param toothId the toothId to set
+	 */
+	public void setToothId(Long toothId) {
+		this.toothId = toothId;
+	}
+
+	/**
+	 * @return the tooth
+	 */
+	public Teeth getTooth() {
+		return tooth;
+	}
+
+	/**
+	 * @param tooth the tooth to set
+	 */
+	public void setTooth(Teeth tooth) {
+		this.tooth = tooth;
+	}
+
 	
 }

@@ -50,13 +50,12 @@ public class CustomerModelViewController {
 
 		customerModelController.init() // Re-initialize Model
 			.addControllerParam("id", id)
-			.addControllerParam("modal", modal)
 			.addControllerParam("viewType", Actions.VIEW.getValue())
 			.setViewModel(model)
 			.run(); // GetValuesForView
 
 
-		return "demo_1/pages/customer";
+		return "demo_1/pages/dashboard_customer";
 	}
 	
 	/**

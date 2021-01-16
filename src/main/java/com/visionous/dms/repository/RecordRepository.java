@@ -3,9 +3,10 @@
  */
 package com.visionous.dms.repository;
 
-import java.util.Set;
+import java.util.List;
+import java.util.Optional;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.visionous.dms.pojo.Record;
@@ -15,13 +16,18 @@ import com.visionous.dms.pojo.Record;
  *
  */
 @Repository
-public interface RecordRepository extends CrudRepository<Record, Long>{
-	
+public interface RecordRepository extends JpaRepository<Record, Long>{
+
+	/**
+	 * @param id
+	 * @return
+	 */
+	Optional<Record> findByHistoryId(Long id);
+
 	/**
 	 * @param historyId
-	 * @return Set of {@link Record} object
+	 * @return
 	 */
-	Set<Record> findByHistoryId(Long historyId);
-
+	List<Record> findByHistoryIdOrderByServicedateDesc(Long historyId);
 }
 

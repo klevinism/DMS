@@ -80,7 +80,7 @@
 	                          <td width="2%">
 	                          	
 	                              <div class="btn-group" style="display:none;" name="actionButton" th:id="'actionButton' + ${user.id}">
-									<a type="button" th:if="${customer.customerHistory}" th:href="'/admin/customer/history/' + ${user.id}" class="btn btn-secondary btn-sm">Dental History</a>
+									<a type="button" th:if="${customer.customerHistory}" th:href="'/admin/customer/' + ${user.id} + '/history/' + ${user.id} + '/record'" class="btn btn-secondary btn-sm">Dental History</a>
 		                        	<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			                          	<span class="sr-only">Toggle Action</span>
 										<a class="btn btn-primary" th:href="'/admin/customer/edit/' + ${user.id} " >Edit</a>

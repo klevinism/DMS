@@ -8,8 +8,7 @@
         </div>
         <div class="text-wrapper">
           <p class="profile-name">[[${#httpServletRequest.remoteUser}]]</p>
-          <p class="designation">Premium user</p>
-          <p id="user"> [[${#httpServletRequest.remoteUser}]]!</p>
+          <p class="designation"><span th:each="role: ${currentRoles}" >[[${role.name}]] </span></p>
         </div>
       </a>
     </li>

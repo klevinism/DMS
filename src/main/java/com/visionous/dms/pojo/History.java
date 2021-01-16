@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -49,15 +50,15 @@ public class History implements Serializable{
 	@DateTimeFormat (pattern="dd-MMM-YYYY")
 	private Date startdate;
 
-	@OneToOne(optional = false, fetch = FetchType.EAGER)
+	@OneToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "supervisorid")
 	private Personnel supervisor;
 	
-	@OneToMany(mappedBy = "history", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "history", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@PrimaryKeyJoinColumn
 	private Set<Record> records;
 	
-	@OneToOne(optional = false, fetch = FetchType.EAGER)
+	@OneToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "customerid")
 	private Customer customer;
 
@@ -132,6 +133,13 @@ public class History implements Serializable{
 	}
 
 	/**
+	 * @param newRecord
+	 */
+	public void addRecord(Record newRecord) {
+		this.records.add(newRecord);
+	}
+	
+	/**
 	 * @return the customerId
 	 */
 	public Long getCustomerId() {
@@ -158,5 +166,7 @@ public class History implements Serializable{
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
+
+	
 
 }

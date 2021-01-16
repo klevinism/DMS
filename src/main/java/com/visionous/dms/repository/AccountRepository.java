@@ -11,7 +11,6 @@ import com.visionous.dms.pojo.Account;
  *
  */
 @Repository
-@Transactional
 public interface AccountRepository extends JpaRepository<Account, Long> {
 	
 	/**
