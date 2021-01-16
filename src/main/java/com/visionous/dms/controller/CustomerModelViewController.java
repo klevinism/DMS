@@ -24,7 +24,7 @@ import com.visionous.dms.pojo.Customer;
  *
  */
 @Controller
-@RequestMapping("/admin/customer")
+@RequestMapping("/customer")
 public class CustomerModelViewController {
 
 	private CustomerModelController customerModelController;
@@ -97,7 +97,7 @@ public class CustomerModelViewController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/edit/{id}")
+	@GetMapping("/edit")
 	public String customerEdit(@PathVariable("id") Long id, Model model) {
 		
 		customerModelController.init()
@@ -113,7 +113,7 @@ public class CustomerModelViewController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/delete/{id}")
+	@GetMapping("/delete")
 	public String customerDelete(@Valid @PathVariable("id") Long id, Model model) {
 		
 		customerModelController.init()
@@ -140,19 +140,4 @@ public class CustomerModelViewController {
 		return "demo_1/pages/create_customer";
 	}
 	
-	/**
-	 * @param model
-	 * @return
-	 */
-	@GetMapping("/dashboard/{id}")
-	public String customerDashboard(@Valid @PathVariable("id") Long id, Model model) {
-
-		customerModelController.init()
-			.addControllerParam("id",id)
-			.addControllerParam("viewType", Actions.VIEW.getValue())
-			.setViewModel(model)
-			.run(); // GetValuesForView
-		
-		return "demo_1/pages/dashboard_customer";
-	}
 }

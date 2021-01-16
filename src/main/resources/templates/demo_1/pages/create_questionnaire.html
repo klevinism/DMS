@@ -28,7 +28,7 @@
               														createPersonnelView = 'demo_1/partials/personnel/modals/_'+${viewType}+' :: '+ ${viewType}" >
               	<div class="card"> 
               		<div class="card-body">
-              	<form th:object="${selected}" th:action="@{/admin/customer/__${selected.customer.id}__/questionnaire}"  method="post" >
+              	<form th:object="${selected}" th:action="@{/customer/__${selected.customer.id}__/questionnaire}"  method="post" >
               	
               		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
               		<input type="hidden" th:if="*{customerId != null}" th:field="*{customerId}">
@@ -78,7 +78,7 @@
           			</table>
           			
 			      <div >
-			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="'/admin'+${currentPage} + '/'">Close</a>
+			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="'/customer/'">Close</a>
 			        <button type="submit" class="btn btn-primary">[[${#strings.capitalize(viewType)}]]</button>
 			      </div>
 		  			

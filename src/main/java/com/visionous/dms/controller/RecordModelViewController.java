@@ -24,7 +24,7 @@ import com.visionous.dms.pojo.Record;
  */
 
 @Controller
-@RequestMapping("/admin/customer/{customerId}/history/{historyId}/record")
+@RequestMapping("/customer/{customerId}/history/{historyId}/record")
 public class RecordModelViewController {
 	
 	private RecordModelController recordModelController;

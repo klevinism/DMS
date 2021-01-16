@@ -76,7 +76,7 @@
 								   
 							    </div>
 							</div>
-               		 <form id="dentalRecordForm" style="display:none;" method="post" th:action="@{/admin/customer/__${selected.history.customerId}__/history/__${selected.historyId}__/record}" th:object="${selected}">
+               		 <form id="dentalRecordForm" style="display:none;" method="post" th:action="@{/customer/__${selected.history.customerId}__/history/__${selected.historyId}__/record}" th:object="${selected}">
 							<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
 							<input type="hidden" th:field="*{historyId}">
 							<input type="hidden" th:field="*{personnelId}">

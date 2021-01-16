@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,7 @@ public class AccountUserDetailService implements UserDetailsService{
 	public UserDetails loadUserByUsername(String username){
 		Set<GrantedAuthority> authorities = new HashSet<>();
 		AccountUserDetail accountUserDetail = null;
-		Optional<Account> acc = accountRepository.findByUsername(username);
+		Optional<Account> acc = accountRepository.findByUsernameOrEmail(username, username); 
 		
 		if(acc.isPresent()) {
 			authorities.addAll(buildUserAuthority(acc.get().getRoles()));
@@ -51,11 +52,10 @@ public class AccountUserDetailService implements UserDetailsService{
 		return accountUserDetail;
 	}
 	
-	// Returns Account instead of spring.springframework.security.core.userdetails.User
-    /**
-     * @param user
+    /** 
+     * @param user 
      * @param authorities
-     * @return
+     * @return Returns {@link Account} instead of {@link User} 
      */
     private AccountUserDetail buildUserForAuthentication(Account user,
         Set<GrantedAuthority> authorities) {
@@ -63,8 +63,9 @@ public class AccountUserDetailService implements UserDetailsService{
     }
 
     /**
+     * Builds custom Set of {@link GrantedAuthority}
      * @param userRoles
-     * @return
+     * @return Set of {@link GrantedAuthority}
      */
     private Set<GrantedAuthority> buildUserAuthority(Set<Role> userRoles) {
 

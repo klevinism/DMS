@@ -43,7 +43,7 @@
 				  	<div class="col-md-12 grid-margin">
 						<div class="card"> 
 	              			<div class="card-body" th:with="accountUrl = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType}">
-	              				<form th:action="@{/admin/customer}" th:object="${selected}" method="post" >
+	              				<form th:action="@{/customer}" th:object="${selected}" method="post" >
 		              	
 				              		<section th:replace="__${accountUrl}__">
 									  	<!-- partial:partials/_accountUrl.html -->

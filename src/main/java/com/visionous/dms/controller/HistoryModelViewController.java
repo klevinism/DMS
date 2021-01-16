@@ -26,7 +26,7 @@ import com.visionous.dms.pojo.Questionnaire;
  *
  */
 @Service
-@RequestMapping("/admin/customer/{id}/history")
+@RequestMapping("/customer/{id}/history")
 public class HistoryModelViewController {
 	private final Log logger = LogFactory.getLog(CustomerModelController.class);
 
@@ -92,7 +92,7 @@ public class HistoryModelViewController {
 
 		if(historyModelController.getModelCollectionToView("historyId") != null) {
 			Long historyId = Long.valueOf(historyModelController.getModelCollectionToView("historyId").toString());
-			String redirectUrl = "/admin/customer/" + id + "/history/"+historyId+"/record/create";
+			String redirectUrl = "/customer/" + id + "/history/"+historyId+"/record/create";
 			
 			return "redirect:"+redirectUrl;
 		}else {

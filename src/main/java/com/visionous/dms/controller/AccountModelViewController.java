@@ -53,7 +53,7 @@ public class AccountModelViewController {
 			.run(); // GetValuesForView
 
 		if(account.getCustomer() != null) {
-			return "redirect:/admin/customer/dashboard/"+account.getId();
+			return "redirect:/customer/dashboard/"+account.getId();
 		}else if(account.getPersonnel() != null) {
 			return "redirect:/admin/personnel/dashboard/"+account.getId();
 		}else {

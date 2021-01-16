@@ -26,7 +26,7 @@ import com.visionous.dms.pojo.QuestionnaireResponse;
  */
 
 @Controller
-@RequestMapping("/admin/customer/{id}/questionnaire")
+@RequestMapping("/customer/{id}/questionnaire")
 public class QuestionnaireModelViewController {
 
 	private QuestionnaireModelController questionnaireModelController;
@@ -63,7 +63,7 @@ public class QuestionnaireModelViewController {
 			@RequestParam(required = true) String action,
 			Model model) {
 		System.out.println(questionnaire.getCustomerId());
-		String redirectUrl = "/admin/customer/"+questionnaire.getCustomerId()+"/history/create"; 
+		String redirectUrl = "/customer/"+questionnaire.getCustomerId()+"/history/create"; 
 		System.out.println(redirectUrl);
 		questionnaireModelController.init()
 			.addControllerParam("action", action)
