@@ -1,0 +1,64 @@
+<div class="card" th:fragment="view">
+  <div class="card-body">
+      <div class="form-group" >      
+       <div class="d-flex flex-column flex-lg-row">
+    	  <h4 class="card-title">Dental Records for patient <u>[[${currentCustomer.account.username}]]</u></h4>
+
+	    </div>
+        <hr />
+        
+        
+        <div class="row" th:if="*{records == null}">
+        	<div class="col-md-12 grid-margin"  >
+        		<div class="d-flex flex-row align-items-center">
+                  <i class="mdi mdi-alert icon-lg text-danger"></i>
+                  <p class="mb-0 ml-1"> <h4 class="text text-danger">There is no dental record for [[${currentCustomer.account.username}]]</h4></p>
+                </div>
+        	</div>
+        	<div class="col-md-12 grid-margin">
+        		<a th:href="'/admin/customer/'+${currentCustomer.id}+'/questionnaire/create'" class="btn btn-primary btn-sm">New Visit</a>
+        	</div>
+        </div>
+        
+        <div class="row" th:if="*{records != null}">
+        	<div class="col-md-12 grid-margin">
+        		<a th:href="'/admin/customer/__${currentCustomer.id}__/history/'+*{id}+'/record/create'" class="btn btn-primary btn-sm">New Visit</a>
+        	</div>
+        	<div class="col-md-12 grid-margin">
+        		<table id="allRecords" class="table table-hover" >
+					<thead>
+						<tr style="background:#ebf3ff">
+							<th>Service Date</th>
+							<th>Patient Name</th>
+							<th>Dentist Name</th>
+							<th>Service Type</th>
+							<th>Service Detail</th>
+							<th>Service Comment</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr  th:each="record: *{records}" >
+							<td th:text="${#dates.format(record.servicedate, 'dd/MM/yyyy')}"></td>
+							<td th:text="*{customer.account.username}"></td>
+							<td th:text="${record.personnel.account.name}"></td>
+							<td th:text="${record.serviceType.name}"></td>
+							<td th:text="${record.servicedetail}"></td>
+							<td th:text="${record.servicecomment}"></td>
+						</tr>
+					</tbody>
+				</table>
+        	</div>
+        </div>
+        
+        <script>
+        $(document).ready(function() {
+            $('#allRecords').DataTable();
+        });
+        </script>
+        	
+		
+      </div>
+    </div>
+
+  </div>
+</div>
