@@ -25,7 +25,7 @@ import com.visionous.dms.pojo.Account;
  */
 
 @Controller
-@RequestMapping("/admin/account")
+@RequestMapping("/account")
 public class AccountModelViewController {
 	
 	private AccountModelController accountModelController;
@@ -44,11 +44,15 @@ public class AccountModelViewController {
 	 * @return
 	 */
 	@PostMapping("") 
-	public String personnelPost(@ModelAttribute Account account, @RequestParam String[] rolez, Model model) {
+	public String accountPost(@ModelAttribute Account account, @RequestParam String[] rolez,
+			@RequestParam(required = false) String action,
+			Model model) {
 		
 		accountModelController.init()
+			.addControllerParam("action", action)
 			.addControllerParam("roles", rolez)
 			.addModelAttributes(account)
+			.addControllerParam("viewType", Actions.VIEW)
 			.setViewModel(model)
 			.run(); // GetValuesForView
 
@@ -66,11 +70,12 @@ public class AccountModelViewController {
 	 * @return
 	 */
 	@GetMapping("/edit/{id}")
-	public String personnelEdit(@Valid @PathVariable("id") Long id, Model model) {
+	public String accountEdit(@Valid @PathVariable("id") Long id, Model model) {
 		
 		accountModelController.init()
 			.addControllerParam("id",id)
 			.addControllerParam("action", Actions.EDIT)
+			.addControllerParam("viewType", Actions.EDIT)
 			.setViewModel(model)
 			.run(); // GetValuesForView
 		

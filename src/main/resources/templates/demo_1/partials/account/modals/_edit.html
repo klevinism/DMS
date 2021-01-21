@@ -1,5 +1,6 @@
 <div class="card" th:fragment="edit">
-  <div class="card-body">
+  <div th:if="${errorEditingAccount != null}">[[${errorEditingAccount}]]</div>
+  <div class="card-body" th:if="${errorEditingAccount == null}">
     <h4 class="card-title">[[#{EditAccount}]] <u>[[*{username}]]</u></h4>
     <hr/>
     

@@ -4,12 +4,15 @@
 package com.visionous.dms.model;
 
 import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -37,6 +40,8 @@ public class AccountModelController extends ModelController{
 	private AccountRepository accountRepository;
 	private RoleRepository roleRepository;
 	
+	private MessageSource messageSource;
+	
 	private static String currentPage = LandingPages.ACCOUNT.value();
 
 
@@ -44,9 +49,10 @@ public class AccountModelController extends ModelController{
 	 * @param personnelRepository
 	 */
 	@Autowired
-	public AccountModelController(AccountRepository accountRepository, RoleRepository roleRepository) {
+	public AccountModelController(AccountRepository accountRepository, RoleRepository roleRepository, MessageSource messageSource) {
 		this.accountRepository = accountRepository;
 		this.roleRepository = roleRepository;
+		this.messageSource = messageSource;
 	}
 	
 	/**
@@ -54,65 +60,87 @@ public class AccountModelController extends ModelController{
 	 */
 	@Override
 	public void run() {
-		buildAccountGlobalViewModel();
 		
-		// If action occured, add attributes to db
+		// If action occurred, persist object to db
 		if(super.getAllControllerParams().containsKey("modelAttribute")) {
-			persistModelAttributes();
-		}
-		
-		// Build view
-		if(!super.getAllControllerParams().containsKey("modal") &&
-				super.getAllControllerParams().containsKey("action")) {
-			buildAccountActionViewModel();
-		}else {
-			buildAccountViewModel();
-			
 			if(super.getAllControllerParams().containsKey("action")) {
-				buildAccountActionViewModel();	
+				persistModelAttributes(
+						(Account) super.getAllControllerParams().get("modelAttribute"), 
+						super.getAllControllerParams().get("action").toString().toLowerCase()
+						);
 			}
 		}
 		
+		// Build view
+		this.buildAccountViewModel(super.getAllControllerParams().get("viewType").toString().toLowerCase());
+		
+		// Build global view model for Personnel
+		this.buildAccountGlobalViewModel();
 	}
 	
 	/**
 	 * 
 	 */
-	private void persistModelAttributes() {
-		Account newAccount = (Account)super.getAllControllerParams().get("modelAttribute");
-		String[] roleids = (String[]) super.getAllControllerParams().get("roles");
-		for(String roleName: roleids) {
-			roleRepository.findByName(roleName).ifPresent(role -> {System.out.println(roleName);newAccount.addRole(role);});
-		}
-		if(newAccount.getCustomer().getId()  != null) {
-			System.out.println(" customer not null");
-			newAccount.setPersonnel(null);
-		}else if(newAccount.getPersonnel().getId()  != null) {
-			System.out.println(" personnel not null");
-			newAccount.setCustomer(null);
-			newAccount.getPersonnel().setAccount(newAccount);
-		}
-
-		accountRepository.saveAndFlush(newAccount);
+	private void persistModelAttributes(Account accountNewModel, String action) {
+		Account newAccount = accountNewModel;
+		
+		if(action.equals(Actions.DELETE.getValue())) {
+			
+		}else if(action.equals(Actions.EDIT.getValue()) ) {
+				String[] roleids = (String[]) super.getAllControllerParams().get("roles");
+				for(String roleName: roleids) {
+					roleRepository.findByName(roleName).ifPresent(role -> {
+						newAccount.addRole(role);
+					});
+				}
+				if(newAccount.getCustomer().getId()  != null) {
+					newAccount.setPersonnel(null);
+				}else if(newAccount.getPersonnel().getId()  != null) {
+					newAccount.setCustomer(null);
+					newAccount.getPersonnel().setAccount(newAccount);
+				}
+				accountRepository.saveAndFlush(newAccount);
+		}else if(action.equals(Actions.CREATE.getValue())) {
+			
+		}else if(action.equals(Actions.VIEW.getValue())) {
+		}	
+		
 	}
 
 	/**
 	 * 
 	 */
-	private void buildAccountActionViewModel() {
-		super.addModelCollectionToView("action",super.getAllControllerParams().get("action").toString().toLowerCase());
+	private void buildAccountViewModel(String viewType) {
+		super.addModelCollectionToView("viewType", viewType);
 		
-		if(super.getAllControllerParams().get("action").equals(Actions.CREATE)) {
+		if(viewType.equals(Actions.CREATE.getValue())) {
 			Personnel newPersonnel = new Personnel();
 			newPersonnel.setAccount(new Account());
 			super.addModelCollectionToView("selected", newPersonnel);
-		}else {
-			String personnelId = super.getAllControllerParams().get("id").toString();
-			Optional<Account> account = accountRepository.findById(Long.valueOf(personnelId));
-			account.ifPresent(x -> super.addModelCollectionToView("selected", account.get()));
+		}else if(viewType.equals(Actions.EDIT.getValue())) {
+
+			Account currentLoggedInAccount=AccountUtil.currentLoggedInUser();
+			Long personnelId = Long.valueOf(super.getAllControllerParams().get("id").toString());
+			Optional<Account> oldAccount = accountRepository.findById(personnelId);
+
+			Role[] loggedInRoles = currentLoggedInAccount.getRoles().stream().toArray(Role[]::new);					
+			Role[] oldRoles = oldAccount.get().getRoles().stream().toArray(Role[]::new);
+
+			if((loggedInRoles[0].getName().equals("CUSTOMER") && !oldRoles[0].getName().equals("CUSTOMER")) || 
+					(loggedInRoles[0].getName().equals("PERSONNEL") && (oldRoles[0].getName().equals("ADMIN") || oldRoles[0].getName().equals("PERSONNEL")))) {
+				
+		        String errorEditingAccount = messageSource.getMessage("alert.errorEditingAccount", null, LocaleContextHolder.getLocale());
+				super.addModelCollectionToView("errorEditingAccount", errorEditingAccount);
+			}else {
 			
-			Iterable<Role> allRoles= roleRepository.findAll();
-			super.addModelCollectionToView("allRoles", allRoles);
+				Optional<Account> account = accountRepository.findById(personnelId);
+				account.ifPresent(x -> super.addModelCollectionToView("selected", account.get()));
+				
+				Iterable<Role> allRoles= roleRepository.findAll();
+				super.addModelCollectionToView("allRoles", allRoles);
+			}
+		}else if(viewType.equals(Actions.VIEW.getValue())) {
+			
 		}
 		
 	}
@@ -127,13 +155,6 @@ public class AccountModelController extends ModelController{
 		super.addModelCollectionToView("currentPage", currentPage);
 			
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
-		
-	}
-	
-	/**
-	 * 
-	 */
-	private void buildAccountViewModel() {
 		
 		Iterable<Account> personnels = accountRepository.findAll();
 		super.addModelCollectionToView("personnelList", personnels);

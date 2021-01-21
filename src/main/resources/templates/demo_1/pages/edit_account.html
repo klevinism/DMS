@@ -24,17 +24,19 @@
   			</section>
             <!-- Page Title Header Ends-->
             <div class="row">
-              <div class="col-md-8 grid-margin stretch-card"  th:with="bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${action}+' :: '+ ${action}" >
+              <div class="col-md-8 grid-margin stretch-card"  th:with="bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
               	<div class="card"> 
               		<div class="card-body">
-              	<form th:action="@{/admin/account}" th:object="${selected}" method="post" >
+              	<form th:action="@{/account}" th:object="${selected}" method="post" >
+              		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).EDIT}">
+              		
           			<section th:replace="__${bodyUrl}__">
 					  	<!-- partial:partials/_footer.html -->
 		  			</section>
 		  			
-			      <div >
-			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="'/admin'+${currentPage} + '/view/' + ${selected.id}">Close</a>
-			        <button type="submit" class="btn btn-primary">[[#{__${#strings.capitalize(action)}__}]]</button>
+			      <div th:if="${errorEditingAccount == null}">
+			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="${currentPage} + '/view/' + ${selected.id}">Close</a>
+			        <button type="submit" class="btn btn-primary">[[#{__${#strings.capitalize(viewType)}__}]]</button>
 			      </div>
 		  			
 		  		</form>
