@@ -3,6 +3,8 @@
  */
 package com.visionous.dms.controller;
 
+import java.util.Date;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,4 +142,17 @@ public class CustomerModelViewController {
 		return "demo_1/pages/create_customer";
 	}
 	
+	
+	@GetMapping("/book")
+	public String customerBook(@PathVariable(name = "customerId", required = false) Long customerId,
+			@PathVariable(name = "personnelId", required = false) Long personnelId,
+			@PathVariable(name = "appointmentDate", required = false) Date appointmentDate, Model model) {
+
+		customerModelController.init()
+			.addControllerParam("viewType", Actions.CREATE.getValue())
+			.setViewModel(model)
+			.run(); // GetValuesForView
+		
+		return "demo_1/pages/create_customer";
+	}
 }
