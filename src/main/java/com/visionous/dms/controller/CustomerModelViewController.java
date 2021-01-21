@@ -44,24 +44,39 @@ public class CustomerModelViewController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/{id}")
-	public String customerView(@PathVariable("id") Long id,
-			@RequestParam(name="action", required=false) Actions action,
-			@RequestParam(name="modal", required=false) boolean modal,
-			Model model) {
+	@GetMapping("/dashboard/{id}")
+	public String customerView(@PathVariable("id") Long id, Model model) {
 
 		customerModelController.init() // Re-initialize Model
 			.addControllerParam("id", id)
 			.addControllerParam("viewType", Actions.VIEW.getValue())
 			.setViewModel(model)
 			.run(); // GetValuesForView
-		
-		if(modal) {
-			return "demo_1/pages/customer";
-		}
 
 		return "demo_1/pages/dashboard_customer";
 	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("{id}")
+	public String singleCustomer(@PathVariable("id") Long id,
+			@RequestParam(name="view", required=false) Actions action,
+			@RequestParam(name="modal", required=false) boolean modal,
+			Model model) {
+
+		customerModelController.init() // Re-initialize Model
+			.addControllerParam("id", id)
+			.addControllerParam("modal", modal)
+			.addControllerParam("action", action)
+			.addControllerParam("viewType", action)
+			.setViewModel(model)
+			.run(); // GetValuesForView
+		
+		return "demo_1/pages/customer"; 
+	}
+
 	
 	/**
 	 * @param model

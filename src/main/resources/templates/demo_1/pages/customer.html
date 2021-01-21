@@ -58,7 +58,7 @@
 	                              </div>
 		                      </td>
 							  <td width="1%" th:text="${user.id}">id</td>
-	                          <td ><a th:href="${currentPage}+'/'+${user.id}" th:text="${user.username}">username</a></td>
+	                          <td ><a th:href="${currentPage}+'/dashboard/'+${user.id}" th:text="${user.username}">username</a></td>
 	                          <td >
 							  	<h5 th:text="${#dates.format(customer.registerdate, 'dd/MM/yyyy')}">
 							  		
