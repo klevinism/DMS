@@ -125,19 +125,24 @@ public class AccountModelController extends ModelController{
 
 			Role[] loggedInRoles = currentLoggedInAccount.getRoles().stream().toArray(Role[]::new);					
 			Role[] oldRoles = oldAccount.get().getRoles().stream().toArray(Role[]::new);
-
-			if((loggedInRoles[0].getName().equals("CUSTOMER") && !oldRoles[0].getName().equals("CUSTOMER")) || 
-					(loggedInRoles[0].getName().equals("PERSONNEL") && (oldRoles[0].getName().equals("ADMIN") || oldRoles[0].getName().equals("PERSONNEL")))) {
-				
-		        String errorEditingAccount = messageSource.getMessage("alert.errorEditingAccount", null, LocaleContextHolder.getLocale());
-				super.addModelCollectionToView("errorEditingAccount", errorEditingAccount);
-			}else {
 			
-				Optional<Account> account = accountRepository.findById(personnelId);
-				account.ifPresent(x -> super.addModelCollectionToView("selected", account.get()));
-				
-				Iterable<Role> allRoles= roleRepository.findAll();
-				super.addModelCollectionToView("allRoles", allRoles);
+			if(oldRoles.length > 0) {
+				if((loggedInRoles[0].getName().equals("CUSTOMER") && !oldRoles[0].getName().equals("CUSTOMER")) || 
+						(loggedInRoles[0].getName().equals("PERSONNEL") && (oldRoles[0].getName().equals("ADMIN") || oldRoles[0].getName().equals("PERSONNEL")))) {
+					
+			        String errorEditingAccount = messageSource.getMessage("alert.errorEditingAccount", null, LocaleContextHolder.getLocale());
+					super.addModelCollectionToView("errorEditingAccount", errorEditingAccount);
+				}else {				
+					oldAccount.ifPresent(account -> super.addModelCollectionToView("selected", account));
+					
+					Iterable<Role> allRoles= roleRepository.findAll();
+					super.addModelCollectionToView("allRoles", allRoles);
+				}
+			}else {
+					oldAccount.ifPresent(account -> super.addModelCollectionToView("selected", account));
+
+					Iterable<Role> allRoles= roleRepository.findAll(); 
+					super.addModelCollectionToView("allRoles", allRoles);
 			}
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
 			
