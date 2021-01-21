@@ -49,7 +49,7 @@ public class QuestionnaireResponse implements Serializable{
 	private Long questionnaireId;
 
 	@Column(name="responsedate")
-	@DateTimeFormat (pattern="dd-MMM-YYYY")
+	@DateTimeFormat (pattern="dd-MM-YYYY")
 	private Date responseDate;
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)

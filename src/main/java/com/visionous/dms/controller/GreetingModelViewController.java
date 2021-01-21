@@ -1,6 +1,5 @@
 package com.visionous.dms.controller;
 
-import javax.servlet.http.HttpServletRequest;
 /**
  * @author delimeta
  *
@@ -19,10 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.repository.AccountRepository;
 
@@ -49,14 +44,7 @@ public class GreetingModelViewController {
 	 */
 	@GetMapping("")
 	public String greeting(Model model) {
-		logger.debug(AccountUtil.currentLoggedInUser());
-				
-		model.addAttribute("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
-			
-
-		model.addAttribute("currentLoggedInUser", AccountUtil.currentLoggedInUser());
-
-		return "demo_1/index";
+		return "redirect:/home";
 	}
 	
 	/**
@@ -73,6 +61,13 @@ public class GreetingModelViewController {
 		return "demo_1/index";
 	}
 	
+	@GetMapping("/index")
+	public String indexx(Model model) {
+		
+		
+		return "index";
+	}
+	
 	/**
 	 * @param error
 	 * @param model
@@ -80,11 +75,16 @@ public class GreetingModelViewController {
 	 */
 	@GetMapping("/login")
 	public String login(@RequestParam(name="error", required=false) String error, Model model) {
+		
 		if(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken) {
+			if(error != null) {
+				model.addAttribute("errorUsernamePassword", "Username or password is incorrect.");
+			}
+			
 			return "demo_1/pages/samples/login";
 		}else {
 			System.out.println(SecurityContextHolder.getContext().getAuthentication());
-			return "redirect:/";
+			return "redirect:/home";
 		}
 	}
 
@@ -126,7 +126,7 @@ public class GreetingModelViewController {
 	@GetMapping("/typography")
 	public String typography() {
 		
-		return "demo_1/pages/ui-features/typography";
+		return "demo_1/pages/booking";
 	}
 	
 	/**

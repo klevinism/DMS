@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,6 +17,8 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.visionous.dms.configuration.helpers.DmsCoreVersion;
 
 /**
@@ -35,7 +38,8 @@ public class Role implements Serializable{
     @SequenceGenerator(sequenceName = "user_id_seq", allocationSize = 1, name = "USER_ID_SEQ")    
     private Long id;
     
-    @ManyToMany(mappedBy = "roles")
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
+    @ManyToMany(mappedBy = "roles", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     private Set<Account> accounts;
     
 	private String name;

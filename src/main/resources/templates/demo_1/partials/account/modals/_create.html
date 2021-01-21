@@ -1,39 +1,39 @@
 <div class="card" th:fragment="create">
   <div class="card-body">
-    <h4 class="card-title">Add Account </h4>
+    <h4 class="card-title">#{CreateAccount} </h4>
     <hr/>
     
       <div class="form-group">      
-        <label for="username">Username</label>
+        <label for="username">[[#{Username}]]</label>
         <input type="text" class="form-control form-control-lg" id="username" name="username" th:placeholder="*{account.username}" th:value="*{account.username}" th:field="*{account.username}">
       </div>
       
       <div class="form-group">      
-        <label for="password">Password</label>
+        <label for="password">[[#{Password}]]</label>
         <input type="password" class="form-control form-control-lg" id="password" name="password" th:placeholder="*{account.password}" th:value="*{account.password}" th:field="*{account.password}">
       </div>
 
       <div class="form-group">      
-        <label for="name">Name</label>
+        <label for="name">[[#{Password}]]</label>
         <input type="text" class="form-control form-control-lg" id="name" name="name" th:placeholder="*{account.name}" th:value="*{account.name}" th:field="*{account.name}">
       </div>
       
       <div class="form-group">      
-        <label for="surname">Surname</label>
+        <label for="surname">[[#{Surname}]]</label>
         <input type="text" class="form-control form-control-lg" id="surname" name="surname" th:placeholder="*{account.surname}" th:value="*{account.surname}" th:field="*{account.surname}">
       </div>
       
       <div class="form-group">      
-        <label for="email">Email</label>
+        <label for="email">[[#{Email}]]</label>
         <input type="text" class="form-control form-control-lg" id="email" name="email" th:placeholder="*{account.email}" th:value="*{account.email}" th:field="*{account.email}">
       </div>
       <div class="form-group">      
-        <label for="phone">PhoneNr</label>
+        <label for="phone">[[#{PhoneNr}]]</label>
         <input type="text" class="form-control form-control-lg" id="phone" name="phone" th:placeholder="*{account.phone}" th:value="*{account.phone}" th:field="*{account.phone}">
       </div>
       
 		<div class="form-group">
-		  <label for="gender">Gender</label>	
+		  <label for="gender">[[#{Gender}]]</label>	
 		  <div class="form-radio form-radio-flat">
 		    <label class="form-check-label">
 		      <input type="radio" class="form-check-inputform-control-lg" name="gender" id="gender" value="male" th:checked="*{account.gender == 'male'}" th:field="*{account.gender}"> Male <i class="input-helper"></i></label>
@@ -45,7 +45,7 @@
 		</div>
       
       <div class="form-group">
-        <label for="roles">Roles</label>
+        <label for="roles">[[#{Roles}]]</label>
         <input type="text" id="roles" name="rolez" data-role="tagsinput" class="badge badge-info" value="jQuery,Script,Net">
 
 		<script th:inline="javascript" > 	  
@@ -53,7 +53,7 @@
  	  	/*<![CDATA[*/
  	  		
   		var allRoles = new Array(/*[# th:each="role: ${allRoles}"]*/
-        	{"id":/*[[${role.id}]]*/ '',"name":/*[[${role.name}]]*/ ''},
+        	{"id":/*[[${role.id}]]*/ '',"name":/*[[#{__${role.name}__}]]*/ ''},
  	 	    /*[/]*/);
  	  	
 		var roles = new Bloodhound({
@@ -89,24 +89,20 @@
  	  	</script>
       </div>
       <div class="form-group">
-        <label for="age">Age</label>
+        <label for="age">[[#{Age}]]</label>
         <input type="number" name="age" class="form-control form-control-lg" id="age" th:placeholder="*{account.age}"  th:value="*{account.age}" th:field="*{account.age}">
       </div>
       <div class="form-group">
-        <label for="address">Address</label>
+        <label for="address">[[#{Address}]]</label>
         <input type="text" name="address" class="form-control form-control-lg" id="address" th:placeholder="*{account.age}"  th:value="*{account.age}" th:field="*{account.age}">
       </div>
       <div class="form-group">
-        <label for="city">City</label>
+        <label for="city">[[#{City}]]</label>
         <input type="text" name="city" class="form-control form-control-lg" id="city" th:placeholder="*{account.age}"  th:value="*{account.age}" th:field="*{account.age}">
       </div>
       <div class="form-group">
-        <label for="country">Country</label>
+        <label for="country">[[#{Country}]]</label>
         <input type="text" name="country" class="form-control form-control-lg" id="country" th:placeholder="*{account.age}"  th:value="*{account.age}" th:field="*{account.age}">
-      </div>
-      <div class="form-group">
-        <label for="exampleTextarea1">Textarea</label>
-        <textarea class="form-control"  name="textarea" id="exampleTextarea1" rows="2"></textarea>
       </div>
   </div>
 </div>

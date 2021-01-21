@@ -55,7 +55,10 @@ public class CustomerModelViewController {
 			.addControllerParam("viewType", Actions.VIEW.getValue())
 			.setViewModel(model)
 			.run(); // GetValuesForView
-
+		
+		if(modal) {
+			return "demo_1/pages/customer";
+		}
 
 		return "demo_1/pages/dashboard_customer";
 	}

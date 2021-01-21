@@ -1,0 +1,133 @@
+<div class="row" th:fragment="home">
+   <div class="col-md-8 grid-margin stretch-card">
+     <div class="card" >
+     	<div class="card-body">
+			<div class="card" >
+				<div class="card-body">
+					<div class="form-group">      
+				       <div class="d-flex flex-column flex-lg-row">
+				       	  <div class="data-wrapper d-flex mt-2 mt-lg-0">
+				    	  	<h3>[[#{Today}]]</h3>
+				    	  </div>
+				    	  <div class="ml-lg-auto">
+				        		
+						  </div>
+					    </div>
+				        <hr>
+				        <div class="row">
+        					<div class="col-md-12 grid-margin">
+        						<h4>[[#{Appointments}]]</h4>
+        						<div th:if="${appointmentList == null}" class="alert alert-warning alert-dismissible fade show" role="alert">
+								  <p th:utext="#{alert.noAppointmentToday}"></p>
+								  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								    <span aria-hidden="true">&times;</span>
+								  </button>
+								</div>
+        					</div>
+        					<div class="col-md-12 grid-margin" th:if="${appointmentList != null}">
+        						<table id="todaysAppointments" class="table table-hover" >
+									<thead>
+										<tr style="background:#ebf3ff">
+											<th>[[#{Time}]]</th>
+											<th>[[#{PatientName}]]</th>
+											<th>[[#{PatientSurname}]]</th>
+											<th><!-- Visit Now Action -->Action</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="appointment : ${appointmentList}">
+											<td>[[${#dates.format(appointment.appointmentDate, 'HH:mm')}]]</td>
+											<td>[[${appointment.customer.account.name}]]</td>
+											<td>[[${appointment.customer.account.surname}]]</td>
+											<td><a th:href="'/customer/'+${appointment.customer.id}+'/history/'+${appointment.customer.customerHistory.id}+'/record/create'" class="btn btn-primary btn-sm">[[#{action.visitNow}]]</a></td>
+											
+										</tr>
+									</tbody>
+								</table>
+        					</div>
+        				</div>
+			     	</div>
+			     	<div class="form-group">      
+				       <div class="d-flex flex-column flex-lg-row">
+				       	  <div class="data-wrapper d-flex mt-2 mt-lg-0">
+				    	  	<h4>[[#{Reminders}]]</h4>
+				    	  </div>
+				    	  <div class="ml-lg-auto">
+				        		
+						  </div>
+					    </div>
+					    <hr>
+				        <div class="row">
+        					<div class="col-md-12 grid-margin">
+        						<h4>[[#{followups}]]</h4>
+	       						<div class="alert alert-warning alert-dismissible fade show" role="alert">
+								  
+								  <p th:utext="#{alert.noFollowUps}">locale</p>
+								  
+								  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								    <span aria-hidden="true">&times;</span>
+								  </button>
+								</div>
+        					</div>
+        					<div class="col-md-12 grid-margin">
+        						
+        					</div>
+        				</div>
+			     	</div>
+				</div>
+			</div>
+     	</div>
+     </div>
+   </div>
+   <div class="col-md-4 grid-margin stretch-card">
+     <div class="card">
+       <div class="card-body d-flex flex-column">
+         <div class="wrapper">
+           <h3>[[#{Visits}]]</h3>
+   		 <hr>
+         </div>
+         
+		 <div class="row">
+
+   			<div class="col-md-12 grid-margin">
+   				<h4>[[#{last_10}]]</h4>
+   				<div th:if="${lastVisitList == null}" class="alert alert-warning alert-dismissible fade show" role="alert">
+				  <p th:utext="#{alert.noVisits}">locale</p>
+				  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				    <span aria-hidden="true">&times;</span>
+				  </button>
+				</div>
+   				<div class="col-md-12 grid-margin tbl-overflow" style="max-height: 25vh;" th:if="${lastVisitList != null}">
+      				<table id="todaysAppointments" class="table table-hover"  >
+						<thead>
+							<tr >
+								<th class="tbl-header" scope="col">[[#{Date}]]</th>
+								<th class="tbl-header" scope="col">[[#{PatientName}]]</th>
+								<th class="tbl-header" scope="col">[[#{Type}]]</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="record : ${lastVisitList}">
+								<td>[[${#dates.format(record.servicedate, 'dd/MM HH:mm')}]]</td>
+								<td>[[${record.history.customer.account.name}]]</td>
+								<td>[[${record.serviceType.name}]]</td>
+							</tr>
+						</tbody>
+					</table>
+     			  </div>
+   			</div>
+   			<div class="col-md-12 grid-margin">
+				<h4>[[#{ThisYear}]]</h4>
+				<canvas id="myChart"></canvas>
+   			</div>
+   		 </div>
+       </div>
+     </div>
+     <script th:inline="javascript">
+	 /*<![CDATA[*/
+		var visitsName = ""+ /*[[#{Visits}]]*/'';
+	 	var list =  [[${nrOfVisitsList}]];
+	 /*]]>*/
+     </script>
+   </div>
+</div>

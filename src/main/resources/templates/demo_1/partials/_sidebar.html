@@ -8,27 +8,27 @@
         </div>
         <div class="text-wrapper">
           <p class="profile-name">[[${#httpServletRequest.remoteUser}]]</p>
-          <p class="designation"><span th:each="role: ${currentRoles}" >[[${role.name}]] </span></p>
+          <p class="designation"><span th:each="role: ${currentRoles}" >[[#{__${role.name}__}]]</span></p>
         </div>
       </a>
     </li>
-    <li class="nav-item nav-category">Main Menu</li>
+    <li class="nav-item nav-category">[[#{MainMenu}]]</li>
     <li class="nav-item">
-      <a class="nav-link" href="/">
+      <a class="nav-link" href="/home">
         <i class="menu-icon typcn typcn-document-text"></i>
-        <span class="menu-title">Dashboard</span>
+        <span class="menu-title">[[#{Home}]]</span>
       </a>
     </li>
     <li class="nav-item" th:if="${currentRoles != null}">
       <a class="nav-link" href="/admin/personnel" th:if="${not currentRoles.?[name == 'ADMIN'].isEmpty()}">
         <i class="menu-icon typcn typcn-document-text" ></i>
-        <span class="menu-title">Personnel</span>
+        <span class="menu-title">[[#{Personnel}]]</span>
       </a>
     </li>
     <li class="nav-item" th:if="${currentRoles != null}">
       <a class="nav-link" href="/customer" th:if="${not currentRoles.?[name == 'ADMIN' or name == 'PERSONNEL'].isEmpty()}">
         <i class="menu-icon typcn typcn-document-text"></i>
-        <span class="menu-title">Patients</span>
+        <span class="menu-title">[[#{Customers}]]</span>
       </a>
     </li>
     <li class="nav-item">

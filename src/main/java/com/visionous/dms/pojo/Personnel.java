@@ -21,6 +21,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.visionous.dms.configuration.helpers.DmsCoreVersion;
 
 /**
@@ -41,14 +43,20 @@ public class Personnel implements Serializable{
 	@OneToOne(mappedBy = "personnel", optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name="id")
 	private Account account;
-    
+	
+	@JsonIgnore
     @OneToOne(mappedBy="supervisor", optional = true)
     private History customerHistory;
     
+    @JsonIgnore
     @OneToMany(mappedBy = "personnel", fetch = FetchType.EAGER)
 	@PrimaryKeyJoinColumn
 	private Set<Record> records;
 
+    @JsonIgnore
+    @OneToOne(mappedBy="personnel",  fetch = FetchType.LAZY)
+    private Appointment appointment;
+    
 	/**
 	 * @return the id
 	 */
@@ -118,5 +126,18 @@ public class Personnel implements Serializable{
 	public void setRecords(Set<Record> records) {
 		this.records = records;
 	}
-	
+
+	/**
+	 * @return the appointment
+	 */
+	public Appointment getAppointment() {
+		return appointment;
+	}
+
+	/**
+	 * @param appointment the appointment to set
+	 */
+	public void setAppointment(Appointment appointment) {
+		this.appointment = appointment;
+	}
 }

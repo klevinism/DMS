@@ -24,8 +24,8 @@
   			</section>
             <!-- Page Title Header Ends-->
             <div class="row">
-           
-              <div class="col-md-7 grid-margin stretch-card">
+                     
+              <div class="col-md-8 ">
               	<div class="card"> 
               		<div class="card-body"  th:with="historyUrl = 'demo_1/partials/history/modals/_'+${viewType}+' :: '+ ${viewType}">
 		              	<form th:action="@{/admin/history}" th:object="${selected}" method="post" >
@@ -38,9 +38,9 @@
 		  			</div>
 		  		</div>
               </div>
-			  <div class="col-md-5 grid-margin stretch-card">
+			  <div class="col-md-4 ">
 			  	<div class="row">
-				  	<div class="col-md-12 grid-margin">
+				  	<div class="col-md-12 grid-margin" >
 						<div class="card"> 
 	              			<div class="card-body" th:with="accountUrl = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType}">
 	              				<form th:action="@{/customer}" th:object="${selected}" method="post" >
@@ -53,13 +53,78 @@
 	              			</div>
 	              		</div>
 	              	</div>
+	              	<div class="col-md-12 grid-margin" th:if="${anamezeAllergies != null}">
+						<div class="card"> 
+	              			<div class="card-body" >
+								<div class="card"> 
+									<div class="card-body" >
+									<div class="d-flex flex-column flex-lg-row">
+										<div class="data-wrapper d-flex mt-2 mt-lg-0">
+											<a data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+												<div class="d-flex flex-column flex-lg-row">
+												  <h3 class=" text-danger">[[#{Alergies}]]</h3>
+												</div>
+											</a>
+										</div>
+										<div class="ml-lg-auto">
+											  <ul class="navbar-nav">
+											      <li class="nav-item dropdown">
+											        <a class="nav-link count-indicator" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+											          <i class="mdi mdi-alert-outline text-warning"></i>
+											          <span class="count ">[[${#lists.size(anamezeAllergies)}]]</span>
+											        </a>
+										          </li>
+										      </ul>
+										</div>
+									</div>
+									<hr/>
+								  	<div class="collapse"  id="collapseExample">										
+										<div class="d-flex flex-column flex-lg-row" th:each="allergies: ${anamezeAllergies}">
+											<div class="data-wrapper d-flex mt-2 mt-lg-0 ">
+												<p>
+								    				[[${allergies.questionForm.question}]]
+								  				</p>
+											</div>
+											<div class="ml-lg-auto ">
+												<p class="text-danger">
+								    				[[#{__${#strings.capitalize(allergies.response)}__}]]
+								  				</p>
+											</div>
+										</div>
+									</div>
+									</div>
+								</div>
+								
+	              			</div>
+	              		</div>
+	              	</div>
+	              	
 			  	</div>             
               </div>
-              
-            </div>
+			</div>
           </div>
           <!-- content-wrapper ends -->
-				  			
+	  	<!-- Appointment Modal -->
+		<div class="modal fade " id="appointmentModal" role="dialog"  aria-hidden="true">
+		  <div class="modal-dialog modal-lg">
+		    <!-- Modal content-->
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h4 class="modal-title" >[[#{NewAppointment}]]</h4>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+		      </div>
+			      <div class="modal-body" th:with="modalBodyUrl = 'demo_1/partials/booking/modals/_book :: book'">
+						<section  th:replace="__${modalBodyUrl}__">
+						  	<!-- partial:partials/_edit.html partial:partials/_delete.html-->
+						</section>
+			      </div>
+			      <div class="modal-footer" >
+			    	<button type="button" class="btn btn-secondary" data-dismiss="modal">[[#{Close}]]</button>
+			        <button id="bookSubmit" type="submit" class="btn btn-primary" onclick="book()" disabled>[[#{Book}]]</button>
+			      </div>
+		    </div>
+		  </div>
+		</div>
 		  
 		  <section th:replace="demo_1/partials/_footer :: footer">
 		  	<!-- partial:partials/_footer.html -->
@@ -70,7 +135,16 @@
         <!-- main-panel ends -->
         
       </div>
-      
+		<script th:inline="javascript">
+		/*<![CDATA[*/
+			var alertSuccess = ""+ /*[[#{table.lengthMenu}]]*/ '';
+			var tableZeroRecord = ""+ /*[[#{table.zeroRecord}]]*/ '';
+			var tableInfo = ""+ /*[[#{table.info}]]*/ '';
+			var tableInfoEmpty = ""+ /*[[#{table.infoEmpty}]]*/ '';
+			var tableInfoFiltered = ""+ /*[[#{table.infoFiltered}]]*/ '';
+			var tableSearch = ""+ /*[[#{table.search}]]*/ '';
+		/*]]>*/
+		</script>
       <!-- page-body-wrapper ends -->
     </div>
     <!-- container-scroller -->
@@ -79,12 +153,17 @@
     <script src="/assets/vendors/js/vendor.bundle.addons.js"></script>
     <!-- endinject -->
     <!-- Plugin js for this page-->
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>    
     <!-- End plugin js for this page-->
     <!-- inject:js -->
     <script src="/assets/js/shared/off-canvas.js"></script>
     <script src="/assets/js/shared/misc.js"></script>
     <!-- endinject -->
     <!-- Custom js for this page-->
+    
+    <script src="/assets/js/demo_1/booking.js"></script>
     <script src="/assets/js/demo_1/dashboard_selected_customer.js"></script>
     <!-- End custom js for this page-->
   

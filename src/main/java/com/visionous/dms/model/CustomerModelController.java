@@ -24,11 +24,15 @@ import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.Questionnaire;
+import com.visionous.dms.pojo.QuestionnaireResponse;
 import com.visionous.dms.pojo.Role;
 import com.visionous.dms.pojo.Teeth;
 import com.visionous.dms.repository.AccountRepository;
 import com.visionous.dms.repository.CustomerRepository;
 import com.visionous.dms.repository.HistoryRepository;
+import com.visionous.dms.repository.QuestionnaireRepository;
+import com.visionous.dms.repository.QuestionnaireResponseRepository;
 import com.visionous.dms.repository.RecordRepository;
 import com.visionous.dms.repository.RoleRepository;
 import com.visionous.dms.repository.TeethRepository;
@@ -46,6 +50,8 @@ public class CustomerModelController extends ModelController{
 	private AccountRepository accountRepository;
 	private RoleRepository roleRepository;
 	private RecordRepository recordRepository;
+	private QuestionnaireResponseRepository questionnaireResponseRepository;
+	private QuestionnaireRepository questionnaireRepository;
 
 	private TeethRepository teethRepository;
 	
@@ -59,11 +65,15 @@ public class CustomerModelController extends ModelController{
 	public CustomerModelController(CustomerRepository customerRepository, AccountRepository accountRepository, 
 			RoleRepository roleRepository,
 			TeethRepository teethRepository,
-			RecordRepository recordRepository) {
+			RecordRepository recordRepository,
+			QuestionnaireRepository questionnaireRepository,
+			QuestionnaireResponseRepository questionnaireResponseRepository) {
 		this.customerRepository = customerRepository;
 		this.accountRepository = accountRepository;	
 		this.teethRepository = teethRepository;
 		this.roleRepository = roleRepository;
+		this.questionnaireRepository = questionnaireRepository;
+		this.questionnaireResponseRepository = questionnaireResponseRepository;
 	}
 	
 	
@@ -170,10 +180,19 @@ public class CustomerModelController extends ModelController{
 			if(super.getAllControllerParams().get("id") != null) {
 				String customerId = super.getAllControllerParams().get("id").toString();
 				Optional<Customer> customer = customerRepository.findById(Long.valueOf(customerId));
-				customer.ifPresent(x -> super.addModelCollectionToView("selected", customer.get()));
+				customer.ifPresent(x -> {
+					Optional<Questionnaire> questionnaire = questionnaireRepository.findByCustomerId(x.getId());
+					questionnaire.ifPresent(singlequestionnaire -> {					
+						List<QuestionnaireResponse> questionnaireResponses = questionnaireResponseRepository.findAllByQuestionnaireIdAndResponse(singlequestionnaire.getId(), "yes");
+						super.addModelCollectionToView("anamezeAllergies", questionnaireResponses);
+					});
+					super.addModelCollectionToView("selected", x);
+				});
 				
 				List<Teeth> teeths = teethRepository.findAll();
 				super.addModelCollectionToView("listTeeth", teeths);		
+				
+				
 				
 				Iterable<Role> allRoles = roleRepository.findAll();
 				super.addModelCollectionToView("allRoles", allRoles);

@@ -34,7 +34,7 @@
 		  			
 			      <div >
 			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="'/admin'+${currentPage} + '/'">Close</a>
-			        <button type="submit" class="btn btn-primary">[[${#strings.capitalize(action)}]]</button>
+			        <button type="submit" class="btn btn-primary">[[#{__${#strings.capitalize(action)}__}]]</button>
 			      </div>
 		  			
 		  		</form>

@@ -21,6 +21,7 @@ import javax.persistence.SequenceGenerator;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.visionous.dms.configuration.helpers.DmsCoreVersion;
 
 /**
@@ -40,19 +41,26 @@ public class Customer implements Serializable{
     @SequenceGenerator(sequenceName = "customer_seq2", allocationSize = 1, name = "CUSTOMER_SEQ2")
     private Long id;
 	
-	@DateTimeFormat (pattern="dd-MMM-YYYY")
+	@DateTimeFormat (pattern="dd-MM-YYYY")
 	private Date registerdate;
-	
+
+	@JsonIgnore
 	@MapsId
 	@OneToOne(mappedBy = "customer", optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name="id")
 	private Account account;
     
+	@JsonIgnore
     @OneToOne(mappedBy="customer")
     private History customerHistory;
     
+	@JsonIgnore
     @OneToOne(mappedBy="customer")
     private Questionnaire questionnaire;
+    
+	@JsonIgnore
+    @OneToOne(mappedBy="customer")
+    private Appointment appointment;
     
 	/**
 	 * @return the id
@@ -136,6 +144,18 @@ public class Customer implements Serializable{
 		this.questionnaire = questionnaire;
 	}
 
-	
-	
+	/**
+	 * @return the appointment
+	 */
+	public Appointment getAppointment() {
+		return appointment;
+	}
+
+	/**
+	 * @param appointment the appointment to set
+	 */
+	public void setAppointment(Appointment appointment) {
+		this.appointment = appointment;
+	}
+
 }

@@ -2,27 +2,35 @@
   <div class="card-body">
       <div class="form-group" >      
        <div class="d-flex flex-column flex-lg-row">
-    	  <h4 class="card-title">Dental History</h4>
-
+       	  <div class="data-wrapper d-flex mt-2 mt-lg-0">
+    	  	<h4 class="card-title">[[#{DentalHistory}]]</h4>
+    	  </div>
+    	  <div class="ml-lg-auto" >
+        		<a href="#appointmentModal" class="btn btn-primary" data-toggle="modal" data-target="#appointmentModal">Book</a>
+		  </div>
 	    </div>
         <hr />
-        
         
         <div class="row" th:if="*{customerHistory == null || customerHistory.records == null}">
         	<div class="col-md-12 grid-margin"  >
         		<div class="d-flex flex-row align-items-center">
                   <i class="mdi mdi-alert icon-lg text-danger"></i>
-                  <p class="mb-0 ml-1"> <h4 class="text text-danger">There is no dental record for [[*{account.name}]]</h4></p>
+                  <p class="mb-0 ml-1"> <h4 class="text text-danger">[[#{alert.noDentalRecords}]] [[*{account.name}]]</h4></p>
                 </div>
         	</div>
         	<div class="col-md-12 grid-margin">
-        		<a th:href="'/customer/'+*{id}+'/questionnaire/create'" class="btn btn-primary btn-sm">New Visit</a>
+        		<a th:href="'/customer/'+*{id}+'/questionnaire/create'" class="btn btn-primary btn-sm">[[#{action.newVisit}]]</a>
         	</div>
         </div>
         
         <div class="row" th:if="*{customerHistory != null && customerHistory.records != null}">
         	<div class="col-md-12 grid-margin">
-        		<a th:href="'/customer/'+*{id}+'/history/'+*{customerHistory.id}+'/record/create'" class="btn btn-primary btn-sm">New Visit</a>
+	           	<div class="alert show" role="alert" id="alert" style="display:none">
+				    Alert warning
+				</div>
+        	
+        		<a th:href="'/customer/'+*{id}+'/history/'+*{customerHistory.id}+'/record/create'" class="btn btn-primary btn-sm">[[#{action.newVisit}]]</a>
+        		
         	</div>
         	
         	<div class="col-md-4 grid-margin"> 
@@ -32,18 +40,18 @@
         	</div>
         	
         	<div class="col-md-8 grid-margin">
-        		<table class="table table-hover" >
+        		<table  id="allRecords" class="table table-hover">
 					<thead>
 						<tr style="background:#ebf3ff">
-							<td>Service Date</td>
-							<td>Service Type</td>
-							<td>Tooth</td>
-							<td>Service Comment</td>
+							<th>[[#{ServiceDate}]]</th>
+							<th>[[#{ServiceType}]]</th>
+							<th>[[#{Tooth}]]</th>
+							<th>[[#{Comment}]]</th>
 						</tr>
 					</thead>
 					<tbody >
 						<tr class="clickable-tr"  th:each="record: *{customerHistory.records}" onmouseout="clearRecordSelection()" th:onmouseover="'hoverRecord(\'__${record.tooth.name}__\')'" onclick="window.location='/customer/history/record/'">
-							<td th:text="${#dates.format(record.servicedate, 'dd-MM-yyyy HH:mm')}"></td>
+							<td th:text="${#dates.format(record.servicedate, 'dd/MM/yyyy')}"></td>
 							<td th:text="${record.serviceType.name}"></td>
 							<td id="tooth" th:text="${record.tooth.name}"></td>
 							<td th:text="${record.servicecomment}"></td>
@@ -53,7 +61,11 @@
         	</div>
         </div>
         	
-		
+		<script>
+        $(document).ready(function() {
+            $('#allRecords').DataTable();
+        });
+        </script>
       </div>
     </div>
 

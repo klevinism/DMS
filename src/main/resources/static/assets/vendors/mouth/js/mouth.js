@@ -18,7 +18,7 @@ function onClickTooth(element){
 
 function selectSingleTooth(element){
 	clearAllTeethSelection();
-	element.setAttribute("fill-opacity","1");
+	element.setAttribute("fill-opacity","0.6");
 }
 
 function onRightClickTooth(element){

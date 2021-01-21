@@ -52,7 +52,7 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers(LandingPages.INDEX.value(), 
 						LandingPages.DASHBOARD.value()).access("hasRole('ROLE_USER')")
 				
-				.antMatchers(LandingPages.DEFAULT.value()).access("hasRole('ROLE_PERSONNEL') or hasRole('ROLE_ADMIN')")
+				.antMatchers(LandingPages.HOME.value()).access("hasRole('ROLE_PERSONNEL') or hasRole('ROLE_ADMIN')")
 				.antMatchers(LandingPages.CUSTOMER.value()).access("hasRole('ROLE_PERSONNEL') or hasRole('ROLE_ADMIN')")
 				.antMatchers(LandingPages.ADMIN.value()+"/**").access("hasRole('ROLE_ADMIN')") //all of Admin pages
 				.and()
@@ -60,9 +60,8 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
 				.usernameParameter("username")
 				.passwordParameter("password")
 				.loginPage(LandingPages.LOGIN.value())
-                .defaultSuccessUrl(LandingPages.DEFAULT.value())
+                .defaultSuccessUrl(LandingPages.HOME.value())
                 .failureUrl(LandingPages.LOGIN.value()+"?error")
-                .failureForwardUrl(LandingPages.LOGIN.value()+"?error")
                 .permitAll()
                 .and()
 			.logout()

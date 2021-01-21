@@ -10799,23 +10799,31 @@ ul {
 
 /*-------------------------------------------------------------------*/
 
-.avatar {
-	text-align:center;
+
+.px-2 {
+	border: 1px solid #bbbaba;
 }
-.avatar img {
-	width: 45%;
+
+.px-2.active, .px-2:hover {
+	
+    background: #ebf3ff;
+	cursor: pointer;
 }
 
 
-.clickable-tr{
-	cursor : pointer;
+/* Sticky table head */
+.tbl-header { 
+    position: sticky; 
+    background: #ebf3ff;
+    top:0; 
+} 
+.tbl-container { 
+    width: 600px; 
+    height: 300px; 
+    overflow: auto; 
+}
+.tbl-overflow {
+	overflow: auto;
 }
 
-.glyphicon {  margin-bottom: 10px;margin-right: 10px;}
-
-small {
-display: block;
-line-height: 1.428571429;
-color: #999;
-}
 /*# sourceMappingURL=style.css.map */

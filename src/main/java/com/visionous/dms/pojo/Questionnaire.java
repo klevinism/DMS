@@ -45,7 +45,7 @@ public class Questionnaire implements Serializable{
 	private Long customerId;
 
 	@Column(name="addeddate")
-	@DateTimeFormat (pattern="dd-MMM-YYYY")
+	@DateTimeFormat (pattern="dd-MM-YYYY")
 	private Date addedDate;
 	
 	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)

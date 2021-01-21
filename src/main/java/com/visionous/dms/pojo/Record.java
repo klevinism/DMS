@@ -58,7 +58,6 @@ public class Record  implements Serializable{
 	@Column(name = "toothid", insertable = false, updatable = false)
 	private Long toothId;
 	
-	
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL,  optional = false)
 	@JoinColumn(name="historyid")
 	private History history;

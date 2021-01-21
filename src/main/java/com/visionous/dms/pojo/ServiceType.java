@@ -36,7 +36,7 @@ public class ServiceType implements Serializable{
 	
 	private String name;
 
-	@DateTimeFormat (pattern="dd-MMM-YYYY")
+	@DateTimeFormat (pattern="dd-MM-YYYY")
 	private Date addeddate;
 	
 	@OneToOne(mappedBy = "serviceType", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)

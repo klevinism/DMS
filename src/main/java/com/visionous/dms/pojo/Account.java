@@ -25,6 +25,8 @@ import javax.validation.constraints.NotNull;
 import org.springframework.lang.Nullable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.visionous.dms.configuration.helpers.DmsCoreVersion;
 import com.visionous.dms.configuration.helpers.annotations.ValidEmail;
 
@@ -63,8 +65,9 @@ public class Account implements Serializable{
     private String username;
     
     private String password;
-
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL) 
     @JoinTable(name = "authority",
             joinColumns = @JoinColumn(name = "accountid"),
             inverseJoinColumns = @JoinColumn(name = "roleid"))
@@ -74,12 +77,14 @@ public class Account implements Serializable{
     
     private boolean active;
     
-    @OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonIgnore
+    @OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @PrimaryKeyJoinColumn
     @Nullable
 	private Personnel personnel;
-
-    @OneToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
+    @OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @PrimaryKeyJoinColumn
     @Nullable
 	private Customer customer;
@@ -319,9 +324,12 @@ public class Account implements Serializable{
 		this.customer = customer;
 	}
 
-	public String string() {
-		return "Account [id=" + id + ", name=" + name + ", surname=" + surname + "]";
+	@Override
+	public String toString() {
+		return "Account [id=" + id + ", name=" + name + ", surname=" + surname + ", age=" + age + ", gender=" + gender
+				+ ", email=" + email + ", phone=" + phone + ", username=" + username + ", password=" + password
+				+ ", enabled=" + enabled + ", active=" + active 
+				+ "]";
 	}
-	
-	
+
 }

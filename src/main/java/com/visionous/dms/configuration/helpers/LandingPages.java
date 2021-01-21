@@ -18,6 +18,7 @@ public enum LandingPages {
     LOGIN("/login"),
     LOGOUT("/logout"), 
     INDEX("/index"),
+    HOME("/home"),
     DASHBOARD("/dashboard"),
     ADMIN("/admin"),
     REGISTER("/register"),
@@ -45,8 +46,14 @@ public enum LandingPages {
     }
     
     public static List<HashMap<String, String>> buildBreadCrumb(HttpServletRequest request){
-    	String path = "home"+request.getRequestURI();
+    	String path = request.getRequestURI();
 		StringBuffer fullPath = request.getRequestURL();
+		
+		if(path.indexOf("/home") == -1) {
+			path = "home" + request.getRequestURI();
+		}else {
+			path = request.getRequestURI().substring(1);
+		}
 		
 		String domainPath = fullPath.substring(0, fullPath.indexOf(request.getRequestURI()));
 		

@@ -47,7 +47,7 @@ public class QuestionnaireForm implements Serializable{
 	private boolean multipleChoice;
 	
 	@Column(name="addeddate")
-	@DateTimeFormat (pattern="dd-MMM-YYYY")
+	@DateTimeFormat (pattern="dd-MM-YYYY")
 	private Date addedDate;
 	
 	@Valid

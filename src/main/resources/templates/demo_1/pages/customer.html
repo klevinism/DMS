@@ -29,15 +29,15 @@
                   <div class="card-body">
                     <div class="row">
                       <div class="col">
-                        <a class="btn btn-primary" th:href="${currentPage}+'/create'"> Add Customer</a>
+                        <a class="btn btn-primary" th:href="${currentPage}+'/create'"> [[#{action.add}]] [[#{Customer}]]</a>
                         <hr />
-                        <table class="table table-hover">
+                        <table id="patientTable" class="table table-hover">
 	                      <thead>
 	                        <tr>
 	                          <th><!-- Selection column --></th>
-	                          <th>Id</th>
-	                          <th>Username</th>
-	                          <th>Register Date</th>
+	                          <th>[[#{Id}]]</th>
+	                          <th>[[#{Username}]]</th>
+	                          <th>[[#{RegisterDate}]]</th>
 	                          <th><!-- Actions column --></th>
 	                        </tr>
 	                      </thead>
@@ -67,17 +67,17 @@
 	                          <td width="2%">
 	                          	
 	                              <div class="btn-group" style="display:none;" name="actionButton" th:id="'actionButton' + ${user.id}">
-									<a type="button" th:if="${customer.customerHistory}" th:href="'/customer/' + ${user.id} + '/history/' + ${user.id} + '/record'" class="btn btn-secondary btn-sm">Dental History</a>
+									<a type="button" th:if="${customer.customerHistory}" th:href="'/customer/' + ${user.id} + '/history/' + ${user.id} + '/record'" class="btn btn-secondary btn-sm">[[#{DentalHistory}]]</a>
 		                        	<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			                          	<span class="sr-only">Toggle Action</span>
-										<a class="btn btn-primary" th:href="'/customer/edit/' + ${user.id} " >Edit</a>
+										<a class="btn btn-primary" th:href="'/customer/edit/' + ${user.id} " >[[#{Edit}]]</a>
 			                        </button>
 			                        <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
-			                          <h6 class="dropdown-header">Quick Actions</h6>
-			                          <a class="dropdown-item" th:href="'/customer/' + ${user.id} + '/?modal=true&view=' + ${T(com.visionous.dms.configuration.helpers.Actions).EDIT} +'' ">Edit</a>
-			                          <a class="dropdown-item"  th:href="'/customer/' + ${user.id} + '/?modal=true&view=' + ${T(com.visionous.dms.configuration.helpers.Actions).DELETE} +'' ">Delete</a>
+			                          <h6 class="dropdown-header">[[#{QuickActions}]]</h6>
+			                          <a class="dropdown-item" th:href="'/customer/' + ${user.id} + '/?modal=true&view=' + ${T(com.visionous.dms.configuration.helpers.Actions).EDIT} +'' ">[[#{Edit}]]</a>
+			                          <a class="dropdown-item"  th:href="'/customer/' + ${user.id} + '/?modal=true&view=' + ${T(com.visionous.dms.configuration.helpers.Actions).DELETE} +'' ">[[#{Delete}]]</a>
 			                          <div class="dropdown-divider"></div>
-			                          <a class="dropdown-item" href="#">Change Permissions</a>
+			                          <a class="dropdown-item" href="#">[[#{ChangePermissions}]]</a>
 			                        </div>
 			                        
 			                      </div>
@@ -91,7 +91,30 @@
                 </div>
               </div>
             </div>
-            
+            <script th:inline="javascript">
+			 /*<![CDATA[*/
+				var tableLengthMenu = ""+ /*[[#{table.lengthMenu}]]*/ '';
+				var tableZeroRecord = ""+ /*[[#{table.zeroRecord}]]*/ '';
+				var tableInfo = ""+ /*[[#{table.info}]]*/ '';
+				var tableInfoEmpty = ""+ /*[[#{table.infoEmpty}]]*/ '';
+				var tableInfoFiltered = ""+ /*[[#{table.infoFiltered}]]*/ '';
+				var tableSearch = ""+ /*[[#{table.search}]]*/ '';
+			 /*]]>*/
+		    </script>
+	        <script>
+		        $(document).ready(function() {
+		            $('#patientTable').DataTable({
+		            	"oLanguage": {
+		            		  "sLengthMenu": tableLengthMenu,
+		            		  "sZeroRecords": tableZeroRecord,
+		            		  "sInfo": tableInfo,
+		            		  "sInfoEmpty": tableInfoEmpty,
+		            		  "sInfoFiltered": tableInfoFiltered,
+		            		  "sSearch": tableSearch
+		            		}
+		            });
+		        });
+	        </script>
           </div>
           <!-- content-wrapper ends -->
 		  
@@ -119,7 +142,9 @@
     <script src="/assets/vendors/js/vendor.bundle.addons.js"></script>
     <!-- endinject -->
     <!-- Plugin js for this page-->
-        <script type="text/javascript" src="/assets/vendors/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>    
+    <script type="text/javascript" src="/assets/vendors/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>    
     <!-- End plugin js for this page-->
     <!-- inject:js -->
     <script src="/assets/js/shared/off-canvas.js"></script>
