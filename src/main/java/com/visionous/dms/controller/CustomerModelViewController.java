@@ -45,7 +45,7 @@ public class CustomerModelViewController {
 	 * @return
 	 */
 	@GetMapping("/dashboard/{id}")
-	public String customerView(@PathVariable("id") Long id, Model model) {
+	public String customerDashboard(@PathVariable("id") Long id, Model model) {
 
 		customerModelController.init() // Re-initialize Model
 			.addControllerParam("id", id)
@@ -117,7 +117,7 @@ public class CustomerModelViewController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/edit")
+	@GetMapping("/edit/{id}")
 	public String customerEdit(@PathVariable("id") Long id, Model model) {
 		
 		customerModelController.init()
@@ -133,7 +133,23 @@ public class CustomerModelViewController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/delete")
+	@GetMapping("/view/{id}") 
+	public String customerView(@PathVariable("id") Long id, Model model) {
+		
+		customerModelController.init()
+			.addControllerParam("id",id)
+			.addControllerParam("viewType", Actions.VIEW.getValue())
+			.setViewModel(model)
+			.run(); // GetValuesForView
+		
+		return "demo_1/pages/view_customer";
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/delete/{id}")
 	public String customerDelete(@Valid @PathVariable("id") Long id, Model model) {
 		
 		customerModelController.init()

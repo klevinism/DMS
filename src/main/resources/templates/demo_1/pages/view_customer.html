@@ -25,25 +25,16 @@
             <!-- Page Title Header Ends-->
             <div class="row">
               <div class="col-md-8 grid-margin stretch-card"  th:with="accountUrl = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType},
-              															bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
+              														bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
               	<div class="card"> 
               		<div class="card-body">
-              	<form th:action="@{/admin/personnel}" th:object="${selected}" method="post" >
-              	
-          			<section th:replace="__${accountUrl}__">
-					  	<!-- partial:partials/_footer.html -->
-		  			</section>
-
-          			<section th:replace="__${bodyUrl}__">
-					  	<!-- partial:partials/_footer.html -->
-		  			</section>
-		  			
-			      <div >
-			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="'/admin'+${currentPage} + '/'">Close</a>
-			        <button type="submit" class="btn btn-primary">[[${#strings.capitalize(viewType)}]]</button>
-			      </div>
-		  			
-		  		</form>
+	              	<form th:action="@{/admin/__${currentPage}__}" th:object="${selected}" method="post" >
+		              	
+	              		<section th:replace="__${accountUrl}__">
+						  	<!-- partial:partials/_footer.html -->
+			  			</section>
+			  						  			
+			  		</form>
 		  			</div>
 		  		</div>
               </div>

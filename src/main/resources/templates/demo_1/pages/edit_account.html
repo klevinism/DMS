@@ -33,7 +33,7 @@
 		  			</section>
 		  			
 			      <div >
-			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="'/admin'+${currentPage} + '/'">Close</a>
+			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="'/admin'+${currentPage} + '/view/' + ${selected.id}">Close</a>
 			        <button type="submit" class="btn btn-primary">[[#{__${#strings.capitalize(action)}__}]]</button>
 			      </div>
 		  			

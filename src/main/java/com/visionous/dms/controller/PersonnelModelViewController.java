@@ -41,7 +41,7 @@ public class PersonnelModelViewController {
 	 */
 	@GetMapping("/{id}")
 	public String personnelEdit(@PathVariable("id") Long id,
-			@RequestParam(name="view", required=true) Actions view,
+			@RequestParam(name="view", required=false) Actions view,
 			@RequestParam(name="modal", required=false) boolean modal,
 			Model model) {
 
@@ -88,6 +88,22 @@ public class PersonnelModelViewController {
 			.run(); // GetValuesForView
 		
 		return "demo_1/pages/personnel"; 
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/view/{id}")
+	public String personnelView(@Valid @PathVariable("id") Long id, Model model) {
+		
+		personnelModelController.init()
+			.addControllerParam("id",id)
+			.addControllerParam("viewType", Actions.VIEW.getValue())
+			.setViewModel(model)
+			.run(); // GetValuesForView
+		
+		return "demo_1/pages/view_personnel";
 	}
 	
 	/**

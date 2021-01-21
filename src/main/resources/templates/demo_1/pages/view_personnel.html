@@ -22,27 +22,26 @@
             <section th:replace="demo_1/partials/_breadcrumb :: breadcrumb">
 			  	<!-- partial:partials/_breadcrumb.html -->
   			</section>
+            
             <!-- Page Title Header Ends-->
             <div class="row">
               <div class="col-md-8 grid-margin stretch-card"  th:with="accountUrl = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType},
-              															bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
+              														bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
               	<div class="card"> 
               		<div class="card-body">
               	<form th:action="@{/admin/personnel}" th:object="${selected}" method="post" >
               	
-          			<section th:replace="__${accountUrl}__">
+              		<section th:replace="__${accountUrl}__">
 					  	<!-- partial:partials/_footer.html -->
 		  			</section>
-
+		  			
+		  			<hr />
+		  			
           			<section th:replace="__${bodyUrl}__">
 					  	<!-- partial:partials/_footer.html -->
 		  			</section>
 		  			
-			      <div >
-			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="'/admin'+${currentPage} + '/'">Close</a>
-			        <button type="submit" class="btn btn-primary">[[${#strings.capitalize(viewType)}]]</button>
-			      </div>
-		  			
+
 		  		</form>
 		  			</div>
 		  		</div>
@@ -77,5 +76,6 @@
     <!-- Custom js for this page-->
     <script src="/assets/js/demo_1/personnel.js"></script>
     <!-- End custom js for this page-->
+  
   </body>
 </html>
