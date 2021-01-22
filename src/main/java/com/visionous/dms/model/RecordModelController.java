@@ -26,6 +26,8 @@ import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.History;
 import com.visionous.dms.pojo.Personnel;
+import com.visionous.dms.pojo.Questionnaire;
+import com.visionous.dms.pojo.QuestionnaireResponse;
 import com.visionous.dms.pojo.Record;
 import com.visionous.dms.pojo.Role;
 import com.visionous.dms.pojo.ServiceType;
@@ -34,6 +36,8 @@ import com.visionous.dms.repository.AccountRepository;
 import com.visionous.dms.repository.CustomerRepository;
 import com.visionous.dms.repository.HistoryRepository;
 import com.visionous.dms.repository.PersonnelRepository;
+import com.visionous.dms.repository.QuestionnaireRepository;
+import com.visionous.dms.repository.QuestionnaireResponseRepository;
 import com.visionous.dms.repository.RecordRepository;
 import com.visionous.dms.repository.ServiceTypeRepository;
 import com.visionous.dms.repository.TeethRepository;
@@ -55,6 +59,8 @@ public class RecordModelController extends ModelControllerImpl {
 	private TeethRepository teethRepository;
 	private AccountRepository accountRepository;
 	private PersonnelRepository personnelRepository;
+	private QuestionnaireResponseRepository questionnaireResponseRepository;
+	private QuestionnaireRepository questionnaireRepository;
 
 	/**
 	 * 
@@ -63,7 +69,8 @@ public class RecordModelController extends ModelControllerImpl {
 	public RecordModelController(RecordRepository recordRepository, CustomerRepository customerRepository, 
 			HistoryRepository historyRepository, ServiceTypeRepository serviceTypeRepository,
 			TeethRepository teethRepository, AccountRepository accountRepository,
-			PersonnelRepository personnelRepository) {
+			PersonnelRepository personnelRepository, QuestionnaireResponseRepository questionnaireResponseRepository,
+			QuestionnaireRepository questionnaireRepository) {
 		this.recordRepository = recordRepository;
 		this.customerRepository = customerRepository;
 		this.historyRepository = historyRepository;
@@ -71,6 +78,8 @@ public class RecordModelController extends ModelControllerImpl {
 		this.teethRepository = teethRepository;
 		this.accountRepository = accountRepository;
 		this.personnelRepository = personnelRepository;
+		this.questionnaireResponseRepository = questionnaireResponseRepository;
+		this.questionnaireRepository = questionnaireRepository;
 	}
 	
 	/**
@@ -154,11 +163,20 @@ public class RecordModelController extends ModelControllerImpl {
 				Optional<Account> loggedInAccount = accountRepository.findByUsername(currentAccountDetails.getUsername());
 				
 				Optional<Customer> recordCustomer = customerRepository.findById(customerId);
+				recordCustomer.ifPresent(x -> {
+					Optional<Questionnaire> questionnaire = questionnaireRepository.findByCustomerId(x.getId());
+					questionnaire.ifPresent(singlequestionnaire -> {					
+						List<QuestionnaireResponse> questionnaireResponses = questionnaireResponseRepository.findAllByQuestionnaireIdAndResponse(singlequestionnaire.getId(), "yes");
+						super.addModelCollectionToView("anamezeAllergies", questionnaireResponses);
+					});
+				});
 				recordCustomer.ifPresent(customer -> {
 					Optional<History> historyCustomer = historyRepository.findById(historyId);
 					
+					
 					historyCustomer.ifPresent(history-> {
 						super.addModelCollectionToView("selectedHistory", history);
+						
 						Record record = new Record();
 						record.setHistory(history);
 						record.setHistoryId(history.getId());
