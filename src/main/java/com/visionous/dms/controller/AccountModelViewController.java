@@ -44,11 +44,11 @@ public class AccountModelViewController {
 	 * @return
 	 */
 	@PostMapping("") 
-	public String accountPost(@ModelAttribute Account account, @RequestParam String[] rolez,
+	public String accountPost(@ModelAttribute Account account, @RequestParam Long[] rolez,
 			@RequestParam(required = false) String action,
 			Model model) {
 		
-		accountModelController.init()
+		accountModelController.init() 
 			.addControllerParam("action", action)
 			.addControllerParam("roles", rolez)
 			.addModelAttributes(account)
@@ -82,4 +82,20 @@ public class AccountModelViewController {
 		return "demo_1/pages/edit_account";
 	}
 	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/view/{id}")
+	public String accountView(@Valid @PathVariable("id") Long id, Model model) {
+		
+		accountModelController.init()
+			.addControllerParam("id",id)
+			.addControllerParam("action", Actions.VIEW)
+			.addControllerParam("viewType", Actions.VIEW)
+			.setViewModel(model)
+			.run(); // GetValuesForView
+		
+		return "demo_1/pages/view_account";
+	}
 }

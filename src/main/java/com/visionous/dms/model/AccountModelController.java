@@ -21,6 +21,7 @@ import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Account;
+import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Role;
 import com.visionous.dms.repository.AccountRepository;
@@ -39,6 +40,8 @@ public class AccountModelController extends ModelController{
 
 	private AccountRepository accountRepository;
 	private RoleRepository roleRepository;
+	private PersonnelRepository personnelRepository;
+	private CustomerRepository customerRepository;
 	
 	private MessageSource messageSource;
 	
@@ -49,10 +52,15 @@ public class AccountModelController extends ModelController{
 	 * @param personnelRepository
 	 */
 	@Autowired
-	public AccountModelController(AccountRepository accountRepository, RoleRepository roleRepository, MessageSource messageSource) {
+	public AccountModelController(AccountRepository accountRepository, RoleRepository roleRepository, MessageSource messageSource, 
+			PersonnelRepository personnelRepository,
+			CustomerRepository customerRepository) {
+		
 		this.accountRepository = accountRepository;
 		this.roleRepository = roleRepository;
 		this.messageSource = messageSource;
+		this.personnelRepository = personnelRepository;
+		this.customerRepository = customerRepository;
 	}
 	
 	/**
@@ -87,9 +95,9 @@ public class AccountModelController extends ModelController{
 		if(action.equals(Actions.DELETE.getValue())) {
 			
 		}else if(action.equals(Actions.EDIT.getValue()) ) {
-				String[] roleids = (String[]) super.getAllControllerParams().get("roles");
-				for(String roleName: roleids) {
-					roleRepository.findByName(roleName).ifPresent(role -> {
+				Long[] roleids = (Long[]) super.getAllControllerParams().get("roles");
+				for(Long roleId: roleids) {
+					roleRepository.findById(roleId).ifPresent(role -> {
 						newAccount.addRole(role);
 					});
 				}
@@ -120,8 +128,8 @@ public class AccountModelController extends ModelController{
 		}else if(viewType.equals(Actions.EDIT.getValue())) {
 
 			Account currentLoggedInAccount=AccountUtil.currentLoggedInUser();
-			Long personnelId = Long.valueOf(super.getAllControllerParams().get("id").toString());
-			Optional<Account> oldAccount = accountRepository.findById(personnelId);
+			Long accountId = Long.valueOf(super.getAllControllerParams().get("id").toString());
+			Optional<Account> oldAccount = accountRepository.findById(accountId);
 
 			Role[] loggedInRoles = currentLoggedInAccount.getRoles().stream().toArray(Role[]::new);					
 			Role[] oldRoles = oldAccount.get().getRoles().stream().toArray(Role[]::new);
@@ -145,7 +153,15 @@ public class AccountModelController extends ModelController{
 					super.addModelCollectionToView("allRoles", allRoles);
 			}
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
-			
+			if(super.getAllControllerParams().get("id") != null) {
+				Long accountId = Long.valueOf(super.getAllControllerParams().get("id").toString());
+				
+				//Either personnel or customer. not both
+				Optional<Personnel> selectedPersonnel = personnelRepository.findById(accountId);
+				selectedPersonnel.ifPresent(personnel -> super.addModelCollectionToView("selected", personnel));
+				Optional<Customer> selectedCustomer = customerRepository.findById(accountId);
+				selectedCustomer.ifPresent(customer -> super.addModelCollectionToView("selected", customer));
+			}
 		}
 		
 	}
@@ -162,7 +178,7 @@ public class AccountModelController extends ModelController{
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
 		
 		Iterable<Account> personnels = accountRepository.findAll();
-		super.addModelCollectionToView("personnelList", personnels);
+		super.addModelCollectionToView("accountList", personnels);
 	}
 	
 	@Override

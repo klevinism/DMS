@@ -81,7 +81,7 @@
  	  	<script >
 
  	  	$("#roles").tagsinput({
-	 	  	  itemValue: 'name',
+	 	  	  itemValue: 'id',
 	 	  	  itemText: 'name',
 			  tagClass: function(item) {
 				return 'badge badge-info';
@@ -101,7 +101,7 @@
  	  	/*<![CDATA[*/
 		
  	    /*[# th:each="role: *{roles}"]*/
- 	        $("#roles").tagsinput('add',{"id":/*[[${role.id}]]*/ '',"name":/*[[${role.name}]]*/ ''}  );
+ 	        $("#roles").tagsinput('add',{"id":/*[[${role.id}]]*/ '',"name":/*[[#{__${role.name}__}]]*/ ''}  );
  	    /*[/]*/
  	    
  		/*]]>*/
