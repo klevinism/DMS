@@ -17,6 +17,14 @@ public class AccountUtil {
 	}
 	
 	public static AccountUserDetail currentLoggedInUser(){
-		return (AccountUserDetail)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		AccountUserDetail loggedIn = null;
+		
+		try {
+			loggedIn = (AccountUserDetail)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return loggedIn;
 	}
 }
