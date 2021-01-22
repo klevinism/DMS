@@ -129,7 +129,33 @@
             
                   </div>
                 </div>
+                
               </div>
+              
+              <div class="col-md-6 ">
+			  	<div class="row">
+	              <div class="col-md-12 grid-margin" th:if="${selectedHistory}">
+					<div class="card"> 
+            			<div class="card-body" th:with="accountUrl = 'demo_1/partials/account/modals/_view :: view'">
+	             			<form th:action="@{/customer}" th:object="${selectedHistory.customer}" method="post" >
+			              		<section th:replace="__${accountUrl}__">
+								  	<!-- partial:partials/_accountUrl.html -->
+					  			</section>
+					  		</form>
+	           			</div>
+            		</div>
+	              </div>
+	              <div class="col-md-12 grid-margin" th:if="${anamezeAllergies != null}" >
+	              
+					<section th:replace="demo_1/partials/widgets/customer/_alergies :: alergies">
+						<!-- partial:partials/_accountUrl.html -->
+					</section>
+							
+		          </div>
+			  	</div>
+			  </div>
+
+	          
             </div>
 
           </div>
