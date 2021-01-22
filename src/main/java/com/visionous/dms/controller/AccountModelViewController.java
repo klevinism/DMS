@@ -8,6 +8,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,18 +46,23 @@ public class AccountModelViewController {
 	 * @return
 	 */
 	@PostMapping("") 
-	public String accountPost(@ModelAttribute Account account, @RequestParam Long[] rolez,
-			@RequestParam(required = false) String action,
+	public String accountPost(@Valid Account account, BindingResult bindingResult,
+			@RequestParam Long[] rolez,@RequestParam(required = false) String action,
 			Model model) {
 		
 		accountModelController.init() 
 			.addControllerParam("action", action)
 			.addControllerParam("roles", rolez)
 			.addModelAttributes(account)
-			.addControllerParam("viewType", Actions.VIEW)
+			.addBindingResult(bindingResult)
+			.addControllerParam("viewType", Actions.VIEW) 
 			.setViewModel(model)
 			.run(); // GetValuesForView
-
+		
+		if(bindingResult.hasErrors()) {
+			return "demo_1/pages/"+action.toLowerCase()+"_account";
+		}
+		
 		if(account.getCustomer() != null) {
 			return "redirect:/customer/dashboard/"+account.getId();
 		}else if(account.getPersonnel() != null) {

@@ -27,7 +27,7 @@
               <div class="col-md-8 grid-margin stretch-card"  th:with="bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
               	<div class="card"> 
               		<div class="card-body">
-              	<form th:action="@{/account}" th:object="${selected}" method="post" >
+              	<form th:action="@{/account}" th:object="${account}" method="post" >
               		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).EDIT}">
               		
           			<section th:replace="__${bodyUrl}__">
@@ -35,7 +35,7 @@
 		  			</section>
 		  			
 			      <div th:if="${errorEditingAccount == null}">
-			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="${currentPage} + '/view/' + ${selected.id}">Close</a>
+			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="${currentPage} + '/view/' + ${account.id}">Close</a>
 			        <button type="submit" class="btn btn-primary">[[#{__${#strings.capitalize(viewType)}__}]]</button>
 			      </div>
 		  			

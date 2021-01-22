@@ -6,6 +6,8 @@ package com.visionous.dms.model;
 import java.util.Map;
 
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 
 /**
  * @author delimeta
@@ -51,4 +53,10 @@ public interface ModelController {
 	 * @return
 	 */
 	ModelController setViewModel(Model model);
+
+	/**
+	 * @param bindingResult
+	 * @return
+	 */
+	ModelController addBindingResult(BindingResult bindingResult);
 }

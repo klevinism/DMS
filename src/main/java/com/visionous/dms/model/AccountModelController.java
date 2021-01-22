@@ -70,20 +70,25 @@ public class AccountModelController extends ModelControllerImpl{
 	 */
 	@Override
 	public void run() {
-		
-		// If action occurred, persist object to db
-		if(super.getAllControllerParams().containsKey("modelAttribute")) {
-			if(super.getAllControllerParams().containsKey("action")) {
-				persistModelAttributes(
-						(Account) super.getAllControllerParams().get("modelAttribute"), 
-						super.getAllControllerParams().get("action").toString().toLowerCase()
-						);
+
+			// If action occurred, persist object to db
+			if(super.getAllControllerParams().containsKey("modelAttribute")) {
+					if(super.getAllControllerParams().containsKey("action")) {
+						if(super.hasResultBindingError()) {
+							super.setControllerParam("viewType", super.getAllControllerParams().get("action").toString().toLowerCase());
+						}else {
+						persistModelAttributes(
+								(Account) super.getAllControllerParams().get("modelAttribute"), 
+								super.getAllControllerParams().get("action").toString().toLowerCase()
+								);
+						}
+					}
 			}
-		}
-		
+	
+	
 		// Build view
 		this.buildAccountViewModel(super.getAllControllerParams().get("viewType").toString().toLowerCase());
-		
+			
 		// Build global view model for Personnel
 		this.buildAccountGlobalViewModel();
 	}
@@ -126,33 +131,34 @@ public class AccountModelController extends ModelControllerImpl{
 		if(viewType.equals(Actions.CREATE.getValue())) {
 			Personnel newPersonnel = new Personnel();
 			newPersonnel.setAccount(new Account());
-			super.addModelCollectionToView("selected", newPersonnel);
+			super.addModelCollectionToView("account", newPersonnel);
 		}else if(viewType.equals(Actions.EDIT.getValue())) {
-
-			Account currentLoggedInAccount=AccountUtil.currentLoggedInUser();
-			Long accountId = Long.valueOf(super.getAllControllerParams().get("id").toString());
-			Optional<Account> oldAccount = accountRepository.findById(accountId);
-
-			Role[] loggedInRoles = currentLoggedInAccount.getRoles().stream().toArray(Role[]::new);					
-			Role[] oldRoles = oldAccount.get().getRoles().stream().toArray(Role[]::new);
-			
-			if(oldRoles.length > 0) {
-				if((loggedInRoles[0].getName().equals("CUSTOMER") && !oldRoles[0].getName().equals("CUSTOMER")) || 
-						(loggedInRoles[0].getName().equals("PERSONNEL") && (oldRoles[0].getName().equals("ADMIN") || oldRoles[0].getName().equals("PERSONNEL")))) {
-					
-			        String errorEditingAccount = messageSource.getMessage("alert.errorEditingAccount", null, LocaleContextHolder.getLocale());
-					super.addModelCollectionToView("errorEditingAccount", errorEditingAccount);
-				}else {				
-					oldAccount.ifPresent(account -> super.addModelCollectionToView("selected", account));
-					
-					Iterable<Role> allRoles= roleRepository.findAll();
-					super.addModelCollectionToView("allRoles", allRoles);
+			if(super.getAllControllerParams().get("id") != null) {
+				Account currentLoggedInAccount=AccountUtil.currentLoggedInUser();
+				Long accountId = Long.valueOf(super.getAllControllerParams().get("id").toString());
+				Optional<Account> oldAccount = accountRepository.findById(accountId);
+	
+				Role[] loggedInRoles = currentLoggedInAccount.getRoles().stream().toArray(Role[]::new);					
+				Role[] oldRoles = oldAccount.get().getRoles().stream().toArray(Role[]::new);
+				
+				if(oldRoles.length > 0) {
+					if((loggedInRoles[0].getName().equals("CUSTOMER") && !oldRoles[0].getName().equals("CUSTOMER")) || 
+							(loggedInRoles[0].getName().equals("PERSONNEL") && (oldRoles[0].getName().equals("ADMIN") || oldRoles[0].getName().equals("PERSONNEL")))) {
+						
+				        String errorEditingAccount = messageSource.getMessage("alert.errorEditingAccount", null, LocaleContextHolder.getLocale());
+						super.addModelCollectionToView("errorEditingAccount", errorEditingAccount);
+					}else {				
+						oldAccount.ifPresent(account -> super.addModelCollectionToView("account", account));
+						
+						Iterable<Role> allRoles= roleRepository.findAll();
+						super.addModelCollectionToView("allRoles", allRoles);
+					}
+				}else {
+						oldAccount.ifPresent(account -> super.addModelCollectionToView("account", account));
+	
+						Iterable<Role> allRoles= roleRepository.findAll(); 
+						super.addModelCollectionToView("allRoles", allRoles);
 				}
-			}else {
-					oldAccount.ifPresent(account -> super.addModelCollectionToView("selected", account));
-
-					Iterable<Role> allRoles= roleRepository.findAll(); 
-					super.addModelCollectionToView("allRoles", allRoles);
 			}
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
 			if(super.getAllControllerParams().get("id") != null) {
@@ -176,7 +182,6 @@ public class AccountModelController extends ModelControllerImpl{
 				((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest())
 		);
 		super.addModelCollectionToView("currentPage", currentPage);
-			
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
 		
 		Iterable<Account> personnels = accountRepository.findAll();

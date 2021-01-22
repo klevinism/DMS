@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 
 /**
  * @author delimeta
@@ -19,6 +21,8 @@ public class ModelControllerImpl implements ModelController{
 	 */
 	private Map<String, Object> paramMap;
 	private Model viewModel;
+	
+	private boolean resultBindingError;
 	
 	/**
 	 * @param model
@@ -130,5 +134,20 @@ public class ModelControllerImpl implements ModelController{
 		addModelCollectionToView(object.getClass().getSimpleName(), object);
 		return this;
 	}
-	
+
+	@Override
+	public ModelController addBindingResult(BindingResult bindingResult) {
+		if(bindingResult.hasErrors()) {
+			System.out.println(bindingResult.getFieldErrorCount());
+			this.resultBindingError = true;
+		}
+		return this;
+	}
+
+	/**
+	 * @return the resultBindingError
+	 */
+	public boolean hasResultBindingError() {
+		return resultBindingError;
+	}
 }

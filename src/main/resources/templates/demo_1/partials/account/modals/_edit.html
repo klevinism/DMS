@@ -1,4 +1,5 @@
 <div class="card" th:fragment="edit">
+
   <div th:if="${errorEditingAccount != null}">[[${errorEditingAccount}]]</div>
   <div class="card-body" th:if="${errorEditingAccount == null}">
     <h4 class="card-title">[[#{EditAccount}]] <u>[[*{username}]]</u></h4>
@@ -14,27 +15,30 @@
 	  
       <div class="form-group">      
         <label for="username">[[#{Username}]]</label>
-        <input type="text" class="form-control form-control-lg" id="username" name="username" th:placeholder="*{username}" th:value="*{username}" th:field="*{username}">
+        <input type="text" class="form-control form-control-lg"  th:placeholder="*{username}" th:value="*{username}" th:field="*{username}">
+        <p class="error" th:if="${#fields.hasErrors('username')}" th:errors="${username}">error</p>
       </div>
       
       <div class="form-group">      
         <label for="password">[[#{Password}]]</label>
-        <input type="password" class="form-control form-control-lg" id="password" name="password" th:placeholder="*{password}" th:value="*{password}" th:field="*{password}">
+        <input type="password" class="form-control form-control-lg" th:placeholder="*{password}" th:value="*{password}" th:field="*{password}">
       </div>
 
       <div class="form-group">      
         <label for="name">[[#{Name}]]</label>
-        <input type="text" class="form-control form-control-lg" id="name" name="name" th:placeholder="*{name}" th:value="*{name}" th:field="*{name}">
+        <input type="text" class="form-control form-control-lg" th:placeholder="*{name}" th:value="*{name}" th:field="*{name}">
       </div>
       
       <div class="form-group">      
         <label for="surname">[[#{Surname}]]</label>
-        <input type="text" class="form-control form-control-lg" id="surname" name="surname" th:placeholder="*{surname}" th:value="*{surname}" th:field="*{surname}">
+        <input type="text" class="form-control form-control-lg" th:placeholder="*{surname}" th:value="*{surname}" th:field="*{surname}">
       </div>
       
       <div class="form-group">      
         <label for="email">[[#{Email}]]</label>
-        <input type="text" class="form-control form-control-lg" id="email" name="email" th:placeholder="*{email}" th:value="*{email}" th:field="*{email}">
+        <input type="text" class="form-control form-control-lg" th:placeholder="*{email}" th:value="*{email}" th:field="*{email}">
+                        <p class="alert alert-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+
       </div>
       
       <div class="form-group">      

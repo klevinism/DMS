@@ -18,6 +18,7 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -55,6 +56,7 @@ public class Account implements Serializable{
 	
 	private String gender;
 	
+	@Valid
 	@ValidEmail(message = "Email must be valid, example@example.com")
     @NotNull
     @NotEmpty
