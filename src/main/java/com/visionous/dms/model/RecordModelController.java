@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -40,8 +41,8 @@ import com.visionous.dms.repository.TeethRepository;
  * @author delimeta
  *
  */
-@Service
-public class RecordModelController extends ModelController {
+@Component
+public class RecordModelController extends ModelControllerImpl {
 	private final Log logger = LogFactory.getLog(RecordModelController.class);
 	
 	private static String currentPage = LandingPages.RECORD.value();
