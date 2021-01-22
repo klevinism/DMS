@@ -46,13 +46,12 @@ public class AccountModelViewController {
 	 * @return
 	 */
 	@PostMapping("") 
-	public String accountPost(@Valid Account account, BindingResult bindingResult,
-			@RequestParam Long[] rolez,@RequestParam(required = false) String action,
+	public String accountPost(@Valid Account account, BindingResult bindingResult, 
+			@RequestParam(required = false) String action,
 			Model model) {
 		
 		accountModelController.init() 
 			.addControllerParam("action", action)
-			.addControllerParam("roles", rolez)
 			.addModelAttributes(account)
 			.addBindingResult(bindingResult)
 			.addControllerParam("viewType", Actions.VIEW) 

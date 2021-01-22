@@ -1,6 +1,8 @@
 package com.visionous.dms.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -40,7 +42,7 @@ public class AccountUserDetailService implements UserDetailsService{
 	 */
 	@Override
 	public UserDetails loadUserByUsername(String username){
-		Set<GrantedAuthority> authorities = new HashSet<>();
+		List<GrantedAuthority> authorities = new ArrayList<>();
 		AccountUserDetail accountUserDetail = null;
 		Optional<Account> acc = accountRepository.findByUsernameOrEmail(username, username); 
 		
@@ -58,19 +60,19 @@ public class AccountUserDetailService implements UserDetailsService{
      * @return Returns {@link Account} instead of {@link User} 
      */
     private AccountUserDetail buildUserForAuthentication(Account user,
-        Set<GrantedAuthority> authorities) {
+        List<GrantedAuthority> authorities) {
     	return new AccountUserDetail(user, true, true, true, authorities);
     }
 
     /**
      * Builds custom Set of {@link GrantedAuthority}
-     * @param userRoles
+     * @param list
      * @return Set of {@link GrantedAuthority}
      */
-    private Set<GrantedAuthority> buildUserAuthority(Set<Role> userRoles) {
+    private List<GrantedAuthority> buildUserAuthority(List<Role> list) {
 
-        Set<GrantedAuthority> setAuths = new HashSet<>();
-        for (Role userRole : userRoles) {
+        List<GrantedAuthority> setAuths = new ArrayList<>();
+        for (Role userRole : list) {
             setAuths.add(new SimpleGrantedAuthority(userRole.getName()));
         }
 

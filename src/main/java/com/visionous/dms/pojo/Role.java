@@ -2,6 +2,7 @@ package com.visionous.dms.pojo;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -40,7 +41,7 @@ public class Role implements Serializable{
     
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
     @ManyToMany(mappedBy = "roles", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    private Set<Account> accounts;
+    private List<Account> accounts;
     
 	private String name;
 
@@ -76,14 +77,14 @@ public class Role implements Serializable{
 	/**
 	 * @return the accounts
 	 */
-	public Set<Account> getAccounts() {
+	public List<Account> getAccounts() {
 		return accounts;
 	}
 
 	/**
 	 * @param accounts the accounts to set
 	 */
-	public void setAccounts(Set<Account> accounts) {
+	public void setAccounts(List<Account> accounts) {
 		this.accounts = accounts;
 	}
 

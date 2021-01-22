@@ -98,12 +98,10 @@ public class CustomerModelViewController {
 	 */
 	@PostMapping("")
 	public String customerPost(@ModelAttribute Customer customer,
-			@RequestParam(required = false) String[] rolez,
 			@RequestParam(required = false) String action,
 			Model model) {
 		
 		customerModelController.init()
-			.addControllerParam("roles", rolez)
 			.addControllerParam("action", action)
 			.addControllerParam("viewType", Actions.VIEW)
 			.addModelAttributes(customer)

@@ -74,13 +74,11 @@ public class PersonnelModelViewController {
 	 * @return
 	 */
 	@PostMapping("") 
-	public String personnelPost(@ModelAttribute Personnel personnel,
-			@RequestParam(required = false) String[] rolez,
+	public String personnelPost(@Valid @ModelAttribute Personnel personnel,
 			@RequestParam(required = false) String action,
 			Model model) {
 		
 		personnelModelController.init()
-			.addControllerParam("roles", rolez)
 			.addControllerParam("action", action)
 			.addControllerParam("viewType", Actions.VIEW)
 			.addModelAttributes(personnel)

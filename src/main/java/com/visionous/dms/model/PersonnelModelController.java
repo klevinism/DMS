@@ -99,20 +99,13 @@ public class PersonnelModelController extends ModelControllerImpl{
 			});
 			
 		}else if(action.equals(Actions.CREATE.getValue())) {
-			if(super.getAllControllerParams().get("roles") != null) {
-				String[] roleids = (String[]) super.getAllControllerParams().get("roles");
-				
-				newPersonnel.getAccount().setCustomer(null);
-				newPersonnel.getAccount().setPersonnel(null);
-				
-				for(String roleName: roleids) {
-					roleRepository.findByName(roleName).ifPresent(role -> {newPersonnel.getAccount().addRole(role);});
-				}
-				
-				Account newAccount = accountRepository.saveAndFlush(newPersonnel.getAccount());
-				newPersonnel.setAccount(newAccount);				
-				personnelRepository.saveAndFlush(newPersonnel);
-			}
+			
+			newPersonnel.getAccount().setCustomer(null);
+			newPersonnel.getAccount().setPersonnel(null);
+			
+			Account newAccount = accountRepository.saveAndFlush(newPersonnel.getAccount());
+			newPersonnel.setAccount(newAccount);				
+			personnelRepository.saveAndFlush(newPersonnel);
 		}else if(action.equals(Actions.VIEW.getValue())) {
 		}		
 

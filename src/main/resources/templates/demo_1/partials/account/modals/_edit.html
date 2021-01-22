@@ -60,57 +60,11 @@
       
       <div class="form-group">
         <label for="roles">[[#{Roles}]]</label>
-        <input type="text" id="roles" name="rolez" data-role="tagsinput" class="badge badge-info" value="jQuery,Script,Net">
-
-		<script th:inline="javascript" > 	  
-
- 	  	/*<![CDATA[*/
- 	  		
-  		var allRoles = new Array(/*[# th:each="role: ${allRoles}"]*/
-        	{"id":/*[[${role.id}]]*/ '',"name":/*[[#{__${role.name}__}]]*/ ''},
- 	 	    /*[/]*/);
- 	  	
-		var roles = new Bloodhound({
- 	  	    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
- 	  	    queryTokenizer: Bloodhound.tokenizers.whitespace,
- 	  	    local: allRoles
- 	  	});
- 	    
- 	    
- 	    
-
- 		/*]]>*/
-
-		</script>
- 	  	<script >
-
- 	  	$("#roles").tagsinput({
-	 	  	  itemValue: 'id',
-	 	  	  itemText: 'name',
-			  tagClass: function(item) {
-				return 'badge badge-info';
-			  },
-			  freeInput: false,
-			  cancelConfirmKeysOnEmpty: true,
-	 	  	  typeaheadjs: {
-	 	  		name: 'users',
-	 	        displayKey: 'name',
-	 	  	    source: roles.ttAdapter()
-	 	  	  }
-	 	  	});
-
- 	  	
- 	  	</script>
- 	  	<script th:inline="javascript" > 	  	
- 	  	/*<![CDATA[*/
-		
- 	    /*[# th:each="role: *{roles}"]*/
- 	        $("#roles").tagsinput('add',{"id":/*[[${role.id}]]*/ '',"name":/*[[#{__${role.name}__}]]*/ ''}  );
- 	    /*[/]*/
- 	    
- 		/*]]>*/
-
-		</script>
+        
+        <select th:field="*{roles[0]}">
+        	<option th:each="role: ${allRoles}" th:value="${role.id}" th:text="${role.name}"></option>
+        </select>
+        
       </div>
 
       <div class="form-group">

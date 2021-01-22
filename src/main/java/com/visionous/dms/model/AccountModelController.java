@@ -102,12 +102,6 @@ public class AccountModelController extends ModelControllerImpl{
 		if(action.equals(Actions.DELETE.getValue())) {
 			
 		}else if(action.equals(Actions.EDIT.getValue()) ) {
-				Long[] roleids = (Long[]) super.getAllControllerParams().get("roles");
-				for(Long roleId: roleids) {
-					roleRepository.findById(roleId).ifPresent(role -> {
-						newAccount.addRole(role);
-					});
-				}
 				if(newAccount.getCustomer().getId()  != null) {
 					newAccount.setPersonnel(null);
 				}else if(newAccount.getPersonnel().getId()  != null) {
@@ -139,26 +133,22 @@ public class AccountModelController extends ModelControllerImpl{
 				Optional<Account> oldAccount = accountRepository.findById(accountId);
 	
 				Role[] loggedInRoles = currentLoggedInAccount.getRoles().stream().toArray(Role[]::new);					
-				Role[] oldRoles = oldAccount.get().getRoles().stream().toArray(Role[]::new);
 				
-				if(oldRoles.length > 0) {
-					if((loggedInRoles[0].getName().equals("CUSTOMER") && !oldRoles[0].getName().equals("CUSTOMER")) || 
-							(loggedInRoles[0].getName().equals("PERSONNEL") && (oldRoles[0].getName().equals("ADMIN") || oldRoles[0].getName().equals("PERSONNEL")))) {
-						
-				        String errorEditingAccount = messageSource.getMessage("alert.errorEditingAccount", null, LocaleContextHolder.getLocale());
-						super.addModelCollectionToView("errorEditingAccount", errorEditingAccount);
-					}else {				
-						oldAccount.ifPresent(account -> super.addModelCollectionToView("account", account));
-						
-						Iterable<Role> allRoles= roleRepository.findAll();
-						super.addModelCollectionToView("allRoles", allRoles);
-					}
-				}else {
-						oldAccount.ifPresent(account -> super.addModelCollectionToView("account", account));
-	
+				oldAccount.ifPresent(account -> {
+					super.addModelCollectionToView("account", account);
+						if(!account.getRoles().isEmpty()) {
+							if((loggedInRoles[0].getName().equals("CUSTOMER") && account.getRoles().get(0).getName().equals("CUSTOMER")) || 
+								(loggedInRoles[0].getName().equals("PERSONNEL") && (account.getRoles().get(0).getName().equals("ADMIN") || account.getRoles().get(0).getName().equals("PERSONNEL")))) {
+						        String errorEditingAccount = messageSource.getMessage("alert.errorEditingAccount", null, LocaleContextHolder.getLocale());
+								super.addModelCollectionToView("errorEditingAccount", errorEditingAccount);
+							}else {
+								super.addModelCollectionToView("account", account);
+							}
+						}
 						Iterable<Role> allRoles= roleRepository.findAll(); 
 						super.addModelCollectionToView("allRoles", allRoles);
-				}
+					}
+				);
 			}
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
 			if(super.getAllControllerParams().get("id") != null) {

@@ -135,21 +135,17 @@ public class CustomerModelController extends ModelControllerImpl{
 		}else if(action.equals(Actions.CREATE.getValue())) {
 			logger.debug(" Creating new Customer with username = " + newCustomer.getAccount().getUsername());
 
-			if(super.getAllControllerParams().get("roles") != null) {
-				String[] roleids = (String[]) super.getAllControllerParams().get("roles");
-				
-				newCustomer.getAccount().setCustomer(null);
-				newCustomer.setRegisterdate(new Date(System.currentTimeMillis()));
-				newCustomer.getAccount().setPersonnel(null);
-				
-				for(String roleName: roleids) {
-					roleRepository.findByName(roleName).ifPresent(role -> {newCustomer.getAccount().addRole(role);});
-				}
-				
-				Account newAccount = accountRepository.saveAndFlush(newCustomer.getAccount());
-				newCustomer.setAccount(newAccount);				
-				customerRepository.saveAndFlush(newCustomer);
-			}
+			
+			newCustomer.getAccount().setCustomer(null);
+			newCustomer.setRegisterdate(new Date(System.currentTimeMillis()));
+			newCustomer.getAccount().setPersonnel(null);
+			
+			newCustomer.getAccount().setActive(true);
+			newCustomer.getAccount().setEnabled(true);
+			Account newAccount = accountRepository.saveAndFlush(newCustomer.getAccount());
+			newCustomer.setAccount(newAccount);				
+			customerRepository.saveAndFlush(newCustomer);
+
 		}else if(action.equals(Actions.VIEW.getValue())) {
 			
 		}		

@@ -1,7 +1,9 @@
 package com.visionous.dms.pojo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -14,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
@@ -23,6 +24,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.lang.Nullable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -69,11 +72,12 @@ public class Account implements Serializable{
     private String password;
     
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL) 
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(cascade = CascadeType.ALL) 
     @JoinTable(name = "authority",
             joinColumns = @JoinColumn(name = "accountid"),
             inverseJoinColumns = @JoinColumn(name = "roleid"))
-    private Set<Role> roles  = new HashSet<>();
+    private List<Role> roles  = new ArrayList<>();
     
     private boolean enabled;
     
@@ -98,7 +102,7 @@ public class Account implements Serializable{
 	 * @param enabled
 	 */
 	public Account(@NotBlank(message = "Username is mandatory") String username,
-			@NotBlank(message = "Password is mandatory") String password, Set<Role> roles, boolean enabled, boolean active) {
+			@NotBlank(message = "Password is mandatory") String password, List<Role> roles, boolean enabled, boolean active) {
 		this.username = username;
 		this.password = password;
 		this.roles = roles;
@@ -254,14 +258,14 @@ public class Account implements Serializable{
 	/**
 	 * @return
 	 */
-	public Set<Role> getRoles() {
+	public List<Role> getRoles() {
 		return roles;
 	}
 
 	/**
 	 * @param terms
 	 */
-	public void setRoles(Set<Role> authority) {
+	public void setRoles(List<Role> authority) {
 		this.roles = authority;
 	}
 	
