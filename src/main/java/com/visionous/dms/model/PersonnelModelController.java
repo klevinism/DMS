@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -27,7 +28,7 @@ import com.visionous.dms.repository.RoleRepository;
  * @author delimeta
  *
  */
-@Component
+@Controller
 public class PersonnelModelController extends ModelControllerImpl{
 	
 	private final Log logger = LogFactory.getLog(PersonnelModelController.class);

@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -38,7 +39,7 @@ import com.visionous.dms.repository.RecordRepository;
  * @author delimeta
  *
  */
-@Component
+@Controller
 public class HistoryModelController extends ModelControllerImpl{
 	private final Log logger = LogFactory.getLog(HistoryModelController.class);
 	private static String currentPage = LandingPages.HISTORY.value();

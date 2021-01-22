@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -34,7 +35,7 @@ import com.visionous.dms.repository.RoleRepository;
  * @author delimeta
  *
  */
-@Component
+@Controller
 public class AccountModelController extends ModelControllerImpl{
 	
 	private final Log logger = LogFactory.getLog(AccountModelController.class);
