@@ -11,10 +11,12 @@ function showHourTable(date, excludedDates){
 		var show = true;
 	
 		for(var cnt=0; cnt<excludedDates.length; cnt++){
-
-			if(beginDate.getMonth() == excludedDates[cnt].getMonth() && 
-					beginDate.getDay() == excludedDates[cnt].getDay() && 
-					beginDate.getYear() == excludedDates[cnt].getYear()){
+			var excluded= new Date(excludedDates[cnt]);
+			console.log(beginDate);
+			console.log(excludedDates);
+			if(beginDate.getMonth() === excluded.getMonth() && 
+					beginDate.getDate() === excluded.getDate() && 
+					beginDate.getFullYear() === excluded.getFullYear()){
 				
 				var before = new Date(excludedDates[cnt]);
 				before.setMinutes(before.getMinutes() - 30);
