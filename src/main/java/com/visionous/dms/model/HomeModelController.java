@@ -4,12 +4,15 @@
 package com.visionous.dms.model;
 
 import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.logging.Log;
@@ -28,10 +31,14 @@ import com.visionous.dms.configuration.helpers.DateUtil;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Appointment;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Record;
+import com.visionous.dms.pojo.Role;
 import com.visionous.dms.repository.AccountRepository;
 import com.visionous.dms.repository.AppointmentRepository;
+import com.visionous.dms.repository.CustomerRepository;
 import com.visionous.dms.repository.HistoryRepository;
+import com.visionous.dms.repository.PersonnelRepository;
 import com.visionous.dms.repository.RecordRepository;
 import com.visionous.dms.repository.RoleRepository;
 
@@ -48,6 +55,10 @@ public class HomeModelController extends ModelControllerImpl{
 	private RecordRepository recordRepository;
 	private HistoryRepository historyRepository;
 	private AppointmentRepository appointmentRepository;
+	private PersonnelRepository personnelRepository;
+	private CustomerRepository customerRepository;
+
+	private RoleRepository roleRepository;
 	
 	private static String currentPage = LandingPages.HOME.value();
 
@@ -56,11 +67,17 @@ public class HomeModelController extends ModelControllerImpl{
 	 * @param personnelRepository
 	 */
 	@Autowired
-	public HomeModelController(AccountRepository accountRepository, RecordRepository recordRepository, AppointmentRepository appointmentRepository, HistoryRepository historyRepository) {
+	public HomeModelController(AccountRepository accountRepository, RecordRepository recordRepository, 
+			AppointmentRepository appointmentRepository, HistoryRepository historyRepository,
+			PersonnelRepository personnelRepository, RoleRepository roleRepository,
+			CustomerRepository customerRepository){
 		this.accountRepository = accountRepository;
 		this.recordRepository = recordRepository;
 		this.appointmentRepository = appointmentRepository;
 		this.historyRepository = historyRepository;
+		this.personnelRepository = personnelRepository;
+		this.customerRepository = customerRepository;
+		this.roleRepository = roleRepository;
 	}
 	
 	/**
@@ -143,6 +160,93 @@ public class HomeModelController extends ModelControllerImpl{
 				if(!top10records.isEmpty()) {
 					super.addModelCollectionToView("lastVisitList", top10records); 
 				}
+				
+				
+				if(account.getRoles().get(0).getName().equals("ADMIN")) {
+					
+					Optional<Role> rolePersonnel = roleRepository.findByName("PERSONNEL");
+					List<Account> allPersonnel = new ArrayList<>();
+					rolePersonnel.ifPresent(role-> allPersonnel.addAll(accountRepository.findAllByActiveAndEnabledAndRoles_Name(true,true, role.getName())));
+					
+					if(!allPersonnel.isEmpty()) {
+						super.addModelCollectionToView("allPersonnel", allPersonnel);
+						
+						Account selectedPersonnel = allPersonnel.get(0);
+						
+						Date currentDate = new Date();
+						Date startDate = DateUtil.getOneWeekBefore(new Date());
+						
+						List<Integer> dataForRange = new ArrayList<>();
+						List<Integer> dataForAppointment = new ArrayList<>();
+						super.addModelCollectionToView("dateRangeInit", new SimpleDateFormat("dd/MM/yyyy").format(startDate.getTime()) + " - " + new SimpleDateFormat("dd/MM/yyyy").format(currentDate.getTime()));
+
+						while (startDate.before(currentDate)) { 
+							Date end = startDate;
+							Calendar endCalendar = DateUtil.getCalendarFromDate(end);
+							endCalendar.set(Calendar.HOUR_OF_DAY, 23);
+							Calendar startCalendar = DateUtil.getCalendarFromDate(startDate);
+							startCalendar.set(Calendar.HOUR_OF_DAY, 0);
+							Integer records = recordRepository.countAllByPersonnelIdAndServicedateBetween(selectedPersonnel.getId(), startCalendar.getTime(), endCalendar.getTime());
+							Integer appointments = appointmentRepository.countAllByPersonnelIdAndAppointmentDateBetween(selectedPersonnel.getId(), startCalendar.getTime(), endCalendar.getTime());
+							dataForAppointment.add(appointments);
+							dataForRange.add(records);
+							startDate = DateUtil.addDays(startDate, 1);
+						}
+						
+						super.addModelCollectionToView("allRecords", dataForRange);
+						super.addModelCollectionToView("allAppointments", dataForAppointment);
+					}
+					
+					Date endsDate = new Date();
+					Date startsDate = DateUtil.setDayToBegginingOfYear(endsDate);
+					
+					List<Record> allRecordsThisYear = recordRepository.findAllByServicedateBetween(startsDate, endsDate);
+					
+					Map<String, Integer> allNewAndOldCustomers = new HashMap<>();
+					Integer allNewCustomers= new Integer(0); 
+					Integer allOldCustomers= new Integer(0);				
+					
+					allNewAndOldCustomers.put("oldcustomers", allOldCustomers);
+					allNewAndOldCustomers.put("newcustomers", allOldCustomers);
+					
+					if(!allRecordsThisYear.isEmpty()) {
+						allRecordsThisYear.forEach(record -> {
+							System.out.println("CUSTOMER="+record.getHistory().getCustomer().getAccount().getName()+" REG DATE " + record.getHistory().getCustomer().getRegisterdate());
+							if(record.getHistory().getCustomer().getRegisterdate().before(startsDate)) {
+								allNewAndOldCustomers.replace("oldcustomers", allNewAndOldCustomers.get("oldcustomers") + 1);
+							}else {
+								allNewAndOldCustomers.replace("newcustomers", allNewAndOldCustomers.get("newcustomers") + 1);
+							}
+							System.out.println(allNewAndOldCustomers.get("oldcustomers") + " <OLD");
+							System.out.println(allNewAndOldCustomers.get("newcustomers") + " <New");
+						});
+					}
+
+					super.addModelCollectionToView("allCustomers", allNewAndOldCustomers);
+					
+				}
+				
+				
+				
+				Period periodOfThisYear = DateUtil.getPeriodBetween(DateUtil.getBegginingOfYear(), new Date());
+
+				
+				List<Integer> allNewCustomersForEachMonth = new ArrayList<>();
+				for(int month=0 ; month <= periodOfThisYear.getMonths(); month++) {
+					
+					Date beginMonthDate = DateUtil.getCurrentDateByMonthAndDay(month, 1);
+										
+					Date endMonthDate = DateUtil.getCurrentDateByMonthAndDay(month, DateUtil.getCalendarFromDate(beginMonthDate).getActualMaximum(Calendar.DAY_OF_MONTH));
+					Integer countBetweenDates = 0;
+					countBetweenDates = accountRepository.countByEnabledAndActiveAndCustomer_RegisterdateBetween(true,true, beginMonthDate, endMonthDate);
+					allNewCustomersForEachMonth.add(countBetweenDates);
+				}
+				
+				if(!allNewCustomersForEachMonth.isEmpty()) {
+					super.addModelCollectionToView("allNewCustomers", allNewCustomersForEachMonth);
+				}
+								
+				
 			});
 		}
 	}

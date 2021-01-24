@@ -12,8 +12,6 @@ function showHourTable(date, excludedDates){
 	
 		for(var cnt=0; cnt<excludedDates.length; cnt++){
 			var excluded= new Date(excludedDates[cnt]);
-			console.log(beginDate);
-			console.log(excludedDates);
 			if(beginDate.getMonth() === excluded.getMonth() && 
 					beginDate.getDate() === excluded.getDate() && 
 					beginDate.getFullYear() === excluded.getFullYear()){

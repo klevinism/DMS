@@ -1,0 +1,147 @@
+<div class="row" th:fragment="home">
+   <div class="col-md-8 grid-margin stretch-card">
+     <div class="card" >
+     		<div class="card-body">
+     			<div class="row">
+     				<div class="col-md-2 d-flex flex-column">
+     					<div class="form-group">
+     						<div class="d-flex flex-column flex-lg-row">
+						       	<div class="data-wrapper d-flex mt-2 mt-lg-0">
+					    	  		<h3>[[#{Personnel}]]</h3>
+					    	  	</div>
+					    	</div>
+					        <hr>
+					        <div class="row">
+					        	<div class="col-md-12 grid-margin">
+	        						<select id="multipleSelectPersonnel" multiple="multiple" th:if="${allPersonnel}">
+									  <option th:each="personnel: ${allPersonnel}" th:value="${personnel.id}" th:text="${personnel.name} + ', ' + ${personnel.surname}"></option>
+									</select>
+	        					</div>
+					        </div>
+     					</div>
+     				</div>
+     				<div class="col-md-10 d-flex flex-column">
+						<div class="form-group">      
+					       <div class="d-flex flex-column flex-lg-row">
+					       	  <div class="data-wrapper d-flex mt-2 mt-lg-0">
+					    	  	<h3>[[#{Visits}]] </h3>
+					    	  </div>
+					    	  <div class="ml-lg-auto">
+				        		<div class="input-group">
+	                                   <div class="input-group-prepend " th:if="${dateRangeInit}">
+	                                   	  <i class="fa fa-spin fa-spinner" id="appointmentPickerSpinner" style="display:none;"></i>
+	                                      <input type="text" style="width: 200px" name="reservation" id="appointmentPicker" class="form-control" th:value="${dateRangeInit}">
+	                                      <span class="input-group-text bg-transparent"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+	                                   </div>
+	                             </div>
+							  </div>
+						    </div>
+					        <hr>
+					        <div class="row">
+	        					<div class="col-md-12 grid-margin">
+	        						<h3>[[#{Overall}]] </h3>
+	        						
+									<canvas id="horizontalVisitsBar"></canvas>
+	        						
+	        					</div>
+	        					<div class="col-md-12 grid-margin" >
+	        						
+	        					</div>
+	        				</div>
+				     	</div>
+				     	<div class="form-group">      
+					       <div class="d-flex flex-column flex-lg-row">
+					       	  <div class="data-wrapper d-flex mt-2 mt-lg-0">
+					    	  	<h4>[[#{Appointments}]]</h4>
+					    	  </div>
+					    	  <div class="ml-lg-auto">
+					        		
+							  </div>
+						    </div>
+						    <hr>
+					        <div class="row">
+	        					<div class="col-md-12 grid-margin">
+	        						<h4>[[#{Overall}]]</h4>
+		       						<canvas id="horizontalAppointmentsBar"></canvas>
+	        					</div>
+	        					<div class="col-md-12 grid-margin">
+	        						
+	        					</div>
+	        				</div>
+				     	</div>
+					</div>
+     				</div>
+					
+				</div>
+			</div>
+   </div>
+   <div class="col-md-4 grid-margin stretch-card">
+     <div class="card">
+       <div class="card-body d-flex flex-column">
+         <div class="wrapper">
+           <h3>[[#{Customers}]] [[#{ThisYear}]]</h3>
+   		 <hr>
+         </div>
+         
+		 <div class="row">
+
+   			<div class="col-md-12 grid-margin">
+   				<h4>[[#{Overall}]]</h4>
+				
+   				<div class="col-md-12 grid-margin tbl-overflow" style="max-height: 25vh;" th:if="${lastVisitList != null}">
+					<canvas id="pieCustomerChart"></canvas>
+     			</div>
+   			</div>
+   			<div class="col-md-12 grid-margin">
+				<h4>[[#{New}]][[#{Customers}]]</h4>
+				<div class="col-md-12 grid-margin tbl-overflow" style="max-height: 25vh;" th:if="${lastVisitList != null}">
+      				<canvas id="lineCustomerChart"></canvas>
+     			</div>
+   			</div>
+   		 </div>
+       </div>
+     </div>
+     
+   </div>
+  	 <script>
+  	 	$(document).ready(function(){
+
+  	     	var token = $("meta[name='_csrf']").attr("content");
+  	     	var header = $("meta[name='_csrf_header']").attr("content");
+  	     	
+  		    $(document).ajaxSend(function(e, xhr, options) {
+  			    xhr.setRequestHeader(header, token);
+  			});
+  	 	});
+     	if( $('#appointmentPicker').length != null){
+
+       	 	var multiselectPersonnel = $('#multipleSelectPersonnel').multiselect();
+     		
+	        $('#appointmentPicker').daterangepicker({
+	        	format: 'DD/MM/YYYY'       		
+	        }, function(start, end, label) {
+	        	fireDateChange(start,end);
+	            console.log(new Date(start).toISOString(), new Date(end).toISOString());
+	        });
+	     
+     	}
+     </script>
+     
+     <script th:inline="javascript">
+	 /*<![CDATA[*/
+		var visitsName = ""+ /*[[#{Visits}]]*/'';
+	 	var list =  [[${nrOfVisitsList}]];
+	 	
+	 	var personnelNames = new Array([[${allPersonnel[0].name}+', '+${allPersonnel[0].surname}]]);	 	
+	 	var personnelRecordsList=[[${allRecords}]];
+	 	
+	 	var personnelAppointmentList=[[${allAppointments}]];
+	 	
+	 	var customerLabels = [""+/*[[#{New}]] + [[#{Customers}]]*/"", ""+/*[[#{Returning}]] + [[#{Customers}]]*/ ""];
+	 	var allCustomer = [[${allCustomers}]];
+	 	
+ 	 	var thisYearCustomerLabel = /*[[#{New}]]+''+[[#{Customers}]]*/ +"";
+	 	var thisYearCustomerValues = [[${allNewCustomers}]];
+	 /*]]>*/
+     </script>
+</div>

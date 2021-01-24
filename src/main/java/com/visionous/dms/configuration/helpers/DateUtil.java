@@ -64,4 +64,130 @@ public class DateUtil {
 		cal.setTime(date);
 		return cal;
 	}
+	
+	public static Date getOneWeekBefore(Date startDate) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(startDate);
+		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 6);
+		return cal.getTime();
+	}
+	
+	public static Date addDays(Date currentDate, int nrOfDays) {
+		Calendar temp = DateUtil.getCalendarFromDate(currentDate);
+		temp.add(Calendar.DAY_OF_MONTH, nrOfDays);
+		return temp.getTime();
+	}
+	
+	public static boolean isDayPeriod(Period period) {
+		return (!period.isNegative() && period.getDays() <= 7 && period.getMonths() <= 0 && period.getYears() <=0) ? Boolean.TRUE : Boolean.FALSE;
+	}
+	
+	
+	public static boolean isWeekPeriod(Period period) {
+		return (!period.isNegative() && period.getDays() >= 8 && period.getDays() <= 31 && period.getMonths() <= 0 && period.getYears() <=0) ? Boolean.TRUE : Boolean.FALSE;
+	}
+	
+	public static boolean isMonthPeriod(Period period) {
+		return (!period.isNegative() && (period.getMonths() >= 0) && period.getYears() <=0) ? Boolean.TRUE : Boolean.FALSE;
+	}
+
+	public static boolean isYearPeriod(Period period) {
+		return (!period.isNegative() && period.getYears() >=0 ) ? Boolean.TRUE : Boolean.FALSE;
+	}
+	
+	/**
+	 * @param date
+	 * @return
+	 */
+	public static Date setDayToBegginingOfMonth(Date date) {
+		Calendar calendar = DateUtil.getCalendarFromDate(date);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.HOUR_OF_DAY, 1);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		return calendar.getTime();
+	}
+
+	/**
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public static int calculateDaysToAddFromPeriod(Date start, Date end) {
+		Period period = DateUtil.getPeriodBetween(start, end);
+		int daysToAdd = 0;
+		if(DateUtil.isDayPeriod(period)) {
+			daysToAdd = 1;
+		}else if(DateUtil.isWeekPeriod(period)) {
+			daysToAdd = 7;
+		}else if(DateUtil.isMonthPeriod(period)) {
+			daysToAdd = DateUtil.getCalendarFromDate(start).getActualMaximum(Calendar.DAY_OF_MONTH);
+		}else if(DateUtil.isYearPeriod(period)) {
+			daysToAdd = 365;
+		}else {
+			daysToAdd = 1;
+		}
+		return daysToAdd;
+	}
+
+	/**
+	 * @param endingDate
+	 * @return
+	 */
+	public static Date setDayToEndOfMonth(Date date) {
+		Calendar calendar = DateUtil.getCalendarFromDate(date);
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		return calendar.getTime();
+	}
+
+	/**
+	 * @param date
+	 * @return
+	 */
+	public static Date setHoursToBegginingOfDay(Date date) {
+		Calendar calendar = DateUtil.getCalendarFromDate(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		return calendar.getTime();
+	}
+	
+	/**
+	 * @param date
+	 * @return
+	 */
+	public static Date setHoursToEndingOfDay(Date date) {
+		Calendar calendar = DateUtil.getCalendarFromDate(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		return calendar.getTime();
+	}
+
+	/**
+	 * @param start
+	 * @return
+	 */
+	public static Date setDayToEndOfYear(Date date) {
+		Calendar calendar = DateUtil.getCalendarFromDate(date);
+		calendar.set(Calendar.MONTH, 11);
+		calendar.set(Calendar.DAY_OF_MONTH, 31);
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		return calendar.getTime();
+	}
+
+	/**
+	 * @param start
+	 * @return
+	 */
+	public static Date setDayToBegginingOfYear(Date date) {
+		Calendar calendar = DateUtil.getCalendarFromDate(date);
+		calendar.set(Calendar.MONTH, 0);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		return calendar.getTime();
+	}
 }

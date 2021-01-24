@@ -3,11 +3,16 @@
  */
 package com.visionous.dms.rest;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,12 +30,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.visionous.dms.configuration.helpers.DateUtil;
 import com.visionous.dms.pojo.Appointment;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.repository.AppointmentRepository;
 import com.visionous.dms.repository.CustomerRepository;
 import com.visionous.dms.repository.PersonnelRepository;
+import com.visionous.dms.repository.RecordRepository;
 import com.visionous.dms.rest.response.ResponseBody;
 
 /**
@@ -44,6 +51,8 @@ public class AppointmentRestController {
 	private AppointmentRepository appointmentRepository;
 	private PersonnelRepository personnelRepository;
 	private CustomerRepository customerRepository;
+	private RecordRepository recordRepository;
+
 	
 	/**
 	 * 
@@ -51,11 +60,12 @@ public class AppointmentRestController {
 	@Autowired
 	public AppointmentRestController(AppointmentRepository appointmentRepository, PersonnelRepository personnelRepository, 
 			CustomerRepository customerRepository,
-			MessageSource messageSource) {
+			MessageSource messageSource, RecordRepository recordRepository) {
 		this.appointmentRepository = appointmentRepository;
 		this.personnelRepository = personnelRepository;
 		this.customerRepository = customerRepository;
 		this.messageSource = messageSource;
+		this.recordRepository = recordRepository;
 	}
 	
 	@PostMapping("/api/book")
@@ -101,6 +111,174 @@ public class AppointmentRestController {
         return ResponseEntity.ok(result);
     }
 	
+	@PostMapping("/api/personnel/statistics")
+    public ResponseEntity<?> personnelStatistics(@RequestParam(name = "personnelIds[]", required = false) Long[] personnelIds,
+    		@RequestParam(name = "startDate", required = true) String startDate,
+    		@RequestParam(name = "endDate", required = true) String endDate){ 
+
+        ResponseBody<Map<String,List<Integer>>> result = new ResponseBody<>();
+        
+        Date start = null;
+		Date end = null;
+		
+        List<Personnel> personnels = new ArrayList<>();
+        Map<String,List<Integer>> listOfRecords = new HashMap<>();
+        
+        if(personnelIds.length > 0) {
+        	for(int cnt=0; cnt<personnelIds.length; cnt++) {
+        		Optional<Personnel> singlePersonnel = personnelRepository.findById(personnelIds[cnt]);
+        		singlePersonnel.ifPresent(personnel -> personnels.add(personnel));
+        		
+        		try {
+        			start = new SimpleDateFormat("dd/MM/yyyy").parse(startDate);
+        			end = new SimpleDateFormat("dd/MM/yyyy").parse(endDate);
+        		} catch (ParseException e) {
+        			e.printStackTrace();
+        		}
+        		
+        		System.out.println(" For Personnel + " + singlePersonnel.get().getAccount().getName());
+        		
+				if(start != null) {
+					        		        		
+	        		int daysToAdd = DateUtil.calculateDaysToAddFromPeriod(start, end);
+	        		System.out.println(" DAYS TO ADD = " + daysToAdd);
+	        		System.out.println(" DEFAULT PERIOD -> "+  new SimpleDateFormat("dd/MM/YYYY").format(start) + " -- "+  new SimpleDateFormat("dd/MM/YYYY").format(end));
+
+	        		// getRecords for period startDate ~ endDate > add by daysToAdd
+	        		List<Integer> recordsForPersonnel = new ArrayList<>();
+	        		while (start.before(end)) {
+						Date startingDate = new Date();
+						Date endingDate = new Date();
+						if(daysToAdd > 29 && daysToAdd<365) {
+							startingDate = DateUtil.setDayToBegginingOfMonth(start);
+							endingDate = DateUtil.setDayToEndOfMonth(start);
+						}else if(daysToAdd >= 365) {
+							startingDate = DateUtil.setDayToBegginingOfYear(start);
+							endingDate = DateUtil.setDayToEndOfYear(start);
+	        			}else{
+							startingDate = DateUtil.setHoursToBegginingOfDay(start);
+							endingDate = DateUtil.addDays(start, daysToAdd);
+						} 
+						
+						Integer records = recordRepository.countAllByPersonnelIdAndServicedateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
+						System.out.println(records + " Record for Personnel " + singlePersonnel.get().getAccount().getName() + 
+								" for period >>> " + new SimpleDateFormat("dd/MM/YYYY HH:mm:ss").format(startingDate) + " -- " + new SimpleDateFormat("dd/MM/YYYY HH:mm:ss").format(endingDate));
+						start = DateUtil.addDays(start, daysToAdd);
+						recordsForPersonnel.add(records);
+	        		}
+	        		listOfRecords.put(singlePersonnel.get().getAccount().getName(), recordsForPersonnel);
+	        		
+				}
+        	}
+        }
+                		
+        if(listOfRecords.isEmpty()) {
+        	result.setError("error");
+        }else {
+    		result.addResult(listOfRecords);
+    		result.setError("success");
+    		result.setMessage("success");
+        }
+
+        return ResponseEntity.ok(result);
+    }
+	
+	@PostMapping("/api/personnel/appointment/statistics")
+    public ResponseEntity<?> personnelAppointmentStatistics(@RequestParam(name = "personnelIds[]", required = false) Long[] personnelIds,
+    		@RequestParam(name = "startDate", required = true) String startDate,
+    		@RequestParam(name = "endDate", required = true) String endDate){ 
+
+        ResponseBody<Map<String,List<Integer>>> result = new ResponseBody<>();
+        
+        Date start = null;
+		Date end = null;
+		
+        List<Personnel> personnels = new ArrayList<>();
+        Map<String,List<Integer>> listOfRecords = new HashMap<>();
+        
+        if(personnelIds.length > 0) {
+        	for(int cnt=0; cnt<personnelIds.length; cnt++) {
+        		Optional<Personnel> singlePersonnel = personnelRepository.findById(personnelIds[cnt]);
+        		singlePersonnel.ifPresent(personnel -> personnels.add(personnel));
+        		
+        		try {
+        			start = new SimpleDateFormat("dd/MM/yyyy").parse(startDate);
+        			end = new SimpleDateFormat("dd/MM/yyyy").parse(endDate);
+        		} catch (ParseException e) {
+        			e.printStackTrace();
+        		}
+        		
+        		System.out.println(" For Personnel + " + singlePersonnel.get().getAccount().getName());
+        		
+				if(start != null) {
+	        		int daysToAdd = DateUtil.calculateDaysToAddFromPeriod(start, end);
+	        		
+	        		System.out.println(" DAYS TO ADD = " + daysToAdd);
+	        		System.out.println(" DEFAULT PERIOD -> "+  new SimpleDateFormat("dd/MM/YYYY").format(start) + " -- "+  new SimpleDateFormat("dd/MM/YYYY").format(end));
+
+	        		// getRecords for period startDate ~ endDate > add by daysToAdd
+	        		List<Integer> recordsForPersonnel = new ArrayList<>();
+	        		while (start.before(end)) {
+						Date startingDate = setDayToBegginingOfPeriod(start, daysToAdd);
+						Date endingDate = setDayToEndingOfPeriod(start, daysToAdd);
+						
+						Integer records = appointmentRepository.countAllByPersonnelIdAndAppointmentDateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
+						System.out.println(records + " Record for Personnel " + singlePersonnel.get().getAccount().getName() + 
+								" for period >>> " + new SimpleDateFormat("dd/MM/YYYY HH:mm:ss").format(startingDate) + " -- " + new SimpleDateFormat("dd/MM/YYYY HH:mm:ss").format(endingDate));
+						start = DateUtil.addDays(start, daysToAdd);
+						recordsForPersonnel.add(records);
+	        		}
+	        		listOfRecords.put(singlePersonnel.get().getAccount().getName(), recordsForPersonnel);
+	        		
+				}
+        	}
+        }
+                		
+        if(listOfRecords.isEmpty()) {
+        	result.setError("error");
+        }else {
+    		result.addResult(listOfRecords);
+    		result.setError("success");
+    		result.setMessage("success");
+        }
+
+        return ResponseEntity.ok(result);
+    }
+	
+	/**
+	 * @param Date startDate
+	 * @param int daysToAdd
+	 * @return
+	 */
+	private Date setDayToBegginingOfPeriod(Date start,int daysToAdd) {
+		Date date = new Date();
+		if(daysToAdd > 29 && daysToAdd<365) {
+			date = DateUtil.setDayToBegginingOfMonth(start);
+		}else if(daysToAdd >= 365) {
+			date = DateUtil.setDayToBegginingOfYear(start);
+		}else{
+			date = DateUtil.setHoursToBegginingOfDay(start);
+		} 
+		return date;
+	}
+	
+	/**
+	 * @param Date startDate
+	 * @param int daysToAdd
+	 * @return
+	 */
+	private Date setDayToEndingOfPeriod(Date start,int daysToAdd) {
+		Date date = new Date(); 
+		if(daysToAdd > 29 && daysToAdd<365) {
+			date = DateUtil.setDayToEndOfMonth(start);
+		}else if(daysToAdd >= 365) {
+			date = DateUtil.setDayToEndOfYear(start);
+		}else{
+			date = DateUtil.addDays(start, daysToAdd);
+		} 
+		return date;
+	}
+
 	@GetMapping("/api/availableAppointments")
     public ResponseEntity<?> getSearchResultViaAjax(@RequestParam(name = "personnelId", required = false) Long personnelId) { 
         ResponseBody<Appointment> result = new ResponseBody<>();

@@ -1,42 +1,138 @@
-function getDateNamesBetween(from, to) {
-    var monthNames = [ "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December" ];
-        
-    var arr = [];
-    var datFrom = new Date(from);
-    var datTo = new Date(to);
-    var fromYear =  datFrom.getFullYear();
-    var toYear =  datTo.getFullYear();
-    var diffYear = (12 * (toYear - fromYear)) + datTo.getMonth();
 
-    for (var i = datFrom.getMonth(); i <= diffYear; i++) {
-        arr.push(monthNames[i%12]);
-    }        
+
+function getBarLabels(){
+	var currentDate = new Date();
+	var oneWeekBefore = getOneWeekBefore(currentDate);
+	return getDayDateNamesBetween(oneWeekBefore, currentDate);
+}
+
+function buildDataset(labels, datas){
+	
+	var dataset = new Array();
+	
+	for(var cnt=0; cnt<labels.length; cnt++){
+		var set =  {
+			"backgroundColor": getRandomColor()+"",
+			"label": labels[cnt],
+			"data": datas
+		};
+		dataset.push(set);
+	}
+	return dataset;
+}
+
+
+function reloadDataset(datas){
+	var dataset = new Array();
+	
+	for (var key in datas) {
+	    if (datas.hasOwnProperty(key)) {
+	    	dataset.push({
+	    		backgroundColor: getRandomColor()+"",
+	    		label: key,
+	    		data: datas[key]
+	    	});
+	    }
+	}
+	return dataset;
+}
+
+function getPersonnelNames(){
+	var personnelids = $('#multipleSelectPersonnel').val();
+	var arrayNames = new Array();
+	for(cnt=0; cnt<personnelids; cnt++){
+		arrayNames.push($('#multipleSelectPersonnel option[value="'+personnelids[cnt]+'"]').html());
+	}
+	return arrayNames;
+}
+
+function getPersonnelAndDateRange(){
+	var personnelids = $('#multipleSelectPersonnel').val();
+	var dates = $("#appointmentPicker").val().split("-");
+	var set = {
+		date : [dates[0].trim(),dates[1].trim()],
+		personnelsIds: personnelids
+	}
+	
+	return set;
+}
+
+function fireDateChange(start, end){
+	var dates = $("#appointmentPicker").val().split("-");
+	var personnelAndDateRange = getPersonnelAndDateRange();
+	
+	//Visits
+	refreshStatistics(dates[0].trim(), dates[1].trim(), personnelAndDateRange["personnelsIds"], function(data){
+		if(data.error != "error"){
+			refreshHorizontalBarChart(data.result[0], personnelAndDateRange["date"]);		
+		}
+	});
+	
+	//Appointment
+	refreshAppointmentStatistics(dates[0].trim(), dates[1].trim(), personnelAndDateRange["personnelsIds"], function(data){
+		if(data.error != "error"){
+			refreshHorizontalAppointmentBarChart(data.result[0], personnelAndDateRange["date"]);		
+		}
+	});
+	
+}
+
+function fireMultiselectChange(element, checked){
+	var personnelAndDateRange = getPersonnelAndDateRange();
+	
+	if(personnelAndDateRange["personnelsIds"] != null && personnelAndDateRange["personnelsIds"].length > 0){
+		//Visits
+		refreshStatistics(personnelAndDateRange["date"][0], personnelAndDateRange["date"][1], personnelAndDateRange["personnelsIds"], function(data){
+			if(data.error != "error"){		
+				refreshHorizontalBarChart(data.result[0], personnelAndDateRange["date"]);		
+			}
+		});
+		
+		//Appointment
+		refreshAppointmentStatistics(personnelAndDateRange["date"][0], personnelAndDateRange["date"][1], personnelAndDateRange["personnelsIds"], function(data){
+			if(data.error != "error"){
+				refreshHorizontalAppointmentBarChart(data.result[0], personnelAndDateRange["date"]);		
+			}
+		});
+	}
+}
+
+
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+function getAllChartLabels(startDate, endDate){
+	var start = startDate;
+	var end = endDate;
     
-    return arr;
+	var lblNames = "";			
+	var datePeriod = getPeriod(startDate, endDate);
+	console.log(datePeriod);
+	if(datePeriod<=7){
+		lblNames = getDayDateNamesBetween(start, end);
+	}else if(datePeriod>7 && datePeriod<=31){
+		lblNames = getWeekDateNamesBetween(start, end);
+	}else if(datePeriod>31 && datePeriod<=365 ){
+		lblNames = getMonthDateNamesBetween(start, end);
+	}else if(datePeriod>365 ){
+		lblNames = getYearDateNamesBetween(start, end);
+	}
+	return lblNames;
 }
 
 $(document).ready(function(){
-	
-	if(list.length > 0){
-		 var ctx = document.getElementById('myChart').getContext('2d');
-	     var chart = new Chart(ctx, {
-	         // The type of chart we want to create
-	         type: 'line',
-	
-	         // The data for our dataset
-	         data: {
-	             labels: getDateNamesBetween(new Date().setMonth(0), new Date()),
-	             datasets: [{
-	                 label: visitsName,
-	                 backgroundColor: 'red',
-	                 borderColor: 'red',
-	                 data: list
-	             }]
-	         },
-	
-	         // Configuration options go here
-	         options: {}
-	     });
-	 }
+	initCharts();
+	if( typeof(multiselectPersonnel) != "undefined"){
+		multiselectPersonnel.multiselect('destroy');
+		multiselectPersonnel.multiselect({
+			onChange: fireMultiselectChange,
+	 	});
+	 	multiselectPersonnel.multiselect('select', $('#multipleSelectPersonnel').find("option")[0].value)
+	}
 });
