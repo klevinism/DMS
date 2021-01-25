@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.model.RecordModelController;
@@ -43,13 +44,14 @@ public class RecordModelViewController {
 	 * @return
 	 */
 	@PostMapping("") 
-	public String recordPost(@ModelAttribute Record record,
+	public String recordPost(@RequestParam("files") MultipartFile[] files, @ModelAttribute Record record,
 			@PathVariable("customerId") Long customerId,
 			@PathVariable("historyId") Long historyId,
 			@RequestParam(required = false) String action,
 			Model model) {
 		
 		recordModelController.init()
+			.addControllerParam("files", files)
 			.addControllerParam("customerId", customerId)
 			.addControllerParam("historyId", historyId)
 			.addControllerParam("action", action)
@@ -90,7 +92,6 @@ public class RecordModelViewController {
 	@GetMapping("/create")
 	public String recordCreate(@PathVariable("customerId") Long customerId,
 			@PathVariable("historyId") Long historyId, Model model) {
-		
 
 		recordModelController.init() // Re-initialize Model
 			.addControllerParam("customerId", customerId)

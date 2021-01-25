@@ -49,6 +49,8 @@ public class Record  implements Serializable{
 	
 	private String servicecomment;
 	
+	private String attachments;
+	
 	@DateTimeFormat (pattern="dd-MMM-YYYY")
 	private Date servicedate;
 	
@@ -243,5 +245,18 @@ public class Record  implements Serializable{
 		this.tooth = tooth;
 	}
 
-	
+	/**
+	 * @return the attachments
+	 */
+	public String getAttachments() {
+		return attachments;
+	}
+
+	/**
+	 * @param attachments the attachments to set
+	 */
+	public void setAttachments(String attachments) {
+		this.attachments = attachments;
+	}
+
 }

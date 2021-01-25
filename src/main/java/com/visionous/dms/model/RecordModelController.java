@@ -3,6 +3,9 @@
  */
 package com.visionous.dms.model;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -17,10 +20,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.visionous.dms.configuration.AccountUserDetail;
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
+import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
@@ -114,7 +119,6 @@ public class RecordModelController extends ModelControllerImpl {
 			
 		}else if(action.equals(Actions.EDIT.getValue()) ) {
 		}else if(action.equals(Actions.CREATE.getValue())) {
-			
 			Long personnelId = newRecord.getPersonnelId();
 			Long historyId = newRecord.getHistoryId();
 			
@@ -122,11 +126,29 @@ public class RecordModelController extends ModelControllerImpl {
 			Optional<History> history = historyRepository.findById(historyId);
 			Optional<ServiceType> serviceType = serviceTypeRepository.findByName(newRecord.getServiceType().getName());
 			Optional<Teeth> tooth = teethRepository.findByName(newRecord.getTooth().getName());
+			MultipartFile[] uploadedFiles =null;
+			if(super.getAllControllerParams().get("files") != null) {
+				uploadedFiles = (MultipartFile[]) super.getAllControllerParams().get("files");
+			}
 			
 			if(personnel.isPresent() && history.isPresent() 
 					&& serviceType.isPresent() 
 					&& tooth.isPresent()) {
-
+				
+				if(uploadedFiles != null){
+					StringBuilder attachments = new StringBuilder();
+					for(MultipartFile file : uploadedFiles) {
+						try {
+							String path = new File(".").getCanonicalPath()+"/tmp/" + file.getOriginalFilename();
+							FileManager.write(file, path);
+							attachments.append(""+Paths.get(path)+",");
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					newRecord.setAttachments(attachments.toString());
+				}
+				
 				newRecord.setHistory(history.get());
 				newRecord.setPersonnel(personnel.get());
 				newRecord.setServiceType(serviceType.get());

@@ -24,7 +24,7 @@
   			</section>
             <!-- Page Title Header Ends-->
             <div class="row">
-              <div class="col-md-6 grid-margin stretch-card">
+              <div class="col-md-7 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                  				<div class="row ml-lg-1">
@@ -35,7 +35,7 @@
 	                       		</div>
                         <div class="col-md-12 grid-margin">
                         <div class="row">
-                          <div class="data-wrapper d-flex mt-2 mt-lg-1"> 
+                          <div class="col-md-4 d-flex mt-2 mt-lg-1"> 
                         
 								<div class="dentalFace">
 									<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1145 1800" xml:space="preserve">
@@ -76,11 +76,14 @@
 								   
 							    </div>
 							</div>
-               		 <form id="dentalRecordForm" style="display:none;" method="post" th:action="@{/customer/__${selected.history.customerId}__/history/__${selected.historyId}__/record}" th:object="${selected}">
+							
+							<div class="col-md-8 d-flex grid-margin"> 
+							
+               		 <form id="dentalRecordForm" enctype="multipart/form-data" style="display:none;" method="post" th:action="@{/customer/__${selected.history.customerId}__/history/__${selected.historyId}__/record}" th:object="${selected}">
 							<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
 							<input type="hidden" th:field="*{historyId}">
 							<input type="hidden" th:field="*{personnelId}">
-							<div class="d-flex">						    
+							<div class="col-md-12">						    
 							<div class="ml-lg-5">
 	                       		<div class="row ml-lg-1">
 									<div class="d-flex justify-content-between">
@@ -115,14 +118,45 @@
 											<textarea class="form-control form-control-lg" th:field="*{servicecomment}"></textarea>
 											</label>
 										</div>
+										<div class="form-group ">
+										<div class="form-check">
+											<label class="form-check-label" for="attachmentsCheckbox" >
+												<input type="checkbox" id="attachmentsCheckbox" class="form-check-input" >
+											
+												<i class="input-helper">Attachments</i>
+											</label>
+										</div>
+										</div>
+										<div class="col-md-12" style="display:none" id="attachmentInput">
+							    
+										    <div class="col-md-12 grid-margin" >
+											<div class="form-group ">
+												<label>File upload</label>
+												<input id="recordAttachments" name="files" type="file" class="file" multiple="true" data-preview-file-type="any">
+											</div>
+											
+											</div>
+										</div>
 										<input class="btn btn-primary" type="submit" value="submit">
 		                       		</div>
 	                       		</div>
 	                       	</div> 
-
-							    
 							</div>
+							<script>
+				              $("#recordAttachments").fileinput({
+				            	  showUpload:false,
+				              });
+				              $("#attachmentsCheckbox").change(function(){
+				            	  console.log(":changed?");
+				            	  if(this.checked){
+				            		  $("#attachmentInput").show();
+				            	  }else{
+				            		  $("#attachmentInput").hide();
+				            	  }
+				              });
+				              </script>
 					</form>
+					</div>
 							</div>
 
 					</div>
@@ -132,7 +166,7 @@
                 
               </div>
               
-              <div class="col-md-6 ">
+              <div class="col-md-5 ">
 			  	<div class="row">
 	              <div class="col-md-12 grid-margin" th:if="${selectedHistory}">
 					<div class="card"> 
