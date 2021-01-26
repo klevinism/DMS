@@ -258,11 +258,14 @@ public class HomeModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("currentBreadcrumb", LandingPages.buildBreadCrumb(
 				((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest())
 		);
-		
+		 
 		super.addModelCollectionToView("currentPage", currentPage);
-		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
 		
-		
+		Optional<Account> loggedInAccount = accountRepository.findByUsername(AccountUtil.currentLoggedInUser().getUsername());
+		loggedInAccount.ifPresent(account -> {
+			super.addModelCollectionToView("currentRoles", account.getRoles());
+			super.addModelCollectionToView("loggedInAccount", account);
+		});
 	}
 	
 	/**

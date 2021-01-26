@@ -240,6 +240,12 @@ public class RecordModelController extends ModelControllerImpl {
 		
 		Iterable<Record> personnels = recordRepository.findAll();
 		super.addModelCollectionToView("recordList", personnels);
+
+		Optional<Account> loggedInAccount = accountRepository.findByUsername(AccountUtil.currentLoggedInUser().getUsername());
+		loggedInAccount.ifPresent(account -> {
+			super.addModelCollectionToView("currentRoles", account.getRoles());
+			super.addModelCollectionToView("loggedInAccount", account);
+		});
 	}
 	
 	@Override

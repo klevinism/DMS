@@ -27,7 +27,7 @@
               <div class="col-md-8 grid-margin stretch-card"  th:with="bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
               	<div class="card"> 
               		<div class="card-body">
-              	<form th:action="@{/account}" th:object="${account}" method="post" >
+              	<form th:action="@{/account}" th:object="${account}" method="post" enctype="multipart/form-data">
               		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).EDIT}">
               		
           			<section th:replace="__${bodyUrl}__">

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.model.AccountModelController;
@@ -46,11 +47,12 @@ public class AccountModelViewController {
 	 * @return
 	 */
 	@PostMapping("") 
-	public String accountPost(@Valid Account account, BindingResult bindingResult, 
+	public String accountPost(@Valid Account account, BindingResult bindingResult, @RequestParam(name = "profileimage", required =false) MultipartFile profileImage, 
 			@RequestParam(required = false) String action,
 			Model model) {
 		
-		accountModelController.init() 
+		accountModelController.init()
+			.addControllerParam("profileimage", profileImage)
 			.addControllerParam("action", action)
 			.addModelAttributes(account)
 			.addBindingResult(bindingResult)

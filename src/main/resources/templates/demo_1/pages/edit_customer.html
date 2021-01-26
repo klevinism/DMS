@@ -27,7 +27,7 @@
               <div class="col-md-8 grid-margin stretch-card"  th:with="bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
               	<div class="card"> 
               		<div class="card-body">
-	              	<form th:action="@{/admin/__${currentPage}__}" th:object="${selected}" method="post" >
+	              	<form th:action="@{/admin/__${currentPage}__}" th:object="${selected}" method="post"  enctype="multipart/form-data">
 	              	
 	          			<section th:replace="__${bodyUrl}__">
 						  	<!-- partial:partials/_footer.html -->

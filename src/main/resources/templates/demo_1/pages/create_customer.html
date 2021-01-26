@@ -28,7 +28,7 @@
               														bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
               	<div class="card"> 
               		<div class="card-body">
-              	<form th:action="@{__${currentPage}__}" th:object="${selected}" method="post" >
+              	<form th:action="@{__${currentPage}__}" th:object="${selected}" method="post" enctype="multipart/form-data">
               	
               		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
               		

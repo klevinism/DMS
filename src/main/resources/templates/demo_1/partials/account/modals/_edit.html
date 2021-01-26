@@ -8,44 +8,51 @@
       <input type="hidden" th:field="*{id}">
       <input type="hidden" th:field="*{enabled}">
       <input type="hidden" th:field="*{active}">
-	  <input type="hidden" th:if="*{customer != null}" th:field="*{customer.id}">
-	  <input type="hidden" th:if="*{customer != null}" th:field="*{customer.registerdate}">
-	  <input type="hidden" th:if="*{personnel != null}" th:field="*{personnel.id}">  
-	  <input type="hidden" th:if="*{personnel != null}" th:field="*{personnel.type}">  
+	  <input type="hidden" th:if="*{customer != null && customer.id != null}" th:field="*{customer.id}">
+	  <input type="hidden" th:if="*{customer != null && customer.id != null}" th:field="*{customer.registerdate}">
+	  <input type="hidden" th:if="*{personnel != null && personnel.id != null}" th:field="*{personnel.id}">  
+	  <input type="hidden" th:if="*{personnel != null && personnel.id != null}" th:field="*{personnel.type}">  
+	  <input type="hidden" th:field="*{password}">  
+	  
+	  <div class="form-group" id="attachmentInput">
+	    <div class="col-md-6 grid-margin" >
+			<div class="form-group " th:with="imgsuburl = *{roles[0].name == 'ADMIN' || roles[0].name == 'PERSONNEL' ? 'personnel' : 'customer'}">
+				<label>[[#{ProfileImage}]]</label>
+				<input id="recordAttachments" type="file" class="file" th:if="*{image != null}" name="profileimage" th:value="'http://localhost:8080'+@{/resources/__${imgsuburl}__/img/profile/__*{image}__}" multiple="false" data-preview-file-type="any">
+				<input id="recordAttachments" type="file" class="file" th:if="*{image == null}" name="profileimage" multiple="false" data-preview-file-type="any">
+			</div>		
+		</div>
+	  </div>
 	  
       <div class="form-group">      
         <label for="username">[[#{Username}]]</label>
         <input type="text" class="form-control form-control-lg"  th:placeholder="*{username}" th:value="*{username}" th:field="*{username}">
-        <p class="error" th:if="${#fields.hasErrors('username')}" th:errors="${username}">error</p>
+        <p class="alert alert-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">error</p>
       </div>
       
       <div class="form-group">      
-        <label for="password">[[#{Password}]]</label>
-        <input type="password" class="form-control form-control-lg" th:placeholder="*{password}" th:value="*{password}" th:field="*{password}">
-      </div>
-
-      <div class="form-group">      
         <label for="name">[[#{Name}]]</label>
         <input type="text" class="form-control form-control-lg" th:placeholder="*{name}" th:value="*{name}" th:field="*{name}">
+        <p class="alert alert-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">error</p>
       </div>
       
       <div class="form-group">      
         <label for="surname">[[#{Surname}]]</label>
         <input type="text" class="form-control form-control-lg" th:placeholder="*{surname}" th:value="*{surname}" th:field="*{surname}">
+        <p class="alert alert-danger" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">error</p>
       </div>
       
       <div class="form-group">      
         <label for="email">[[#{Email}]]</label>
         <input type="text" class="form-control form-control-lg" th:placeholder="*{email}" th:value="*{email}" th:field="*{email}">
-                        <p class="alert alert-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
-
+		<p class="alert alert-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
       </div>
       
       <div class="form-group">      
         <label for="phone">[[#{PhoneNr}]]</label>
-        <input type="text" class="form-control form-control-lg" id="phone" name="phone" th:placeholder="*{phone}" th:value="*{phone}" th:field="*{phone}">
+        <input type="text" class="form-control form-control-lg" th:placeholder="*{phone}" th:value="*{phone}" th:field="*{phone}">
+        <p class="alert alert-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">error</p>
       </div>
-      
 		<div class="form-group">
 		  <label for="gender">[[#{Gender}]]</label>	
 		  <div class="form-radio form-radio-flat">
@@ -61,16 +68,61 @@
       <div class="form-group">
         <label for="roles">[[#{Roles}]]</label>
         
-        <select th:field="*{roles[0]}">
-        	<option th:each="role: ${allRoles}" th:value="${role.id}" th:text="${role.name}"></option>
+        <select th:field="*{roles[0].name}"  th:with="roleName = *{customer !=null ? 'CUSTOMER' : 'PERSONNEL'}, name = *{roles[0].name}">
+        	<option th:each="role: ${allRoles}" th:if="*{roles[0].name} == ${name}" th:value="*{roles[0].name}">[[${role.name}]]</option>
         </select>
         
       </div>
-
-      <div class="form-group">
-        <label for="age">Age</label>
-        <input type="number" name="age" class="form-control form-control-lg" id="age" th:placeholder="*{age}"  th:value="*{age}" th:field="*{age}">
+	  
+	  <div class="form-group">
+        <label for="Birthday">[[#{Birthday}]]</label>
+        <input type="text" class="form-control form-control-lg"  id="birthdayCalendar"  th:placeholder="*{birthday}"  th:field="*{birthday}">
+        <p class="alert alert-danger" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}">error</p>
       </div>
-
+      <div class="form-group">
+        <label for="address">[[#{Address}]]</label>
+        <input type="text" class="form-control form-control-lg" th:placeholder="*{address}" th:field="*{address}">
+        <p class="alert alert-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}">error</p>
+      </div>
+      <div class="form-group">
+        <label for="city">[[#{City}]]</label>
+        <input type="text" class="form-control form-control-lg" th:placeholder="*{city}" th:field="*{city}">
+        <p class="alert alert-danger" th:if="${#fields.hasErrors('city')}" th:errors="*{city}">error</p>
+      </div>
+      <div class="form-group">
+        <label for="country">[[#{Country}]]</label>
+        <input type="text" class="form-control form-control-lg" th:placeholder="*{country}"  th:field="*{country}">
+        <p class="alert alert-danger" th:if="${#fields.hasErrors('country')}" th:errors="*{country}">error</p>
+      </div>
+	  
+	<script th:inline="javascript"  th:with="imgsuburl = *{roles[0].name == 'ADMIN' || roles[0].name == 'PERSONNEL' ? 'personnel' : 'customer'}">
+	 /*<![CDATA[*/
+	
+	 var imgsrc = /*[[${'http://localhost:8080/resources/'+'__${imgsuburl}__'+'/img/profile/'+'__*{image}__'}]]*/+'';
+	 var imgtitle = /*[[${'__*{image}__'}]]*/+'';
+     var input = $("#recordAttachments").fileinput({
+   	  "initialPreview": ["<img width='150px' height='200px' title='"+imgtitle+"' src='"+imgsrc+"'>"],
+   	  "initialCaption":imgtitle,
+ 	 });
+     var birthday = /*[[*{birthday}]]*/'';
+console.log(new Date(birthday));
+     console.log(getFormattedDate(new Date(birthday)));
+     $('#birthdayCalendar').val(getFormattedDate(new Date(birthday)));
+     $('#birthdayCalendar').datetimepicker({
+  	    "allowInputToggle": true,
+  	    "showClose": true,
+  	    "showClear": true,
+  	    "format": "YYYY-MM-DD"
+    });
+     function getFormattedDate(date) {
+    	    var day = date.getDate();
+    	    var month = date.getMonth() + 1;
+    	    var year = date.getFullYear();
+    	    console.log(year + "-" + month + "-" + day);
+    	    return year + "-" + month + "-" + day;
+    	}
+     console.log(birthday);
+    /*]]>*/
+    </script>
   </div>
 </div>

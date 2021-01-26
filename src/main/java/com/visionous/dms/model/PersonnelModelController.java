@@ -1,5 +1,12 @@
 package com.visionous.dms.model;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -7,14 +14,18 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
+import com.visionous.dms.configuration.helpers.DateUtil;
+import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Personnel;
@@ -61,13 +72,18 @@ public class PersonnelModelController extends ModelControllerImpl{
 		// If action occurred, persist object to db
 		if(super.getAllControllerParams().containsKey("modelAttribute")) {
 			if(super.getAllControllerParams().containsKey("action")) {
-				persistModelAttributes(
-						(Personnel) super.getAllControllerParams().get("modelAttribute"), 
-						super.getAllControllerParams().get("action").toString().toLowerCase()
-						);
+				if(super.hasResultBindingError()) {
+					super.setControllerParam("viewType", super.getAllControllerParams().get("action").toString().toLowerCase());
+				}else {
+					persistModelAttributes(
+							(Personnel) super.getAllControllerParams().get("modelAttribute"), 
+							super.getAllControllerParams().get("action").toString().toLowerCase()
+					);
+				}
 			}
 		}
-		
+		System.out.println(super.getAllControllerParams().get("viewType") + " <ACITON");
+
 		// Build view
 		this.buildPersonnelViewModel(super.getAllControllerParams().get("viewType").toString().toLowerCase());
 		
@@ -93,6 +109,28 @@ public class PersonnelModelController extends ModelControllerImpl{
 		}else if(action.equals(Actions.EDIT.getValue()) ) {
 			Optional<Account> acc = accountRepository.findById(newPersonnel.getId());
 			acc.ifPresent(account -> {
+				
+				if(super.getAllControllerParams().containsKey("profileimage")) {
+					MultipartFile uploadedFile = (MultipartFile) super.getAllControllerParams().get("files");
+					if(uploadedFile != null && (uploadedFile.getOriginalFilename()!= null || uploadedFile.getOriginalFilename() != "")){
+						StringBuilder attachmentPath = new StringBuilder();
+						try {
+							String path = FileManager.write(uploadedFile, "/tmp/personnel/profile/");
+						    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss-"));
+						    String fileName = date + uploadedFile.getOriginalFilename();
+							attachmentPath.append(fileName);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						account.setImage(attachmentPath.toString());
+					}
+				}
+
+				Date birthday = account.getBirthday();
+				Date today = new Date();
+				Period period = DateUtil.getPeriodBetween(birthday, today);
+				account.setAge(period.getYears());
+				
 				newPersonnel.setAccount(account);
 				account.setPersonnel(newPersonnel);
 				accountRepository.saveAndFlush(account);
@@ -100,12 +138,36 @@ public class PersonnelModelController extends ModelControllerImpl{
 			
 		}else if(action.equals(Actions.CREATE.getValue())) {
 			
-			newPersonnel.getAccount().setCustomer(null);
-			newPersonnel.getAccount().setPersonnel(null);
-			
-			Account newAccount = accountRepository.saveAndFlush(newPersonnel.getAccount());
-			newPersonnel.setAccount(newAccount);				
-			personnelRepository.saveAndFlush(newPersonnel);
+			if(newPersonnel.getAccount().getRoles().get(0).getName().equals("PERSONNEL")) {
+				newPersonnel.getAccount().setCustomer(null);
+				newPersonnel.getAccount().setPersonnel(null);
+				newPersonnel.getAccount().setPassword(new BCryptPasswordEncoder().encode(newPersonnel.getAccount().getPassword()));
+
+				if(super.getAllControllerParams().get("profileimage") != null) {
+					MultipartFile uploadedFile = (MultipartFile) super.getAllControllerParams().get("profileimage");
+					
+					if(!uploadedFile.isEmpty() && (uploadedFile.getOriginalFilename()!= null || !uploadedFile.getOriginalFilename().equals(""))){
+						StringBuilder attachmentPath = new StringBuilder();
+						try {
+							String path = FileManager.write(uploadedFile, "/tmp/personnel/profile/");
+						    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss-"));
+						    String fileName = date + uploadedFile.getOriginalFilename();
+							attachmentPath.append(fileName);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						newPersonnel.getAccount().setImage(attachmentPath.toString());
+					}
+				} 
+				Date birthday = newPersonnel.getAccount().getBirthday();
+				Date today = new Date();
+				Period period = DateUtil.getPeriodBetween(birthday, today);
+				newPersonnel.getAccount().setAge(period.getYears());
+				
+				Account newAccount = accountRepository.saveAndFlush(newPersonnel.getAccount());
+				newPersonnel.setAccount(newAccount);
+				personnelRepository.saveAndFlush(newPersonnel);
+			}
 		}else if(action.equals(Actions.VIEW.getValue())) {
 		}		
 
@@ -118,13 +180,16 @@ public class PersonnelModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("viewType", viewType);
 		
 		if(viewType.equals(Actions.CREATE.getValue())) {
-			Personnel newPersonnel = new Personnel();
-			newPersonnel.setAccount(new Account());
-			super.addModelCollectionToView("selected", newPersonnel);
+			if(!super.hasResultBindingError()) {
+				Personnel newPersonnel = new Personnel();
+				newPersonnel.setAccount(new Account());
+				super.addModelCollectionToView("personnel", newPersonnel);
+			}
 			
-			Iterable<Role> allRoles = roleRepository.findAll();
-			super.addModelCollectionToView("allRoles", allRoles);
-			
+				Iterable<Role> allRoles = roleRepository.findAll();
+				super.addModelCollectionToView("allRoles", allRoles);
+				super.addModelCollectionToView("isPersonnelCreation", true);
+
 		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
 			String personnelId = super.getAllControllerParams().get("id").toString();
 			Optional<Personnel> personnel = personnelRepository.findById(Long.valueOf(personnelId));
@@ -141,6 +206,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 
 				Iterable<Role> allRoles = roleRepository.findAll();
 				super.addModelCollectionToView("allRoles", allRoles);
+				
 			}
 		}
 		
@@ -159,6 +225,13 @@ public class PersonnelModelController extends ModelControllerImpl{
 
 		Iterable<Personnel> personnels = personnelRepository.findAll();
 		super.addModelCollectionToView("personnelList", personnels);
+		
+		
+		Optional<Account> loggedInAccount = accountRepository.findByUsername(AccountUtil.currentLoggedInUser().getUsername());
+		loggedInAccount.ifPresent(account -> {
+			super.addModelCollectionToView("currentRoles", account.getRoles());
+			super.addModelCollectionToView("loggedInAccount", account);
+		});
 	}
 	
 	@Override

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.model.CustomerModelController;
@@ -88,7 +89,7 @@ public class CustomerModelViewController {
 		.addControllerParam("viewType", Actions.VIEW.getValue())
 		.setViewModel(model)
 		.run(); // GetValuesForView
-		
+
 		return "demo_1/pages/customer"; 
 	}
 	
@@ -97,11 +98,12 @@ public class CustomerModelViewController {
 	 * @return
 	 */
 	@PostMapping("")
-	public String customerPost(@ModelAttribute Customer customer,
+	public String customerPost(@RequestParam(name = "profileimage", required =false) MultipartFile profileImage, @ModelAttribute Customer customer,
 			@RequestParam(required = false) String action,
 			Model model) {
 		
 		customerModelController.init()
+			.addControllerParam("profileimage", profileImage)
 			.addControllerParam("action", action)
 			.addControllerParam("viewType", Actions.VIEW)
 			.addModelAttributes(customer)

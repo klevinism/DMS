@@ -52,7 +52,7 @@ public class Questionnaire implements Serializable{
 	@JoinColumn(name="customerid")
 	private Customer customer;
 
-	@OneToMany(mappedBy = "questionnaire", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "questionnaire", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	private List<QuestionnaireResponse> questionnaireResponse;
 	
 	/**

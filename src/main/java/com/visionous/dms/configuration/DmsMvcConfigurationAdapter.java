@@ -35,7 +35,9 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
 	
 	@Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/static/assets/");
+        registry.addResourceHandler("/resources/personnel/img/**").addResourceLocations("file:///C:/Users/delimeta/OneDrive - SISAL SPA/Documenti/Workspace/dms/tmp/personnel/");
+        registry.addResourceHandler("/resources/customer/img/**").addResourceLocations("file:///C:/Users/delimeta/OneDrive - SISAL SPA/Documenti/Workspace/dms/tmp/customer/");
     }
 	
     @Bean

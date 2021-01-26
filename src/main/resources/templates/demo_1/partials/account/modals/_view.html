@@ -2,12 +2,15 @@
   <div class="card-body">
   
   <div class="row">
-          <div class="col-sm-6 col-md-4">
-              <img src="https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg" alt="" width="100%" border="0" class="rounded"  />
+          <div class="col-sm-6 col-md-4" th:if="*{account.image != null }" th:with="imgsuburl = *{account.roles[0].name == 'ADMIN' || account.roles[0].name == 'PERSONNEL' ? 'personnel' : 'customer'}">
+              <img th:src="@{/resources/__${imgsuburl}__/img/profile/__*{account.image}__}" alt="" width="100%" height="100%" border="0" class="rounded"  />
+          </div>
+          <div class="col-sm-6 col-md-4" th:if="*{account.image == null }">
+              <img th:src="'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg'" alt="" width="100%" border="0" class="rounded"  />
           </div>
           <div class="col-sm-6 col-md-8">
               <h4>[[*{account.name}]] [[*{account.surname}]]</h4>
-              <small><cite title="San Francisco, USA"><i class="mdi mdi-map-marker"></i>San Francisco, USA </cite></small>
+              <small><cite th:title="*{account.address} +','+ *{account.city} +','+ *{account.country}"><i class="mdi mdi-map-marker"></i>[[*{account.address} +','+ *{account.city} +','+ *{account.country}]]</cite></small>
               <small><cite title="Age"> <i class="mdi mdi-gift"></i>[[*{account.age}]] </cite></small>
               <p>
                   <i class="mdi mdi-email-box"></i>[[*{account.email}]]<br />

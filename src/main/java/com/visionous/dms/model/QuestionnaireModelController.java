@@ -53,6 +53,7 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 	private PersonnelRepository personnelRepository;
 	private RoleRepository roleRepository;
 	private CustomerRepository customerRepository;
+	private AccountRepository accountRepository;
 	private QuestionnaireRepository questionnaireRepository;
 	private QuestionnaireFormRepository questionnaireFormRepository;
 	private QuestionnaireResponseRepository questionnaireResponseRepository;
@@ -64,16 +65,16 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 	 */
 	@Autowired
 	public QuestionnaireModelController(PersonnelRepository personnelRepository, 
-			CustomerRepository customerRepository,
-			QuestionnaireRepository questionnaireRepository,
-			QuestionnaireFormRepository questionnaireFormRepository,
-			QuestionnaireResponseRepository questionnaireResponseRepository) {
+			CustomerRepository customerRepository, QuestionnaireRepository questionnaireRepository,
+			QuestionnaireFormRepository questionnaireFormRepository, QuestionnaireResponseRepository questionnaireResponseRepository, 
+			AccountRepository accountRepository) {
 		
 		this.personnelRepository = personnelRepository;
 		this.questionnaireResponseRepository = questionnaireResponseRepository;
 		this.customerRepository = customerRepository;
 		this.questionnaireRepository = questionnaireRepository;
 		this.questionnaireFormRepository = questionnaireFormRepository;
+		this.accountRepository = accountRepository;
 	}
 	
 	
@@ -255,6 +256,12 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 
 		Iterable<Personnel> personnels = personnelRepository.findAll();
 		super.addModelCollectionToView("personnelList", personnels);
+		
+		Optional<Account> loggedInAccount = accountRepository.findByUsername(AccountUtil.currentLoggedInUser().getUsername());
+		loggedInAccount.ifPresent(account -> {
+			super.addModelCollectionToView("currentRoles", account.getRoles());
+			super.addModelCollectionToView("loggedInAccount", account);
+		});
 	}
 	
 	/**

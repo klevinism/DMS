@@ -139,7 +139,11 @@ public class ModelControllerImpl implements ModelController{
 	public ModelController addBindingResult(BindingResult bindingResult) {
 		if(bindingResult.hasErrors()) {
 			System.out.println(bindingResult.getFieldErrorCount());
+			bindingResult.getAllErrors().forEach(x -> {System.out.println(x.getDefaultMessage());});
+			
 			this.resultBindingError = true;
+		}else {
+			this.resultBindingError = false;
 		}
 		return this;
 	}

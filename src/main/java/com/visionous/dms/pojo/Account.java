@@ -1,13 +1,13 @@
 package com.visionous.dms.pojo;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -19,13 +19,18 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.lang.Nullable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -51,46 +56,77 @@ public class Account implements Serializable{
     @SequenceGenerator(sequenceName = "account_seq", allocationSize = 1, name = "ACC_SEQ")
     private Long id;
 	
+    @NotNull(message = "Name should not be empty")
+    @NotEmpty(message = "Name should not be empty")
 	private String name;
 	
+    @NotNull(message = "Surname should not be empty")
+    @NotEmpty(message = "Surname should not be empty")
 	private String surname;
 	
+    @NotNull(message = "Age should not be empty")
 	private int age;
 	
+    @NotNull(message = "Pick a gender")
 	private String gender;
 	
 	@Valid
 	@ValidEmail(message = "Email must be valid, example@example.com")
-    @NotNull
-    @NotEmpty
+    @NotNull(message = "Email must not be null")
 	private String email;
 	
+	@NotNull(message = "Enter a phone number")
 	private Long phone;
     
+	@NotNull(message = "Enter a username")
+	@NotEmpty(message = "Enter a username")
     private String username;
     
+	@Valid
+	@NotNull(message = "Enter a password")
+	@NotEmpty(message = "Enter a password")
+	@NotBlank(message = "Enter a password")
     private String password;
     
+	@NotNull(message = "Enter birthday")
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(iso = ISO.DATE)
+	private Date birthday;
+	
+	private String image;
+
+	@NotNull(message = "Enter address")
+	@NotEmpty(message = "Enter address")
+	private String address;
+
+	@NotNull(message = "Enter city")
+	@NotEmpty(message = "Enter city")
+	private String city;
+	
+	@NotNull(message = "Enter country")
+	@NotEmpty(message = "Enter country")
+	private String country;
+	
     @JsonIgnore
     @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(cascade = CascadeType.ALL) 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER) 
     @JoinTable(name = "authority",
             joinColumns = @JoinColumn(name = "accountid"),
             inverseJoinColumns = @JoinColumn(name = "roleid"))
     private List<Role> roles  = new ArrayList<>();
     
     private boolean enabled;
-    
     private boolean active;
     
+    @Valid
     @JsonIgnore
-    @OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @PrimaryKeyJoinColumn
     @Nullable
 	private Personnel personnel;
     
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
-    @OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @PrimaryKeyJoinColumn
     @Nullable
 	private Customer customer;
@@ -252,7 +288,7 @@ public class Account implements Serializable{
 	 * @param password
 	 */
 	public void setPassword(String password) {
-		this.password = new BCryptPasswordEncoder().encode(password);
+		this.password = password;
 	}
 
 	/**
@@ -330,12 +366,95 @@ public class Account implements Serializable{
 		this.customer = customer;
 	}
 
+	/**
+	 * @return the birthday
+	 */
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	/**
+	 * @param registerdate the registerdate to set
+	 */
+	public void setBirthday(String birthday) {
+		try {
+			this.birthday = new SimpleDateFormat("DD-MMM-YYYY").parse(birthday);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+
+	/**
+	 * @param birthday the birthday to set
+	 */
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
+	
+	/**
+	 * @return the image
+	 */
+	public String getImage() {
+		return image;
+	}
+
+	/**
+	 * @param image the image to set
+	 */
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	/**
+	 * @return the address
+	 */
+	public String getAddress() {
+		return address;
+	}
+
+	/**
+	 * @param address the address to set
+	 */
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	/**
+	 * @return the city
+	 */
+	public String getCity() {
+		return city;
+	}
+
+	/**
+	 * @param city the city to set
+	 */
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	/**
+	 * @return the country
+	 */
+	public String getCountry() {
+		return country;
+	}
+
+	/**
+	 * @param country the country to set
+	 */
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
 	@Override
 	public String toString() {
 		return "Account [id=" + id + ", name=" + name + ", surname=" + surname + ", age=" + age + ", gender=" + gender
 				+ ", email=" + email + ", phone=" + phone + ", username=" + username + ", password=" + password
-				+ ", enabled=" + enabled + ", active=" + active 
-				+ "]";
+				+ ", birthday=" + birthday + ", image=" + image + ", address=" + address + ", city=" + city
+				+ ", country=" + country + ", enabled=" + enabled + ", active=" + active + "]";
 	}
 
 }

@@ -154,9 +154,14 @@ public class HistoryModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("currentPage", currentPage);
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
 		
-
 		Iterable<History> personnels = historyRepository.findAll();
 		super.addModelCollectionToView("personnelList", personnels);
+		
+		Optional<Account> loggedInAccount = accountRepository.findByUsername(AccountUtil.currentLoggedInUser().getUsername());
+		loggedInAccount.ifPresent(account -> {
+			super.addModelCollectionToView("currentRoles", account.getRoles());
+			super.addModelCollectionToView("loggedInAccount", account);
+		});
 	}
 	
 	/**

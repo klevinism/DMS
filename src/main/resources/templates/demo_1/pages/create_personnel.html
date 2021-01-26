@@ -25,10 +25,11 @@
             <!-- Page Title Header Ends-->
             <div class="row">
               <div class="col-md-8 grid-margin stretch-card"  th:with="createAccountView = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType},
-              														createPersonnelView = 'demo_1/partials/personnel/modals/_'+${viewType}+' :: '+ ${viewType}" >
+              														createPersonnelView = 'demo_1/partials/personnel/modals/_'+${viewType}+' :: '+ ${viewType},
+              														obj = ${selected}" >
               	<div class="card"> 
-              		<div class="card-body">
-              	<form th:action="@{/admin/personnel}" th:object="${selected}" method="post" >
+              		<div class="card-body">[[${obj}]]
+              	<form th:action="@{/admin/personnel}" th:object="${personnel}" method="post"  enctype="multipart/form-data">
               	
               		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
               		

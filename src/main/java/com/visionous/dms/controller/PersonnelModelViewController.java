@@ -6,12 +6,14 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.model.PersonnelModelController;
@@ -74,16 +76,22 @@ public class PersonnelModelViewController {
 	 * @return
 	 */
 	@PostMapping("") 
-	public String personnelPost(@Valid @ModelAttribute Personnel personnel,
+	public String personnelPost(@Valid Personnel personnel, BindingResult errors, @RequestParam(name = "profileimage", required =false) MultipartFile profileImage,
 			@RequestParam(required = false) String action,
 			Model model) {
 		
 		personnelModelController.init()
+			.addControllerParam("profileimage", profileImage)
 			.addControllerParam("action", action)
 			.addControllerParam("viewType", Actions.VIEW)
+			.addBindingResult(errors)
 			.addModelAttributes(personnel)
 			.setViewModel(model)
 			.run(); // GetValuesForView
+		
+		if(personnelModelController.hasResultBindingError()) {
+			return "demo_1/pages/"+action.toLowerCase()+"_personnel";
+		}
 		
 		return "demo_1/pages/personnel"; 
 	}

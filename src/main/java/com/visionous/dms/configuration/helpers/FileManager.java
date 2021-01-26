@@ -18,10 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
  *
  */
 public class FileManager {
-	public static String write(MultipartFile file, String fileType) throws IOException {
+	public static String write(MultipartFile file, String pathstatic) throws IOException {
 	    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss-"));
 	    String fileName = date + file.getOriginalFilename();
-	    String path = new File(".").getCanonicalPath()+"/tmp";
+	    String path = new File(".").getCanonicalPath()+pathstatic;
 
 	    String folderPath = path;
 	    String filePath = folderPath + "/" + fileName;
