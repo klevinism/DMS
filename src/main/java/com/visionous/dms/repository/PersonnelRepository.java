@@ -23,5 +23,18 @@ public interface PersonnelRepository extends JpaRepository<Personnel, Long> {
 	 */
 	void deleteById(Long id);
 
+	/**
+	 * @param b
+	 * @param c
+	 * @param string
+	 * @return
+	 */
+	List<Personnel> findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_Name(boolean b, boolean c, String roles_name);
+
+	/**
+	 * @param string
+	 * @return
+	 */
+	Iterable<Personnel> findAllByAccount_Roles_Name(String roles_name);
 	
 }

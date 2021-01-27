@@ -292,7 +292,7 @@ public class AppointmentRestController {
             result.setMessage("success");
         }
         result.setResult(appointments); 
-
+        
         return ResponseEntity.ok(result);
 
     }
@@ -301,8 +301,8 @@ public class AppointmentRestController {
     public ResponseEntity<?> getAvailablePersonnel() {
 		
         ResponseBody<Personnel> result = new ResponseBody<>();
-        
-        List<Personnel> personnel = personnelRepository.findAll();
+
+        List<Personnel> personnel = personnelRepository.findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_Name(true, true, "PERSONNEL");
         if(personnel.size() != 0) {
         	result.setResult(personnel);
         }

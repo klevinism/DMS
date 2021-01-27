@@ -223,9 +223,8 @@ public class PersonnelModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
 		
 
-		Iterable<Personnel> personnels = personnelRepository.findAll();
+		Iterable<Personnel> personnels = personnelRepository.findAllByAccount_Roles_Name("PERSONNEL");
 		super.addModelCollectionToView("personnelList", personnels);
-		
 		
 		Optional<Account> loggedInAccount = accountRepository.findByUsername(AccountUtil.currentLoggedInUser().getUsername());
 		loggedInAccount.ifPresent(account -> {
