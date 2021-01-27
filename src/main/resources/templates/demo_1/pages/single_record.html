@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <section th:replace="demo_1/partials/_header :: header">
-  </section>
+  <div th:replace="demo_1/partials/_header :: header">
+  </div>
   <body>
     <div class="container-scroller">
       <section th:replace="demo_1/partials/_navbar :: navbar">
@@ -24,26 +24,24 @@
   			</section>
             <!-- Page Title Header Ends-->
             <div class="row">
-                     
               <div class="col-md-8 ">
-              	<div class="card"> 
-              		<div class="card-body"  th:with="historyUrl = 'demo_1/partials/history/modals/_'+${viewType}+' :: '+ ${viewType}">
-		              	<form th:action="@{/admin/history}" th:object="${selected}" method="post" >
-		              	
-		              		<section th:replace="__${historyUrl}__">
+               <div class="card"> 
+              		<div class="card-body"  th:with="recordUrl = 'demo_1/partials/record/selected_'+${viewType}+' :: '+ ${viewType}">
+		              	<form th:action="@{/admin/history}" th:object="${selectedRecord}" method="post" >
+		              		<section th:replace="__${recordUrl}__">
 							  	<!-- partial:partials/_historyUrl.html -->
 				  			</section>
-						  									  			
 						</form>
 		  			</div>
 		  		</div>
+
               </div>
-			  <div class="col-md-4 ">
+              <div class="col-md-4 ">
 			  	<div class="row">
 				  	<div class="col-md-12 grid-margin" >
 						<div class="card"> 
 	              			<div class="card-body" th:with="accountUrl = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType}">
-	              				<form th:action="@{/customer}" th:object="${selected}" method="post" >
+	              				<form th:action="@{/customer}" th:object="${selectedRecord.history.customer}" method="post" >
 		              	
 				              		<section th:replace="__${accountUrl}__">
 									  	<!-- partial:partials/_accountUrl.html -->
@@ -63,30 +61,10 @@
 	              	
 			  	</div>             
               </div>
-			</div>
+            </div>
+            
           </div>
           <!-- content-wrapper ends -->
-	  	<!-- Appointment Modal -->
-		<div class="modal fade " id="appointmentModal" role="dialog"  aria-hidden="true">
-		  <div class="modal-dialog modal-lg">
-		    <!-- Modal content-->
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <h4 class="modal-title" >[[#{NewAppointment}]]</h4>
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
-		      </div>
-			      <div class="modal-body" th:with="modalBodyUrl = 'demo_1/partials/booking/modals/_book :: book'">
-						<section  th:replace="__${modalBodyUrl}__">
-						  	<!-- partial:partials/_edit.html partial:partials/_delete.html-->
-						</section>
-			      </div>
-			      <div class="modal-footer" >
-			    	<button type="button" class="btn btn-secondary" data-dismiss="modal">[[#{Close}]]</button>
-			        <button id="bookSubmit" type="submit" class="btn btn-primary" onclick="book()" disabled>[[#{Book}]]</button>
-			      </div>
-		    </div>
-		  </div>
-		</div>
 		  
 		  <section th:replace="demo_1/partials/_footer :: footer">
 		  	<!-- partial:partials/_footer.html -->
@@ -97,7 +75,8 @@
         <!-- main-panel ends -->
         
       </div>
-      <!-- page-body-wrapper ends -->
+    
+    <!-- page-body-wrapper ends -->
     </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
@@ -105,7 +84,7 @@
     <script src="/assets/vendors/js/vendor.bundle.addons.js"></script>
     <!-- endinject -->
     <!-- Plugin js for this page-->
-    
+    <script type="text/javascript" src="/assets/vendors/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>    
     <!-- End plugin js for this page-->
@@ -114,10 +93,7 @@
     <script src="/assets/js/shared/misc.js"></script>
     <!-- endinject -->
     <!-- Custom js for this page-->
-    
-    <script src="/assets/js/demo_1/booking.js"></script>
-    <script src="/assets/js/demo_1/dashboard_selected_customer.js"></script>
+    <script src="/assets/js/demo_1/personnel.js"></script>
     <!-- End custom js for this page-->
-  
   </body>
 </html>

@@ -75,6 +75,7 @@ public class Record  implements Serializable{
 	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "toothid")
 	private Teeth tooth;
+	
 	/**
 	 * @return the id
 	 */

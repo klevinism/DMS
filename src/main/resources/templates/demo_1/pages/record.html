@@ -32,10 +32,27 @@
 		              		<section th:replace="__${recordUrl}__">
 							  	<!-- partial:partials/_historyUrl.html -->
 				  			</section>
-						  									  			
 						</form>
 		  			</div>
 		  		</div>
+		        <script th:inline="javascript">
+				/*<![CDATA[*/
+					var alertSuccess = ""+ /*[[#{table.lengthMenu}]]*/ '';
+					var tableZeroRecord = ""+ /*[[#{table.zeroRecord}]]*/ '';
+					var tableInfo = ""+ /*[[#{table.info}]]*/ '';
+					var tableInfoEmpty = ""+ /*[[#{table.infoEmpty}]]*/ '';
+					var tableInfoFiltered = ""+ /*[[#{table.infoFiltered}]]*/ '';
+					var tableSearch = ""+ /*[[#{table.search}]]*/ '';
+				/*]]>*/
+				</script>
+		       <script>
+		       $(document).ready(function() {
+		           $('#historyRecords').DataTable({
+		           		order: [ 0, "desc" ]
+		           });
+		       });
+		       </script>
+		       	
 
               </div>
               

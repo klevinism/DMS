@@ -80,5 +80,27 @@ public interface RecordRepository extends JpaRepository<Record, Long>{
 	 * @return
 	 */
 	List<Record> findAllByServicedateBetween(Date startDate, Date endDate);
+
+	/**
+	 * @return
+	 */
+	List<Record> findAllByOrderByServicedateDesc();
+
+	/**
+	 * @return
+	 */
+	List<Record> findAllByOrderByServicedateAsc();
+
+	/**
+	 * @param historyId
+	 * @return
+	 */
+	List<Record> findTop5ByHistoryIdOrderByServicedateDesc(Long historyId);
+
+	/**
+	 * @param historyId
+	 * @return
+	 */
+	Optional<Record> findFirstByHistoryIdOrderByServicedateDesc(Long historyId);
 }
 

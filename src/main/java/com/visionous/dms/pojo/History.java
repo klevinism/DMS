@@ -57,7 +57,7 @@ public class History implements Serializable{
 	@OneToMany(mappedBy = "history", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@PrimaryKeyJoinColumn
 	private Set<Record> records;
-	
+
 	@OneToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "customerid")
 	private Customer customer;

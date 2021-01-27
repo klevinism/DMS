@@ -30,7 +30,6 @@ public class RecordModelViewController {
 	
 	private RecordModelController recordModelController;
 	
-	
 	/**
 	 * 
 	 */
@@ -83,6 +82,27 @@ public class RecordModelViewController {
 			.run(); // GetValuesForView
 
 		return "demo_1/pages/record";
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/{id}")
+	public String recordSelected(@PathVariable("customerId") Long customerId,
+			@PathVariable("historyId") Long historyId,
+			@PathVariable("id") Long recordId,
+			Model model) {
+
+		recordModelController.init() // Re-initialize Model
+			.addControllerParam("customerId", customerId)
+			.addControllerParam("historyId", historyId)
+			.addControllerParam("id", recordId)
+			.addControllerParam("viewType", Actions.VIEW)
+			.setViewModel(model)
+			.run(); // GetValuesForView
+
+		return "demo_1/pages/single_record";
 	}
 	
 	/**

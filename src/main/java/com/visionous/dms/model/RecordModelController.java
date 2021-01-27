@@ -6,6 +6,8 @@ package com.visionous.dms.model;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -139,9 +141,10 @@ public class RecordModelController extends ModelControllerImpl {
 					StringBuilder attachments = new StringBuilder();
 					for(MultipartFile file : uploadedFiles) {
 						try {
-							String path = new File(".").getCanonicalPath()+"/tmp/" + file.getOriginalFilename();
-							FileManager.write(file, path);
-							attachments.append(""+Paths.get(path)+",");
+						    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss-"));
+							String path = FileManager.write(file, "/tmp/"); 
+						    String fileName = date + file.getOriginalFilename();
+							attachments.append(fileName+","); 
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -219,6 +222,27 @@ public class RecordModelController extends ModelControllerImpl {
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
 				Long customerId = Long.valueOf(super.getAllControllerParams().get("customerId").toString());
 				
+				if(super.getAllControllerParams().containsKey("id")) {
+					Long recordId = (Long) super.getAllControllerParams().get("id");
+					Optional<Record> selectedRecord = recordRepository.findById(recordId);
+					selectedRecord.ifPresent(record->{
+						
+						super.addModelCollectionToView("selectedRecord", record);
+						
+						if(record.getAttachments() != null) {
+							String attachment = record.getAttachments();
+							String[] attachments = attachment.split(",");
+							if(attachments.length >0 ) {
+								super.addModelCollectionToView("attachmentList", attachments);
+							}
+						}					
+						
+					});
+
+					List<Teeth> allTeeth = teethRepository.findAll();
+					super.addModelCollectionToView("listTeeth", allTeeth);
+				}
+				
 				Optional<History> history = historyRepository.findByCustomerId(customerId);
 				super.addModelCollectionToView("selected", history.get());
 				
@@ -237,9 +261,9 @@ public class RecordModelController extends ModelControllerImpl {
 		);
 		super.addModelCollectionToView("currentPage", currentPage);
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
-		
-		Iterable<Record> personnels = recordRepository.findAll();
-		super.addModelCollectionToView("recordList", personnels);
+
+		Iterable<Record> records = recordRepository.findAllByOrderByServicedateDesc();
+		super.addModelCollectionToView("recordList", records);
 
 		Optional<Account> loggedInAccount = accountRepository.findByUsername(AccountUtil.currentLoggedInUser().getUsername());
 		loggedInAccount.ifPresent(account -> {

@@ -6,31 +6,41 @@
     	  	<h4 class="card-title">[[#{DentalHistory}]]</h4>
     	  </div>
     	  <div class="ml-lg-auto" >
-        		<a href="#appointmentModal" class="btn btn-primary" data-toggle="modal" data-target="#appointmentModal">Book</a>
+    	  	<div class="dropdown">
+               <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuOutlineButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
+               	[[#{Action}]] 
+               </button>
+               <div class="dropdown-menu" aria-labelledby="dropdownMenuOutlineButton1" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 35px, 0px);">
+                 <a  th:if="*{customerHistory != null && customerHistory.records != null}"  th:href="'/customer/'+*{id}+'/history/'+*{customerHistory.id}+'/record/create'" class="dropdown-item" >[[#{action.visit}]]</a>
+                 <a  th:if="*{customerHistory == null || customerHistory.records == null}"  th:href="'/customer/'+*{id}+'/questionnaire/create'" class="dropdown-item" >[[#{action.visit}]]</a>
+                 <a href="#appointmentModal" class="dropdown-item"  data-toggle="modal" data-target="#appointmentModal">Book</a>
+               </div>
+             </div>
 		  </div>
 	    </div>
         <hr />
         
         <div class="row" th:if="*{customerHistory == null || customerHistory.records == null}">
+        	<div class="col-md-12 grid-margin">
+	           	<div class="alert show" role="alert" id="alert" style="display:none">
+				    Alert warning
+				</div>
+        	</div>
+
         	<div class="col-md-12 grid-margin"  >
         		<div class="d-flex flex-row align-items-center">
                   <i class="mdi mdi-alert icon-lg text-danger"></i>
                   <p class="mb-0 ml-1"> <h4 class="text text-danger">[[#{alert.noDentalRecords}]] [[*{account.name}]]</h4></p>
                 </div>
         	</div>
-        	<div class="col-md-12 grid-margin">
-        		<a th:href="'/customer/'+*{id}+'/questionnaire/create'" class="btn btn-primary btn-sm">[[#{action.newVisit}]]</a>
-        	</div>
         </div>
         
         <div class="row" th:if="*{customerHistory != null && customerHistory.records != null}">
         	<div class="col-md-12 grid-margin">
+    	  		<h4 class="card-title">[[#{Top5}]]</h4>
 	           	<div class="alert show" role="alert" id="alert" style="display:none">
 				    Alert warning
 				</div>
-        	
-        		<a th:href="'/customer/'+*{id}+'/history/'+*{customerHistory.id}+'/record/create'" class="btn btn-primary btn-sm">[[#{action.newVisit}]]</a>
-        		
         	</div>
         	
         	<div class="col-md-4 grid-margin"> 
@@ -40,30 +50,66 @@
         	</div>
         	
         	<div class="col-md-8 grid-margin">
-        		<table  id="allRecords" class="table table-hover">
-					<thead>
-						<tr style="background:#ebf3ff">
-							<th>[[#{ServiceDate}]]</th>
-							<th>[[#{ServiceType}]]</th>
-							<th>[[#{Tooth}]]</th>
-							<th>[[#{Comment}]]</th>
-						</tr>
-					</thead>
-					<tbody >
-						<tr class="clickable-tr"  th:each="record: *{customerHistory.records}" onmouseout="clearRecordSelection()" th:onmouseover="'hoverRecord(\'__${record.tooth.name}__\')'" onclick="window.location='/customer/history/record/'">
-							<td th:text="${#dates.format(record.servicedate, 'dd/MM/yyyy')}"></td>
-							<td th:text="${record.serviceType.name}"></td>
-							<td id="tooth" th:text="${record.tooth.name}"></td>
-							<td th:text="${record.servicecomment}"></td>
-						</tr>
-					</tbody>
-				</table>
+        		<div class="row">
+        			<div class="col-md-12 grid-margin">
+		        		<table  id="allRecords" class="table table-hover">
+							<thead>
+								<tr style="background:#ebf3ff">
+									<th>[[#{ServiceDate}]]</th>
+									<th>[[#{ServiceType}]]</th>
+									<th>[[#{Tooth}]]</th>
+									<th>[[#{Comment}]]</th>
+								</tr>
+							</thead>
+							<tbody >
+								<tr class="clickable-tr px-2"  th:each="record, iter: ${customerRecords}" onmouseout="clearRecordSelection()" 
+									th:onmouseover="'hoverRecord(\'__${record.tooth.name}__\')'" 
+									th:onclick="'window.location=\'/customer/'+*{id}+'/history/'+*{customerHistory.id}+'/record/'+${record.id}+'\''">
+									
+									<td th:text="${#dates.format(record.servicedate, 'dd/MM/yyyy')}"></td>
+									<td th:text="${record.serviceType.name}"></td>
+									<td id="tooth" th:text="${record.tooth.name}"></td>
+									<td th:text="${record.servicecomment}"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+        		</div>
+				<div class="row">
+        			<div class="col-md-12 grid-margin">
+        				<div class="data-wrapper d-flex mt-2 mt-lg-0">
+				    	  	
+			    	  	</div>
+			    	  	<div class="ml-lg-auto" >
+				    	  	<div class="dropdown">
+				               <h4 class="card-title"></h4>
+				               <a th:href="${currentPage} + '/' + *{id} + '/history/' + *{customerHistory.id}+ '/record'"><button type="button" class="btn btn-primary btn-sm"   >[[#{AllHistory}]]</button></a>
+				            </div>
+					  	</div>
+        			</div>
+        		</div>
         	</div>
         </div>
-        	
+        <script th:inline="javascript">
+		/*<![CDATA[*/
+			var alertSuccess = ""+ /*[[#{table.lengthMenu}]]*/ '';
+			var tableZeroRecord = ""+ /*[[#{table.zeroRecord}]]*/ '';
+			var tableInfo = ""+ /*[[#{table.info}]]*/ '';
+			var tableInfoEmpty = ""+ /*[[#{table.infoEmpty}]]*/ '';
+			var tableInfoFiltered = ""+ /*[[#{table.infoFiltered}]]*/ '';
+			var tableSearch = ""+ /*[[#{table.search}]]*/ '';
+		/*]]>*/
+		</script>
 		<script>
+		
         $(document).ready(function() {
-            $('#allRecords').DataTable();
+            $('#allRecords').DataTable({
+            	"bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": false,
+                "bInfo": false,
+            	"order": [ 0, "desc" ]
+            });
         });
         </script>
       </div>

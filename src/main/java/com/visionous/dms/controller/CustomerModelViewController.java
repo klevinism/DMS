@@ -71,7 +71,7 @@ public class CustomerModelViewController {
 			.addControllerParam("id", id)
 			.addControllerParam("modal", modal)
 			.addControllerParam("action", action)
-			.addControllerParam("viewType", action)
+			.addControllerParam("viewType", (action!=null ? action : Actions.VIEW))
 			.setViewModel(model)
 			.run(); // GetValuesForView
 		

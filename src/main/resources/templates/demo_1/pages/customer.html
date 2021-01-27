@@ -38,18 +38,24 @@
 	                          <th>[[#{Id}]]</th>
 	                          <th>[[#{Username}]]</th>
 	                          <th>[[#{RegisterDate}]]</th>
+	                          <th>[[#{LastVisit}]]</th>
+	                          <th>[[#{TreatedTooth}]]</th>
+	                          <th>[[#{ServiceType}]]</th>
+	                          <th>[[#{ServiceDetail}]]</th>
 	                          <th><!-- Actions column --></th>
 	                        </tr>
 	                      </thead>
 	                      <tbody>
-	                        <tr th:each="customer: ${customerList}" 
+	                        <tr th:each="customer, stat: ${customerList}" 
 	                        	th:onclick="'javascript:selectPersonnel('+${customer.id}+')'"
-	                        	th:with="
-	                        		user = ${customer.account},
+	                        	th:with="user = ${customer.account},
+	                        		lastVisitRecord = ${lastCustomerRecord[stat.index] != null ? lastCustomerRecord[stat.index] : null},
 	                        		enabledLabel = ${user.enabled} ? 'Enabled' : 'Disabled', 
 	                        		enabledClass = ${user.enabled} ? badge-success : badge-danger,
 	                        		activeLabel = ${user.active} ? 'Active' : 'Inactive', 
-	                        		activeClass = ${user.active} ? badge-success : badge-danger">
+	                        		activeClass = ${user.active} ? badge-success : badge-danger,
+	                        		visits = #{NoVisit}">
+	                        		
 	                          <td width="1%">
 		                          <div class="form-radio">
 	                              	<label class="form-check-label">
@@ -59,10 +65,22 @@
 		                      </td>
 							  <td width="1%" th:text="${user.id}">id</td>
 	                          <td ><a th:href="${currentPage}+'/dashboard/'+${user.id}" th:text="${user.username}">username</a></td>
+							  <td >
+							  	<h5 th:text="${#dates.format(customer.registerdate, 'dd/MM/yyyy')}"></h5>
+							  </td>
+							  
 	                          <td >
-							  	<h5 th:text="${#dates.format(customer.registerdate, 'dd/MM/yyyy')}">
-							  		
-							  	</h5>
+							  	<h5 th:text="${lastVisitRecord != null ? #dates.format(lastVisitRecord.servicedate, 'dd/MM/yyyy') : ''}"></h5>
+							  </td>
+
+							  <td >
+							  	<h5 th:text="${lastVisitRecord != null ? lastVisitRecord.tooth.name : ''}"></h5>
+							  </td>
+							  <td >
+							  	<h5 th:text="${lastVisitRecord != null ? lastVisitRecord.serviceType.name : ''}"></h5>
+							  </td>
+							  <td >
+							  	<h5 th:text="${lastVisitRecord != null ? lastVisitRecord.servicedetail : ''}"></h5>
 							  </td>
 	                          <td width="2%">
 	                          	

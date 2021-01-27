@@ -39,6 +39,7 @@ import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.Questionnaire;
 import com.visionous.dms.pojo.QuestionnaireResponse;
+import com.visionous.dms.pojo.Record;
 import com.visionous.dms.pojo.Role;
 import com.visionous.dms.pojo.Teeth;
 import com.visionous.dms.repository.AccountRepository;
@@ -87,6 +88,7 @@ public class CustomerModelController extends ModelControllerImpl{
 		this.roleRepository = roleRepository;
 		this.questionnaireRepository = questionnaireRepository;
 		this.questionnaireResponseRepository = questionnaireResponseRepository;
+		this.recordRepository = recordRepository;
 	}
 	
 	
@@ -291,15 +293,40 @@ public class CustomerModelController extends ModelControllerImpl{
 						super.addModelCollectionToView("anamezeAllergies", questionnaireResponses);
 					});
 					super.addModelCollectionToView("selected", x);
+					
+					if(x.getCustomerHistory() != null) {
+						Long historyId = x.getCustomerHistory().getId();
+						List<Record> customerRecords = recordRepository.findTop5ByHistoryIdOrderByServicedateDesc(historyId);
+						if(!customerRecords.isEmpty()){
+							super.addModelCollectionToView("customerRecords", customerRecords);
+						}
+					}
+					
 				});
-				
+
 				List<Teeth> teeths = teethRepository.findAll();
 				super.addModelCollectionToView("listTeeth", teeths);		
 				
-				
-				
 				Iterable<Role> allRoles = roleRepository.findAll();
 				super.addModelCollectionToView("allRoles", allRoles);
+			}
+			
+			List<Customer> customers = customerRepository.findAll();
+			List<Record> lastCustomerRecord = new ArrayList<>();
+			for(Customer singlecustomer: customers) {
+				Record nullRecord = null;
+				if(singlecustomer.getCustomerHistory() != null && !singlecustomer.getCustomerHistory().getRecords().isEmpty()) {
+					Long historyId = singlecustomer.getCustomerHistory().getId();
+					Optional<Record> customerRecords = recordRepository.findFirstByHistoryIdOrderByServicedateDesc(historyId);
+					if(customerRecords.isPresent()) {
+						nullRecord = customerRecords.get();
+					}
+				}
+				lastCustomerRecord.add(nullRecord);
+			}
+
+			if(!lastCustomerRecord.isEmpty()) {
+				super.addModelCollectionToView("lastCustomerRecord", lastCustomerRecord);
 			}
 		}
 		
