@@ -186,9 +186,9 @@ public class PersonnelModelController extends ModelControllerImpl{
 				super.addModelCollectionToView("personnel", newPersonnel);
 			}
 			
-				Iterable<Role> allRoles = roleRepository.findAll();
-				super.addModelCollectionToView("allRoles", allRoles);
-				super.addModelCollectionToView("isPersonnelCreation", true);
+			Iterable<Role> allRoles = roleRepository.findAll();
+			super.addModelCollectionToView("allRoles", allRoles);
+			super.addModelCollectionToView("isPersonnelCreation", true);
 
 		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
 			String personnelId = super.getAllControllerParams().get("id").toString();
@@ -222,7 +222,6 @@ public class PersonnelModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("currentPage", currentPage);
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
 		
-
 		Iterable<Personnel> personnels = personnelRepository.findAllByAccount_Roles_Name("PERSONNEL");
 		super.addModelCollectionToView("personnelList", personnels);
 		

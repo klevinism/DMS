@@ -4,18 +4,13 @@
 package com.visionous.dms.model;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -28,12 +23,13 @@ import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.History;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Record;
-import com.visionous.dms.pojo.Role;
+import com.visionous.dms.pojo.Teeth;
 import com.visionous.dms.repository.AccountRepository;
 import com.visionous.dms.repository.CustomerRepository;
 import com.visionous.dms.repository.HistoryRepository;
 import com.visionous.dms.repository.PersonnelRepository;
 import com.visionous.dms.repository.RecordRepository;
+import com.visionous.dms.repository.TeethRepository;
 
 /**
  * @author delimeta
@@ -48,15 +44,20 @@ public class HistoryModelController extends ModelControllerImpl{
 	private CustomerRepository customerRepository;
 	private PersonnelRepository personnelRepository;
 	private AccountRepository accountRepository;
+	private TeethRepository teethRepository;
+	private RecordRepository recordRepository;
 	
 	@Autowired
 	private HistoryModelController(HistoryRepository historyRepository, RecordRepository recordRepository,
 			CustomerRepository customerRepository, PersonnelRepository personnelRepository,
-			AccountRepository accountRepository) {
+			AccountRepository accountRepository, TeethRepository teethRepository) {
+		
 		this.historyRepository = historyRepository;
 		this.customerRepository = customerRepository;
 		this.personnelRepository = personnelRepository;
 		this.accountRepository = accountRepository;
+		this.teethRepository = teethRepository;
+		this.recordRepository = recordRepository;
 	}
 	
 	/**
@@ -140,8 +141,23 @@ public class HistoryModelController extends ModelControllerImpl{
 		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
 
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
+			Long customerId = (Long) super.getAllControllerParams().get("customerId");
+			Optional<Customer> customer = customerRepository.findById(customerId);
+			customer.ifPresent(single -> {
+				super.addModelCollectionToView("selected", single);
+				if(single.getCustomerHistory() != null) {
+					Long historyId = single.getCustomerHistory().getId();
+					List<Record> customerRecords = recordRepository.findTop5ByHistoryIdOrderByServicedateDesc(historyId);
+					if(!customerRecords.isEmpty()){
+						super.addModelCollectionToView("customerRecords", customerRecords);
+					}
+				}
+			});
+			
+			List<Teeth> teeths = teethRepository.findAll();
+			super.addModelCollectionToView("listTeeth", teeths);		
+
 		}
-		
 	}
 
 	/**

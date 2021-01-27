@@ -34,18 +34,23 @@
     		</div>
 		</div>
 <script>
+	 var currentDate = new Date();
+	 if(currentDate.getHours() > 18){
+	 	currentDate.setDate(currentDate.getDate()+1);
+ 	 }
+	 
      $('#id_4').datetimepicker({
    	    "allowInputToggle": true,
    	    "showClose": true,
    	    "showClear": true,
    	    "format": "MM/DD/YYYY",
+   	 	"minDate": currentDate.setHours(0,0,0,0),
    	    "daysOfWeekDisabled": [0, 6]
      });
      $("#id_4").on("dp.change", ({date, oldDate}) => {
    		var availablePersonnel = $("#availablePersonnel").val();
    		$("#loader").show();
-
-   		$.get("/api/availableAppointments",{"personnelId" : availablePersonnel}, function(data, status){
+		$.get("/api/availableAppointments",{"personnelId" : availablePersonnel}, function(data, status){
    			var excludedDates = new Array();
    			
    			for(var cnt=0; cnt<data.result.length; cnt++){
@@ -53,8 +58,9 @@
    			}
    			
    			showHourTable(date,excludedDates);
-   			$("#loader").hide();
    		});
+ 		
+   		$("#loader").hide();
    		return false;
      });
      $(document).ready(function(){
@@ -82,28 +88,10 @@
        });
      	
      	
-     	
-     	$("#id_4").on("dp.change", ({date, oldDate}) => {
-     		var availablePersonnel = $("#availablePersonnel").val();
-     		$("#loader").show();
-
-     		$.get("/api/availableAppointments",{"personnelId" : availablePersonnel}, function(data, status){
-     			var excludedDates = new Array();
-     			
-     			for(var cnt=0; cnt<data.result.length; cnt++){
-     				excludedDates.push(new Date(data.result[cnt].appointmentDate));
-     			}
-     			
-     			showHourTable(date,excludedDates);
-     			$("#loader").hide();
-     		});
-     		return false;
-     	});
-     	
-     	$("#availablePersonnel").change(function(e, val){
-     		$("#id_4").show();
-     		$("#hours").html("");
-     	});
+		$("#availablePersonnel").change(function(e, val){
+			$("#id_4").show();
+			$("#hours").html("");
+		});
      	
      });
 </script>

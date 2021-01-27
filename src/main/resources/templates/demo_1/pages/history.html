@@ -24,47 +24,64 @@
   			</section>
             <!-- Page Title Header Ends-->
             <div class="row">
-              <div class="col-md-6 grid-margin stretch-card">
+              <div class="col-md-8 grid-margin stretch-card">
                 <div class="card">
-                  <div class="card-body">
-                    <div class="row">
-                     <div class="card-body pb-0">
-                       <div class="d-flex justify-content-between">
-                         <h4 class="card-title">Dental History for user <u>[[${selectedHistory.customer.account.username}]]</u></h4>
-                         <a th:href="'/customer/history/record/add'" class="btn btn-primary btn-sm">Add New</a>
-                       </div>
-						<table class="table table-hover">
-							<thead>
-								<tr style="background:#ebf3ff">
-									<td>Service Date</td>
-									<td>Service Type</td>
-									<td>Service Comment</td>
-								</tr>
-							</thead>
-							<tbody th:each="record: ${selectedHistory.records}">
-							
-								<tr >
-								<a href="/">
-									<td th:text="${#dates.format(record.servicedate, 'dd-MM-yyyy HH:mm')}"></td>
-									<td th:text="${record.servicetype}"></td>
-									<td th:text="${record.servicecomment}"></td>
-								</a>
-								</tr>
-								
-							</tbody>
-						</table>
-						
-
-                     </div>
-                    </div>
-                  </div>
+                  <div class="card-body"  th:with="historyUrl = 'demo_1/partials/history/modals/_'+${viewType}+' :: '+ ${viewType}">
+		              	<form th:action="@{/history}" th:object="${selected}" method="post" >
+		              	
+		              		<section th:replace="__${historyUrl}__">
+							  	<!-- partial:partials/_historyUrl.html -->
+				  			</section>
+						  									  			
+						</form>
+		  			</div>
                 </div>
+              </div>
+              <div class="col-md-4 ">
+			  	<div class="row">
+				  	<div class="col-md-12 grid-margin" >
+						<div class="card"> 
+	              			<div class="card-body" th:with="accountUrl = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType}">
+	              				<form th:action="@{/customer}" th:object="${selected}" method="post" >
+		              	
+				              		<section th:replace="__${accountUrl}__">
+									  	<!-- partial:partials/_accountUrl.html -->
+						  			</section>
+						  									  			
+						  		</form>
+	              			</div>
+	              		</div>
+	              	</div>
+			  	</div>             
               </div>
             </div>
             
           </div>
+          
+          <!-- Appointment Modal -->
+		<div class="modal fade " id="appointmentModal" role="dialog"  aria-hidden="true">
+		  <div class="modal-dialog modal-lg">
+		    <!-- Modal content-->
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h4 class="modal-title" >[[#{NewAppointment}]]</h4>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+		      </div>
+			      <div class="modal-body" th:with="modalBodyUrl = 'demo_1/partials/booking/modals/_book :: book'">
+						<section  th:replace="__${modalBodyUrl}__">
+						  	<!-- partial:partials/_edit.html partial:partials/_delete.html-->
+						</section>
+			      </div>
+			      <div class="modal-footer" >
+			    	<button type="button" class="btn btn-secondary" data-dismiss="modal">[[#{Close}]]</button>
+			        <button id="bookSubmit" type="submit" class="btn btn-primary" onclick="book()" disabled>[[#{Book}]]</button>
+			      </div>
+		    </div>
+		  </div>
+		</div>
+          
+          
           <!-- content-wrapper ends -->
-		  
 		  <section th:replace="demo_1/partials/_footer :: footer">
 		  	<!-- partial:partials/_footer.html -->
 		  </section>
@@ -96,7 +113,8 @@
     <script src="/assets/js/shared/misc.js"></script>
     <!-- endinject -->
     <!-- Custom js for this page-->
-    <script src="/assets/js/demo_1/personnel.js"></script>
+    <script src="/assets/js/demo_1/booking.js"></script>
+    <script src="/assets/js/demo_1/dashboard_selected_customer.js"></script>
     <!-- End custom js for this page-->
   </body>
 </html>

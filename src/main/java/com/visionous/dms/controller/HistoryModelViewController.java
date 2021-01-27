@@ -26,7 +26,7 @@ import com.visionous.dms.pojo.Questionnaire;
  *
  */
 @Service
-@RequestMapping("/customer/{id}/history")
+@RequestMapping("/customer/{customerId}/history")
 public class HistoryModelViewController {
 	private final Log logger = LogFactory.getLog(CustomerModelController.class);
 
@@ -61,14 +61,37 @@ public class HistoryModelViewController {
 	 * @return
 	 */
 	@GetMapping("")
-	public String historyDefault(@PathVariable("id") Long id,
+	public String historyDefault(@PathVariable("customerId") Long customerId,
 			@RequestParam(name="action", required=false) Actions action,
 			@RequestParam(name="modal", required=false) boolean modal,
 			Model model) {
 		
 		historyModelController.init() // Re-initialize Model
-			.addControllerParam("id", id)
+			.addControllerParam("customerId", customerId)
 			.addControllerParam("modal", modal)
+			.addControllerParam("viewType", Actions.VIEW)
+			.setViewModel(model)
+			.run(); // GetValuesForView
+
+		return "demo_1/pages/history";
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/{id}")
+	public String historySelected(@PathVariable("customerId") Long customerId,
+			@PathVariable("id") Long historyId,
+			@RequestParam(name="action", required=false) Actions action,
+			@RequestParam(name="modal", required=false) boolean modal,
+			Model model) {
+		
+		historyModelController.init() // Re-initialize Model
+			.addControllerParam("customerId", customerId)
+			.addControllerParam("id", historyId)
+			.addControllerParam("modal", modal)
+			.addControllerParam("viewType", Actions.VIEW)
 			.setViewModel(model)
 			.run(); // GetValuesForView
 
@@ -80,10 +103,10 @@ public class HistoryModelViewController {
 	 * @return
 	 */
 	@GetMapping("/create")
-	public String historyCreate(@PathVariable("id") Long id, Model model) {
+	public String historyCreate(@PathVariable("customerId") Long customerId, Model model) {
 		
 		historyModelController.init() // Re-initialize Model
-			.addControllerParam("id", id)
+			.addControllerParam("id", customerId)
 			.addControllerParam("viewType", Actions.CREATE)
 			.addControllerParam("action", Actions.CREATE) //Create new History immidiately in view
 			.addModelAttributes(new History())
@@ -92,7 +115,7 @@ public class HistoryModelViewController {
 
 		if(historyModelController.getModelCollectionToView("historyId") != null) {
 			Long historyId = Long.valueOf(historyModelController.getModelCollectionToView("historyId").toString());
-			String redirectUrl = "/customer/" + id + "/history/"+historyId+"/record/create";
+			String redirectUrl = "/customer/" + customerId + "/history/"+historyId+"/record/create";
 			
 			return "redirect:"+redirectUrl;
 		}else {

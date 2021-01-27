@@ -83,7 +83,7 @@
 			    	  	<div class="ml-lg-auto" >
 				    	  	<div class="dropdown">
 				               <h4 class="card-title"></h4>
-				               <a th:href="${currentPage} + '/' + *{id} + '/history/' + *{customerHistory.id}+ '/record'"><button type="button" class="btn btn-primary btn-sm"   >[[#{AllHistory}]]</button></a>
+				               <a th:href="'/customer/' + *{id} + '/history/' + *{customerHistory.id}+ '/record'"><button type="button" class="btn btn-primary btn-sm"   >[[#{AllHistory}]]</button></a>
 				            </div>
 					  	</div>
         			</div>
@@ -103,13 +103,15 @@
 		<script>
 		
         $(document).ready(function() {
-            $('#allRecords').DataTable({
-            	"bPaginate": false,
-                "bLengthChange": false,
-                "bFilter": false,
-                "bInfo": false,
-            	"order": [ 0, "desc" ]
-            });
+        	if($('#allRecords').html() != undefined){
+	            $('#allRecords').DataTable({
+	            	"bPaginate": false,
+	                "bLengthChange": false,
+	                "bFilter": false,
+	                "bInfo": false,
+	            	"order": [ 0, "desc" ]
+	            });
+        	}
         });
         </script>
       </div>
