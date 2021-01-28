@@ -49,7 +49,7 @@
 	                        <tr th:each="customer, stat: ${customerList}" 
 	                        	th:onclick="'javascript:selectPersonnel('+${customer.id}+')'"
 	                        	th:with="user = ${customer.account},
-	                        		lastVisitRecord = ${lastCustomerRecord[stat.index] != null ? lastCustomerRecord[stat.index] : null},
+	                        		lastVisitRecord = ${lastCustomerRecord != null ? lastCustomerRecord[stat.index] : null},
 	                        		enabledLabel = ${user.enabled} ? 'Enabled' : 'Disabled', 
 	                        		enabledClass = ${user.enabled} ? badge-success : badge-danger,
 	                        		activeLabel = ${user.active} ? 'Active' : 'Inactive', 
