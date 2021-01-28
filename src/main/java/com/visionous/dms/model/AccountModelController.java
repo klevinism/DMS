@@ -11,6 +11,7 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
@@ -262,6 +263,9 @@ public class AccountModelController extends ModelControllerImpl{
 			super.addModelCollectionToView("currentRoles", account.getRoles());
 			super.addModelCollectionToView("loggedInAccount", account);
 		});
+		
+		Locale locales = LocaleContextHolder.getLocale();
+		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
 	}
 	
 	@Override

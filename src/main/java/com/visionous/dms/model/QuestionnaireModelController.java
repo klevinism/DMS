@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -262,6 +264,9 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 			super.addModelCollectionToView("currentRoles", account.getRoles());
 			super.addModelCollectionToView("loggedInAccount", account);
 		});
+		
+		Locale locales = LocaleContextHolder.getLocale();
+		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
 	}
 	
 	/**

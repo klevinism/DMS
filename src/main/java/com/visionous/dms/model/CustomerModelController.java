@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.annotation.security.RolesAllowed;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -349,9 +351,12 @@ public class CustomerModelController extends ModelControllerImpl{
 			super.addModelCollectionToView("currentRoles", account.getRoles());
 			super.addModelCollectionToView("loggedInAccount", account);
 		});
-
+		
 		Iterable<Customer> customers = customerRepository.findAll();
 		super.addModelCollectionToView("customerList", customers);
+
+		Locale locales = LocaleContextHolder.getLocale();
+		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
 	}
 	
 	/**

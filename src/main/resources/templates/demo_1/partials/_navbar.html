@@ -8,35 +8,19 @@
   <div class="navbar-menu-wrapper d-flex align-items-center">
     <ul class="navbar-nav">
       <li class="nav-item font-weight-semibold d-none d-lg-block">[[#{Help}]] : +355 0696433538</li>
-      <li class="nav-item dropdown language-dropdown">
-        <a class="nav-link dropdown-toggle px-2 d-flex align-items-center" id="LanguageDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
-          <div class="d-inline-flex mr-0 mr-md-3">
+      <li class="nav-item dropdown language-dropdown" id="LanguageDropdown">
+        <a class="nav-link dropdown-toggle px-2 d-flex align-items-center" href="#" data-toggle="dropdown" aria-expanded="false">
+          <div class="d-inline-flex mr-0 mr-md-3"  >
             <div class="flag-icon-holder">
               <i class="flag-icon flag-icon-us"></i>
             </div>
-          </div>
-          <span class="profile-text font-weight-medium d-none d-md-block">English</span>
+          </div>English
         </a>
-        <div class="dropdown-menu dropdown-menu-left navbar-dropdown py-2" aria-labelledby="LanguageDropdown">
-          <a class="dropdown-item">
+        <div class="dropdown-menu dropdown-menu-left navbar-dropdown py-2" aria-labelledby="LanguageDropdown" id="languageItems">
+          <a class="dropdown-item" href="?lang=al_SQ">
             <div class="flag-icon-holder">
-              <i class="flag-icon flag-icon-us"></i>
-            </div>English
-          </a>
-          <a class="dropdown-item">
-            <div class="flag-icon-holder">
-              <i class="flag-icon flag-icon-fr"></i>
-            </div>French
-          </a>
-          <a class="dropdown-item">
-            <div class="flag-icon-holder">
-              <i class="flag-icon flag-icon-ae"></i>
-            </div>Arabic
-          </a>
-          <a class="dropdown-item">
-            <div class="flag-icon-holder">
-              <i class="flag-icon flag-icon-ru"></i>
-            </div>Russian
+              <i class="flag-icon flag-icon-al"></i>
+            </div>Albania
           </a>
         </div>
       </li>
@@ -160,13 +144,13 @@
            <div class="dropdown-header text-center" th:if="${loggedInAccount.image == null}">
             <img class="img-md rounded-circle"  th:src="'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg'">
             <p class="mb-1 mt-3 font-weight-semibold">[[${T(com.visionous.dms.configuration.helpers.AccountUtil).currentLoggedInUser().username}]]</p>
-            <p class="font-weight-light text-muted mb-0">allenmoreno@gmail.com</p>
+            <p class="font-weight-light text-muted mb-0">[[${T(com.visionous.dms.configuration.helpers.AccountUtil).currentLoggedInUser().email}]]</p>
           </div>
           
-          <a class="dropdown-item">My Profile <span class="badge badge-pill badge-danger">1</span><i class="dropdown-item-icon ti-dashboard"></i></a>
-          <a class="dropdown-item">Messages<i class="dropdown-item-icon ti-comment-alt"></i></a>
+          <a class="dropdown-item">My Profile <i class="dropdown-item-icon ti-dashboard"></i></a>
+          <!-- <a class="dropdown-item">Messages<i class="dropdown-item-icon ti-comment-alt"></i></a>
           <a class="dropdown-item">Activity<i class="dropdown-item-icon ti-location-arrow"></i></a>
-          <a class="dropdown-item">FAQ<i class="dropdown-item-icon ti-help-alt"></i></a>
+          <a class="dropdown-item">FAQ<i class="dropdown-item-icon ti-help-alt"></i></a> -->
           <a class="dropdown-item" href="/logout" >Sign Out<i class="dropdown-item-icon ti-power-off"></i></a>
         </div>
       </li>
@@ -175,4 +159,64 @@
       <span class="mdi mdi-menu"></span>
     </button>
   </div>
+  <script>
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+
+  var alName="Albanian";
+  var enName="English";
+  var alUrl="?lang=al_SQ";
+  var enUrl="?lang=en_US";
+  var alFlag="al";
+  var enFlag="us";
+  
+  var chosenLangName = "[[${locale}]]";
+  var chosenFlag;
+  
+  var nxtUrl = "";
+  var nxtName = "";
+  var nxtFlag = "";
+  $(document).ready(function(){
+	  
+	  if(urlParams.has('lang') || chosenLangName != ''){
+			var paramLang = urlParams.get("lang");
+			
+			if(paramLang == "al_SQ" || chosenLangName == 'al_SQ'){
+				chosenLangName=alName;
+				chosenFlag=alFlag;
+				nxtUrl=enUrl;
+				nxtName=enName;
+				nxtFlag=enFlag;
+			}else{
+				chosenLangName=enName;
+				chosenFlag=enFlag;
+				nxtUrl=alUrl;
+				nxtName=alName;
+				nxtFlag=alFlag;
+			}
+	
+	
+	  
+	  var langHTML = '<a class="nav-link dropdown-toggle px-2 d-flex align-items-center" href="#" data-toggle="dropdown" aria-expanded="false">'+
+	  '<div class="d-inline-flex mr-0 mr-md-3" id="LanguageDropdown" >'+
+	    '<div class="flag-icon-holder">'+
+	      '<i class="flag-icon flag-icon-'+chosenFlag+'"></i>'+
+	    '</div>'+
+	  '</div>'+chosenLangName+
+	  '</a>'+
+	  '<div class="dropdown-menu dropdown-menu-left navbar-dropdown py-2" aria-labelledby="LanguageDropdown" id="languageItems">'+
+	   '<a class="dropdown-item" href="'+nxtUrl+'">'+
+	    '<div class="flag-icon-holder">'+
+	      '<i class="flag-icon flag-icon-'+nxtFlag+'"></i>'+
+	    '</div>'+nxtName+
+	   '</a>'+
+	  '</div>';
+
+
+	  $("#LanguageDropdown").html(langHTML);
+	  
+	  }
+  });
+	  
+  </script>
 </nav>

@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -224,12 +226,15 @@ public class PersonnelModelController extends ModelControllerImpl{
 		
 		Iterable<Personnel> personnels = personnelRepository.findAllByAccount_Roles_Name("PERSONNEL");
 		super.addModelCollectionToView("personnelList", personnels);
-		
+
 		Optional<Account> loggedInAccount = accountRepository.findByUsername(AccountUtil.currentLoggedInUser().getUsername());
 		loggedInAccount.ifPresent(account -> {
 			super.addModelCollectionToView("currentRoles", account.getRoles());
 			super.addModelCollectionToView("loggedInAccount", account);
 		});
+		
+		Locale locales = LocaleContextHolder.getLocale();
+		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
 	}
 	
 	@Override
