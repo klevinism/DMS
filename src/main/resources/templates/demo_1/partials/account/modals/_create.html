@@ -18,6 +18,7 @@
         <label for="username">[[#{Username}]]</label>
         <input type="text" class="form-control form-control-lg" th:placeholder="*{account.username}" th:field="*{account.username}">
         <p class="alert alert-danger" th:if="${#fields.hasErrors('account.username')}" th:errors="*{account.username}"></p>
+        <p class="alert alert-danger" th:if="${errorUsername != null}" th:text="${errorUsername}"></p>
       </div>
       
       <div class="form-group">      
@@ -42,6 +43,7 @@
         <label for="email">[[#{Email}]]</label>
         <input type="text" class="form-control form-control-lg" th:placeholder="*{account.email}" th:field="*{account.email}">
         <p class="alert alert-danger" th:if="${#fields.hasErrors('account.email')}" th:errors="*{account.email}"></p>
+        <p class="alert alert-danger" th:if="${errorEmail != null}" th:text="${errorEmail}"></p>
       </div>
       <div class="form-group">      
         <label for="phone">[[#{PhoneNr}]]</label>

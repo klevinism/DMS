@@ -89,7 +89,8 @@ public class PersonnelModelViewController {
 			.setViewModel(model)
 			.run(); // GetValuesForView
 		
-		if(personnelModelController.hasResultBindingError()) {
+		if(personnelModelController.hasResultBindingError() || 
+				(model.getAttribute("errorEmail") != null || model.getAttribute("errorUsername") != null)) {
 			return "demo_1/pages/"+action.toLowerCase()+"_personnel";
 		}
 		
@@ -149,13 +150,16 @@ public class PersonnelModelViewController {
 	 * @return
 	 */
 	@GetMapping("/create")
-	public String personnelCreate(Model model) {
+	public String personnelCreate(@RequestParam(name = "errorEmail", required =false) String errorEmail, 
+			@RequestParam(name = "errorUsername", required =false) String errorUsername, Model model) {
 		
-		personnelModelController.init()
-			.addControllerParam("viewType", Actions.CREATE.getValue())
-			.setViewModel(model)
-			.run(); // GetValuesForView
-		
+		if(errorEmail == null && errorUsername == null) {
+	
+			personnelModelController.init()
+				.addControllerParam("viewType", Actions.CREATE.getValue())
+				.setViewModel(model)
+				.run(); // GetValuesForView
+		}
 		return "demo_1/pages/create_personnel";
 	}
 	

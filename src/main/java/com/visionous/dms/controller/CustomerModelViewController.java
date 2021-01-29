@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -98,7 +99,8 @@ public class CustomerModelViewController {
 	 * @return
 	 */
 	@PostMapping("")
-	public String customerPost(@RequestParam(name = "profileimage", required =false) MultipartFile profileImage, @ModelAttribute Customer customer,
+	public String customerPost(@Valid Customer customer, BindingResult errors, 
+			@RequestParam(name = "profileimage", required =false) MultipartFile profileImage, 
 			@RequestParam(required = false) String action,
 			Model model) {
 		
@@ -106,9 +108,16 @@ public class CustomerModelViewController {
 			.addControllerParam("profileimage", profileImage)
 			.addControllerParam("action", action)
 			.addControllerParam("viewType", Actions.VIEW)
+			.addBindingResult(errors)
 			.addModelAttributes(customer)
 			.setViewModel(model)
 			.run(); // GetValuesForView
+		
+		if(customerModelController.hasResultBindingError()) {
+			return "demo_1/pages/"+action.toLowerCase()+"_customer";
+		}else if(model.getAttribute("errorEmail") != null || model.getAttribute("errorUsername") != null) {
+			return "demo_1/pages/create_customer";
+		}
 		
 		return "demo_1/pages/customer"; 
 	}
@@ -166,13 +175,15 @@ public class CustomerModelViewController {
 	 * @return
 	 */
 	@GetMapping("/create")
-	public String customerCreate(Model model) {
+	public String customerCreate(@RequestParam(name = "errorEmail", required =false) String errorEmail, 
+			@RequestParam(name = "errorUsername", required =false) String errorUsername, Model model) {
 		
-		customerModelController.init()
-			.addControllerParam("viewType", Actions.CREATE.getValue())
-			.setViewModel(model)
-			.run(); // GetValuesForView
-		
+		if(errorEmail == null && errorUsername == null) {
+			customerModelController.init()
+				.addControllerParam("viewType", Actions.CREATE.getValue())
+				.setViewModel(model)
+				.run(); // GetValuesForView
+		}
 		return "demo_1/pages/create_customer";
 	}
 	

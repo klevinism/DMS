@@ -18,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.validation.Valid;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -44,6 +45,7 @@ public class Customer implements Serializable{
 	@DateTimeFormat (pattern="dd-MM-YYYY")
 	private Date registerdate;
 
+	@Valid
 	@JsonIgnore
 	@MapsId
 	@OneToOne(mappedBy = "customer", optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)

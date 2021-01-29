@@ -131,6 +131,7 @@ public class Account implements Serializable{
     @Nullable
 	private Personnel personnel;
     
+	@Valid
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
     @OneToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @PrimaryKeyJoinColumn

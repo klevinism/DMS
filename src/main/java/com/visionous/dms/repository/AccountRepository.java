@@ -63,4 +63,10 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 	 */
 	public Integer countByEnabledAndActiveAndCustomer_RegisterdateBetween(boolean b, boolean c, Date beginMonthDate,
 			Date endMonthDate);
+
+	/**
+	 * @param email
+	 * @return
+	 */
+	public Object findByEmail(String email);
 }

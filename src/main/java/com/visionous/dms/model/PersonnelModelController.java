@@ -87,7 +87,6 @@ public class PersonnelModelController extends ModelControllerImpl{
 				}
 			}
 		}
-		System.out.println(super.getAllControllerParams().get("viewType") + " <ACITON");
 
 		// Build view
 		this.buildPersonnelViewModel(super.getAllControllerParams().get("viewType").toString().toLowerCase());
@@ -142,52 +141,72 @@ public class PersonnelModelController extends ModelControllerImpl{
 			});
 			
 		}else if(action.equals(Actions.CREATE.getValue())) {
-			
+
 			if(newPersonnel.getAccount().getRoles().get(0).getName().equals("PERSONNEL")) {
-				newPersonnel.getAccount().setCustomer(null);
-				newPersonnel.getAccount().setPersonnel(null);
-				String passPlain = newPersonnel.getAccount().getPassword();
-				newPersonnel.getAccount().setPassword(new BCryptPasswordEncoder().encode(passPlain));
+				if(emailExist(newPersonnel.getAccount().getEmail())) {
+					super.addModelCollectionToView("errorEmail", "This email already exists, pick another one.");
+					super.addModelCollectionToView("selected", newPersonnel);
+					super.removeControllerParam("viewType");
+					super.addControllerParam("viewType", Actions.CREATE.getValue());
 
-				if(super.getAllControllerParams().get("profileimage") != null) {
-					MultipartFile uploadedFile = (MultipartFile) super.getAllControllerParams().get("profileimage");
-					
-					if(!uploadedFile.isEmpty() && (uploadedFile.getOriginalFilename()!= null || !uploadedFile.getOriginalFilename().equals(""))){
-						StringBuilder attachmentPath = new StringBuilder();
-						try {
-							String path = FileManager.write(uploadedFile, "/tmp/personnel/profile/");
-						    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss-"));
-						    String fileName = date + uploadedFile.getOriginalFilename();
-							attachmentPath.append(fileName);
-						} catch (IOException e) {
-							e.printStackTrace();
+				}else if(usernameExist(newPersonnel.getAccount().getUsername())) {
+					super.addModelCollectionToView("errorUsername", "This username already exists, pick another one.");
+					super.addModelCollectionToView("selected", newPersonnel);
+					super.removeControllerParam("viewType");
+					super.addControllerParam("viewType", Actions.CREATE.getValue());
+				}else {
+					newPersonnel.getAccount().setCustomer(null);
+					newPersonnel.getAccount().setPersonnel(null);
+					String passPlain = newPersonnel.getAccount().getPassword();
+					newPersonnel.getAccount().setPassword(new BCryptPasswordEncoder().encode(passPlain));
+	
+					if(super.getAllControllerParams().get("profileimage") != null) {
+						MultipartFile uploadedFile = (MultipartFile) super.getAllControllerParams().get("profileimage");
+						
+						if(!uploadedFile.isEmpty() && (uploadedFile.getOriginalFilename()!= null || !uploadedFile.getOriginalFilename().equals(""))){
+							StringBuilder attachmentPath = new StringBuilder();
+							try {
+								String path = FileManager.write(uploadedFile, "/tmp/personnel/profile/");
+							    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss-"));
+							    String fileName = date + uploadedFile.getOriginalFilename();
+								attachmentPath.append(fileName);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							newPersonnel.getAccount().setImage(attachmentPath.toString());
 						}
-						newPersonnel.getAccount().setImage(attachmentPath.toString());
+					} 
+					Date birthday = newPersonnel.getAccount().getBirthday();
+					Date today = new Date();
+					Period period = DateUtil.getPeriodBetween(birthday, today);
+					newPersonnel.getAccount().setAge(period.getYears());
+	
+					Account newAccount = accountRepository.saveAndFlush(newPersonnel.getAccount());
+					newPersonnel.setAccount(newAccount);
+					Personnel createdPersonnel = personnelRepository.saveAndFlush(newPersonnel);
+					
+			        String appUrl = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getContextPath();
+					if(createdPersonnel != null) {
+						Account publishedAccount = createdPersonnel.getAccount();
+						publishedAccount.setPassword(passPlain);
+				        eventPublisher.publishEvent(
+				        		new OnRegistrationCompleteEvent(publishedAccount,LocaleContextHolder.getLocale(), appUrl)
+				        		);
 					}
-				} 
-				Date birthday = newPersonnel.getAccount().getBirthday();
-				Date today = new Date();
-				Period period = DateUtil.getPeriodBetween(birthday, today);
-				newPersonnel.getAccount().setAge(period.getYears());
-
-				Account newAccount = accountRepository.saveAndFlush(newPersonnel.getAccount());
-				newPersonnel.setAccount(newAccount);
-				Personnel createdPersonnel = personnelRepository.saveAndFlush(newPersonnel);
-				
-		        String appUrl = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getContextPath();
-				if(createdPersonnel != null) {
-					Account publishedAccount = createdPersonnel.getAccount();
-					publishedAccount.setPassword(passPlain);
-			        eventPublisher.publishEvent(
-			        		new OnRegistrationCompleteEvent(publishedAccount,LocaleContextHolder.getLocale(), appUrl)
-			        		);
 				}
-				
 			}
 		}else if(action.equals(Actions.VIEW.getValue())) {
 		}		
 
 	}
+	
+    private boolean emailExist(String email) {
+        return accountRepository.findByEmail(email) != null;
+    }
+    
+    private boolean usernameExist(String username) {
+        return accountRepository.findByUsername(username).isPresent();
+    }
 
 	/**
 	 * 
@@ -196,7 +215,10 @@ public class PersonnelModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("viewType", viewType);
 		
 		if(viewType.equals(Actions.CREATE.getValue())) {
-			if(!super.hasResultBindingError()) {
+
+			if((super.getModelCollectionToView("errorEmail") == null) && (super.getModelCollectionToView("errorUsername") == null) 
+				&& !super.hasResultBindingError()) {
+				
 				Personnel newPersonnel = new Personnel();
 				newPersonnel.setAccount(new Account());
 				super.addModelCollectionToView("personnel", newPersonnel);

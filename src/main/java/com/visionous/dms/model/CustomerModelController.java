@@ -39,6 +39,7 @@ import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Questionnaire;
 import com.visionous.dms.pojo.QuestionnaireResponse;
 import com.visionous.dms.pojo.Record;
@@ -102,10 +103,14 @@ public class CustomerModelController extends ModelControllerImpl{
 		// If action occurred, persist object to db
 		if(super.getAllControllerParams().containsKey("modelAttribute")) {
 			if(super.getAllControllerParams().containsKey("action")) {
-				persistModelAttributes(
-					(Customer) super.getAllControllerParams().get("modelAttribute"), 
-					super.getAllControllerParams().get("action").toString().toLowerCase()
-					);
+				if(super.hasResultBindingError()) {
+					super.setControllerParam("viewType", super.getAllControllerParams().get("action").toString().toLowerCase());
+				}else {
+					persistModelAttributes(
+						(Customer) super.getAllControllerParams().get("modelAttribute"), 
+						super.getAllControllerParams().get("action").toString().toLowerCase()
+						);
+				}
 			}
 		}
 		
@@ -177,41 +182,56 @@ public class CustomerModelController extends ModelControllerImpl{
 		}else if(action.equals(Actions.CREATE.getValue())) {
 			logger.debug(" Creating new Customer with username = " + newCustomer.getAccount().getUsername());
 
-			if(newCustomer.getAccount().getRoles().get(0).getName().equals("CUSTOMER")) {		
-				newCustomer.getAccount().setCustomer(null);
-				newCustomer.setRegisterdate(new Date(System.currentTimeMillis()));
-				newCustomer.getAccount().setPersonnel(null);
-				newCustomer.getAccount().setActive(true);
-				newCustomer.getAccount().setEnabled(true);
-				newCustomer.getAccount().setPassword(new BCryptPasswordEncoder().encode(newCustomer.getAccount().getPassword()));
-				if(super.getAllControllerParams().get("profileimage") != null) {
-					
-					MultipartFile uploadedFile = (MultipartFile) super.getAllControllerParams().get("profileimage");
-					System.out.println(uploadedFile.toString());
-					System.out.println(uploadedFile.getOriginalFilename());
-					if(!uploadedFile.isEmpty() && (uploadedFile.getOriginalFilename()!= null || !uploadedFile.isEmpty())){
-							StringBuilder attachmentPath = new StringBuilder();
-							try {
-								String path = FileManager.write(uploadedFile, "/tmp/customer/profile/");
-							    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss-"));
-							    String fileName = date + uploadedFile.getOriginalFilename();
-								attachmentPath.append(fileName);
-							} catch (IOException e) {
-								e.printStackTrace();
-							} 
-							newCustomer.getAccount().setImage(attachmentPath.toString());
-					}else {
-						newCustomer.getAccount().setImage(newCustomer.getAccount().getImage());
+			if(newCustomer.getAccount().getRoles().get(0).getName().equals("CUSTOMER")) {	
+				if(emailExist(newCustomer.getAccount().getEmail())) {
+					super.addModelCollectionToView("errorEmail", "This email already exists, pick another one.");
+					super.addModelCollectionToView("selected", newCustomer);
+					super.removeControllerParam("viewType");
+					super.addControllerParam("viewType", Actions.CREATE.getValue());
+
+				}else if(usernameExist(newCustomer.getAccount().getUsername())) {
+					super.addModelCollectionToView("errorUsername", "This username already exists, pick another one.");
+					super.addModelCollectionToView("selected", newCustomer);
+					super.removeControllerParam("viewType");
+					super.addControllerParam("viewType", Actions.CREATE.getValue());
+				}else {
+					super.addModelCollectionToView("errorUsername", null);
+					super.addModelCollectionToView("errorEmail", null);
+					newCustomer.getAccount().setCustomer(null);
+					newCustomer.setRegisterdate(new Date(System.currentTimeMillis()));
+					newCustomer.getAccount().setPersonnel(null);
+					newCustomer.getAccount().setActive(true);
+					newCustomer.getAccount().setEnabled(true);
+					newCustomer.getAccount().setPassword(new BCryptPasswordEncoder().encode(newCustomer.getAccount().getPassword()));
+					if(super.getAllControllerParams().get("profileimage") != null) {
+						
+						MultipartFile uploadedFile = (MultipartFile) super.getAllControllerParams().get("profileimage");
+						System.out.println(uploadedFile.toString());
+						System.out.println(uploadedFile.getOriginalFilename());
+						if(!uploadedFile.isEmpty() && (uploadedFile.getOriginalFilename()!= null || !uploadedFile.isEmpty())){
+								StringBuilder attachmentPath = new StringBuilder();
+								try {
+									String path = FileManager.write(uploadedFile, "/tmp/customer/profile/");
+								    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss-"));
+								    String fileName = date + uploadedFile.getOriginalFilename();
+									attachmentPath.append(fileName);
+								} catch (IOException e) {
+									e.printStackTrace();
+								} 
+								newCustomer.getAccount().setImage(attachmentPath.toString());
+						}else {
+							newCustomer.getAccount().setImage(newCustomer.getAccount().getImage());
+						}
 					}
+					Date birthday = newCustomer.getAccount().getBirthday();
+					Date today = new Date();
+					Period period = DateUtil.getPeriodBetween(birthday, today);
+					newCustomer.getAccount().setAge(period.getYears());
+					
+					Account newAccount = accountRepository.saveAndFlush(newCustomer.getAccount());
+					newCustomer.setAccount(newAccount);
+					customerRepository.saveAndFlush(newCustomer);
 				}
-				Date birthday = newCustomer.getAccount().getBirthday();
-				Date today = new Date();
-				Period period = DateUtil.getPeriodBetween(birthday, today);
-				newCustomer.getAccount().setAge(period.getYears());
-				
-				Account newAccount = accountRepository.saveAndFlush(newCustomer.getAccount());
-				newCustomer.setAccount(newAccount);
-				customerRepository.saveAndFlush(newCustomer);
 			}
 			
 		}else if(action.equals(Actions.VIEW.getValue())) {
@@ -220,6 +240,13 @@ public class CustomerModelController extends ModelControllerImpl{
 
 	}
 	
+    private boolean emailExist(String email) {
+        return accountRepository.findByEmail(email) != null;
+    }
+    
+    private boolean usernameExist(String username) {
+        return accountRepository.findByUsername(username).isPresent();
+    }
 	
 	private void setImageToAccount(MultipartFile file, Account newAccount, Account oldAccount) {
 		
@@ -255,14 +282,18 @@ public class CustomerModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("viewType", viewType);
 		
 		if(viewType.equals(Actions.CREATE.getValue())) {
-			Customer newCustomer = new Customer();
-			newCustomer.setAccount(new Account());
-			super.addModelCollectionToView("selected", newCustomer);
-
+			
+			if((super.getModelCollectionToView("errorEmail") == null) && (super.getModelCollectionToView("errorUsername") == null) 
+				&& !super.hasResultBindingError()) {
+			
+				Customer newCustomer = new Customer();
+				newCustomer.setAccount(new Account());
+				super.addModelCollectionToView("customer", newCustomer);
+			}
+			
 			Iterable<Role> allRoles = roleRepository.findAll();
 			super.addModelCollectionToView("allRoles", allRoles);
 			super.addModelCollectionToView("isCustomerCreation", true);
-
 		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
 			String customerId = super.getAllControllerParams().get("id").toString();
 			Optional<Customer> customer = customerRepository.findById(Long.valueOf(customerId));
@@ -341,11 +372,12 @@ public class CustomerModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("currentBreadcrumb", LandingPages.buildBreadCrumb(
 				((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest())
 		);
-		
+		System.out.println("BREADCRUMB");
+
 		super.addModelCollectionToView("currentPage", currentPage);
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
 		
-		
+
 		Optional<Account> loggedInAccount = accountRepository.findByUsername(AccountUtil.currentLoggedInUser().getUsername());
 		loggedInAccount.ifPresent(account -> {
 			super.addModelCollectionToView("currentRoles", account.getRoles());
