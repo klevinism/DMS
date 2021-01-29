@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,7 @@ import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.configuration.helpers.DateUtil;
 import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
+import com.visionous.dms.event.OnRegistrationCompleteEvent;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Role;
@@ -49,7 +51,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 	private PersonnelRepository personnelRepository;
 	private RoleRepository roleRepository;
 	private AccountRepository accountRepository;
-
+	private ApplicationEventPublisher eventPublisher;
 	private static String currentPage = LandingPages.PERSONNEL.value();
 
 	/**
@@ -57,11 +59,12 @@ public class PersonnelModelController extends ModelControllerImpl{
 	 */
 	@Autowired
 	public PersonnelModelController(PersonnelRepository personnelRepository, RoleRepository roleRepository,
-			AccountRepository accountRepository,
-			HistoryRepository historyRepository) {
+			AccountRepository accountRepository, HistoryRepository historyRepository,
+			ApplicationEventPublisher eventPublisher) {
 		this.personnelRepository = personnelRepository;
 		this.roleRepository = roleRepository;
 		this.accountRepository = accountRepository;
+		this.eventPublisher = eventPublisher;
 	}
 	
 	
@@ -143,7 +146,8 @@ public class PersonnelModelController extends ModelControllerImpl{
 			if(newPersonnel.getAccount().getRoles().get(0).getName().equals("PERSONNEL")) {
 				newPersonnel.getAccount().setCustomer(null);
 				newPersonnel.getAccount().setPersonnel(null);
-				newPersonnel.getAccount().setPassword(new BCryptPasswordEncoder().encode(newPersonnel.getAccount().getPassword()));
+				String passPlain = newPersonnel.getAccount().getPassword();
+				newPersonnel.getAccount().setPassword(new BCryptPasswordEncoder().encode(passPlain));
 
 				if(super.getAllControllerParams().get("profileimage") != null) {
 					MultipartFile uploadedFile = (MultipartFile) super.getAllControllerParams().get("profileimage");
@@ -165,10 +169,20 @@ public class PersonnelModelController extends ModelControllerImpl{
 				Date today = new Date();
 				Period period = DateUtil.getPeriodBetween(birthday, today);
 				newPersonnel.getAccount().setAge(period.getYears());
-				
+
 				Account newAccount = accountRepository.saveAndFlush(newPersonnel.getAccount());
 				newPersonnel.setAccount(newAccount);
-				personnelRepository.saveAndFlush(newPersonnel);
+				Personnel createdPersonnel = personnelRepository.saveAndFlush(newPersonnel);
+				
+		        String appUrl = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getContextPath();
+				if(createdPersonnel != null) {
+					Account publishedAccount = createdPersonnel.getAccount();
+					publishedAccount.setPassword(passPlain);
+			        eventPublisher.publishEvent(
+			        		new OnRegistrationCompleteEvent(publishedAccount,LocaleContextHolder.getLocale(), appUrl)
+			        		);
+				}
+				
 			}
 		}else if(action.equals(Actions.VIEW.getValue())) {
 		}		

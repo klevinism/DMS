@@ -116,9 +116,15 @@ public class Account implements Serializable{
     private List<Role> roles  = new ArrayList<>();
     
     private boolean enabled;
+    
     private boolean active;
     
-    @Valid
+    @OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @PrimaryKeyJoinColumn
+    @Nullable
+	private Verification verification;
+    
+	@Valid
     @JsonIgnore
     @OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @PrimaryKeyJoinColumn
@@ -385,12 +391,25 @@ public class Account implements Serializable{
 		}
 	}
 	
-
 	/**
 	 * @param birthday the birthday to set
 	 */
 	public void setBirthday(Date birthday) {
 		this.birthday = birthday;
+	}
+	
+	/**
+	 * @return the verification
+	 */
+	public Verification getVerification() {
+		return verification;
+	}
+
+	/**
+	 * @param verification the verification to set
+	 */
+	public void setVerification(Verification verification) {
+		this.verification = verification;
 	}
 	
 	/**

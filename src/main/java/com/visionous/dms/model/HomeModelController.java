@@ -209,29 +209,22 @@ public class HomeModelController extends ModelControllerImpl{
 					Integer allOldCustomers= new Integer(0);				
 					
 					allNewAndOldCustomers.put("oldcustomers", allOldCustomers);
-					allNewAndOldCustomers.put("newcustomers", allOldCustomers);
+					allNewAndOldCustomers.put("newcustomers", allNewCustomers);
 					
 					if(!allRecordsThisYear.isEmpty()) {
 						allRecordsThisYear.forEach(record -> {
-							System.out.println("CUSTOMER="+record.getHistory().getCustomer().getAccount().getName()+" REG DATE " + record.getHistory().getCustomer().getRegisterdate());
 							if(record.getHistory().getCustomer().getRegisterdate().before(startsDate)) {
 								allNewAndOldCustomers.replace("oldcustomers", allNewAndOldCustomers.get("oldcustomers") + 1);
 							}else {
 								allNewAndOldCustomers.replace("newcustomers", allNewAndOldCustomers.get("newcustomers") + 1);
 							}
-							System.out.println(allNewAndOldCustomers.get("oldcustomers") + " <OLD");
-							System.out.println(allNewAndOldCustomers.get("newcustomers") + " <New");
 						});
 					}
 
 					super.addModelCollectionToView("allCustomers", allNewAndOldCustomers);
-					
 				}
 				
-				
-				
 				Period periodOfThisYear = DateUtil.getPeriodBetween(DateUtil.getBegginingOfYear(), new Date());
-
 				
 				List<Integer> allNewCustomersForEachMonth = new ArrayList<>();
 				for(int month=0 ; month <= periodOfThisYear.getMonths(); month++) {

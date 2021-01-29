@@ -1,14 +1,18 @@
 package com.visionous.dms.controller;
 
+import java.util.Calendar;
+
 /**
  * @author delimeta
  *
  */
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,7 +23,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.visionous.dms.pojo.Account;
+import com.visionous.dms.pojo.Verification;
 import com.visionous.dms.repository.AccountRepository;
+import com.visionous.dms.repository.VerificationRepository;
 
 @Controller
 @RequestMapping("/")
@@ -28,7 +34,12 @@ public class GreetingModelViewController {
 	
 	@Autowired
 	private AccountRepository userRepository;
-	
+	@Autowired
+	private VerificationRepository verificationRepository;
+	@Autowired
+    private MessageSource messages;
+	@Autowired
+	private AccountRepository accountRepository;
 	/**
 	 * @param model
 	 * @return
@@ -88,6 +99,31 @@ public class GreetingModelViewController {
 		}
 	}
 
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/confirm")
+	public String emailConfirmation(@RequestParam(name = "token", required = true) String token, Model model) {
+		Boolean auth = SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
+		Verification verificationToken = verificationRepository.findByToken(token);
+	    if (verificationToken == null) {
+	        model.addAttribute("errorMessage", " Invalid Token, Please contact administrator");
+	        return "demo_1/pages/confirmation";
+	    }
+		
+	    Account user = verificationToken.getAccount();
+	    Calendar cal = Calendar.getInstance();
+	    if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+	        model.addAttribute("errorMessage", "Token expired, more than 1 hr.");
+	        return "demo_1/pages/confirmation";
+	    }
+	    user.setEnabled(true);
+	    user.setActive(true);
+	    accountRepository.saveAndFlush(user);
+		return "redirect:/login";
+	}
+	
 	/**
 	 * @return
 	 */
