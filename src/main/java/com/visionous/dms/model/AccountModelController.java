@@ -206,13 +206,20 @@ public class AccountModelController extends ModelControllerImpl{
 					super.addModelCollectionToView("account", account);
 					
 					if(!account.getRoles().isEmpty()) {
-						if((loggedInRoles[0].getName().equals("CUSTOMER") && account.getRoles().get(0).getName().equals("CUSTOMER")) || 
-							(loggedInRoles[0].getName().equals("PERSONNEL") && (account.getRoles().get(0).getName().equals("ADMIN") || account.getRoles().get(0).getName().equals("PERSONNEL")))) {
-					        String errorEditingAccount = messageSource.getMessage("alert.errorEditingAccount", null, LocaleContextHolder.getLocale());
-							super.addModelCollectionToView("errorEditingAccount", errorEditingAccount);
+						if(!account.getUsername().equals(currentLoggedInAccount.getUsername())) {
+							if((loggedInRoles[0].getName().equals("CUSTOMER") && account.getRoles().get(0).getName().equals("CUSTOMER")) || 
+								(loggedInRoles[0].getName().equals("PERSONNEL") && (account.getRoles().get(0).getName().equals("ADMIN") || account.getRoles().get(0).getName().equals("PERSONNEL")))) {
+						        String errorEditingAccount = messageSource.getMessage("alert.errorEditingAccount", null, LocaleContextHolder.getLocale());
+								super.addModelCollectionToView("errorEditingAccount", errorEditingAccount);
+							}else {
+								super.addModelCollectionToView("account", account);
+							}
 						}else {
 							super.addModelCollectionToView("account", account);
 						}
+					}else {
+						String errorEditingAccount = messageSource.getMessage("alert.errorEditingAccount", null, LocaleContextHolder.getLocale());
+						super.addModelCollectionToView("errorEditingAccount", errorEditingAccount);
 					}
 				});
 			}
@@ -240,6 +247,17 @@ public class AccountModelController extends ModelControllerImpl{
 				selectedPersonnel.ifPresent(personnel -> super.addModelCollectionToView("selected", personnel));
 				Optional<Customer> selectedCustomer = customerRepository.findById(accountId);
 				selectedCustomer.ifPresent(customer -> super.addModelCollectionToView("selected", customer));
+			}else {
+				String username = AccountUtil.currentLoggedInUser().getUsername();
+				Optional<Account> loggedInAccount = accountRepository.findByUsername(username);
+				loggedInAccount.ifPresent(account->{
+					if(account.getPersonnel() != null)
+						super.addModelCollectionToView("selected", account.getPersonnel());
+					else if(account.getCustomer() != null)
+						super.addModelCollectionToView("selected", account.getCustomer());
+				});
+				
+
 			}
 		}
 		

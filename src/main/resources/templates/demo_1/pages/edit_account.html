@@ -45,6 +45,77 @@
               </div>
             </div>
           </div>
+          
+          <!-- Change Password Modal -->
+			<div id="changePasswordModal"  aria-labelledby="changePasswordModal" class="modal fade" role="dialog" aria-hidden="true">
+			  <div class="modal-dialog">
+			    <!-- Modal content-->
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+			      </div>
+			      <div class="modal-body" th:with="modalBodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_passwordChange :: passwordChange'">
+						<section  th:replace="__${modalBodyUrl}__">
+						  	<!-- partial:partials/_edit.html partial:partials/_changePassword.html-->
+						</section>
+					<div class="form-group " id="errorForm">
+						<p class="alert alert-danger" style="display:none" id="error">Error</p>
+						<p class="alert alert-success" style="display:none" id="success">Success</p>
+					</div>
+			      </div>
+			      <div class="modal-footer" >
+			      	<i class="fa fa-spin fa-spinner" id="loader" style="display:none"></i>
+			    	<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			        <button type="button" class="btn btn-primary"  onClick="changePassword()">[[${#strings.capitalize(viewType)}]]</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			<script>
+	  	 	$(document).ready(function(){
+	  	     	var token = $("meta[name='_csrf']").attr("content");
+	  	     	var header = $("meta[name='_csrf_header']").attr("content");
+	  	     	
+	  		    $(document).ajaxSend(function(e, xhr, options) {
+	  			    xhr.setRequestHeader(header, token);
+	  			});
+	  	 	});
+			function changePassword(){
+				$("#error").hide();
+				$("#loader").hide();
+				console.log("????");
+				var pass = $("#oldPassword").val();
+				var newPass = $("#newPassword").val();
+				var reconPass = $("#reconfirmPassword").val();
+				var id=$("#id").val();
+				
+				if(newPass != reconPass){
+					$("#error").html("Passwords are not same.")
+					$("#error").show();
+				}else{
+					$("#loader").show();
+					refreshPassword(id, pass, newPass, function(data){
+						$("#loader").hide();
+						
+						if(data.error != "error"){
+							$("#success").html(data.message)
+							$("#success").show();
+							location.reload();
+						}else{
+							$("#error").html(data.message)
+							$("#error").show();
+						}
+						
+					})
+				}
+			}
+			
+			function refreshPassword(id, oldPassword, newPassword, callback){
+				$.post("/api/account/changePassword", {"id" : id, "oldPassword" : oldPassword,  "newPassword" : newPassword}, callback);
+			}
+			</script>
+			
+		  
           <!-- content-wrapper ends -->
 		  
 		  <section th:replace="demo_1/partials/_footer :: footer">

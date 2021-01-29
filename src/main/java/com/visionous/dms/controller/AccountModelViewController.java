@@ -77,6 +77,22 @@ public class AccountModelViewController {
 	 * @param model
 	 * @return
 	 */
+	@GetMapping("")
+	public String accountProfile(Model model) {
+		
+		accountModelController.init()
+			.addControllerParam("action", Actions.VIEW)
+			.addControllerParam("viewType", Actions.VIEW)
+			.setViewModel(model)
+			.run(); // GetValuesForView
+		
+		return "demo_1/pages/view_account";
+	}
+
+	/**
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/edit/{id}")
 	public String accountEdit(@Valid @PathVariable("id") Long id, Model model) {
 		

@@ -23,6 +23,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,9 +32,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.visionous.dms.configuration.helpers.DateUtil;
+import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Appointment;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.Personnel;
+import com.visionous.dms.repository.AccountRepository;
 import com.visionous.dms.repository.AppointmentRepository;
 import com.visionous.dms.repository.CustomerRepository;
 import com.visionous.dms.repository.PersonnelRepository;
@@ -51,6 +54,7 @@ public class AppointmentRestController {
 	private AppointmentRepository appointmentRepository;
 	private PersonnelRepository personnelRepository;
 	private CustomerRepository customerRepository;
+	private AccountRepository accountRepository;
 	private RecordRepository recordRepository;
 
 	
@@ -59,13 +63,14 @@ public class AppointmentRestController {
 	 */
 	@Autowired
 	public AppointmentRestController(AppointmentRepository appointmentRepository, PersonnelRepository personnelRepository, 
-			CustomerRepository customerRepository,
-			MessageSource messageSource, RecordRepository recordRepository) {
+			CustomerRepository customerRepository, MessageSource messageSource, 
+			RecordRepository recordRepository, AccountRepository accountRepostory) {
 		this.appointmentRepository = appointmentRepository;
 		this.personnelRepository = personnelRepository;
 		this.customerRepository = customerRepository;
 		this.messageSource = messageSource;
 		this.recordRepository = recordRepository;
+		this.accountRepository = accountRepostory;
 	}
 	
 	@PostMapping("/api/book")
@@ -306,6 +311,34 @@ public class AppointmentRestController {
         if(personnel.size() != 0) {
         	result.setResult(personnel);
         }
+
+        return ResponseEntity.ok(result);
+	}
+	
+	@PostMapping("/api/account/changePassword")
+    public ResponseEntity<?> changePassword(@RequestParam(name = "id", required = true) Long accountId, 
+    		@RequestParam(name = "oldPassword", required = true) String oldPassword, 
+    		@RequestParam(name = "newPassword", required = true) String newPassword) {
+		
+		ResponseBody<Personnel> result = new ResponseBody<>();
+
+		Optional<Account> acc = accountRepository.findById(accountId);
+		acc.ifPresent(account->{
+			if((account.getPersonnel() != null) || (account.getCustomer() != null)){
+				BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+				if(encoder.matches(oldPassword, account.getPassword())) {
+					String pass = new BCryptPasswordEncoder().encode(newPassword);					
+					account.setPassword(pass);
+					
+					accountRepository.saveAndFlush(account);
+					
+					result.setError("success");
+				}else {
+					result.setError("error");
+					result.setMessage("Passwords do not match");
+				}
+			}
+		});
 
         return ResponseEntity.ok(result);
 	}

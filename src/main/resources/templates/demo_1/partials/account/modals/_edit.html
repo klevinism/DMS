@@ -5,7 +5,7 @@
     <h4 class="card-title">[[#{EditAccount}]] <u>[[*{username}]]</u></h4>
     <hr/>
     
-      <input type="hidden" th:field="*{id}">
+      <input type="hidden" th:field="*{id}" id="id">
       <input type="hidden" th:field="*{enabled}">
       <input type="hidden" th:field="*{active}">
 	  <input type="hidden" th:if="*{customer != null && customer.id != null}" th:field="*{customer.id}">
@@ -28,6 +28,12 @@
         <label for="username">[[#{Username}]]</label>
         <input type="text" class="form-control form-control-lg"  th:placeholder="*{username}" th:value="*{username}" th:field="*{username}">
         <p class="alert alert-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">error</p>
+      </div>
+      
+      <div class="form-group">      
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changePasswordModal">
+  			[[#{ChangePassword}]]
+		</button>
       </div>
       
       <div class="form-group">      
@@ -105,8 +111,6 @@
    	  "initialCaption":imgtitle,
  	 });
      var birthday = /*[[*{birthday}]]*/'';
-console.log(new Date(birthday));
-     console.log(getFormattedDate(new Date(birthday)));
      $('#birthdayCalendar').val(getFormattedDate(new Date(birthday)));
      $('#birthdayCalendar').datetimepicker({
   	    "allowInputToggle": true,
@@ -125,4 +129,7 @@ console.log(new Date(birthday));
     /*]]>*/
     </script>
   </div>
+  
+  
+  
 </div>
