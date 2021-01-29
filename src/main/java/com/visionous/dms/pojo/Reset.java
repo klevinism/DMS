@@ -3,8 +3,6 @@
  */
 package com.visionous.dms.pojo;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -21,7 +19,6 @@ import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.visionous.dms.configuration.helpers.DateUtil;
 
@@ -30,12 +27,12 @@ import com.visionous.dms.configuration.helpers.DateUtil;
  *
  */
 @Entity
-public class Verification {
-    private static final int EXPIRATION = 60 * 24;
+public class Reset {
+	private static final int EXPIRATION = 60 * 24;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "VERIFICATION_SEQ")
-    @SequenceGenerator(sequenceName = "verification_seq", allocationSize = 1, name = "VERIFICATION_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RESET_SEQ")
+    @SequenceGenerator(sequenceName = "reset_seq", allocationSize = 1, name = "RESET_SEQ")
     private Long id;
     
     private String token;
@@ -48,18 +45,21 @@ public class Verification {
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(iso = ISO.DATE)
     private Date expiryDate;
-    
-    /**
-	 * 
+
+	/**
+	 * @param account2
+	 * @param token2
 	 */
-	public Verification() {
-	}
-    
-	public Verification(Account account, String token) {
-		this.account = account;
-		this.account.setPassword(new BCryptPasswordEncoder().encode(account.getPassword()));
+	public Reset(Account account, String token) {
+		this.account =  account;
 		this.token = token;
 		this.expiryDate = DateUtil.calculateExpiryDate(60);
+	}
+	
+	/**
+	 * 
+	 */
+	public Reset() {
 	}
 
 	/**

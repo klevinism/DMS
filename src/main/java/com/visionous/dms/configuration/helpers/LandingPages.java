@@ -82,7 +82,11 @@ public enum LandingPages {
 
 		}
 		
-
     	return breadcrumbList;
+    }
+    
+    public static String getDomainPathFromRequest(HttpServletRequest request) {
+        StringBuffer fullPath = request.getRequestURL();
+		return fullPath.substring(0, fullPath.indexOf(request.getRequestURI()));
     }
 }

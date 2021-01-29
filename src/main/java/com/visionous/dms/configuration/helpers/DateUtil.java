@@ -3,6 +3,7 @@
  */
 package com.visionous.dms.configuration.helpers;
 
+import java.sql.Timestamp;
 import java.time.Period;
 import java.util.Calendar;
 import java.util.Date;
@@ -190,4 +191,15 @@ public class DateUtil {
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		return calendar.getTime();
 	}
+	
+    /**
+     * @param expiryTimeInMinutes
+     * @return
+     */
+    public static Date calculateExpiryDate(int expiryTimeInMinutes) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Timestamp(cal.getTime().getTime()));
+        cal.add(Calendar.MINUTE, expiryTimeInMinutes);
+        return new Date(cal.getTime().getTime());
+    }
 }

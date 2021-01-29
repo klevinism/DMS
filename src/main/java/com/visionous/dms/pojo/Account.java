@@ -124,6 +124,12 @@ public class Account implements Serializable{
     @Nullable
 	private Verification verification;
     
+    
+    @OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @PrimaryKeyJoinColumn
+    @Nullable
+	private Reset reset;
+    
 	@Valid
     @JsonIgnore
     @OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
@@ -399,6 +405,20 @@ public class Account implements Serializable{
 		this.birthday = birthday;
 	}
 	
+	/**
+	 * @return the reset
+	 */
+	public Reset getReset() {
+		return reset;
+	}
+
+	/**
+	 * @param reset the reset to set
+	 */
+	public void setReset(Reset reset) {
+		this.reset = reset;
+	}
+
 	/**
 	 * @return the verification
 	 */

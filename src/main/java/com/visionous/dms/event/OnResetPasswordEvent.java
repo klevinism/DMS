@@ -14,9 +14,8 @@ import com.visionous.dms.pojo.Account;
  * @author delimeta
  *
  */
-public class OnRegistrationCompleteEvent extends ApplicationEvent{
-
-    /**
+public class OnResetPasswordEvent  extends ApplicationEvent{
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
@@ -24,12 +23,13 @@ public class OnRegistrationCompleteEvent extends ApplicationEvent{
 	private String appUrl;
     private Locale locale;
     private Account account;
-
-    public OnRegistrationCompleteEvent(
-      Account user, Locale locale, String appUrl) {
-        super(user);
-        
-        this.account = user;
+	
+	/**
+	 * @param source
+	 */
+    public OnResetPasswordEvent(Account account, Locale locale, String appUrl) {
+    	super(account);    	        
+        this.account = account;
         this.locale = locale;
         this.appUrl = appUrl;
     }
@@ -63,16 +63,17 @@ public class OnRegistrationCompleteEvent extends ApplicationEvent{
 	}
 
 	/**
-	 * @return the user
+	 * @return the account
 	 */
 	public Account getAccount() {
 		return account;
 	}
 
 	/**
-	 * @param account the user to set
+	 * @param account the account to set
 	 */
 	public void setAccount(Account account) {
 		this.account = account;
 	}
+    
 }
