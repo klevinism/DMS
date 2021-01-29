@@ -29,6 +29,15 @@
                   <div class="card-body">
                     <div class="row">
                       <div class="col">
+                        <div class="col-md-12 grid-margin">
+				           	<div class="alert show alert-danger" role="alert" id="error" style="display:none">
+							    Alert warning
+							</div>
+							<div class="alert show alert-success" role="alert" id="success" style="display:none">
+							    Success
+							</div>
+			        	</div>
+                      	
                       	<a class="btn btn-primary" th:href="'/admin'+${currentPage}+'/create'"> Add Personnel</a>
                       	<hr/>
                         <table class="table table-hover">
@@ -86,6 +95,7 @@
 			                          <a class="dropdown-item" th:href="'/admin'+${currentPage}+'/'+ ${user.id} + '/?modal=true&view=' + ${T(com.visionous.dms.configuration.helpers.Actions).EDIT}  ">Edit</a>
 			                          <a class="dropdown-item"  th:href="'/admin'+${currentPage}+'/'+ ${user.id} + '/?modal=true&view=' + ${T(com.visionous.dms.configuration.helpers.Actions).DELETE} +'' ">Delete</a>
 			                          <div class="dropdown-divider"></div>
+			                          <a class="dropdown-item" th:if="${!user.enabled && !user.active}" href="#" onclick="resendConfirmation();">[[#{ReConfirm}]]</a>                     
 			                        </div>
 			                      </div>
 	                          </td>
@@ -98,7 +108,19 @@
                 </div>
               </div>
             </div>
+            <script>
+            $(document).ready(function(){
+	  	     	var token = $("meta[name='_csrf']").attr("content");
+	  	     	var header = $("meta[name='_csrf_header']").attr("content");
+	  	     	
+	  		    $(document).ajaxSend(function(e, xhr, options) {
+	  			    xhr.setRequestHeader(header, token);
+	  			});
+	  	 	});
             
+			
+
+            </script>
           </div>
           <!-- content-wrapper ends -->
 		  

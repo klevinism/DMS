@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.repository.CrudRepository;
@@ -30,8 +31,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.visionous.dms.configuration.helpers.DateUtil;
+import com.visionous.dms.event.OnRegistrationCompleteEvent;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Appointment;
 import com.visionous.dms.pojo.Customer;
@@ -56,6 +60,7 @@ public class AppointmentRestController {
 	private CustomerRepository customerRepository;
 	private AccountRepository accountRepository;
 	private RecordRepository recordRepository;
+	private ApplicationEventPublisher eventPublisher;
 
 	
 	/**
@@ -64,13 +69,14 @@ public class AppointmentRestController {
 	@Autowired
 	public AppointmentRestController(AppointmentRepository appointmentRepository, PersonnelRepository personnelRepository, 
 			CustomerRepository customerRepository, MessageSource messageSource, 
-			RecordRepository recordRepository, AccountRepository accountRepostory) {
+			RecordRepository recordRepository, AccountRepository accountRepostory, ApplicationEventPublisher eventPublisher) {
 		this.appointmentRepository = appointmentRepository;
 		this.personnelRepository = personnelRepository;
 		this.customerRepository = customerRepository;
 		this.messageSource = messageSource;
 		this.recordRepository = recordRepository;
 		this.accountRepository = accountRepostory;
+		this.eventPublisher = eventPublisher;
 	}
 	
 	@PostMapping("/api/book")
@@ -338,6 +344,27 @@ public class AppointmentRestController {
 					result.setMessage("Passwords do not match");
 				}
 			}
+		});
+
+        return ResponseEntity.ok(result);
+	}
+	
+	@PostMapping("/api/personnel/sendConfirmation")
+    public ResponseEntity<?> sendConfirmation(@RequestParam(name = "id", required = true) Long personnelId) {
+		ResponseBody<Personnel> result = new ResponseBody<>();
+
+		Optional<Account> acc = accountRepository.findById(personnelId);
+		acc.ifPresent(account->{
+	        String appUrl = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getContextPath();
+	        try {
+	        	eventPublisher.publishEvent(new OnRegistrationCompleteEvent(account, LocaleContextHolder.getLocale(), appUrl));
+	        	result.setError("success");
+	            String confirmationEmailMsg = messageSource.getMessage("alert.confirmationEmailSent", null, LocaleContextHolder.getLocale());
+	        	result.setMessage(confirmationEmailMsg);
+	        }catch(Exception e) {
+	        	result.setError("error");
+	        	result.setMessage(e.getMessage());
+	        }
 		});
 
         return ResponseEntity.ok(result);

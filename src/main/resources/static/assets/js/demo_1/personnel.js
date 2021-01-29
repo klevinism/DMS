@@ -31,3 +31,28 @@ function clearSelected(){
       elements[i].style.display = "none";
     }
 }
+
+function resendConfirmation(){
+	var selectedPersonnel = $('input[name="accountRadio"]:checked');
+	var personnelId;
+	if(selectedPersonnel != undefined || selectedPersonnel.val() != null){
+		personnelId = selectedPersonnel.val();
+	}
+	if(personnelId != undefined || personnelId != null){
+		reConfirm(personnelId,  function (data){
+			if(data.error != "error"){
+				$("#success").html(data.message);
+				$("#success").show();
+				setTimeout(function(){ $("#success").hide(); }, 5000);
+			}else if(data.error === "error"){
+				$("#error").html(data.message);
+				$("#error").show();
+				setTimeout(function(){ $("#error").hide(); }, 5000);
+			}
+		});
+	}	
+}
+
+function reConfirm(personnelId, callback){
+	$.post("/api/personnel/sendConfirmation", {"id" : personnelId}, callback);
+}

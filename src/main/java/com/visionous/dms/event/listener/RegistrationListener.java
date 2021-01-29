@@ -108,7 +108,6 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         	e.printStackTrace();
         }
         
-        
         mailSender.send(mailMessage);
     }
 	
