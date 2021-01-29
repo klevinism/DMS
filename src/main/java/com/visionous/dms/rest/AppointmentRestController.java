@@ -152,8 +152,6 @@ public class AppointmentRestController {
 				if(start != null) {
 					        		        		
 	        		int daysToAdd = DateUtil.calculateDaysToAddFromPeriod(start, end);
-	        		System.out.println(" DAYS TO ADD = " + daysToAdd);
-	        		System.out.println(" DEFAULT PERIOD -> "+  new SimpleDateFormat("dd/MM/YYYY").format(start) + " -- "+  new SimpleDateFormat("dd/MM/YYYY").format(end));
 
 	        		// getRecords for period startDate ~ endDate > add by daysToAdd
 	        		List<Integer> recordsForPersonnel = new ArrayList<>();
@@ -172,8 +170,7 @@ public class AppointmentRestController {
 						} 
 						
 						Integer records = recordRepository.countAllByPersonnelIdAndServicedateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
-						System.out.println(records + " Record for Personnel " + singlePersonnel.get().getAccount().getName() + 
-								" for period >>> " + new SimpleDateFormat("dd/MM/YYYY HH:mm:ss").format(startingDate) + " -- " + new SimpleDateFormat("dd/MM/YYYY HH:mm:ss").format(endingDate));
+
 						start = DateUtil.addDays(start, daysToAdd);
 						recordsForPersonnel.add(records);
 	        		}
@@ -224,9 +221,6 @@ public class AppointmentRestController {
 				if(start != null) {
 	        		int daysToAdd = DateUtil.calculateDaysToAddFromPeriod(start, end);
 	        		
-	        		System.out.println(" DAYS TO ADD = " + daysToAdd);
-	        		System.out.println(" DEFAULT PERIOD -> "+  new SimpleDateFormat("dd/MM/YYYY").format(start) + " -- "+  new SimpleDateFormat("dd/MM/YYYY").format(end));
-
 	        		// getRecords for period startDate ~ endDate > add by daysToAdd
 	        		List<Integer> recordsForPersonnel = new ArrayList<>();
 	        		while (start.before(end)) {
@@ -234,13 +228,11 @@ public class AppointmentRestController {
 						Date endingDate = setDayToEndingOfPeriod(start, daysToAdd);
 						
 						Integer records = appointmentRepository.countAllByPersonnelIdAndAppointmentDateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
-						System.out.println(records + " Record for Personnel " + singlePersonnel.get().getAccount().getName() + 
-								" for period >>> " + new SimpleDateFormat("dd/MM/YYYY HH:mm:ss").format(startingDate) + " -- " + new SimpleDateFormat("dd/MM/YYYY HH:mm:ss").format(endingDate));
+						
 						start = DateUtil.addDays(start, daysToAdd);
 						recordsForPersonnel.add(records);
 	        		}
 	        		listOfRecords.put(singlePersonnel.get().getAccount().getName(), recordsForPersonnel);
-	        		
 				}
         	}
         }
@@ -335,9 +327,7 @@ public class AppointmentRestController {
 				if(encoder.matches(oldPassword, account.getPassword())) {
 					String pass = new BCryptPasswordEncoder().encode(newPassword);					
 					account.setPassword(pass);
-					
 					accountRepository.saveAndFlush(account);
-					
 					result.setError("success");
 				}else {
 					result.setError("error");
