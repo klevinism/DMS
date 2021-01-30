@@ -195,6 +195,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 					if(createdPersonnel != null) {
 						Account publishedAccount = createdPersonnel.getAccount();
 						publishedAccount.setPassword(passPlain);
+						System.out.println(" ACC PASS ="+publishedAccount.getPassword());
 				        eventPublisher.publishEvent(
 				        		new OnRegistrationCompleteEvent(publishedAccount,LocaleContextHolder.getLocale(), appUrl)
 				        		);

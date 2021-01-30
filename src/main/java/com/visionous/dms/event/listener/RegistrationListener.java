@@ -5,6 +5,7 @@ package com.visionous.dms.event.listener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.mail.internet.MimeMessage;
@@ -75,13 +76,26 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 	private void confirmRegistration(OnRegistrationCompleteEvent event) {
 		Context thymeleafContext = new Context();
 		Map<String, Object> vars = new HashMap<>();
-		
+		String emailTemplatePath = "demo_1/partials/emails/registrationConfirmation.html";
+		String firstEmailTemplatePath = "demo_1/partials/emails/firstRegistrationConfirmation.html";
+		String template= null;
         Account account = event.getAccount();
         String recipientAddress = account.getEmail();
-        String token = UUID.randomUUID().toString();
+        String token = null;
+        String rawPass = account.getPassword();
+        Optional<Verification> verification = verificationRepository.findByAccount_id(account.getId());
         
-        Verification verificationToken = new Verification(account, token);
-        verificationRepository.saveAndFlush(verificationToken);
+        if(verification.isPresent()) {
+        	token = verification.get().getToken();
+        	template = emailTemplatePath;
+        }else {
+        	token = UUID.randomUUID().toString();
+        	template = firstEmailTemplatePath;
+        	
+            Verification verificationToken = new Verification(account, token);
+            verificationRepository.saveAndFlush(verificationToken);
+            account.setPassword(rawPass);
+        }
         
 		String domainPath = LandingPages.getDomainPathFromRequest(
 				((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest()); 
@@ -93,11 +107,11 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 
 	    thymeleafContext.setVariables(vars);
 	    
-	    String htmlBody = thymeleafTemplateEngine.process("demo_1/partials/emails/registrationConfirmation.html", thymeleafContext);
+	    String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
 	    
         MimeMessage mailMessage = mailSender.createMimeMessage();
         try {
-
+            System.out.println(account.getPassword() + " <<LATER");
         	mailMessage.setSubject("Registration Confirmation", "UTF-8");
         
         	MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true, "UTF-8");
