@@ -27,14 +27,24 @@
     </ul>
     <form class="ml-auto search-form d-none d-md-block" action="#">
       <div class="form-group">
-        <input type="search" class="form-control" placeholder="Search Here">
+        <!-- <input type="search" class="form-control" placeholder="Search Here"> -->
       </div>
     </form>
     <ul class="navbar-nav ml-auto">
-      <li class="nav-item dropdown">
-        <a class="nav-link count-indicator" id="messageDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+      <li class="nav-item dropdown" id="notificationDropdown">
+        <a class="nav-link count-indicator" id="notificationDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
           <i class="mdi mdi-bell-outline"></i>
-          <span class="count">7</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="notificationDropdown">
+          <a class="dropdown-item py-3 border-bottom">
+            <p class="mb-0 font-weight-medium float-left">You have no upcoming visits today! </p>
+          </a>
+        </div>
+      </li>
+      <!-- <li class="nav-item dropdown">
+        <a class="nav-link count-indicator" id="messageDropdown" href="#" data-toggle="dropdown">
+          <i class="mdi mdi-email-outline"></i>
+          <span class="count bg-success">3</span>
         </a>
         <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="messageDropdown">
           <a class="dropdown-item py-3">
@@ -67,46 +77,8 @@
             </div>
           </a>
         </div>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link count-indicator" id="notificationDropdown" href="#" data-toggle="dropdown">
-          <i class="mdi mdi-email-outline"></i>
-          <span class="count bg-success">3</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="notificationDropdown">
-          <a class="dropdown-item py-3 border-bottom">
-            <p class="mb-0 font-weight-medium float-left">You have 4 new notifications </p>
-            <span class="badge badge-pill badge-primary float-right">View all</span>
-          </a>
-          <a class="dropdown-item preview-item py-3">
-            <div class="preview-thumbnail">
-              <i class="mdi mdi-alert m-auto text-primary"></i>
-            </div>
-            <div class="preview-item-content">
-              <h6 class="preview-subject font-weight-normal text-dark mb-1">Application Error</h6>
-              <p class="font-weight-light small-text mb-0"> Just now </p>
-            </div>
-          </a>
-          <a class="dropdown-item preview-item py-3">
-            <div class="preview-thumbnail">
-              <i class="mdi mdi-settings m-auto text-primary"></i>
-            </div>
-            <div class="preview-item-content">
-              <h6 class="preview-subject font-weight-normal text-dark mb-1">Settings</h6>
-              <p class="font-weight-light small-text mb-0"> Private message </p>
-            </div>
-          </a>
-          <a class="dropdown-item preview-item py-3">
-            <div class="preview-thumbnail">
-              <i class="mdi mdi-airballoon m-auto text-primary"></i>
-            </div>
-            <div class="preview-item-content">
-              <h6 class="preview-subject font-weight-normal text-dark mb-1">New user registration</h6>
-              <p class="font-weight-light small-text mb-0"> 2 days ago </p>
-            </div>
-          </a>
-        </div>
-      </li>
+        
+      </li> -->
       <li class="nav-item dropdown d-none d-xl-inline-block user-dropdown">
 
         <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false" >
@@ -125,6 +97,7 @@
             <img class="img-md rounded-circle" th:if="${currentRoles!= null && loggedInAccount.image == null}"  th:src="'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg'">
             <p class="mb-1 mt-3 font-weight-semibold">[[${loggedInAccount.name}]] [[${loggedInAccount.surname}]]</p>
             <p class="font-weight-light text-muted mb-0">[[${loggedInAccount.email}]]</p>
+            <input type="hidden" id="accid" th:value="${loggedInAccount.id}">
           </div>
           
           <a class="dropdown-item" href="/account">My Profile <i class="dropdown-item-icon ti-dashboard"></i></a>
@@ -140,6 +113,8 @@
     </button>
   </div>
   <script>
+  var read= false;
+  
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
 
@@ -174,29 +149,100 @@
 				nxtName=alName;
 				nxtFlag=alFlag;
 			}
+	  
+		  var langHTML = '<a class="nav-link dropdown-toggle px-2 d-flex align-items-center" href="#" data-toggle="dropdown" aria-expanded="false">'+
+		  '<div class="d-inline-flex mr-0 mr-md-3" id="LanguageDropdown" >'+
+		    '<div class="flag-icon-holder">'+
+		      '<i class="flag-icon flag-icon-'+chosenFlag+'"></i>'+
+		    '</div>'+
+		  '</div>'+chosenLangName+
+		  '</a>'+
+		  '<div class="dropdown-menu dropdown-menu-left navbar-dropdown py-2" aria-labelledby="LanguageDropdown" id="languageItems">'+
+		   '<a class="dropdown-item" href="'+nxtUrl+'">'+
+		    '<div class="flag-icon-holder">'+
+		      '<i class="flag-icon flag-icon-'+nxtFlag+'"></i>'+
+		    '</div>'+nxtName+
+		   '</a>'+
+		  '</div>';
 	
 	
-	  
-	  var langHTML = '<a class="nav-link dropdown-toggle px-2 d-flex align-items-center" href="#" data-toggle="dropdown" aria-expanded="false">'+
-	  '<div class="d-inline-flex mr-0 mr-md-3" id="LanguageDropdown" >'+
-	    '<div class="flag-icon-holder">'+
-	      '<i class="flag-icon flag-icon-'+chosenFlag+'"></i>'+
-	    '</div>'+
-	  '</div>'+chosenLangName+
-	  '</a>'+
-	  '<div class="dropdown-menu dropdown-menu-left navbar-dropdown py-2" aria-labelledby="LanguageDropdown" id="languageItems">'+
-	   '<a class="dropdown-item" href="'+nxtUrl+'">'+
-	    '<div class="flag-icon-holder">'+
-	      '<i class="flag-icon flag-icon-'+nxtFlag+'"></i>'+
-	    '</div>'+nxtName+
-	   '</a>'+
-	  '</div>';
-
-
-	  $("#LanguageDropdown").html(langHTML);
-	  
+		  $("#LanguageDropdown").html(langHTML);
+		  
 	  }
   });
-	  
+  
+  
+	$(document).ready(function(){
+
+    	var token = $("meta[name='_csrf']").attr("content");
+    	var header = $("meta[name='_csrf_header']").attr("content");
+    	
+	    $(document).ajaxSend(function(e, xhr, options) {
+		    xhr.setRequestHeader(header, token);
+		});
+	    
+		 $("#notificationDropdown").click(function(e){
+		  read = true;
+		  $("#notifCount").remove();
+		 });
+		 
+	    getNotifications();
+	    
+	    setTimeout(getNotifications(), 900000);
+	});
+  
+  function getNotifications(){
+	  var id = $("#accid").val();
+	    refreshNotifications(id, new Date(), function(data){
+	    	
+	    	if(data.error != "error"){
+	    		parseHeaderTemplate(true, data.message,"/customer/dashboard/"+data.result[0].customer.id, data.result.length,data.result[0]);
+	    	}else{
+	    		read = false;
+	    		parseHeaderTemplate(false, data.message,"","","");
+	    	}
+      });
+  }
+	
+  function parseHeaderTemplate(hasNewNotification, notifMessage, notifUrl, notifCnt, data){
+	  var notifHtml='';
+	  var notifPreview = '';
+	  if(notifCnt != ""){
+		  var appDate = new Date(data.appointmentDate);
+		  notifHtml = '<span class="count" id="notifCount">'+notifCnt+'</span></a>';
+		  notifPreview = '<h6 class="preview-subject font-weight-normal text-dark mb-1">'+data.customer.account.name +', '+ data.customer.account.surname+'</h6>'+
+          '<p class="font-weight-light small-text mb-0"> In '+getDiffBetweenMinutes(appDate, new Date())+' min</p>';
+
+	  } 
+	  var text = '<a class="nav-link count-indicator" id="notificationDropdown" href="#" data-toggle="dropdown" aria-expanded="false">'+
+          '<i class="mdi mdi-bell-outline"></i>'+
+          notifHtml+
+        '<div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="notificationDropdown">'+
+          '<a class="dropdown-item py-3 border-bottom" href="/home">'+
+            '<p class="mb-0 font-weight-medium float-left">'+notifMessage+'</p>'+
+            '<span class="badge badge-pill badge-primary float-right">View all</span></a>'+
+          '<a class="dropdown-item preview-item py-3" title="Visit" href="'+notifUrl+'">'+
+            '<div class="preview-thumbnail">'+
+              	'<i class="fa fa-stethoscope text-primary"></i>'+
+            '</div>'+
+            '<div class="preview-item-content">'+
+            notifPreview+
+            '</div></a></div>';
+            
+      var nothingText = '<a class="nav-link count-indicator" id="notificationDropdown" href="#" data-toggle="dropdown" aria-expanded="false">'+
+      '<i class="mdi mdi-bell-outline"></i></a>'+
+      '<div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="notificationDropdown">'+
+      '<a class="dropdown-item py-3 border-bottom">'+
+      '<p class="mb-0 font-weight-medium float-left">'+notifMessage+' </p></a></div>';
+	
+      if(hasNewNotification){
+    	  $("#notificationDropdown").html(text);
+      }else{
+    	  $("#notificationDropdown").html(nothingText);
+      }
+  }
+  function refreshNotifications(accountId, startDate, callback){
+		$.post("/api/notifications/nextAppointments", {"accountId" : accountId, "startDate" : startDate}, callback);
+  }
   </script>
 </nav>

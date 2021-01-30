@@ -105,9 +105,22 @@ public class DateUtil {
 
 	
 	
-	public static Date addDays(Date currentDate, int nrOfDays) {
+	public static Date setDays(Date currentDate, int nrOfDays) {
 		Calendar temp = DateUtil.getCalendarFromDate(currentDate);
 		temp.add(Calendar.DAY_OF_MONTH, nrOfDays);
+		return temp.getTime();
+	}
+	
+	
+	public static Date addHours(Date currentDate, int hoursNr) {
+		Calendar temp = DateUtil.getCalendarFromDate(currentDate);
+		temp.add(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY) + hoursNr);
+		return temp.getTime();
+	}
+	
+	public static Date addMinutes(Date currentDate, int minutesNr) {
+		Calendar temp = DateUtil.getCalendarFromDate(currentDate);
+		temp.add(Calendar.MINUTE, temp.get(Calendar.MINUTE) + minutesNr);
 		return temp.getTime();
 	}
 	

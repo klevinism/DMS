@@ -46,7 +46,6 @@ public class Customer implements Serializable{
 	private Date registerdate;
 
 	@Valid
-	@JsonIgnore
 	@MapsId
 	@OneToOne(mappedBy = "customer", optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name="id")

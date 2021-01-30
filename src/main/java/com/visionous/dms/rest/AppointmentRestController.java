@@ -166,12 +166,12 @@ public class AppointmentRestController {
 							endingDate = DateUtil.setDayToEndOfYear(start);
 	        			}else{
 							startingDate = DateUtil.setHoursToBegginingOfDay(start);
-							endingDate = DateUtil.addDays(start, daysToAdd);
+							endingDate = DateUtil.setDays(start, daysToAdd);
 						} 
 						
 						Integer records = recordRepository.countAllByPersonnelIdAndServicedateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
 
-						start = DateUtil.addDays(start, daysToAdd);
+						start = DateUtil.setDays(start, daysToAdd);
 						recordsForPersonnel.add(records);
 	        		}
 	        		listOfRecords.put(singlePersonnel.get().getAccount().getName(), recordsForPersonnel);
@@ -229,7 +229,7 @@ public class AppointmentRestController {
 						
 						Integer records = appointmentRepository.countAllByPersonnelIdAndAppointmentDateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
 						
-						start = DateUtil.addDays(start, daysToAdd);
+						start = DateUtil.setDays(start, daysToAdd);
 						recordsForPersonnel.add(records);
 	        		}
 	        		listOfRecords.put(singlePersonnel.get().getAccount().getName(), recordsForPersonnel);
@@ -277,7 +277,7 @@ public class AppointmentRestController {
 		}else if(daysToAdd >= 365) {
 			date = DateUtil.setDayToEndOfYear(start);
 		}else{
-			date = DateUtil.addDays(start, daysToAdd);
+			date = DateUtil.setDays(start, daysToAdd);
 		} 
 		return date;
 	}
@@ -339,6 +339,40 @@ public class AppointmentRestController {
         return ResponseEntity.ok(result);
 	}
 	
+	@PostMapping("/api/notifications/nextAppointments")
+    public ResponseEntity<?> changePassword(@RequestParam(name = "accountId", required = true) Long accountId, 
+    		@RequestParam(name = "startDate", required = true) Date startDate) {
+		
+		ResponseBody<Appointment> result = new ResponseBody<>();
+
+		Optional<Account> acc = accountRepository.findById(accountId);
+		acc.ifPresent(account->{
+			
+			if((account.getPersonnel() != null) || (account.getCustomer() != null)){
+				
+				Date start = startDate;
+				Date end = DateUtil.addMinutes(start, 30);
+				
+				List<Appointment> all = appointmentRepository.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(accountId, start, end);
+				all.stream().forEach(appointment -> appointment.getPersonnel().getAccount().setPassword(""));
+
+				if(all.isEmpty()) {
+					result.setError("error");
+					result.setMessage("No upcoming appointments!");	
+				}else {
+					result.setError("success");
+					result.setMessage("You have "+ all.size() + " upcoming appointmet");
+					result.setResult(all);
+				}
+			}else {
+				result.setError("error");
+				result.setMessage("An error occurred please try again later!");
+			}
+		});
+		
+        return ResponseEntity.ok(result);
+	}
+	
 	@PostMapping("/api/personnel/sendConfirmation")
     public ResponseEntity<?> sendConfirmation(@RequestParam(name = "id", required = true) Long personnelId) {
 		ResponseBody<Personnel> result = new ResponseBody<>();
@@ -356,7 +390,6 @@ public class AppointmentRestController {
 	        	result.setMessage(e.getMessage());
 	        }
 		});
-
         return ResponseEntity.ok(result);
 	}
 	

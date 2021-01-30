@@ -192,7 +192,7 @@ public class HomeModelController extends ModelControllerImpl{
 							Integer appointments = appointmentRepository.countAllByPersonnelIdAndAppointmentDateBetween(selectedPersonnel.getId(), startCalendar.getTime(), endCalendar.getTime());
 							dataForAppointment.add(appointments);
 							dataForRange.add(records);
-							startDate = DateUtil.addDays(startDate, 1);
+							startDate = DateUtil.setDays(startDate, 1);
 						}
 						
 						super.addModelCollectionToView("allRecords", dataForRange);
