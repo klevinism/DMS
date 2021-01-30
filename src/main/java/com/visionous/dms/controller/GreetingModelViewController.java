@@ -70,6 +70,15 @@ public class GreetingModelViewController {
 		return "redirect:/home";
 	}
 	
+    /**
+     * @param model
+     * @return
+     */
+    @GetMapping("/admin")
+    public String homeAdminDefault(Model model) {
+        return "redirect:/home";
+    }
+	
 	/**
 	 * @param model
 	 * @return
@@ -110,7 +119,7 @@ public class GreetingModelViewController {
 			return "redirect:/home";
 		}
 	}
-
+    
 	/**
 	 * @param model
 	 * @return
