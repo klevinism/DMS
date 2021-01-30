@@ -66,12 +66,44 @@ public class DateUtil {
 		return cal;
 	}
 	
-	public static Date getOneWeekBefore(Date startDate) {
+	public static Date getOneWeekBefore(Date date) {
+		return getDaysBefore(date, 6);
+	}
+
+	public static Date getOneMonthBefore(Date date) {
+		return getMonthsBefore(date, 1);
+	}
+	
+	public static Date getDaysBefore(Date date, int days) {
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(startDate);
-		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 6);
+		cal.setTime(date);
+		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - days);
 		return cal.getTime();
 	}
+	
+	public static Date getMonthsBefore(Date date, int months) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) - months);
+		return cal.getTime();
+	}
+
+	
+	public static Date getBeginingOfMonth(Date startDate) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(startDate);
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
+		return cal.getTime();
+	}
+	
+	public static Date getEndingOfMonth(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		return cal.getTime();
+	}
+
+	
 	
 	public static Date addDays(Date currentDate, int nrOfDays) {
 		Calendar temp = DateUtil.getCalendarFromDate(currentDate);

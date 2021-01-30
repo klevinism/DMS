@@ -43,35 +43,6 @@
 		  			
 		  			<hr />
 		  			
-		  			<div class="card" th:fragment="view">
-						<div class="card-body">
-						      <div class="form-group">      
-						       <div class="d-flex flex-column flex-lg-row">
-						    	  <h4 class="card-title">Patiens of  <u>[[*{account.name}]]</u></h4>
-							    </div>
-						        <hr />
-						        <div class="row col-md-8 grid-margin stretch-card">
-							        <table class="table table-hover" th:if="${customersHistory != null}">
-					                      <thead>
-					                        <tr>
-					                          <th>Id</th>
-					                          <th>Name</th>
-					                          <th>Surname</th>
-					                        </tr>
-					                      </thead>
-					                      <tbody th:each="record: *{records}" >
-												<tr >
-													<td >[[${record.history.customer.id}]]</td>
-													<td th:text="${record.history.customer.account.name}"></td>
-													<td th:text="${record.history.customer.account.surname}"></td>
-												</tr>
-											</tbody>
-					                    </table>
-							      </div>
-						      </div>
-						      
-						  </div>
-						</div>
 		  		</form>
 		  			</div>
 		  		</div>

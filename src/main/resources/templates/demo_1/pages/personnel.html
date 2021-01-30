@@ -47,20 +47,22 @@
 	                          <th>Id</th>
 	                          <th>Username</th>
 	                          <th>Authorities</th>
-	                          <th>Sale</th>
+	                          <th>Visits Trend <small>(Last 2 months)</small></th>
 	                          <th>Status</th>
 	                          <th><!-- Actions column --></th>
 	                        </tr>
 	                      </thead>
 	                      <tbody>
-	                        <tr th:each="personnel: ${personnelList}" 
+	                        <tr th:each="personnel, stat: ${personnelList}" 
 	                        	th:onclick="'javascript:selectPersonnel('+${personnel.id}+')'"
 	                        	th:with="
 	                        		user = ${personnel.account},
+	                        		monthlyGrowthObj = ${monthlyGrowth},
 	                        		enabledLabel = ${user.enabled} ? 'Enabled' : 'Disabled', 
 	                        		enabledClass = ${user.enabled} ? badge-success : badge-danger,
 	                        		activeLabel = ${user.active} ? 'Active' : 'Inactive', 
-	                        		activeClass = ${user.active} ? badge-success : badge-danger">
+	                        		activeClass = ${user.active} ? badge-success : badge-danger,
+	                        		growth = ${monthlyGrowthObj != null ? monthlyGrowthObj[stat.index] : ''}">
 	                          <td width="1%">
 		                          <div class="form-radio">
 	                              	<label class="form-check-label">
@@ -75,8 +77,9 @@
 							  		<span class="badge badge-info" th:text="${role.name}"></span>
 							  	</h5>
 							  </td>
-	                          <td class="text-danger"> 28.76% <i class="mdi mdi-arrow-down"></i>
-	                          </td>
+	                          <td th:if="${growth < 0}" class="text-danger"> <b>[[${growth}]]% </b><i class="mdi mdi-arrow-down"></i></td>
+	                          <td th:if="${growth == 0}" class="text-gray"> <b>[[${growth}]]% </b></td>
+	                          <td th:if="${growth > 0}" class="text-success"> <b>[[${growth}]]%</b> <i class="mdi mdi-arrow-up"></i></td>
 	                          <td>
 	                          	<span  th:classappend="'badge ' + ${enabledClass}" style="color:white" th:text="${enabledLabel}">Active</span>
 	                          	

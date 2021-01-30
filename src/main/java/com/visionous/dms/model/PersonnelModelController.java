@@ -6,7 +6,9 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -37,6 +39,7 @@ import com.visionous.dms.pojo.Role;
 import com.visionous.dms.repository.AccountRepository;
 import com.visionous.dms.repository.HistoryRepository;
 import com.visionous.dms.repository.PersonnelRepository;
+import com.visionous.dms.repository.RecordRepository;
 import com.visionous.dms.repository.RoleRepository;
 
 /**
@@ -52,6 +55,8 @@ public class PersonnelModelController extends ModelControllerImpl{
 	private RoleRepository roleRepository;
 	private AccountRepository accountRepository;
 	private ApplicationEventPublisher eventPublisher;
+	private RecordRepository recordRepository;
+	
 	private static String currentPage = LandingPages.PERSONNEL.value();
 
 	/**
@@ -60,11 +65,12 @@ public class PersonnelModelController extends ModelControllerImpl{
 	@Autowired
 	public PersonnelModelController(PersonnelRepository personnelRepository, RoleRepository roleRepository,
 			AccountRepository accountRepository, HistoryRepository historyRepository,
-			ApplicationEventPublisher eventPublisher) {
+			ApplicationEventPublisher eventPublisher, RecordRepository recordRepository) {
 		this.personnelRepository = personnelRepository;
 		this.roleRepository = roleRepository;
 		this.accountRepository = accountRepository;
 		this.eventPublisher = eventPublisher;
+		this.recordRepository = recordRepository;
 	}
 	
 	
@@ -244,8 +250,8 @@ public class PersonnelModelController extends ModelControllerImpl{
 
 				Iterable<Role> allRoles = roleRepository.findAll();
 				super.addModelCollectionToView("allRoles", allRoles);
-				
 			}
+			
 		}
 		
 	}
@@ -262,7 +268,37 @@ public class PersonnelModelController extends ModelControllerImpl{
 		
 		Iterable<Personnel> personnels = personnelRepository.findAllByAccount_Roles_Name("PERSONNEL");
 		super.addModelCollectionToView("personnelList", personnels);
+		
 
+		Date today = new Date();
+		Date lastMonthEnd = DateUtil.getEndingOfMonth(DateUtil.getOneMonthBefore(today));
+		Date lastMonthBegin = DateUtil.getBeginingOfMonth(DateUtil.getOneMonthBefore(today));
+		Date lastLastMonthEnd = DateUtil.getEndingOfMonth(DateUtil.getMonthsBefore(today, 2));
+		Date lastLastMonthBegin = DateUtil.getBeginingOfMonth(DateUtil.getMonthsBefore(today, 2));
+		List<Double> monthlyVisitPerc = new ArrayList<>();
+		personnels.forEach(personnel->{
+			int cntLastMonth = 0;
+			double perc = 0.0;
+			cntLastMonth = recordRepository.countByPersonnelIdAndServicedateBetween(personnel.getId(), lastMonthBegin, lastMonthEnd);
+			int cntLastLastMonth = 0;
+			cntLastLastMonth = recordRepository.countByPersonnelIdAndServicedateBetween(personnel.getId(), lastLastMonthBegin, lastLastMonthEnd);
+			int diff = cntLastMonth - cntLastLastMonth;
+			try {
+				if(cntLastMonth != 0) {
+					double divByLastMonth = diff/cntLastMonth;
+					perc = divByLastMonth*100;
+				}
+				if(cntLastMonth == 0) {
+					perc = diff*100;
+				}
+			}catch(ArithmeticException e) {
+				e.printStackTrace();
+			}
+
+			monthlyVisitPerc.add(perc);
+			super.addModelCollectionToView("monthlyGrowth", monthlyVisitPerc);
+		});
+		
 		Optional<Account> loggedInAccount = accountRepository.findByUsername(AccountUtil.currentLoggedInUser().getUsername());
 		loggedInAccount.ifPresent(account -> {
 			super.addModelCollectionToView("currentRoles", account.getRoles());

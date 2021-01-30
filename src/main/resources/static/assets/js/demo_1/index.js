@@ -139,6 +139,7 @@ $(document).ready(function(){
 		multiselectPersonnel.multiselect('destroy');
 		multiselectPersonnel.multiselect({
 			onChange: fireMultiselectChange,
+			numberDisplayed: 1
 	 	});
 	 	multiselectPersonnel.multiselect('select', $('#multipleSelectPersonnel').find("option")[0].value)
 	}
