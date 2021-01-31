@@ -9,27 +9,24 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.mail.internet.MimeMessage;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.context.WebContext;
 import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
-
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.event.OnRegistrationCompleteEvent;
 import com.visionous.dms.pojo.Account;
+import com.visionous.dms.pojo.Role;
 import com.visionous.dms.pojo.Verification;
+import com.visionous.dms.repository.AccountRepository;
+import com.visionous.dms.repository.RoleRepository;
 import com.visionous.dms.repository.VerificationRepository;
 
 /**
@@ -46,6 +43,10 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     private JavaMailSender mailSender;
 
     private SpringTemplateEngine thymeleafTemplateEngine;
+    
+    private AccountRepository accountRepository;
+    
+    private RoleRepository roleRepository;
 
 	/**
 	 * @param verificationRepository
@@ -53,11 +54,14 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 	 */
 	@Autowired
 	public RegistrationListener(VerificationRepository verificationRepository, MessageSource messages, 
-			JavaMailSender mailSender, SpringTemplateEngine thymeleafTemplateEngine) {
+			JavaMailSender mailSender, SpringTemplateEngine thymeleafTemplateEngine, 
+			AccountRepository accountRepository, RoleRepository roleRepository) {
 		this.verificationRepository = verificationRepository;
 		this.mailSender = mailSender;
 		this.messages = messages;
 		this.thymeleafTemplateEngine = thymeleafTemplateEngine;
+		this.accountRepository = accountRepository;
+		this.roleRepository = roleRepository;
 	}
 	
 	/**
@@ -81,8 +85,15 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 		String template= null;
         Account account = event.getAccount();
         String recipientAddress = account.getEmail();
+        StringBuilder fromAddress= new StringBuilder();
         String token = null;
         String rawPass = account.getPassword();
+        
+        Optional<Role> roleAdmin = roleRepository.findByName("ADMIN");
+        roleAdmin.ifPresent(role -> {
+        	fromAddress.append(role.getAccounts().get(0).getEmail());
+        });
+        
         Optional<Verification> verification = verificationRepository.findByAccount_id(account.getId());
         
         if(verification.isPresent()) {
@@ -113,9 +124,10 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         try {
             System.out.println(account.getPassword() + " <<LATER");
         	mailMessage.setSubject("Registration Confirmation", "UTF-8");
-        
+        	
         	MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true, "UTF-8");
-            helper.setTo(recipientAddress);
+        	helper.setFrom(fromAddress.toString());
+        	helper.setTo(recipientAddress);
             helper.setText(htmlBody, true);
         	
         }catch(Exception e) {

@@ -5,6 +5,7 @@ package com.visionous.dms.event.listener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.mail.internet.MimeMessage;
@@ -24,7 +25,9 @@ import com.visionous.dms.event.OnRegistrationCompleteEvent;
 import com.visionous.dms.event.OnResetPasswordEvent;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Reset;
+import com.visionous.dms.pojo.Role;
 import com.visionous.dms.repository.ResetRepository;
+import com.visionous.dms.repository.RoleRepository;
 
 /**
  * @author delimeta
@@ -35,15 +38,18 @@ public class ResetListener implements ApplicationListener<OnResetPasswordEvent>{
 	private SpringTemplateEngine thymeleafTemplateEngine;
 	private ResetRepository resetRepository;
     private JavaMailSender mailSender;
+    private RoleRepository roleRepository;
 
     /**
 	 * 
 	 */
     @Autowired
-	public ResetListener(SpringTemplateEngine thymeleafTemplateEngine, ResetRepository resetRepository, JavaMailSender mailSender) {
+	public ResetListener(SpringTemplateEngine thymeleafTemplateEngine, ResetRepository resetRepository, JavaMailSender mailSender, 
+			RoleRepository roleRepository) {
 		this.thymeleafTemplateEngine = thymeleafTemplateEngine;
 		this.resetRepository = resetRepository;
 		this.mailSender = mailSender;
+		this.roleRepository = roleRepository;
 	}
 	
 	@Override
@@ -62,6 +68,13 @@ public class ResetListener implements ApplicationListener<OnResetPasswordEvent>{
 		Account account = event.getAccount();
 		String recipientAddress = account.getEmail();
         String token = UUID.randomUUID().toString();
+        
+        StringBuilder fromAddress= new StringBuilder();
+        Optional<Role> roleAdmin = roleRepository.findByName("ADMIN");
+        roleAdmin.ifPresent(role -> {
+        	fromAddress.append(role.getAccounts().get(0).getEmail());
+        });
+        
         
         Reset resetToken = new Reset(account, token);
         resetRepository.saveAndFlush(resetToken);
@@ -82,6 +95,7 @@ public class ResetListener implements ApplicationListener<OnResetPasswordEvent>{
         	mailMessage.setSubject("Reset Password", "UTF-8");
         
         	MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true, "UTF-8");
+        	helper.setFrom(fromAddress.toString());
             helper.setTo(recipientAddress);
             helper.setText(htmlBody, true);
         	
