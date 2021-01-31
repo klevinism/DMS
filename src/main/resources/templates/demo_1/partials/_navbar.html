@@ -87,8 +87,6 @@
           <img th:if="${currentRoles!= null && not currentRoles.?[name == 'ADMIN'].isEmpty() && loggedInAccount.image != null}" class="img-xs rounded-circle" th:src="@{/resources/personnel/img/profile/__${loggedInAccount.image}__}" alt="Profile image">
           <img th:if="${currentRoles!= null && loggedInAccount.image == null}" class="img-xs rounded-circle" th:src="'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg'" alt="Profile image"> 
         </a>
-
-        
         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
           <div class="dropdown-header text-center" >
             <img  th:if="${currentRoles!= null && not currentRoles.?[name == 'CUSTOMER'].isEmpty() && loggedInAccount.image != null}" class="img-md rounded-circle"  th:src="@{/resources/customer/img/profile/__${loggedInAccount.image}__}">
@@ -100,11 +98,11 @@
             <input type="hidden" id="accid" th:value="${loggedInAccount.id}">
           </div>
           
-          <a class="dropdown-item" href="/account">My Profile <i class="dropdown-item-icon ti-dashboard"></i></a>
+          <a class="dropdown-item" href="/account">[[#{MyProfile}]]<i class="dropdown-item-icon ti-dashboard"></i></a>
           <!-- <a class="dropdown-item">Messages<i class="dropdown-item-icon ti-comment-alt"></i></a>
           <a class="dropdown-item">Activity<i class="dropdown-item-icon ti-location-arrow"></i></a>
           <a class="dropdown-item">FAQ<i class="dropdown-item-icon ti-help-alt"></i></a> -->
-          <a class="dropdown-item" href="/logout" >Sign Out<i class="dropdown-item-icon ti-power-off"></i></a>
+          <a class="dropdown-item" href="/logout" >[[#{SignOut}]]<i class="dropdown-item-icon ti-power-off"></i></a>
         </div>
       </li>
     </ul>
@@ -112,14 +110,18 @@
       <span class="mdi mdi-menu"></span>
     </button>
   </div>
+  <script th:inline="javascript">
+	/*<![CDATA[*/
+		var alName=/*[[#{AlbanianLangName}]]*/'';
+  		var enName=/*[[#{EnglishLangName}]]*/'';
+    /*]]>*/
+  </script>
   <script>
   var read= false;
   
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
 
-  var alName="Albanian";
-  var enName="English";
   var alUrl="?lang=al_SQ";
   var enUrl="?lang=en_US";
   var alFlag="al";

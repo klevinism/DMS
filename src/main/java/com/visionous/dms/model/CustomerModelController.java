@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -69,7 +70,7 @@ public class CustomerModelController extends ModelControllerImpl{
 	private RecordRepository recordRepository;
 	private QuestionnaireResponseRepository questionnaireResponseRepository;
 	private QuestionnaireRepository questionnaireRepository;
-
+    private MessageSource messages;
 	private TeethRepository teethRepository;
 	
 	private static String currentPage = LandingPages.CUSTOMER.value();
@@ -80,11 +81,9 @@ public class CustomerModelController extends ModelControllerImpl{
 	 */
 	@Autowired
 	public CustomerModelController(CustomerRepository customerRepository, AccountRepository accountRepository, 
-			RoleRepository roleRepository,
-			TeethRepository teethRepository,
-			RecordRepository recordRepository,
-			QuestionnaireRepository questionnaireRepository,
-			QuestionnaireResponseRepository questionnaireResponseRepository) {
+			RoleRepository roleRepository, TeethRepository teethRepository, RecordRepository recordRepository,
+			QuestionnaireRepository questionnaireRepository, QuestionnaireResponseRepository questionnaireResponseRepository,
+			 MessageSource messages) {
 		this.customerRepository = customerRepository;
 		this.accountRepository = accountRepository;	
 		this.teethRepository = teethRepository;
@@ -92,6 +91,7 @@ public class CustomerModelController extends ModelControllerImpl{
 		this.questionnaireRepository = questionnaireRepository;
 		this.questionnaireResponseRepository = questionnaireResponseRepository;
 		this.recordRepository = recordRepository;
+		this.messages=messages;
 	}
 	
 	
@@ -184,13 +184,15 @@ public class CustomerModelController extends ModelControllerImpl{
 
 			if(newCustomer.getAccount().getRoles().get(0).getName().equals("CUSTOMER")) {	
 				if(emailExist(newCustomer.getAccount().getEmail())) {
-					super.addModelCollectionToView("errorEmail", "This email already exists, pick another one.");
+			        String message = messages.getMessage("alert.emailExists", null, LocaleContextHolder.getLocale());
+					super.addModelCollectionToView("errorEmail", message);
 					super.addModelCollectionToView("selected", newCustomer);
 					super.removeControllerParam("viewType");
 					super.addControllerParam("viewType", Actions.CREATE.getValue());
 
 				}else if(usernameExist(newCustomer.getAccount().getUsername())) {
-					super.addModelCollectionToView("errorUsername", "This username already exists, pick another one.");
+			        String message = messages.getMessage("alert.usernameExists", null, LocaleContextHolder.getLocale());
+					super.addModelCollectionToView("errorUsername", message);
 					super.addModelCollectionToView("selected", newCustomer);
 					super.removeControllerParam("viewType");
 					super.addControllerParam("viewType", Actions.CREATE.getValue());

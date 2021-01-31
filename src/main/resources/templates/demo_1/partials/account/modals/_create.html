@@ -1,6 +1,6 @@
 <div class="card" th:fragment="create">
   <div class="card-body">
-    <h4 class="card-title">#{CreateAccount} </h4>
+    <h4 class="card-title">[[#{CreateAccount}]]</h4>
     <hr/>
     
       <div class="form-group" id="attachmentInput">
@@ -55,11 +55,11 @@
 		  <label for="gender">[[#{Gender}]]</label>	
 		  <div class="form-radio form-radio-flat">
 		    <label class="form-check-label">
-		      <input type="radio" class="form-check-inputform-control-lg" value="male" th:checked="*{account.gender == 'male'}" th:field="*{account.gender}"> Male <i class="input-helper"></i></label>
+		      <input type="radio" class="form-check-inputform-control-lg" value="male" th:checked="*{account.gender == 'male'}" th:field="*{account.gender}"> [[#{Male}]] <i class="input-helper"></i></label>
 		  </div>
 		  <div class="form-radio form-radio-flat">
 		    <label class="form-check-label">
-		      <input type="radio" class="form-check-input"value="female"  th:checked="*{account.gender == 'female'}"  th:field="*{account.gender}"> Female <i class="input-helper"></i></label>
+		      <input type="radio" class="form-check-input"value="female"  th:checked="*{account.gender == 'female'}"  th:field="*{account.gender}"> [[#{Female}]] <i class="input-helper"></i></label>
 		  </div>
 		  <p class="alert alert-danger" th:if="${#fields.hasErrors('account.gender')}" th:errors="*{account.gender}"></p>
 	  </div>

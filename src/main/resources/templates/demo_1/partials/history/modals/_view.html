@@ -13,7 +13,7 @@
                <div class="dropdown-menu" aria-labelledby="dropdownMenuOutlineButton1" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 35px, 0px);">
                  <a  th:if="*{customerHistory != null && customerHistory.records != null}"  th:href="'/customer/'+*{id}+'/history/'+*{customerHistory.id}+'/record/create'" class="dropdown-item" >[[#{action.visit}]]</a>
                  <a  th:if="*{customerHistory == null || customerHistory.records == null}"  th:href="'/customer/'+*{id}+'/questionnaire/create'" class="dropdown-item" >[[#{action.visit}]]</a>
-                 <a href="#appointmentModal" class="dropdown-item"  data-toggle="modal" data-target="#appointmentModal">Book</a>
+                 <a href="#appointmentModal" class="dropdown-item"  data-toggle="modal" data-target="#appointmentModal">[[#{action.book}]]</a>
                </div>
              </div>
 		  </div>
@@ -83,7 +83,7 @@
 			    	  	<div class="ml-lg-auto" >
 				    	  	<div class="dropdown">
 				               <h4 class="card-title"></h4>
-				               <a th:href="'/customer/' + *{id} + '/history/' + *{customerHistory.id}+ '/record'"><button type="button" class="btn btn-primary btn-sm"   >[[#{AllHistory}]]</button></a>
+				               <a th:href="'/customer/' + *{id} + '/history/' + *{customerHistory.id}+ '/record'"><button type="button" class="btn btn-primary btn-sm"   >[[#{action.allHistory}]]</button></a>
 				            </div>
 					  	</div>
         			</div>

@@ -35,8 +35,8 @@
 		  			</section>
 		  			
 			      <div >
-			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="'/admin'+${currentPage} + '/'">Close</a>
-			        <button type="submit" th:class="'btn btn-'+${viewType == 'delete' ? 'danger' : 'primary'}">[[${#strings.capitalize(viewType)}]]</button>
+			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="'/admin'+${currentPage} + '/'">[[#{action.close}]]</a>
+			        <button type="submit" th:class="'btn btn-'+${viewType == 'delete' ? 'danger' : 'primary'}">[[#{__${#strings.capitalize(viewType)}__}]]</button>
 			      </div>
 		  			
 		  		</form>

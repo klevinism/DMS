@@ -2,38 +2,35 @@
   <div class="card-body">
       <div class="form-group" >      
        <div class="d-flex flex-column flex-lg-row">
-    	  <h4 class="card-title">All Dental Records for patient <u>[[${currentCustomer.account.username}]]</u></h4>
-
-	    </div>
+    	  <h4 class="card-title">[[#{AllDentalRecordsForPatient}]] <u>[[${currentCustomer.account.name}]]</u></h4>
+	   </div>
         <hr />
-        
-        
         <div class="row" th:if="*{records == null}">
         	<div class="col-md-12 grid-margin"  >
         		<div class="d-flex flex-row align-items-center">
                   <i class="mdi mdi-alert icon-lg text-danger"></i>
-                  <p class="mb-0 ml-1"> <h4 class="text text-danger">There is no dental record for [[${currentCustomer.account.username}]]</h4></p>
+                  <p class="mb-0 ml-1"> <h4 class="text text-danger">[[#{action.noDentalRecordFor}]] [[${currentCustomer.account.name}]]</h4></p>
                 </div>
         	</div>
         	<div class="col-md-12 grid-margin">
-        		<a th:href="'/customer/'+${currentCustomer.id}+'/questionnaire/create'" class="btn btn-primary btn-sm">New Visit</a>
+        		<a th:href="'/customer/'+${currentCustomer.id}+'/questionnaire/create'" class="btn btn-primary btn-sm">[[#{action.newVisit}]]</a>
         	</div>
         </div>
         <div class="row" th:if="*{records != null}">
         	<div class="col-md-12 grid-margin">
-        		<a th:href="'/customer/__${currentCustomer.id}__/history/'+*{id}+'/record/create'" class="btn btn-primary btn-sm">New Visit</a>
+        		<a th:href="'/customer/__${currentCustomer.id}__/history/'+*{id}+'/record/create'" class="btn btn-primary btn-sm">[[#{action.newVisit}]]</a>
         	</div>
         	<div class="col-md-12 grid-margin">
         		<table id="historyRecords" class="table table-hover" >
 					<thead>
 						<tr style="background:#ebf3ff">
-							<th>Service Date</th>
-							<th>Patient Name</th>
-							<th>Dentist Name</th>
-							<th>Treated Tooth</th>
-							<th>Service Type</th>
-							<th>Service Detail</th>
-							<th>Comment</th>
+							<th>[[#{ServiceDate}]]</th>
+							<th>[[#{PatientName}]]</th>
+							<th>[[#{DentistName}]]</th>
+							<th>[[#{TreatedTooth}]]</th>
+							<th>[[#{ServiceType}]]</th>
+							<th>[[#{ServiceDetail}]]</th>
+							<th>[[#{Comment}]]</th>
 						</tr>
 					</thead>
 					<tbody>

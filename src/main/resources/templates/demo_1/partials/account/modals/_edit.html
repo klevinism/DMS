@@ -32,7 +32,7 @@
       
       <div class="form-group">      
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changePasswordModal">
-  			[[#{ChangePassword}]]
+  			[[#{action.changePassword}]]
 		</button>
       </div>
       
@@ -63,11 +63,11 @@
 		  <label for="gender">[[#{Gender}]]</label>	
 		  <div class="form-radio form-radio-flat">
 		    <label class="form-check-label">
-		      <input type="radio" class="form-check-inputform-control-lg" name="gender" id="gender" value="male" th:checked="*{gender == 'male'}" th:field="*{gender}"> Male <i class="input-helper"></i></label>
+		      <input type="radio" class="form-check-inputform-control-lg" name="gender" id="gender" value="male" th:checked="*{gender == 'male'}" th:field="*{gender}"> [[#{Male}]] <i class="input-helper"></i></label>
 		  </div>
 		  <div class="form-radio form-radio-flat">
 		    <label class="form-check-label">
-		      <input type="radio" class="form-check-input" name="gender" id="gender" value="female"  th:checked="*{gender == 'female'}"  th:field="*{gender}"> Female <i class="input-helper"></i></label>
+		      <input type="radio" class="form-check-input" name="gender" id="gender" value="female"  th:checked="*{gender == 'female'}"  th:field="*{gender}"> [[#{Female}]] <i class="input-helper"></i></label>
 		  </div>
 		</div>
       
@@ -75,7 +75,7 @@
         <label for="roles">[[#{Roles}]]</label>
         
         <select th:field="*{roles[0].name}"  th:with="roleName = *{customer !=null ? 'CUSTOMER' : 'PERSONNEL'}, name = *{roles[0].name}">
-        	<option th:each="role: ${allRoles}" th:if="*{roles[0].name} == ${name}" th:value="*{roles[0].name}">[[${role.name}]]</option>
+        	<option th:each="role: ${allRoles}" th:if="*{roles[0].name} == ${name}" th:value="*{roles[0].name}">[[#{__${role.name}__}]]</option>
         </select>
         
       </div>

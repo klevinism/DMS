@@ -147,7 +147,6 @@ public class AppointmentRestController {
         			e.printStackTrace();
         		}
         		
-        		System.out.println(" For Personnel + " + singlePersonnel.get().getAccount().getName());
         		
 				if(start != null) {
 					        		        		
@@ -181,11 +180,14 @@ public class AppointmentRestController {
         }
                 		
         if(listOfRecords.isEmpty()) {
-        	result.setError("error");
+
+			String messageError = messageSource.getMessage("alert.error", null, LocaleContextHolder.getLocale());
+    		result.setError(messageError);
         }else {
     		result.addResult(listOfRecords);
-    		result.setError("success");
-    		result.setMessage("success");
+			String messageSuccess = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+    		result.setError(messageSuccess);
+    		result.setMessage(messageSuccess);
         }
 
         return ResponseEntity.ok(result);
@@ -215,9 +217,7 @@ public class AppointmentRestController {
         		} catch (ParseException e) {
         			e.printStackTrace();
         		}
-        		
-        		System.out.println(" For Personnel + " + singlePersonnel.get().getAccount().getName());
-        		
+        		        		
 				if(start != null) {
 	        		int daysToAdd = DateUtil.calculateDaysToAddFromPeriod(start, end);
 	        		
@@ -238,11 +238,13 @@ public class AppointmentRestController {
         }
                 		
         if(listOfRecords.isEmpty()) {
-        	result.setError("error");
+			String messageError = messageSource.getMessage("alert.error", null, LocaleContextHolder.getLocale());
+        	result.setError(messageError);
         }else {
     		result.addResult(listOfRecords);
-    		result.setError("success");
-    		result.setMessage("success");
+			String messageSuccess = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+    		result.setError(messageSuccess);
+    		result.setMessage(messageSuccess);
         }
 
         return ResponseEntity.ok(result);
@@ -290,9 +292,11 @@ public class AppointmentRestController {
         
         List<Appointment> userss = new ArrayList<>();
         if (userss.isEmpty()) {
-            result.setMessage("no user found!"); 
+			String messageNoUserFound = messageSource.getMessage("alert.noUserFound", null, LocaleContextHolder.getLocale());
+            result.setMessage(messageNoUserFound); 
         } else {
-            result.setMessage("success");
+			String messageSuccess = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+            result.setMessage(messageSuccess);
         }
         result.setResult(appointments); 
         
@@ -328,10 +332,14 @@ public class AppointmentRestController {
 					String pass = new BCryptPasswordEncoder().encode(newPassword);					
 					account.setPassword(pass);
 					accountRepository.saveAndFlush(account);
-					result.setError("success");
+					String messageSuccess = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+					result.setError(messageSuccess);
 				}else {
-					result.setError("error");
-					result.setMessage("Passwords do not match");
+			        
+			        String messageError = messageSource.getMessage("alert.error", null, LocaleContextHolder.getLocale());
+			        result.setError(messageError);
+			        String messagePassNotSame = messageSource.getMessage("alert.passNotSame", null, LocaleContextHolder.getLocale());
+					result.setMessage(messagePassNotSame);
 				}
 			}
 		});
@@ -357,16 +365,24 @@ public class AppointmentRestController {
 				all.stream().forEach(appointment -> appointment.getPersonnel().getAccount().setPassword(""));
 
 				if(all.isEmpty()) {
-					result.setError("error");
-					result.setMessage("No upcoming appointments!");	
+			        String messageError = messageSource.getMessage("alert.error", null, LocaleContextHolder.getLocale());
+					result.setError(messageError);
+			        String message = messageSource.getMessage("alert.noUpcomingAppointments", null, LocaleContextHolder.getLocale());
+					result.setMessage(message);	
 				}else {
-					result.setError("success");
-					result.setMessage("You have "+ all.size() + " upcoming appointmet");
+			        String message = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+					result.setError(message);
+			        String uHave = messageSource.getMessage("YouHave", null, LocaleContextHolder.getLocale());
+			        String upcomingAppointments = messageSource.getMessage("UpcomingAppointment", null, LocaleContextHolder.getLocale());
+
+					result.setMessage(uHave+" "+ all.size() + " " +upcomingAppointments);
 					result.setResult(all);
 				}
 			}else {
-				result.setError("error");
-				result.setMessage("An error occurred please try again later!");
+		        String messageError = messageSource.getMessage("alert.error", null, LocaleContextHolder.getLocale());
+				result.setError(messageError);
+		        String message = messageSource.getMessage("alert.errorOccurred", null, LocaleContextHolder.getLocale());
+				result.setMessage(message);
 			}
 		});
 		
@@ -382,11 +398,13 @@ public class AppointmentRestController {
 	        String appUrl = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getContextPath();
 	        try {
 	        	eventPublisher.publishEvent(new OnRegistrationCompleteEvent(account, LocaleContextHolder.getLocale(), appUrl));
-	        	result.setError("success");
+	        	String messageSuccess = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+				result.setError(messageSuccess);
 	            String confirmationEmailMsg = messageSource.getMessage("alert.confirmationEmailSent", null, LocaleContextHolder.getLocale());
 	        	result.setMessage(confirmationEmailMsg);
 	        }catch(Exception e) {
-	        	result.setError("error");
+		        String messageError = messageSource.getMessage("alert.error", null, LocaleContextHolder.getLocale());
+				result.setError(messageError);
 	        	result.setMessage(e.getMessage());
 	        }
 		});

@@ -18,6 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -56,7 +57,8 @@ public class PersonnelModelController extends ModelControllerImpl{
 	private AccountRepository accountRepository;
 	private ApplicationEventPublisher eventPublisher;
 	private RecordRepository recordRepository;
-	
+    private MessageSource messages;
+
 	private static String currentPage = LandingPages.PERSONNEL.value();
 
 	/**
@@ -65,12 +67,14 @@ public class PersonnelModelController extends ModelControllerImpl{
 	@Autowired
 	public PersonnelModelController(PersonnelRepository personnelRepository, RoleRepository roleRepository,
 			AccountRepository accountRepository, HistoryRepository historyRepository,
-			ApplicationEventPublisher eventPublisher, RecordRepository recordRepository) {
+			ApplicationEventPublisher eventPublisher, RecordRepository recordRepository,
+			MessageSource messages) {
 		this.personnelRepository = personnelRepository;
 		this.roleRepository = roleRepository;
 		this.accountRepository = accountRepository;
 		this.eventPublisher = eventPublisher;
 		this.recordRepository = recordRepository;
+		this.messages = messages;
 	}
 	
 	
@@ -150,13 +154,15 @@ public class PersonnelModelController extends ModelControllerImpl{
 
 			if(newPersonnel.getAccount().getRoles().get(0).getName().equals("PERSONNEL")) {
 				if(emailExist(newPersonnel.getAccount().getEmail())) {
-					super.addModelCollectionToView("errorEmail", "This email already exists, pick another one.");
+			        String message = messages.getMessage("alert.emailExists", null, LocaleContextHolder.getLocale());
+					super.addModelCollectionToView("errorEmail", message);
 					super.addModelCollectionToView("selected", newPersonnel);
 					super.removeControllerParam("viewType");
 					super.addControllerParam("viewType", Actions.CREATE.getValue());
 
 				}else if(usernameExist(newPersonnel.getAccount().getUsername())) {
-					super.addModelCollectionToView("errorUsername", "This username already exists, pick another one.");
+			        String message = messages.getMessage("alert.usernameExists", null, LocaleContextHolder.getLocale());
+					super.addModelCollectionToView("errorUsername", message);
 					super.addModelCollectionToView("selected", newPersonnel);
 					super.removeControllerParam("viewType");
 					super.addControllerParam("viewType", Actions.CREATE.getValue());
@@ -195,7 +201,6 @@ public class PersonnelModelController extends ModelControllerImpl{
 					if(createdPersonnel != null) {
 						Account publishedAccount = createdPersonnel.getAccount();
 						publishedAccount.setPassword(passPlain);
-						System.out.println(" ACC PASS ="+publishedAccount.getPassword());
 				        eventPublisher.publishEvent(
 				        		new OnRegistrationCompleteEvent(publishedAccount,LocaleContextHolder.getLocale(), appUrl)
 				        		);

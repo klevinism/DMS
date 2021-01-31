@@ -86,14 +86,14 @@
 		 <div class="row">
 
    			<div class="col-md-12 grid-margin">
-   				<h4>[[#{Overall}]]</h4>
+   				<h4>[[#{Overall}]] <small>[[#{VisitBased}]]</small></h4>
 				
    				<div class="col-md-12 grid-margin tbl-overflow" style="max-height: 25vh;" th:if="${lastVisitList != null}">
 					<canvas id="pieCustomerChart"></canvas>
      			</div>
    			</div>
    			<div class="col-md-12 grid-margin">
-				<h4>[[#{New}]][[#{Customers}]]</h4>
+				<h4>[[#{New}]]</h4>
 				<div class="col-md-12 grid-margin tbl-overflow" style="max-height: 25vh;" th:if="${lastVisitList != null}">
       				<canvas id="lineCustomerChart"></canvas>
      			</div>
@@ -137,7 +137,7 @@
 	 	
 	 	var personnelAppointmentList=[[${allAppointments}]];
 	 	
-	 	var customerLabels = [""+/*[[#{New}]] + [[#{Customers}]]*/"", ""+/*[[#{Returning}]] + [[#{Customers}]]*/ ""];
+	 	var customerLabels = [""+/*[[#{New}]]*/"", ""+/*[[#{Returning}]]*/ ""];
 	 	var allCustomer = [[${allCustomers}]];
 	 	
  	 	var thisYearCustomerLabel = /*[[#{New}]]+''+[[#{Customers}]]*/ +"";

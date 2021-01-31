@@ -110,7 +110,8 @@ public class GreetingModelViewController {
 		
 		if(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken) {
 			if(error != null) {
-				model.addAttribute("errorUsernamePassword", "Username or password is incorrect.");
+		        String message = messages.getMessage("alert.usernameOrPasswordIncorrect", null, LocaleContextHolder.getLocale());
+				model.addAttribute("errorUsernamePassword", message);
 			}
 			
 			return "demo_1/pages/samples/login";
@@ -129,14 +130,17 @@ public class GreetingModelViewController {
 		Boolean auth = SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
 		Verification verificationToken = verificationRepository.findByToken(token);
 	    if (verificationToken == null) {
-	        model.addAttribute("errorMessage", " Invalid Token, Please contact administrator");
+	        String message = messages.getMessage("alert.invalidToken", null, LocaleContextHolder.getLocale());
+
+	        model.addAttribute("errorMessage", message);
 	        return "demo_1/pages/confirmation";
 	    }
 		
 	    Account user = verificationToken.getAccount();
 	    Calendar cal = Calendar.getInstance();
 	    if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-	        model.addAttribute("errorMessage", "Token expired, more than 1 hr.");
+	        String message = messages.getMessage("alert.tokenExpired", null, LocaleContextHolder.getLocale());
+	        model.addAttribute("errorMessage", message);
 	        return "demo_1/pages/confirmation";
 	    }
 	    user.setEnabled(true);
@@ -171,9 +175,11 @@ public class GreetingModelViewController {
 		    	eventPublisher.publishEvent(
 	        		new OnResetPasswordEvent(user.get(), LocaleContextHolder.getLocale(), appUrl)
 	        		);
-		    	model.addAttribute("successMessage", "Please check your inbox for a reset password email.");
+		    	String message = messages.getMessage("alert.checkInboxForEmail", null, LocaleContextHolder.getLocale());
+		    	model.addAttribute("successMessage", message);
 		    }else {
-		        model.addAttribute("errorMessage", "Token expired, more than 1 hr.");
+		    	String message = messages.getMessage("alert.tokenExpired", null, LocaleContextHolder.getLocale());
+		        model.addAttribute("errorMessage", message);
 		    }
 		}
 		
@@ -189,14 +195,16 @@ public class GreetingModelViewController {
 		
 		Reset resetToken = resetRepository.findByToken(token);
 	    if (resetToken == null) {
-	        model.addAttribute("errorMessage", " Invalid Token, Please contact administrator");
+	    	String message = messages.getMessage("alert.invalidToken", null, LocaleContextHolder.getLocale());
+	        model.addAttribute("errorMessage", message);
 	        return "demo_1/pages/reset_password";
 	    }
 		
 	    Account user = resetToken.getAccount();
 	    Calendar cal = Calendar.getInstance();
 	    if ((resetToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-	        model.addAttribute("errorMessage", "Token expired, more than 1 hr.");
+	    	String message = messages.getMessage("alert.tokenExpired", null, LocaleContextHolder.getLocale());
+	        model.addAttribute("errorMessage", message);
 	        return "demo_1/pages/reset_password";
 	    }
 	    
@@ -215,23 +223,27 @@ public class GreetingModelViewController {
 		
 		Reset resetToken = resetRepository.findByToken(token);
 	    if (resetToken == null) {
-	        model.addAttribute("errorMessage", " Invalid Token, Please contact administrator");
+	    	String message = messages.getMessage("alert.invalidToken", null, LocaleContextHolder.getLocale());
+	        model.addAttribute("errorMessage", message);
 	        return "demo_1/pages/reset_password";
 	    }
 		
 	    Account user = resetToken.getAccount();
 	    Calendar cal = Calendar.getInstance();
 	    if ((resetToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-	        model.addAttribute("errorMessage", "Token expired, more than 1 hr.");
+	    	String message = messages.getMessage("alert.tokenExpired", null, LocaleContextHolder.getLocale());
+	        model.addAttribute("errorMessage", message);
 	        return "demo_1/pages/reset_password";
 	    }
 	    
 	    user.setPassword(new BCryptPasswordEncoder().encode(password));
 	    if(accountRepository.saveAndFlush(user) != null) {
-	    	model.addAttribute("successReset", "Password changed successfully");
+	    	String message = messages.getMessage("alert.passwordChangedSuccessfully", null, LocaleContextHolder.getLocale());
+	    	model.addAttribute("successReset", message);
 	    	return "redirect:/login";
 	    }else {
-	    	model.addAttribute("errorMessage", "Could not reset password, try again later.");
+	    	String message = messages.getMessage("alert.couldNotResetPassword", null, LocaleContextHolder.getLocale());
+	    	model.addAttribute("errorMessage", message);
 	        return "demo_1/pages/reset_password";
 	    }
 	}

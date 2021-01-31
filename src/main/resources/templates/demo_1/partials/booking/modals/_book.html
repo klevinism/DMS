@@ -4,9 +4,9 @@
             <div class="card border-0">
                     <div class="card-header bg-light">
                     	<div >
-                    		<label for="availablePersonnel"> Personnel
+                    		<label for="availablePersonnel"> [[#{Personnel}]]
 						    <select class="form-control form-control-lg" id="availablePersonnel" >
-						    	<option value="">Select Personnel</option>
+						    	<option value="">[[#{SelectPersonnel}]]</option>
 						    </select>
 						    <input type="hidden" id="customerId" th:if="${selected.id !=null}" th:value="${selected.id}" >
 						    </label>
@@ -15,7 +15,7 @@
 						    </span>
 						</div>
                         <div id="id_4" class="input-append date" style="display:none" >
-                        <label for="date" > Date
+                        <label for="date" > [[#{Date}]]
 						<div class="input-group ">
 						    <input id="date" type="text" value="" class="form-control" data-toggle="datetimepicker" data-target="#id_4" onchange="dosmthng()">
 						    <div class="input-group-append ">

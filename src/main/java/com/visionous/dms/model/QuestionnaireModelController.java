@@ -170,11 +170,8 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 				
 				Optional<Questionnaire> questionnaire = questionnaireRepository.findByCustomerId(customerId);
 				if(questionnaire.isPresent()) {
-					System.out.println( " < IFFF");
 					super.addModelCollectionToView("selected", questionnaire.get());
-					questionnaire.get().getQuestionnaireResponse().forEach(x-> System.out.println( " < RESPONSE"));
 				}else {
-					System.out.println( " < ELSEE");
 					Questionnaire newQuestionnaire = new Questionnaire();
 					newQuestionnaire.setCustomerId(customerId);
 					newQuestionnaire.setCustomer(customer.get());
@@ -204,11 +201,8 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 					
 					Optional<Questionnaire> questionnaires = questionnaireRepository.findByCustomerId(customer.get().getId());
 					if(questionnaires.isPresent()) {
-						System.out.println( " < IFFF");
 						super.addModelCollectionToView("selected", questionnaires.get());
-						questionnaires.get().getQuestionnaireResponse().forEach(x-> System.out.println( " < RESPONSE"));
 					}else {
-						System.out.println( " < ELSEE");
 						Questionnaire newQuestionnaire = new Questionnaire();
 						List<QuestionnaireResponse> questionnaireResponses = new ArrayList<>();
 						

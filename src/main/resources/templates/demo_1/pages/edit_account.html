@@ -35,7 +35,7 @@
 		  			</section>
 		  			
 			      <div th:if="${errorEditingAccount == null}">
-			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="${currentPage} + '/view/' + ${account.id}">Close</a>
+			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="${currentPage} + '/view/' + ${account.id}">[[#{action.close}]]</a>
 			        <button type="submit" class="btn btn-primary">[[#{__${#strings.capitalize(viewType)}__}]]</button>
 			      </div>
 		  			
@@ -59,18 +59,21 @@
 						  	<!-- partial:partials/_edit.html partial:partials/_changePassword.html-->
 						</section>
 					<div class="form-group " id="errorForm">
-						<p class="alert alert-danger" style="display:none" id="error">Error</p>
-						<p class="alert alert-success" style="display:none" id="success">Success</p>
+						<p class="alert alert-danger" style="display:none" id="error">[[#{Error}]]</p>
+						<p class="alert alert-success" style="display:none" id="success">[[#{Success}]]</p>
 					</div>
 			      </div>
 			      <div class="modal-footer" >
 			      	<i class="fa fa-spin fa-spinner" id="loader" style="display:none"></i>
-			    	<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-			        <button type="button" class="btn btn-primary"  onClick="changePassword()">[[${#strings.capitalize(viewType)}]]</button>
+			    	<button type="button" class="btn btn-secondary" data-dismiss="modal">[[#{action.close}]]</button>
+			        <button type="button" class="btn btn-primary"  onClick="changePassword()">[[#{__${#strings.capitalize(viewType)}__}]]</button>
 			      </div>
 			    </div>
 			  </div>
 			</div>
+			<script>
+				var passNotSame = "[[#{alert.passNotSame}]]";
+			</script>
 			<script>
 	  	 	$(document).ready(function(){
 	  	     	var token = $("meta[name='_csrf']").attr("content");
@@ -90,7 +93,7 @@
 				var id=$("#id").val();
 				
 				if(newPass != reconPass){
-					$("#error").html("Passwords are not same.")
+					$("#error").html(passNotSame)
 					$("#error").show();
 				}else{
 					$("#loader").show();

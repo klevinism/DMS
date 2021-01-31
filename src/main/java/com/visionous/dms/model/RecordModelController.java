@@ -144,7 +144,7 @@ public class RecordModelController extends ModelControllerImpl {
 					for(MultipartFile file : uploadedFiles) {
 						try {
 						    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss-"));
-							String path = FileManager.write(file, "/tmp/"); 
+							String path = FileManager.write(file, "/tmp/records/"); 
 						    String fileName = date + file.getOriginalFilename();
 							attachments.append(fileName+","); 
 						} catch (IOException e) {
