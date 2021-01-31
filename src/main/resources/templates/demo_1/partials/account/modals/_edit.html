@@ -18,7 +18,7 @@
 	    <div class="col-md-6 grid-margin" >
 			<div class="form-group " th:with="imgsuburl = *{roles[0].name == 'ADMIN' || roles[0].name == 'PERSONNEL' ? 'personnel' : 'customer'}">
 				<label>[[#{ProfileImage}]]</label>
-				<input id="recordAttachments" type="file" class="file" th:if="*{image != null}" name="profileimage" th:value="'http://localhost:8080'+@{/resources/__${imgsuburl}__/img/profile/__*{image}__}" multiple="false" data-preview-file-type="any">
+				<input id="recordAttachments" type="file" class="file" th:if="*{image != null}" name="profileimage" th:value="@{/resources/__${imgsuburl}__/img/profile/__*{image}__}" multiple="false" data-preview-file-type="any">
 				<input id="recordAttachments" type="file" class="file" th:if="*{image == null}" name="profileimage" multiple="false" data-preview-file-type="any">
 			</div>		
 		</div>
