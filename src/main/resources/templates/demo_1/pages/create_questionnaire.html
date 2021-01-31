@@ -52,20 +52,20 @@
           						<span th:if="*{#lists.size(questionnaireResponse) &gt; __${itemStat.index}__}">
 	          						<input type="radio" th:field="*{questionnaireResponse[__${itemStat.index}__].response}" value="yes" >
 	          						
-	          						<label th:for="*{questionnaireResponse[__${itemStat.index}__].response}" th:text="[[#{Yes}]]"></label>
+	          						<label th:for="*{questionnaireResponse[__${itemStat.index}__].response}" th:text="#{Yes}"></label>
 	          						
 	          						<input type="radio" th:field="*{questionnaireResponse[__${itemStat.index}__].response}" value="no">
 	          						
-	          						<label th:for="*{questionnaireResponse[__${itemStat.index}__].response}" th:text="[[#{No}]]"></label>
+	          						<label th:for="*{questionnaireResponse[__${itemStat.index}__].response}" th:text="#{No}"></label>
           						</span>
           						<span th:if="*{#lists.size(questionnaireResponse) &lt;= __${itemStat.index}__}">
           							<input type="radio" th:id="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+1}" th:name="'questionnaireResponse['+${itemStat.index}+'].response'" value="yes" >
 
-	          						<label th:for="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+1}" th:text="[[#{Yes}]]"></label>
+	          						<label th:for="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+1}" th:text="#{Yes}"></label>
 	          						
 	          						<input type="radio" th:id="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+1}" th:name="'questionnaireResponse['+${itemStat.index}+'].response'" value="no">
 	          						
-	          						<label th:for="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+1}" th:text="[[#{No}]]"></label>
+	          						<label th:for="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+1}" th:text="#{No}"></label>
           						</span>
           						
           					</div>

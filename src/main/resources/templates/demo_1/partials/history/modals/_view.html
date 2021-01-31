@@ -51,7 +51,7 @@
         	
         	<div class="col-md-8 grid-margin">
         		<div class="row">
-        			<div class="col-md-12 grid-margin">
+        			<div class="col-md-12 grid-margin tbl-overflow">
 		        		<table  id="allRecords" class="table table-hover">
 							<thead>
 								<tr style="background:#ebf3ff">
@@ -109,7 +109,10 @@
 	                "bLengthChange": false,
 	                "bFilter": false,
 	                "bInfo": false,
-	            	"order": [ 0, "desc" ]
+	                columnDefs : [
+	                    { targets: 0, sortable: false},
+	                ],
+	                order: []
 	            });
         	}
         });
