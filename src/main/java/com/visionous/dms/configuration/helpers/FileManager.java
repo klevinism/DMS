@@ -11,6 +11,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -21,7 +22,7 @@ public class FileManager {
 	public static String write(MultipartFile file, String pathstatic) throws IOException {
 	    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss-"));
 	    String fileName = date + file.getOriginalFilename();
-	    String path = new File(".").getCanonicalPath()+pathstatic;
+	    String path = new FileSystemResource("").getFile().getAbsolutePath()+pathstatic;
 
 	    String folderPath = path;
 	    String filePath = folderPath + "/" + fileName;
