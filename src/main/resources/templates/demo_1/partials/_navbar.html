@@ -82,16 +82,16 @@
       <li class="nav-item dropdown d-none d-xl-inline-block user-dropdown">
 
         <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false" >
-          <img th:if="${currentRoles!= null && not currentRoles.?[name == 'CUSTOMER'].isEmpty() && loggedInAccount.image != null}" class="img-xs rounded-circle" th:src="@{/resources/customer/img/profile/__${loggedInAccount.image}__}" alt="Profile image">
-          <img th:if="${currentRoles!= null && not currentRoles.?[name == 'PERSONNEL'].isEmpty() && loggedInAccount.image != null}" class="img-xs rounded-circle" th:src="@{/resources/personnel/img/profile/__${loggedInAccount.image}__}" alt="Profile image"> 
-          <img th:if="${currentRoles!= null && not currentRoles.?[name == 'ADMIN'].isEmpty() && loggedInAccount.image != null}" class="img-xs rounded-circle" th:src="@{/resources/personnel/img/profile/__${loggedInAccount.image}__}" alt="Profile image">
+          <img th:if="${currentRoles!= null && currentRoles[0].name == 'CUSTOMER'}" class="img-xs rounded-circle" th:src="@{/resources/customer/img/profile/__${loggedInAccount.image}__}" alt="Profile image">
+          <img th:if="${currentRoles!= null && currentRoles[0].name == 'PERSONNEL' && loggedInAccount.image != null}" class="img-xs rounded-circle" th:src="@{/resources/personnel/img/profile/__${loggedInAccount.image}__}" alt="Profile image"> 
+          <img th:if="${currentRoles!= null && currentRoles[0].name == 'ADMIN' && loggedInAccount.image != null}" class="img-xs rounded-circle" th:src="@{/resources/personnel/img/profile/__${loggedInAccount.image}__}" alt="Profile image">
           <img th:if="${currentRoles!= null && loggedInAccount.image == null}" class="img-xs rounded-circle" th:src="'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg'" alt="Profile image"> 
         </a>
         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
           <div class="dropdown-header text-center" >
-            <img  th:if="${currentRoles!= null && not currentRoles.?[name == 'CUSTOMER'].isEmpty() && loggedInAccount.image != null}" class="img-md rounded-circle"  th:src="@{/resources/customer/img/profile/__${loggedInAccount.image}__}">
-            <img class="img-md rounded-circle" th:if="${currentRoles!= null && not currentRoles.?[name == 'PERSONNEL'].isEmpty() && loggedInAccount.image != null}" th:src="@{/resources/personnel/img/profile/__${loggedInAccount.image}__}">
-            <img class="img-md rounded-circle" th:if="${currentRoles!= null && not currentRoles.?[name == 'ADMIN'].isEmpty() && loggedInAccount.image != null}" th:src="@{/resources/personnel/img/profile/__${loggedInAccount.image}__}">
+            <img  th:if="${currentRoles!= null &&  currentRoles[0].name == 'CUSTOMER' && loggedInAccount.image != null}" class="img-md rounded-circle"  th:src="@{/resources/customer/img/profile/__${loggedInAccount.image}__}">
+            <img class="img-md rounded-circle" th:if="${currentRoles!= null && currentRoles[0].name == 'PERSONNEL' && loggedInAccount.image != null}" th:src="@{/resources/personnel/img/profile/__${loggedInAccount.image}__}">
+            <img class="img-md rounded-circle" th:if="${currentRoles!= null && currentRoles[0].name == 'ADMIN' && loggedInAccount.image != null}" th:src="@{/resources/personnel/img/profile/__${loggedInAccount.image}__}">
             <img class="img-md rounded-circle" th:if="${currentRoles!= null && loggedInAccount.image == null}"  th:src="'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg'">
             <p class="mb-1 mt-3 font-weight-semibold">[[${loggedInAccount.name}]] [[${loggedInAccount.surname}]]</p>
             <p class="font-weight-light text-muted mb-0">[[${loggedInAccount.email}]]</p>
