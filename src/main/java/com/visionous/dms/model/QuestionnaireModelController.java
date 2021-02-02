@@ -116,35 +116,40 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 			
 			
 		}else if(action.equals(Actions.CREATE.getValue())) {
-			if(super.getAllControllerParams().get("modelAttribute") != null) {
-				Questionnaire questionnaire = (Questionnaire)super.getAllControllerParams().get("modelAttribute");
+			if(questionnaireResponse != null) {
+				Questionnaire questionnaire = questionnaireResponse;
 				Long customerId = questionnaire.getCustomerId();
 				
-				Optional<Customer> customer = customerRepository.findById(customerId);
-				customer.ifPresent(singleCustomer -> {
-					questionnaire.setCustomer(singleCustomer);
-		
-					questionnaire.setAddedDate(new Date());
-				});
-
+				Optional<Questionnaire> currentQuestionnaire = questionnaireRepository.findByCustomerId(customerId);
 				
-				Questionnaire newQuestionnaire = questionnaireRepository.saveAndFlush(questionnaire);
-				newQuestionnaire.setQuestionnaireResponse(questionnaire.getQuestionnaireResponse());
-				newQuestionnaire.getQuestionnaireResponse().forEach(singleQuestionnaireResponse -> {
+				if(!currentQuestionnaire.isPresent()) {
 
-					singleQuestionnaireResponse.setId(null);
-					singleQuestionnaireResponse.setResponseDate(new Date()); 
-					singleQuestionnaireResponse.setQuestionId(singleQuestionnaireResponse.getQuestionForm().getId());
+					Optional<Customer> customer = customerRepository.findById(customerId);
+					customer.ifPresent(singleCustomer -> {
+						questionnaire.setCustomer(singleCustomer);
+			
+						questionnaire.setAddedDate(new Date());
+					});
+	
 					
-					singleQuestionnaireResponse.setQuestionnaire(newQuestionnaire);
-
-					questionnaireFormRepository.flush();
-
-					QuestionnaireResponse newQuestionnaireResponse = questionnaireResponseRepository.saveAndFlush(singleQuestionnaireResponse);
-
-					System.out.println(newQuestionnaireResponse.getResponse() + " " + newQuestionnaireResponse.getQuestionId());
-				});
-
+					Questionnaire newQuestionnaire = questionnaireRepository.saveAndFlush(questionnaire);
+					newQuestionnaire.setQuestionnaireResponse(questionnaire.getQuestionnaireResponse());
+					newQuestionnaire.getQuestionnaireResponse().forEach(singleQuestionnaireResponse -> {
+	
+						singleQuestionnaireResponse.setId(null);
+						singleQuestionnaireResponse.setResponseDate(new Date()); 
+						singleQuestionnaireResponse.setQuestionId(singleQuestionnaireResponse.getQuestionForm().getId());
+						
+						singleQuestionnaireResponse.setQuestionnaire(newQuestionnaire);
+	
+						questionnaireFormRepository.flush();
+	
+						QuestionnaireResponse newQuestionnaireResponse = questionnaireResponseRepository.saveAndFlush(singleQuestionnaireResponse);
+	
+						System.out.println(newQuestionnaireResponse.getResponse() + " " + newQuestionnaireResponse.getQuestionId());
+					});
+					
+				}
 			}
 			
 		}else if(action.equals(Actions.VIEW.getValue())) {
@@ -191,7 +196,7 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 			}else {
 				if(super.getAllControllerParams().get("modelAttribute") != null) {
 					Questionnaire questionnaire = (Questionnaire) super.getAllControllerParams().get("modelAttribute");
-					Long customerId = questionnaire.getCustomer().getId();
+					Long customerId = questionnaire.getCustomerId();
 
 					Optional<Customer> customer= customerRepository.findById(customerId);
 					super.addModelCollectionToView("customer", customer.get());

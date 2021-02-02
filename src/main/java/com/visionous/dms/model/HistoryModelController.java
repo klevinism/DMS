@@ -102,24 +102,23 @@ public class HistoryModelController extends ModelControllerImpl{
 				Optional<Customer> customer = customerRepository.findById(Long.valueOf(super.getAllControllerParams().get("id").toString()));
 
 				customer.ifPresent(currentCustomer -> {
-					newHistory.setCustomer(currentCustomer);
-					newHistory.setRecords(null);
-					newHistory.setStartdate(new Date());
-					
-					AccountUserDetail currentAccountDetails =  AccountUtil.currentLoggedInUser();	
-					Optional<Account> loggedInAccount = accountRepository.findByUsername(currentAccountDetails.getUsername());
-					
-					loggedInAccount.ifPresent( account -> {
-						System.out.println(account.toString());
-						Optional<Personnel> supervisor = personnelRepository.findById(account.getId());
+					if(currentCustomer.getCustomerHistory() == null) {					
+						newHistory.setCustomer(currentCustomer);
+						newHistory.setRecords(null);
+						newHistory.setStartdate(new Date());
 						
-						newHistory.setSupervisor(supervisor.get());				
-
-					});
-					History createdNewHistory = historyRepository.saveAndFlush(newHistory);
-					currentCustomer.setCustomerHistory(createdNewHistory);
-					Customer editCustomer = customerRepository.saveAndFlush(currentCustomer);
-
+						AccountUserDetail currentAccountDetails =  AccountUtil.currentLoggedInUser();	
+						Optional<Account> loggedInAccount = accountRepository.findByUsername(currentAccountDetails.getUsername());
+						
+						loggedInAccount.ifPresent( account -> {
+							Optional<Personnel> supervisor = personnelRepository.findById(account.getId());
+							newHistory.setSupervisor(supervisor.get());
+						});
+						History createdNewHistory = historyRepository.saveAndFlush(newHistory);
+						currentCustomer.setCustomerHistory(createdNewHistory);
+						Customer editCustomer = customerRepository.saveAndFlush(currentCustomer);
+						
+					}
 				});
 			}
 		}else if(action.equals(Actions.VIEW.getValue())) {

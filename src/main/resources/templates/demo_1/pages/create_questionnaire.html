@@ -32,16 +32,20 @@
               	
               		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
               		<input type="hidden" th:if="*{customerId != null}" th:field="*{customerId}">
-          			<table>
+          			<table id="table">
           			<thead>
+          				<tr>
+          				    <td><label>[[#{DeselectAll}]]<input type="radio" name="selAll" onclick="deselectAll()"></label></td>
+          					<td><label>[[#{SelectAllNo}]]<input type="radio" name="selAll" onclick="selectAllNo()"></label></td>
+          				</tr>
           			</thead>
           			<tbody> 
           				<tr th:each="all_questions, itemStat: ${allQuestions}" >
           					<td>
-          					<input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.id}">
-          					<input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.question}">
-          					<input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.multipleChoice}">
-          					<input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.addedDate}">
+          					  <input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.id}">
+                              <input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.question}">
+                              <input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.multipleChoice}">
+                              <input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.addedDate}">
           					<div class="row">
         						<label >[[${all_questions.question}]]</label>
           					<div class="col-md-12 grid-margin" th:if="${not all_questions.multipleChoice}">
@@ -83,6 +87,24 @@
 			      </div>
 		  			
 		  		</form>
+		  		<script>
+		  			function selectAllNo(){
+		  				for(var x=0; x<$("table").find("input").length/2; x++){
+			  				if($("table").find("input[name='questionnaireResponse["+x+"].response']") != undefined || $("table").find("input[name='questionnaireResponse["+x+"].response']") != null){
+			  					$($("table").find("input[name='questionnaireResponse["+x+"].response']")[1]).attr("checked","checked");
+			  				}
+			  			}
+		  			}
+		  			
+		  			function deselectAll(){
+		  				for(var x=0; x<$("table").find("input").length/2; x++){
+			  				if($("table").find("input[name='questionnaireResponse["+x+"].response']") != undefined || $("table").find("input[name='questionnaireResponse["+x+"].response']") != null){
+			  					$($("table").find("input[name='questionnaireResponse["+x+"].response']")[0]).removeAttr("checked");
+			  					$($("table").find("input[name='questionnaireResponse["+x+"].response']")[1]).removeAttr("checked");
+			  				}
+			  			}
+		  			}
+		  		</script>
 		  			</div>
 		  		</div>
               </div>
