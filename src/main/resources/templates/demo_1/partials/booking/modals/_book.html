@@ -15,7 +15,7 @@
 						    </span>
 						</div>
                         <div id="id_4" class="input-append date" style="display:none" >
-                        <label for="date" > [[#{Date}]]
+                        <label for="date" > [[#{Date}]] 
 						<div class="input-group ">
 						    <input id="date" type="text" value="" class="form-control" data-toggle="datetimepicker" data-target="#id_4" onchange="dosmthng()">
 						    <div class="input-group-append ">
@@ -33,6 +33,19 @@
 				<input type="hidden" id="appointmentDate" value="">
     		</div>
 		</div>
+		<script th:inline="javascript" >
+						
+		/*<![CDATA[*/ 
+		var disaledDays = /*[[${disabledDays}]]*/[];
+		
+		var startTime = parseInt(/*[[${startTime}]]*/'');
+		var endTime = parseInt(/*[[${endTime}]]*/'');
+		var startMinute = parseInt(/*[[${startMinute}]]*/'');
+		var endMinute = parseInt(/*[[${endMinute}]]*/'');
+		var bookingSplit = /*[[${bookingSplit}]]*/'';
+		/*]]>*/
+		</script>
+		
 <script>
 	 var currentDate = new Date();
 	 if(currentDate.getHours() > 18){
@@ -45,7 +58,7 @@
    	    "showClear": true,
    	    "format": "MM/DD/YYYY",
    	 	"minDate": currentDate.setHours(0,0,0,0),
-   	    "daysOfWeekDisabled": [0, 6]
+   	    "daysOfWeekDisabled": disaledDays
      });
      $("#id_4").on("dp.change", ({date, oldDate}) => {
    		var availablePersonnel = $("#availablePersonnel").val();

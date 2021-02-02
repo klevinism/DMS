@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <div th:replace="demo_1/partials/_header :: header">
+  </div>
+  <body>
+    <div class="container-scroller">
+      <section th:replace="demo_1/partials/_navbar :: navbar">
+  	  </section>
+      <!-- partial:partials/_navbar.html -->
+      
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        
+        <section th:replace="demo_1/partials/_sidebar :: sidebar">
+        <!-- partial:partials/_sidebar.html -->
+        </section>
+        
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <!-- Page Title Header Starts-->
+            <section th:replace="demo_1/partials/_breadcrumb :: breadcrumb">
+			  	<!-- partial:partials/_breadcrumb.html -->
+  			</section>
+            <!-- Page Title Header Ends-->
+            <div class="row">
+              <div class="col-8 grid-margin stretch-card">
+               <div class="card"> 
+              		<div class="card-body"  >
+		              	<ul class="nav nav-tabs" id="myTab">
+						  <li class="nav-item"><a class="nav-link active" href="#global">[[#{Settings}]]</a></li>
+						  <li class="nav-item"><a class="nav-link" href="#appointments">[[#{Appointments}]]</a></li>
+						</ul>
+						 <form th:action="@{/admin/global}" th:object="${globalSettings}" method="POST" enctype="multipart/form-data">
+						 <input type="hidden" th:field="*{id}">
+						 <input type="hidden" name="action" th:value="${viewType}">
+							<div class="tab-content">
+							  <div class="tab-pane active" id="global">
+								 <hr/>
+							      <div class="form-group" id="attachmentInput">
+								    <div class="col-md-6 grid-margin" >
+										<div class="form-group ">
+											<label>[[#{ProfileImage}]]</label>
+											<input id="recordAttachments" type="file" class="file" th:if="*{businessImage != null}" name="globalImage" th:value="@{/resources/business/img/logo/__*{businessImage}__}" multiple="false" data-preview-file-type="any">
+											<input id="recordAttachments" type="file" class="file" th:if="*{businessImage == null}" name="globalImage" multiple="false" data-preview-file-type="any">
+										</div>		
+									</div>
+								  </div>
+							      <div class="form-group">      
+							        <label for="BusinessName">[[#{BusinessName}]]</label>
+							        <input type="text" class="form-control form-control-lg" th:field="*{businessName}">
+							      </div>							      
+							      <div class="form-group">      
+							        <label for="BusinessDays">[[#{BusinessDays}]]</label>
+									<div class="form-group">
+										<div class="form-group">
+								        	<label for="daysStart">[[#{StartDay}]]
+								        	<select class="form-control form-control-lg" id="daysStart" >
+								        		<option value="1">Monday</option>
+								        		<option value="2">Tuesday</option>
+								        		<option value="3">Wednesday</option>
+								        		<option value="4">Thursday</option>
+								        		<option value="5">Friday</option>
+								        		<option value="6">Saturday</option>
+								        		<option value="0">Sunday</option>
+								        	</select>
+								        	</label>
+							        	</div>
+							        	<div class="form-group">
+								        	<label for="daysEnd">[[#{EndDay}]]
+								        	<select class="form-control form-control-lg" id="daysEnd">
+								        		<option value="1">Monday</option>
+								        		<option value="2">Tuesday</option>
+								        		<option value="3">Wednesday</option>
+								        		<option value="4">Thursday</option>
+								        		<option value="5">Friday</option>
+								        		<option value="6">Saturday</option>
+								        		<option value="0">Sunday</option>
+								        	</select>
+								        	</label>
+								        	<p class="alert alert-danger" style="display:none" id="businessDaysError">error</p>
+								        	
+								        	<input type="hidden" id="datePeriod" th:field="*{businessDays}">
+										</div>
+									</div>
+							      </div>
+							      <div class="form-group">      
+							        <label for="BusinessTimes">[[#{BusinessTimes}]]</label>
+							        <div class="form-group">
+							        	<div class="form-group">
+								        	<label for="timeStart">[[#{StartTime}]]
+								        	<select class="form-control form-control-lg" id="timeStart">
+								        	</select>
+								        	</label>
+							        	</div>
+							        	<div class="form-group">
+								        	<label for="timeEnd">[[#{EndTime}]]
+								        	<select  class="form-control form-control-lg" id="timeEnd">
+								        	</select>
+								        	</label>
+								        	<p class="alert alert-danger" style="display:none" id="businessTimesError">error</p>
+								        	
+							        	</div>
+							        	<input type="hidden" id="timePeriod" th:field="*{businessTimes}">
+									</div>
+							      </div>
+							      <div class="form-group">      
+							        <label for="surname">[[#{BusinessEmail}]]</label>
+							        <input type="email" class="form-control form-control-lg" th:field="*{businessEmail}">
+							        <p class="alert alert-danger" th:if="${#fields.hasErrors('businessEmail')}" th:errors="*{businessEmail}">error</p>
+							        
+							      </div>
+							      <div class="form-group">      
+							        <label for="surname">[[#{BusinessPass}]]</label>
+							        <input type="text" id="businessPass" class="form-control form-control-lg" th:field="*{businessPassword}" >
+							        <p class="alert alert-danger" th:if="${#fields.hasErrors('businessPassword')}" th:errors="*{businessPassword}">error</p>
+							      </div>
+							  </div>
+							  <div class="tab-pane" id="appointments">
+							  	<hr/>
+							      <div class="form-group">      
+							        <label for="BookingSplit">[[#{BookingSplit}]]</label>
+							        <select id="BookingSplit" th:field="*{appointmentTimeSplit}">
+							        	 <option value="15">15</option>
+							        	 <option value="30">30</option>
+							        	 <option value="45">45</option>
+							        	 <option value="60">60</option>
+							        	 <option value="75">75</option>
+							        	 <option value="90">90</option>
+							        	 <option value="105">105</option>
+							        	 <option value="120">120</option>
+							        </select>
+							        min
+							      </div>
+							      
+							  </div>
+							</div>
+	 					  <div >
+					    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" >[[#{action.close}]]</a>
+					        <button type="submit" class="btn btn-primary">[[#{__${#strings.capitalize(viewType)}__}]]</button>
+					      </div>
+						 <script th:inline="javascript">
+						 	/*<![CDATA[*/ 
+								var imgsrc = /*[[@{'/resources/business/img/logo/'+'__*{businessImage}__'}]]*/+'';
+								var imgtitle = /*[['__*{businessImage}__']]*/+'';
+							/*]]>*/
+						 	var errorStartEndDay = "Error StartEndDay";
+						 	var errorStartEndTime = "Error StartEnd Business Times";
+						 </script>
+						</form>
+						 
+						<script>
+
+							var input = $("#recordAttachments").fileinput({
+						   	  "initialPreview": ["<img width='150px' height='200px' title='"+imgtitle+"' src='"+imgsrc+"'>"],
+						   	  "initialCaption":imgtitle,
+						 	});	
+						
+							$(document).ready(function(e){
+								generateStartEndTimes();
+								$("#businessPass").attr("type","password");
+								
+								if($("#datePeriod").val()!= null && $("#timePeriod").val()!=null){
+									var datePeriod = $("#datePeriod").val().split(",");
+									var timePeriod = $("#timePeriod").val().split(",");
+									
+									$("#daysStart").val(datePeriod[0]);
+									$("#daysEnd").val(datePeriod[1]);
+									
+									$("#timeStart").val(timePeriod[0]);
+									$("#timeEnd").val(timePeriod[1]);
+								}
+							});
+							
+							$('#myTab a').click(function (e) {
+							  e.preventDefault();
+							  $(this).tab('show');
+							});
+							
+							$('form').submit(function (e) {
+								removeErrors();
+								
+								if(valid()){
+									$("#datePeriod").val($("#daysStart").val()  +","+ $("#daysEnd").val());
+									$("#timePeriod").val($("#timeStart").val()  +","+ $("#timeEnd").val());
+								}else{
+									e.preventDefault();
+								}
+								
+							});
+							
+							function removeErrors(){
+								$("#businessDaysError").hide();
+								$("#businessTimesError").hide();
+							}
+							function valid(){
+								if(validateBusinessDays() && validateBusinessTimes()){
+									return true;
+								}
+								return false;
+							}
+							
+							function validateBusinessDays(){
+								var elstart = $("#daysStart").val();
+								var elend = $("#daysEnd").val();
+								console.log(elstart + " - "+ elend);
+								if(elstart >= elend){
+									$("#businessDaysError").html(errorStartEndDay);
+									$("#businessDaysError").show();
+									return false;
+								}
+								return true;		
+							}
+							
+							function validateBusinessTimes(){
+								var elstart = $("#timeStart").val();
+								var elend = $("#timeEnd").val();
+								var startTimeArr = elstart.split(":");
+								var endTimeArr = elend.split(":");
+								
+								if(startTimeArr[0] >= endTimeArr[0]){
+									$("#businessTimesError").html(errorStartEndTime);
+									$("#businessTimesError").show();
+									return false;
+								}
+								return true;		
+							}
+							
+							function generateStartEndTimes(){
+								var d = new Date("2011-04-20T00:00:00.01");
+								var hrs = d.getHours(); // => 9
+								var minutes = d.getMinutes();
+								for(var x=hrs; x<24; x++){
+									var hrStr=x<10? '0'+x:x;
+									$("#timeStart").html($("#timeStart").html()+"<option value='"+ hrStr+":"+"00"+"'>"+hrStr+":"+"00"+"</option>");
+									$("#timeStart").html($("#timeStart").html()+"<option value='"+ hrStr+":"+"30"+"'>"+hrStr+":"+"30"+"</option>");
+									$("#timeEnd").html($("#timeEnd").html()+"<option value='"+ hrStr+":"+"00"+"'>"+hrStr+":"+"00"+"</option>");
+									$("#timeEnd").html($("#timeEnd").html()+"<option value='"+ hrStr+":"+"30"+"'>"+hrStr+":"+"30"+"</option>");
+								}
+							}
+							
+							function generateBookingSplits(){
+								var start=15;
+								for(var cnt=start; cnt<=120; cnt+=15){
+									var txt = $("#BookingSplit").html();
+									$("#BookingSplit").html(txt + "<option value="+cnt+">"+cnt+"</option>");
+								}
+									
+							}
+						</script>
+		  			</div>
+		  		</div>
+		        
+
+              </div>
+              
+            </div>
+            
+          </div>
+          <!-- content-wrapper ends -->
+		  
+		  <section th:replace="demo_1/partials/_footer :: footer">
+		  	<!-- partial:partials/_footer.html -->
+		  </section>
+          <!-- partial -->
+          
+        </div>
+        <!-- main-panel ends -->
+        
+      </div>
+    
+		
+    <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="/assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="/assets/vendors/js/vendor.bundle.addons.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page-->
+    <script type="text/javascript" src="/assets/vendors/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>    
+    <!-- End plugin js for this page-->
+    <!-- inject:js -->
+    <script src="/assets/js/shared/off-canvas.js"></script>
+    <script src="/assets/js/shared/misc.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    <script src="/assets/js/demo_1/personnel.js"></script>
+    <!-- End custom js for this page-->
+  </body>
+</html>

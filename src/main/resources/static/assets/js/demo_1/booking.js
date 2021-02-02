@@ -1,17 +1,23 @@
 
 function showHourTable(date, excludedDates){
 	var beginDate = new Date(date);
-	beginDate.setHours(8);
-	beginDate.setMinutes(0);
+	beginDate.setHours(startTime);
+	beginDate.setMinutes(startMinute);
 	var innerDiv = "";
-	
 	var endDate = new Date(beginDate);
-	endDate.setDate(endDate.getDate() + 1);
-	while(beginDate < endDate && beginDate.getHours() < 18){
-		var show = true;
+	endDate.setHours(endTime);
+	endDate.setMinutes(endMinute);
+	console.log(endMinute + " ENDMINUTES");
+	console.log(beginDate < endDate);
+	console.log(beginDate.getHours() < endDate.getHours());
+		console.log(endDate.getHours() + " <><><> "+ endDate.getMinutes());
 	
+	while(beginDate < endDate && beginDate.getHours() < endDate.getHours()  ){
+		var show = true;
+	console.log("WHILE");
 		for(var cnt=0; cnt<excludedDates.length; cnt++){
 			var excluded= new Date(excludedDates[cnt]);
+			console.log("FOR");
 			if(beginDate.getMonth() === excluded.getMonth() && 
 					beginDate.getDate() === excluded.getDate() && 
 					beginDate.getFullYear() === excluded.getFullYear()){
@@ -22,13 +28,8 @@ function showHourTable(date, excludedDates){
 				var after = new Date(excludedDates[cnt]);
 				after.setMinutes(after.getMinutes() + 30)
 				
-				if((beginDate.getHours() == before.getHours() && beginDate.getMinutes() == before.getMinutes())){
-					beginDate.setHours(beginDate.getHours() + 1);
-					beginDate.setMinutes(beginDate.getMinutes() + 30);
-					show = false;
-					break;
-				}else if((beginDate.getHours() == excludedDates[cnt].getHours() && beginDate.getMinutes() == excludedDates[cnt].getMinutes())){
-					beginDate.setHours(beginDate.getHours() + 1);
+				if((beginDate.getHours() == excludedDates[cnt].getHours() && beginDate.getMinutes() == excludedDates[cnt].getMinutes())){
+					beginDate.setMinutes(beginDate.getMinutes() + bookingSplit);
 					show = false;
 					break;
 				}
@@ -37,11 +38,13 @@ function showHourTable(date, excludedDates){
 		
 		if(show){
 			var ending = new Date(beginDate);
-			ending.setHours(ending.getHours() + 1);
-		
-			innerDiv += "<div class='col-md-3 col-4 my-1 px-2' ><div class='cell py-1' >"+ beginDate.getHours() +" : "+(beginDate.getMinutes()<10?'0':'') + beginDate.getMinutes() + " - "+ ending.getHours() +" : "+(ending.getMinutes()<10?'0':'') + ending.getMinutes()+"</div></div>";
+			ending.setMinutes(ending.getMinutes() + bookingSplit);
 			
-			beginDate.setMinutes(beginDate.getMinutes() + 30);
+			innerDiv += "<div class='col-md-3 col-4 my-1 px-2' ><div class='cell py-1' >"+ beginDate.getHours() +" : "+(beginDate.getMinutes()<10?'0':'') + beginDate.getMinutes() + " - "+ ending.getHours() +" : "+(ending.getMinutes()<10?'0':'') + ending.getMinutes()+"</div></div>";
+			console.log(beginDate.getHours() + "- " +beginDate.getMinutes());
+			beginDate.setMinutes(beginDate.getMinutes()+bookingSplit);
+			
+			console.log(beginDate.getHours() + "-AFTER - " +beginDate.getMinutes());
 		}
 	}
 	var outterDiv = "<div class='row text-center mx-0'>" + innerDiv + "</div>";

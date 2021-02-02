@@ -35,6 +35,7 @@ import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.event.OnRegistrationCompleteEvent;
 import com.visionous.dms.pojo.Account;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Role;
 import com.visionous.dms.repository.AccountRepository;
@@ -58,6 +59,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 	private ApplicationEventPublisher eventPublisher;
 	private RecordRepository recordRepository;
     private MessageSource messages;
+    private GlobalSettings globalSettings;
 
 	private static String currentPage = LandingPages.PERSONNEL.value();
 
@@ -68,13 +70,14 @@ public class PersonnelModelController extends ModelControllerImpl{
 	public PersonnelModelController(PersonnelRepository personnelRepository, RoleRepository roleRepository,
 			AccountRepository accountRepository, HistoryRepository historyRepository,
 			ApplicationEventPublisher eventPublisher, RecordRepository recordRepository,
-			MessageSource messages) {
+			MessageSource messages, GlobalSettings globalSettings) {
 		this.personnelRepository = personnelRepository;
 		this.roleRepository = roleRepository;
 		this.accountRepository = accountRepository;
 		this.eventPublisher = eventPublisher;
 		this.recordRepository = recordRepository;
 		this.messages = messages;
+		this.globalSettings = globalSettings;
 	}
 	
 	
@@ -313,6 +316,9 @@ public class PersonnelModelController extends ModelControllerImpl{
 		
 		Locale locales = LocaleContextHolder.getLocale();
 		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
+		
+		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+
 	}
 	
 	@Override

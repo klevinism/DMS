@@ -45,7 +45,13 @@
         <span class="menu-title">[[#{Customers}]]</span>
       </a>
     </li>
-        <li class="nav-item" >
+    <li class="nav-item" th:if="${currentRoles != null}">
+      <a class="nav-link" href="/admin/global" th:if="${currentRoles[0].name == 'ADMIN'}">
+        <i class="menu-icon typcn typcn-document-text" ></i>
+        <span class="menu-title">[[#{GeneralSettings}]]</span>
+      </a>
+    </li>
+    <li class="nav-item" >
       <a class="nav-link" href="/logout" >
         <i class="menu-icon typcn typcn-document-text"></i>
         <span class="menu-title">[[#{SignOut}]]</span>

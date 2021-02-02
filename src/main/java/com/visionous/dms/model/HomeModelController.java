@@ -33,6 +33,7 @@ import com.visionous.dms.configuration.helpers.DateUtil;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Appointment;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Record;
 import com.visionous.dms.pojo.Role;
@@ -59,7 +60,8 @@ public class HomeModelController extends ModelControllerImpl{
 	private AppointmentRepository appointmentRepository;
 	private PersonnelRepository personnelRepository;
 	private CustomerRepository customerRepository;
-
+	private GlobalSettings globalSettings;
+	
 	private RoleRepository roleRepository;
 	
 	private static String currentPage = LandingPages.HOME.value();
@@ -72,7 +74,7 @@ public class HomeModelController extends ModelControllerImpl{
 	public HomeModelController(AccountRepository accountRepository, RecordRepository recordRepository, 
 			AppointmentRepository appointmentRepository, HistoryRepository historyRepository,
 			PersonnelRepository personnelRepository, RoleRepository roleRepository,
-			CustomerRepository customerRepository){
+			CustomerRepository customerRepository, GlobalSettings globalSettings){
 		this.accountRepository = accountRepository;
 		this.recordRepository = recordRepository;
 		this.appointmentRepository = appointmentRepository;
@@ -80,6 +82,7 @@ public class HomeModelController extends ModelControllerImpl{
 		this.personnelRepository = personnelRepository;
 		this.customerRepository = customerRepository;
 		this.roleRepository = roleRepository;
+		this.globalSettings = globalSettings;
 	}
 	
 	/**
@@ -131,15 +134,35 @@ public class HomeModelController extends ModelControllerImpl{
 		if(viewType.equals(Actions.CREATE.getValue())) {
 		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
+			System.out.println(this.globalSettings.getBusinessEmail()+ " EMAIL");
+
+			int startDay = 1;
+			int endDay = 5;
+			String startTime = "08:00";
+			String endTime = "18:00";
+			int bookingSplit = 60;
+			if(this.globalSettings != null) {
+				String[] dayPeriod = this.globalSettings.getBusinessDays().split(",");
+				String[] timePeriod = this.globalSettings.getBusinessTimes().split(",");
+				
+				bookingSplit = this.globalSettings.getAppointmentTimeSplit();
+				
+				startDay = Integer.parseInt(dayPeriod[0]);
+				endDay = Integer.parseInt(dayPeriod[1]);
+				
+				startTime = timePeriod[0];
+				endTime = timePeriod[0];
+			}
+
+			Date appointmentEndTime = DateUtil.getEndWorkingHr(startTime);
+
 			Account acc = AccountUtil.currentLoggedInUser();
 			Optional<Account> currentAccount = accountRepository.findByUsername(acc.getUsername());
 			currentAccount.ifPresent(account -> {
 				
 				Period monthPeriodOfThisYear = DateUtil.getPeriodBetween(DateUtil.getBegginingOfYear(), new Date());
-				
-				List<Appointment> todaysAppointments = appointmentRepository.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(account.getId(), DateUtil.getStartWorkingHr(), DateUtil.getEndWorkingHr());
+				List<Appointment> todaysAppointments = appointmentRepository.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(account.getId(), DateUtil.getStartWorkingHr(), appointmentEndTime);
 				List<Record> top10records = recordRepository.findFirst10ByPersonnelIdOrderByServicedateDesc(account.getId()); 
-				
 				List<Integer> nrOfRecordsForEachMonth = new ArrayList<>();
 				for(int month=0 ; month <= monthPeriodOfThisYear.getMonths(); month++) {
 					
@@ -263,6 +286,9 @@ public class HomeModelController extends ModelControllerImpl{
 		});
 		Locale locales = LocaleContextHolder.getLocale();
 		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
+		
+		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+
 	}
 	
 	/**

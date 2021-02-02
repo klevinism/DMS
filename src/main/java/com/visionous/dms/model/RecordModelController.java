@@ -33,6 +33,7 @@ import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.History;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Questionnaire;
@@ -70,6 +71,7 @@ public class RecordModelController extends ModelControllerImpl {
 	private PersonnelRepository personnelRepository;
 	private QuestionnaireResponseRepository questionnaireResponseRepository;
 	private QuestionnaireRepository questionnaireRepository;
+    private GlobalSettings globalSettings;
 
 	/**
 	 * 
@@ -79,7 +81,7 @@ public class RecordModelController extends ModelControllerImpl {
 			HistoryRepository historyRepository, ServiceTypeRepository serviceTypeRepository,
 			TeethRepository teethRepository, AccountRepository accountRepository,
 			PersonnelRepository personnelRepository, QuestionnaireResponseRepository questionnaireResponseRepository,
-			QuestionnaireRepository questionnaireRepository) {
+			QuestionnaireRepository questionnaireRepository, GlobalSettings globalSettings) {
 		this.recordRepository = recordRepository;
 		this.customerRepository = customerRepository;
 		this.historyRepository = historyRepository;
@@ -89,6 +91,7 @@ public class RecordModelController extends ModelControllerImpl {
 		this.personnelRepository = personnelRepository;
 		this.questionnaireResponseRepository = questionnaireResponseRepository;
 		this.questionnaireRepository = questionnaireRepository;
+		this.globalSettings = globalSettings;
 	}
 	
 	/**
@@ -275,6 +278,9 @@ public class RecordModelController extends ModelControllerImpl {
 		
 		Locale locales = LocaleContextHolder.getLocale();
 		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
+		
+		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+
 	}
 	
 	@Override

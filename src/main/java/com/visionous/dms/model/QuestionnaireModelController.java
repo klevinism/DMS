@@ -30,6 +30,7 @@ import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Questionnaire;
 import com.visionous.dms.pojo.QuestionnaireForm;
@@ -59,6 +60,7 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 	private QuestionnaireRepository questionnaireRepository;
 	private QuestionnaireFormRepository questionnaireFormRepository;
 	private QuestionnaireResponseRepository questionnaireResponseRepository;
+    private GlobalSettings globalSettings;
 	
 	private static String currentPage = LandingPages.QUESTIONNAIRE.value();
 
@@ -69,7 +71,7 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 	public QuestionnaireModelController(PersonnelRepository personnelRepository, 
 			CustomerRepository customerRepository, QuestionnaireRepository questionnaireRepository,
 			QuestionnaireFormRepository questionnaireFormRepository, QuestionnaireResponseRepository questionnaireResponseRepository, 
-			AccountRepository accountRepository) {
+			AccountRepository accountRepository, GlobalSettings globalSettings) {
 		
 		this.personnelRepository = personnelRepository;
 		this.questionnaireResponseRepository = questionnaireResponseRepository;
@@ -77,6 +79,7 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 		this.questionnaireRepository = questionnaireRepository;
 		this.questionnaireFormRepository = questionnaireFormRepository;
 		this.accountRepository = accountRepository;
+		this.globalSettings = globalSettings;
 	}
 	
 	
@@ -261,6 +264,9 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 		
 		Locale locales = LocaleContextHolder.getLocale();
 		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
+		
+		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+
 	}
 	
 	/**

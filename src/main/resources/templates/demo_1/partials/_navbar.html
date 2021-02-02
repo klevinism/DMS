@@ -1,9 +1,11 @@
 <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row" th:fragment="navbar">
-  <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
+  <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center" 
+  		th:with="imgUrl = ${logo != null ? '/resources/business/img/logo/'+logo : '/assets/images/logo.svg'},
+  		imgUrlMini = ${logo != null ? '/resources/business/img/logo/'+logo : '/assets/images/logo-mini.svg'}">
     <a class="navbar-brand brand-logo" href="/">
-      <img src="/assets/images/logo.svg" alt="logo" /> </a>
+      <img th:src="${imgUrl}" alt="logo" /> </a>
     <a class="navbar-brand brand-logo-mini" href="/">
-      <img src="/assets/images/logo-mini.svg" alt="logo" /> </a>
+      <img th:src="${imgUrlMini}" alt="logo" /> </a>
   </div>
   <div class="navbar-menu-wrapper d-flex align-items-center">
     <ul class="navbar-nav">

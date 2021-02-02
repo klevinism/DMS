@@ -3,9 +3,11 @@
  */
 package com.visionous.dms.configuration;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,9 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
+import com.visionous.dms.pojo.GlobalSettings;
+import com.visionous.dms.repository.GlobalSettingsRepository;
+
 /**
  * @author delimeta
  *
@@ -31,7 +36,15 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 @Configuration
 @EnableWebMvc
 public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
+	private GlobalSettingsRepository globalSettingRepository;
 	
+	/**
+	 * 
+	 */
+	@Autowired
+	public DmsMvcConfigurationAdapter(GlobalSettingsRepository globalSettingRepository) {
+		this.globalSettingRepository = globalSettingRepository;
+	}
 
 	@Bean
     public MessageSource messageSource() {
@@ -41,12 +54,22 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
         return msgSrc;
     }
 	
+	@Bean
+    public GlobalSettings globalSettings() {
+        List<GlobalSettings> allSettings = globalSettingRepository.findAll();
+        if(!allSettings.isEmpty()) {
+        	return allSettings.get(0);
+        }
+        return null;
+    }
+	
 	@Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/static/assets/");
         registry.addResourceHandler("/resources/records/img/**").addResourceLocations("file:tmp/records/");
         registry.addResourceHandler("/resources/personnel/img/**").addResourceLocations("file:tmp/personnel/");
         registry.addResourceHandler("/resources/customer/img/**").addResourceLocations("file:tmp/customer/");
+        registry.addResourceHandler("/resources/business/img/**").addResourceLocations("file:tmp/business/");
     }
 	
     @Bean
