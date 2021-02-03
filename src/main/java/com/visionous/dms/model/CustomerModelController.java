@@ -200,7 +200,9 @@ public class CustomerModelController extends ModelControllerImpl{
 					super.addModelCollectionToView("errorUsername", null);
 					super.addModelCollectionToView("errorEmail", null);
 					newCustomer.getAccount().setCustomer(null);
-					newCustomer.setRegisterdate(new Date(System.currentTimeMillis()));
+					if(newCustomer.getRegisterdate() == null) {
+						newCustomer.setRegisterdate(new Date(System.currentTimeMillis()));
+					}
 					newCustomer.getAccount().setPersonnel(null);
 					newCustomer.getAccount().setActive(true);
 					newCustomer.getAccount().setEnabled(true);
@@ -284,10 +286,10 @@ public class CustomerModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("viewType", viewType);
 		
 		if(viewType.equals(Actions.CREATE.getValue())) {
-			
-			if((super.getModelCollectionToView("errorEmail") == null) && (super.getModelCollectionToView("errorUsername") == null) 
-				&& !super.hasResultBindingError()) {
-			
+			System.out.println("BEFORE ERROR EMAIL");
+			if(!super.hasResultBindingError()) {
+				
+				System.out.println("AFTERERROR EMAIL");
 				Customer newCustomer = new Customer();
 				newCustomer.setAccount(new Account());
 				super.addModelCollectionToView("customer", newCustomer);

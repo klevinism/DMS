@@ -13,12 +13,19 @@
 			
 			</div>
 	  </div>
+	  
+	  <div class="form-group" th:if="${loggedInAccount.roles[0].name == 'ADMIN'}">      
+        <div class="form-check form-check-flat">
+		    <label class="form-check-label">
+		      <input type="checkbox" class="form-check-inputform-control-lg" onchange="oldCustomer(this)"> [[#{OldAccount}]] </label>
+		</div>
+      </div>
+	  
     
       <div class="form-group">      
         <label for="username">[[#{Username}]]</label>
         <input type="text" class="form-control form-control-lg" th:placeholder="*{account.username}" th:field="*{account.username}">
         <p class="alert alert-danger" th:if="${#fields.hasErrors('account.username')}" th:errors="*{account.username}"></p>
-        <p class="alert alert-danger" th:if="${errorUsername != null}" th:text="${errorUsername}"></p>
       </div>
       
       <div class="form-group">      
@@ -37,6 +44,10 @@
         <label for="surname">[[#{Surname}]]</label>
         <input type="text" class="form-control form-control-lg" th:placeholder="*{account.surname}" th:field="*{account.surname}">
         <p class="alert alert-danger" th:if="${#fields.hasErrors('account.surname')}" th:errors="*{account.surname}"></p>
+      </div>
+      
+      <div class="form-group" id="divSelfGenerateFields" style="display:none">      
+        <button class="btn btn-primary" disabled>[[#{SelfGenerateFields}]]</button>
       </div>
       
       <div class="form-group">      
@@ -66,12 +77,15 @@
       
       <div class="form-group">
         <label for="roles">[[#{Roles}]]</label>
-        
         <select th:field="*{account.roles}" th:with="roleName = ${isPersonnelCreation !=null ? 'PERSONNEL' : 'CUSTOMER'}">
         	<option th:each="role: ${allRoles}" th:if="${role.name == roleName}"  th:value="${role.id}" th:text="${role.name}"></option>
         </select>
       </div>
       
+      <div class="form-group" id="registerDayCalendarDiv" style="display:none">
+        <label for="Birthday">[[#{RegisterDate}]]</label>
+        <input type="date" class="form-control form-control-lg" id="registerDayCalendarDiv" th:placeholder="*{registerdate}"  th:field="*{registerdate}" disabled>
+      </div>
       <div class="form-group" id="birthdayCalendar" >
         <label for="Birthday">[[#{Birthday}]]</label>
         <input type="date" class="form-control form-control-lg" id="birthdayCalendar" th:placeholder="*{account.birthday}"  th:field="*{account.birthday}">
@@ -100,8 +114,49 @@
      	    "showClear": true,
      	    "format": "YYYY-MM-DD",
      	    "daysOfWeekDisabled": []
-       });
-
+      });
+      
+      $('#registerDayCalendarDiv').datetimepicker({
+   	    "allowInputToggle": true,
+   	    "showClose": true,
+   	    "showClear": true,
+   	    "format": "YYYY-MM-DD",
+   	    "daysOfWeekDisabled": []
+      });
+      
+	  function oldCustomer(e){
+		  if($(e).is(':checked')){
+			  showOldFields();
+		  }else{
+			  hideOldFields();
+		  }
+	  }
+	  $("#divSelfGenerateFields").find("button").click(function(e){
+		  e.preventDefault();
+		  var name = document.getElementById("account.name").value;
+		  var surname = document.getElementById("account.surname").value;
+		  var defEmail="@hotmail.com";
+		  document.getElementById("account.username").value=name.toLowerCase()+"."+surname.toLowerCase();
+		  document.getElementById("account.password").value="1234";
+		  document.getElementById("account.email").value= name.toLowerCase()+"."+surname.toLowerCase()+defEmail;
+		  document.getElementById("account.phone").value="0694444333";
+		  document.getElementById("account.address").value = "Tirane";
+		  document.getElementById("account.city").value = "Tirane";
+		  document.getElementById("account.country").value="Shqiperi";
+	  });
+	  function showOldFields(){
+		  $("#divSelfGenerateFields").show();
+		  $("#registerDayCalendarDiv").show();
+		  $("#divSelfGenerateFields").find("button").removeAttr("disabled");
+		  $("#registerDayCalendarDiv").find("input").removeAttr("disabled");
+	  }
+	  function hideOldFields(){
+		  $("#divSelfGenerateFields").hide();
+		  $("#registerDayCalendarDiv").hide();
+		  $("#divSelfGenerateFields").find("button").attr("disabled","disabled");
+		  $("#registerDayCalendarDiv").find("input").attr("disabled","disabled");
+		  $("form").trigger("reset");
+	  }
       </script>
   </div>
 </div>

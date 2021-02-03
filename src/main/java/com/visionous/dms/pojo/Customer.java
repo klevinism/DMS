@@ -21,6 +21,7 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.Valid;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.visionous.dms.configuration.helpers.DmsCoreVersion;
@@ -42,7 +43,7 @@ public class Customer implements Serializable{
     @SequenceGenerator(sequenceName = "customer_seq2", allocationSize = 1, name = "CUSTOMER_SEQ2")
     private Long id;
 	
-	@DateTimeFormat (pattern="dd-MM-YYYY")
+	@DateTimeFormat(iso = ISO.DATE)
 	private Date registerdate;
 
 	@Valid
