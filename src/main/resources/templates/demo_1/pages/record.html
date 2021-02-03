@@ -45,15 +45,25 @@
 					var tableSearch = ""+ /*[[#{table.search}]]*/ '';
 				/*]]>*/
 				</script>
+				
 		       <script>
+
+
 		       $(document).ready(function() {
+		           $.fn.dataTable.moment( 'D-M-YYYY' );
 		           $('#historyRecords').DataTable({
-		                columnDefs : [
-		                   
-		                ],
-		                order: []
+		        	   language: {
+		                   search:         tableSearch,
+		                   info:           tableInfo,
+		                   infoEmpty:      tableInfoEmpty,
+		                   infoFiltered:   tableInfoFiltered,
+		                   zeroRecords:    tableZeroRecord
+		        	   },
+		               order: [0,"desc"]
 		           });
+
 		       });
+
 		       </script>
 		       	
 
@@ -89,8 +99,10 @@
     <!-- endinject -->
     <!-- Plugin js for this page-->
     <script type="text/javascript" src="/assets/vendors/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>    
+    <script src="//cdn.datatables.net/plug-ins/1.10.12/sorting/datetime-moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>
     <!-- End plugin js for this page-->
     <!-- inject:js -->
     <script src="/assets/js/shared/off-canvas.js"></script>

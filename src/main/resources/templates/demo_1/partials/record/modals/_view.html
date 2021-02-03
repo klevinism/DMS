@@ -35,7 +35,7 @@
 					</thead>
 					<tbody>
 						<tr class="px-2" th:each="record: *{records}" th:onclick="'window.location=\'/customer/'+*{customer.id}+'/history/'+*{id}+'/record/'+${record.id}+'\''">
-							<td th:text="${#dates.format(record.servicedate, 'dd/MM/yyyy')}"></td>
+							<td  th:text="${#dates.format(record.servicedate, 'd-M-yyyy')}"></td>
 							<td th:text="*{customer.account.username}"></td>
 							<td th:text="${record.personnel.account.name}"></td>
 							<td th:text="${record.tooth.name}"></td>
