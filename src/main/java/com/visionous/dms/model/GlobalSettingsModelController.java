@@ -6,6 +6,7 @@ package com.visionous.dms.model;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -30,8 +31,11 @@ import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.GlobalSettings;
+import com.visionous.dms.pojo.ServiceType;
+import com.visionous.dms.pojo.ServiceTypes;
 import com.visionous.dms.repository.AccountRepository;
 import com.visionous.dms.repository.GlobalSettingsRepository;
+import com.visionous.dms.repository.ServiceTypeRepository;
 
 /**
  * @author delimeta
@@ -47,6 +51,7 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 
 	private AccountRepository accountRepository;
 	private GlobalSettingsRepository globalSettingsRepository;
+	private ServiceTypeRepository serviceTypeRepository;
 	private GlobalSettings globalSettings;
 	private ApplicationContext ctx;
 	
@@ -55,11 +60,12 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 	 */
 	@Autowired
 	public GlobalSettingsModelController(AccountRepository accountRepository, GlobalSettingsRepository globalSettingsRepository,
-			ApplicationContext ctx, GlobalSettings globalSettings) {
+			ApplicationContext ctx, GlobalSettings globalSettings, ServiceTypeRepository serviceTypeRepository) {
 		this.accountRepository = accountRepository;
 		this.globalSettingsRepository = globalSettingsRepository;
 		this.globalSettings = globalSettings;
 		this.ctx = ctx;
+		this.serviceTypeRepository = serviceTypeRepository;
 	}
 	
 	/**
@@ -73,10 +79,18 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 				if(super.hasResultBindingError()) {
 					super.setControllerParam("viewType", super.getAllControllerParams().get("action").toString().toLowerCase());
 				}else {
-					persistModelAttributes(
-						(GlobalSettings) super.getAllControllerParams().get("modelAttribute"), 
-						super.getAllControllerParams().get("action").toString().toLowerCase()
-						);
+					if(super.getAllControllerParams().get("modelAttribute") instanceof GlobalSettings) {
+						persistModelAttributes(
+								(GlobalSettings) super.getAllControllerParams().get("modelAttribute"), 
+								super.getAllControllerParams().get("action").toString().toLowerCase()
+								);
+					}else {
+						persistModelAttributes(
+								(ServiceTypes) super.getAllControllerParams().get("modelAttribute"), 
+								super.getAllControllerParams().get("action").toString().toLowerCase()
+								);
+					}
+					
 				}
 			}
 		}
@@ -87,7 +101,17 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 		// Build global view model for Customer
 		this.buildGlobalSettingsGlobalViewModel();
 	}
-
+	
+	private void persistModelAttributes(ServiceTypes serviceType, String action) {
+		ServiceTypes services = serviceType;
+		if(action.equals(Actions.EDIT.getValue()) ) {
+			for(ServiceType service : services.getServices()) {
+				System.out.println(service.getName());
+				System.out.println(service.getAddeddate());
+			}
+		}
+	}
+	
 	/**
 	 * 
 	 */
@@ -119,7 +143,7 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 						globalSetting.setBusinessImage(globalSettings.getBusinessImage());
 					}
 				}
-				
+
 				GlobalSettings old = ctx.getBean(GlobalSettings.class);
 				GlobalSettings newSetting = globalSettingsRepository.saveAndFlush(globalSetting);
 				
@@ -151,12 +175,20 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 		
 		if(viewType.equals(Actions.CREATE.getValue())) {
 			
-		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
+		}else if(viewType.equals(Actions.DELETE.getValue())){
+			
+		}else if (viewType.equals(Actions.EDIT.getValue())) {
 			if(!super.hasResultBindingError()) {
 				List<GlobalSettings> globalSettings = globalSettingsRepository.findAll();
 				super.addModelCollectionToView("globalSettings", globalSettings.get(0));
 			}
+			ServiceTypes serviceTypes = new ServiceTypes();
+			serviceTypes.addAllServices(serviceTypeRepository.findAll());
+			if(!serviceTypes.getServices().isEmpty()) {
+				super.addModelCollectionToView("services", serviceTypes);
+			}
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
+			
 		}
 	}
 	
