@@ -37,7 +37,7 @@
 		  		</div>
 		        <script th:inline="javascript">
 				/*<![CDATA[*/
-					var alertSuccess = ""+ /*[[#{table.lengthMenu}]]*/ '';
+					var tableLengthMenu = ""+ /*[[#{table.lengthMenu}]]*/ '';
 					var tableZeroRecord = ""+ /*[[#{table.zeroRecord}]]*/ '';
 					var tableInfo = ""+ /*[[#{table.info}]]*/ '';
 					var tableInfoEmpty = ""+ /*[[#{table.infoEmpty}]]*/ '';
@@ -53,6 +53,7 @@
 		           $.fn.dataTable.moment( 'D-M-YYYY' );
 		           $('#historyRecords').DataTable({
 		        	   language: {
+		        		   lengthMenu: 	   tableLengthMenu,
 		                   search:         tableSearch,
 		                   info:           tableInfo,
 		                   infoEmpty:      tableInfoEmpty,
