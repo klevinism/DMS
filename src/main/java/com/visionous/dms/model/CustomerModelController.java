@@ -70,6 +70,7 @@ public class CustomerModelController extends ModelControllerImpl{
 	private AccountRepository accountRepository;
 	private RoleRepository roleRepository;
 	private RecordRepository recordRepository;
+	private HistoryRepository historyRepository;
 	private QuestionnaireResponseRepository questionnaireResponseRepository;
 	private QuestionnaireRepository questionnaireRepository;
     private MessageSource messages;
@@ -85,7 +86,7 @@ public class CustomerModelController extends ModelControllerImpl{
 	public CustomerModelController(CustomerRepository customerRepository, AccountRepository accountRepository, 
 			RoleRepository roleRepository, TeethRepository teethRepository, RecordRepository recordRepository,
 			QuestionnaireRepository questionnaireRepository, QuestionnaireResponseRepository questionnaireResponseRepository,
-			 MessageSource messages, GlobalSettings globalSettings) {
+			 MessageSource messages, GlobalSettings globalSettings, HistoryRepository historyRepository) {
 		this.customerRepository = customerRepository;
 		this.accountRepository = accountRepository;	
 		this.teethRepository = teethRepository;
@@ -95,6 +96,7 @@ public class CustomerModelController extends ModelControllerImpl{
 		this.recordRepository = recordRepository;
 		this.messages=messages;
 		this.globalSettings = globalSettings;
+		this.historyRepository = historyRepository;
 	}
 	
 	
@@ -140,10 +142,12 @@ public class CustomerModelController extends ModelControllerImpl{
 				account.setPersonnel(null);
 				if(account.getCustomer().getCustomerHistory() != null && account.getCustomer().getQuestionnaire() != null) {
 					questionnaireRepository.deleteById(account.getCustomer().getQuestionnaire().getId());
+					historyRepository.delete(account.getCustomer().getCustomerHistory());
 				}
-				
+
 				account.setCustomer(null);
 				account.setRoles(null);
+				
 				accountRepository.delete(account);
 			});
 			
