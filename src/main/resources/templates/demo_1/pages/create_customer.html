@@ -32,12 +32,17 @@
               	
               		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
               		
-          			<section th:replace="__${createAccountView}__">
-					  	<!-- partial:partials/_footer.html -->
-		  			</section>
-		  			<section th:replace="__${bodyUrl}__">
-					  	<!-- partial:partials/_footer.html -->
-		  			</section>
+
+                    <div class="form-group">
+		             	<section th:replace="__${bodyUrl}__">
+						  	<!-- partial:partials/_footer.html -->
+			  			</section>
+		  			</div>
+		  			<div class="form-group">
+	          			<section th:replace="__${createAccountView}__">
+						  	<!-- partial:partials/_footer.html -->
+			  			</section>
+					</div>
 			      <div >
 			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="''+${currentPage} + '/'">[[#{action.close}]]</a>
 			        <button type="submit" class="btn btn-primary">[[#{__${#strings.capitalize(viewType)}__}]]</button>

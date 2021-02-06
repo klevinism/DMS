@@ -29,6 +29,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.FieldError;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
@@ -185,15 +186,15 @@ public class CustomerModelController extends ModelControllerImpl{
 			if(newCustomer.getAccount().getRoles().get(0).getName().equals("CUSTOMER")) {	
 				if(emailExist(newCustomer.getAccount().getEmail())) {
 			        String message = messages.getMessage("alert.emailExists", null, LocaleContextHolder.getLocale());
-					super.addModelCollectionToView("errorEmail", message);
-					super.addModelCollectionToView("selected", newCustomer);
+			        super.getBindingResult().addError(new FieldError("account", "account.email", newCustomer.getAccount().getEmail(), false, null, null, message));
+					
 					super.removeControllerParam("viewType");
 					super.addControllerParam("viewType", Actions.CREATE.getValue());
 
 				}else if(usernameExist(newCustomer.getAccount().getUsername())) {
 			        String message = messages.getMessage("alert.usernameExists", null, LocaleContextHolder.getLocale());
-					super.addModelCollectionToView("errorUsername", message);
-					super.addModelCollectionToView("selected", newCustomer);
+			        super.getBindingResult().addError(new FieldError("account", "account.username", newCustomer.getAccount().getUsername(), false, null, null, message));
+
 					super.removeControllerParam("viewType");
 					super.addControllerParam("viewType", Actions.CREATE.getValue());
 				}else {
@@ -286,10 +287,7 @@ public class CustomerModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("viewType", viewType);
 		
 		if(viewType.equals(Actions.CREATE.getValue())) {
-			System.out.println("BEFORE ERROR EMAIL");
 			if(!super.hasResultBindingError()) {
-				
-				System.out.println("AFTERERROR EMAIL");
 				Customer newCustomer = new Customer();
 				newCustomer.setAccount(new Account());
 				super.addModelCollectionToView("customer", newCustomer);
