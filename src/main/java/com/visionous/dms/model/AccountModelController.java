@@ -36,6 +36,7 @@ import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Role;
 import com.visionous.dms.repository.AccountRepository;
@@ -56,7 +57,7 @@ public class AccountModelController extends ModelControllerImpl{
 	private RoleRepository roleRepository;
 	private PersonnelRepository personnelRepository;
 	private CustomerRepository customerRepository;
-	
+	private GlobalSettings globalSettings;
 	private MessageSource messageSource;
 	
 	private static String currentPage = LandingPages.ACCOUNT.value();
@@ -68,13 +69,14 @@ public class AccountModelController extends ModelControllerImpl{
 	@Autowired
 	public AccountModelController(AccountRepository accountRepository, RoleRepository roleRepository, MessageSource messageSource, 
 			PersonnelRepository personnelRepository,
-			CustomerRepository customerRepository) {
+			CustomerRepository customerRepository, GlobalSettings globalSettings) {
 		
 		this.accountRepository = accountRepository;
 		this.roleRepository = roleRepository;
 		this.messageSource = messageSource;
 		this.personnelRepository = personnelRepository;
 		this.customerRepository = customerRepository;
+		this.globalSettings = globalSettings;
 	}
 	
 	/**
@@ -284,6 +286,8 @@ public class AccountModelController extends ModelControllerImpl{
 		
 		Locale locales = LocaleContextHolder.getLocale();
 		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
+		
+		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
 	}
 	
 	@Override

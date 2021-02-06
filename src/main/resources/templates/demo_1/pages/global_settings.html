@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+  <div th:replace="demo_1/partials/_header :: header">
+  </div>
+  <body>
+    <div class="container-scroller">
+      <section th:replace="demo_1/partials/_navbar :: navbar">
+  	  </section>
+      <!-- partial:partials/_navbar.html -->
+      
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        
+        <section th:replace="demo_1/partials/_sidebar :: sidebar">
+        <!-- partial:partials/_sidebar.html -->
+        </section>
+        
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <!-- Page Title Header Starts-->
+            <section th:replace="demo_1/partials/_breadcrumb :: breadcrumb">
+			  	<!-- partial:partials/_breadcrumb.html -->
+  			</section>
+            <!-- Page Title Header Ends-->
+            <div class="row">
+              <div class="col-8 grid-margin stretch-card">
+               <div class="card"> 
+              		<div class="card-body"  >
+		              	<ul class="nav nav-tabs" id="myTab">
+						  <li class="nav-item"><a class="nav-link active" id="home-tab" data-toggle="tab" role="tab" href="#global">[[#{Settings}]]</a></li>
+						  <li class="nav-item"><a class="nav-link" data-toggle="tab" id="appointment-tab" role="tab" href="#appointments">[[#{Appointments}]]</a></li>
+						  <li class="nav-item"><a class="nav-link" data-toggle="tab" id="servicetype-tab"  role="tab" href="#services">[[#{ServiceTypes}]]</a></li>
+						</ul>
+						 <form th:action="@{/admin/global}" th:object="${globalSettings}" method="POST" enctype="multipart/form-data">
+						 <input type="hidden" th:field="*{id}">
+						 <input type="hidden" name="action" th:value="${viewType}">
+							<div class="tab-content">
+							  <div class="tab-pane active" aria-labelledby="home-tab" role="tabpanel"  id="global">
+								 <hr/>
+							      <div class="form-group" id="attachmentInput">
+								    <div class="col-md-6 grid-margin" >
+										<div class="form-group ">
+											<label>[[#{ProfileImage}]]</label>
+											<input id="recordAttachments" type="file" class="file" th:if="*{businessImage != null}" name="globalImage" th:value="@{/resources/business/img/logo/__*{businessImage}__}" multiple="false" data-preview-file-type="any">
+											<input id="recordAttachments" type="file" class="file" th:if="*{businessImage == null}" name="globalImage" multiple="false" data-preview-file-type="any">
+										</div>		
+									</div>
+								  </div>
+							      <div class="form-group">      
+							        <label for="BusinessName">[[#{BusinessName}]]</label>
+							        <input type="text" class="form-control form-control-lg" th:field="*{businessName}">
+							      </div>							      
+							      <div class="form-group">      
+							        <label for="BusinessDays">[[#{BusinessDays}]]</label>
+									<div class="form-group">
+										<div class="form-group">
+								        	<label for="daysStart">[[#{StartDay}]]
+								        	<select class="form-control form-control-lg" id="daysStart" >
+								        		<option value="1">Monday</option>
+								        		<option value="2">Tuesday</option>
+								        		<option value="3">Wednesday</option>
+								        		<option value="4">Thursday</option>
+								        		<option value="5">Friday</option>
+								        		<option value="6">Saturday</option>
+								        		<option value="0">Sunday</option>
+								        	</select>
+								        	</label>
+							        	</div>
+							        	<div class="form-group">
+								        	<label for="daysEnd">[[#{EndDay}]]
+								        	<select class="form-control form-control-lg" id="daysEnd">
+								        		<option value="1">Monday</option>
+								        		<option value="2">Tuesday</option>
+								        		<option value="3">Wednesday</option>
+								        		<option value="4">Thursday</option>
+								        		<option value="5">Friday</option>
+								        		<option value="6">Saturday</option>
+								        		<option value="0">Sunday</option>
+								        	</select>
+								        	</label>
+								        	<p class="alert alert-danger" style="display:none" id="businessDaysError">error</p>
+								        	
+								        	<input type="hidden" id="datePeriod" th:field="*{businessDays}">
+										</div>
+									</div>
+							      </div>
+							      <div class="form-group">      
+							        <label for="BusinessTimes">[[#{BusinessTimes}]]</label>
+							        <div class="form-group">
+							        	<div class="form-group">
+								        	<label for="timeStart">[[#{StartTime}]]
+								        	<select class="form-control form-control-lg" id="timeStart">
+								        	</select>
+								        	</label>
+							        	</div>
+							        	<div class="form-group">
+								        	<label for="timeEnd">[[#{EndTime}]]
+								        	<select  class="form-control form-control-lg" id="timeEnd">
+								        	</select>
+								        	</label>
+								        	<p class="alert alert-danger" style="display:none" id="businessTimesError">error</p>
+								        	
+							        	</div>
+							        	<input type="hidden" id="timePeriod" th:field="*{businessTimes}">
+									</div>
+							      </div>
+							      <div class="form-group">      
+							        <label for="surname">[[#{BusinessEmail}]]</label>
+							        <input type="email" class="form-control form-control-lg" th:field="*{businessEmail}">
+							        <p class="alert alert-danger" th:if="${#fields.hasErrors('businessEmail')}" th:errors="*{businessEmail}">error</p>
+							        
+							      </div>
+							      <div class="form-group">      
+							        <label for="surname">[[#{BusinessPass}]]</label>
+							        <input type="text" id="businessPass" class="form-control form-control-lg" th:field="*{businessPassword}" >
+							        <p class="alert alert-danger" th:if="${#fields.hasErrors('businessPassword')}" th:errors="*{businessPassword}">error</p>
+							      </div>
+							  </div>
+							  <div class="tab-pane" role="tabpanel" aria-labelledby="appointment-tab" id="appointments">
+							  	<hr/>
+							      <div class="form-group">      
+							        <label for="BookingSplit">[[#{BookingSplit}]]</label>
+							        <select id="BookingSplit" th:field="*{appointmentTimeSplit}">
+							        	 <option value="15">15</option>
+							        	 <option value="30">30</option>
+							        	 <option value="45">45</option>
+							        	 <option value="60">60</option>
+							        	 <option value="75">75</option>
+							        	 <option value="90">90</option>
+							        	 <option value="105">105</option>
+							        	 <option value="120">120</option>
+							        </select>
+							        min
+							      </div>
+							      
+							  </div>
+							  <div class="tab-pane" role="tabpanel" aria-labelledby="servicetype-tab"  id="services">
+							  	<hr/>
+							      <div class="form-group">      
+							        <label for="BookingSplit">[[#{ServiceTypes}]]: </label>
+							        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#serviceTypeModal">
+									  [[#{Services}]]
+									</button>
+							      </div>
+							  </div>
+							</div>
+	 					  <div >
+					    	<a type="button" class="btn btn-secondary" href="/" data-dismiss="modal" >[[#{action.close}]]</a>
+					        <button type="submit" class="btn btn-primary">[[#{__${#strings.capitalize(viewType)}__}]]</button>
+					      </div>
+						 <script th:inline="javascript">
+						 	/*<![CDATA[*/ 
+								var imgsrc = /*[[@{'/resources/business/img/logo/'+'__*{businessImage}__'}]]*/+'';
+								var imgtitle = /*[['__*{businessImage}__']]*/+'';
+							/*]]>*/
+						 	var errorStartEndDay = "Error StartEndDay";
+						 	var errorStartEndTime = "Error StartEnd Business Times";
+						 </script>
+						</form>
+						 
+						<script>
+
+							$('#myTab a').click(function (e) {
+							  e.preventDefault();
+							  $(this).tab('show');
+							});
+							
+							var input = $("#recordAttachments").fileinput({
+						   	  "initialPreview": ["<img width='150px' height='200px' title='"+imgtitle+"' src='"+imgsrc+"'>"],
+						   	  "initialCaption":imgtitle,
+						 	});	
+						
+							$(document).ready(function(e){
+								generateStartEndTimes();
+								$("#businessPass").attr("type","password");
+								
+								if($("#datePeriod").val()!= null && $("#timePeriod").val()!=null){
+									var datePeriod = $("#datePeriod").val().split(",");
+									var timePeriod = $("#timePeriod").val().split(",");
+									
+									$("#daysStart").val(datePeriod[0]);
+									$("#daysEnd").val(datePeriod[1]);
+									
+									$("#timeStart").val(timePeriod[0]);
+									$("#timeEnd").val(timePeriod[1]);
+								}
+							});
+							
+							
+							
+							$('form').submit(function (e) {
+								removeErrors();
+								
+								if(valid()){
+									$("#datePeriod").val($("#daysStart").val()  +","+ $("#daysEnd").val());
+									$("#timePeriod").val($("#timeStart").val()  +","+ $("#timeEnd").val());
+								}else{
+									e.preventDefault();
+								}
+								
+							});
+							
+							function removeErrors(){
+								$("#businessDaysError").hide();
+								$("#businessTimesError").hide();
+							}
+							function valid(){
+								if(validateBusinessDays() && validateBusinessTimes()){
+									return true;
+								}
+								return false;
+							}
+							
+							function validateBusinessDays(){
+								var elstart = $("#daysStart").val();
+								var elend = $("#daysEnd").val();
+								console.log(elstart + " - "+ elend);
+								if(elstart >= elend){
+									$("#businessDaysError").html(errorStartEndDay);
+									$("#businessDaysError").show();
+									return false;
+								}
+								return true;		
+							}
+							
+							function validateBusinessTimes(){
+								var elstart = $("#timeStart").val();
+								var elend = $("#timeEnd").val();
+								var startTimeArr = elstart.split(":");
+								var endTimeArr = elend.split(":");
+								
+								if(startTimeArr[0] >= endTimeArr[0]){
+									$("#businessTimesError").html(errorStartEndTime);
+									$("#businessTimesError").show();
+									return false;
+								}
+								return true;		
+							}
+							
+							function generateStartEndTimes(){
+								var d = new Date("2011-04-20T00:00:00.01");
+								var hrs = d.getHours(); // => 9
+								var minutes = d.getMinutes();
+								for(var x=hrs; x<24; x++){
+									var hrStr=x<10? '0'+x:x;
+									$("#timeStart").html($("#timeStart").html()+"<option value='"+ hrStr+":"+"00"+"'>"+hrStr+":"+"00"+"</option>");
+									$("#timeStart").html($("#timeStart").html()+"<option value='"+ hrStr+":"+"30"+"'>"+hrStr+":"+"30"+"</option>");
+									$("#timeEnd").html($("#timeEnd").html()+"<option value='"+ hrStr+":"+"00"+"'>"+hrStr+":"+"00"+"</option>");
+									$("#timeEnd").html($("#timeEnd").html()+"<option value='"+ hrStr+":"+"30"+"'>"+hrStr+":"+"30"+"</option>");
+								}
+							}
+							
+							function generateBookingSplits(){
+								var start=15;
+								for(var cnt=start; cnt<=120; cnt+=15){
+									var txt = $("#BookingSplit").html();
+									$("#BookingSplit").html(txt + "<option value="+cnt+">"+cnt+"</option>");
+								}
+									
+							}
+						</script>
+		  			</div>
+		  		</div>
+		        
+
+              </div>
+              
+            </div>
+            
+            <!-- ServiceType Modal -->
+			<div class="modal fade" id="serviceTypeModal" role="dialog"  aria-hidden="true">
+			  <div class="modal-dialog modal-md">
+			    <!-- Modal content-->
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h4 class="modal-title" >[[#{ServiceTypes}]]</h4>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+			      </div>
+			      <form th:action="@{/admin/global/services}" method="POST" th:object="${services}">
+				      <div class="modal-body" >
+							<div class="row justify-content-center" >
+						        <div class="col-lg-12">
+						            <div class="card border-0">
+						                    <div class="card-header bg-light">
+						                    	<div class="data-wrapper d-flex mt-5 mt-lg-0">
+						                    		[[#{Services}]]
+						                    		<div class="ml-sm-auto">
+								                    	<button type="button" id="addService" class="btn btn-icons btn-inverse-primary" 
+								                    	th:onclick="'add(this, '+${#lists.size(services.services)+1}+')'" th:title="#{action.add}">
+								                            <i class="fa fa-plus" ></i>
+								                        </button>
+						                        	</div>
+													
+						                    	</div>
+						                    </div>
+						                    <div class="form-group">
+												<div class="alert alert-success alert-dismissible fade show" role="alert" id="alertSuccess" style="display:none">
+												    Success
+												  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+												    <span aria-hidden="true">&times;</span>
+												  </button>
+												</div>
+												<div class="alert alert-danger alert-dismissible fade show" role="alert" id="alertError" style="display:none">
+												    Error
+												  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+												    <span aria-hidden="true">&times;</span>
+												  </button>
+												</div>
+											</div>
+						                    
+						                    <div class="card-body"  style="overflow-y: scroll; height:600px">
+
+						                    	<div class="form-group" id="serviceTypeInputs">
+							                    	<div class="input-group" th:each="service, itr: ${services.services}" th:with="id = *{services[__${itr.index}__].id}" th:id="${id}">
+														<input type="hidden" th:field="*{services[__${itr.index}__].id}">
+														<input class="form-control form-control-lg" type="text" th:field="*{services[__${itr.index}__].name}">
+														<input type="hidden" th:field="*{services[__${itr.index}__].addeddate}">
+														<div class="form-group" id="editDeleteButtonGroup">
+															<button type="button" class="btn btn-icons btn-inverse-success" th:id="'updateBtn'+${id}" th:onclick="'update('+${id}+','+__${itr.index}__+')'">
+									                            <i class="fa fa-check"></i>
+									                        </button>
+															<button type="button" class="btn btn-icons btn-inverse-danger" th:id="'removeBtn'+${id}"
+															 	data-toggle="modal" data-target="#confirm-delete" th:onclick="'remove('+${id}+')'" >
+									                            <i class="fa fa-trash"></i>
+									                        </button>
+									                        <button type="button" class="btn btn-icons btn-inverse-secondary" th:id="'progressBtn'+${id}" style="display:none">
+									                            <i class="fa fa-spin fa-spinner"></i>
+									                        </button>
+								                        </div>
+								                   	 </div>
+												</div>
+						                    </div>
+						    		</div>
+								</div>
+							</div>
+				      </div>
+				  </form>
+			    </div>
+			  </div>
+			</div>
+			
+			<div class="modal fade" id="confirm-delete" tabindex="0" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		        <div class="modal-dialog modal-md">
+		            <div class="modal-content">
+		            
+		                <div class="modal-header">
+		                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		                    <h4 class="modal-title" id="myModalLabel">[[${ConfirmDelete}]]</h4>
+		                </div>
+		            
+		                <div class="modal-body">
+		                    <p>You are about to delete one service. This will remove all patient's records where this service was given.</p>
+		                    <p>Do you want to proceed?</p>
+		                </div>
+		                
+		                <div class="modal-footer">
+		                    <button type="button" class="btn btn-default" data-number="2" >Cancel</button>
+		                    <button class="btn btn-danger" id="confirmDelete" data-number="2" onclick="">Delete</button>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+			
+            <script>
+            	$(document).ready(function(){
+             	
+             	var token = $("meta[name='_csrf']").attr("content");
+             	var header = $("meta[name='_csrf_header']").attr("content");
+             	
+	             	$(document).ajaxSend(function(e, xhr, options) {
+	             	    xhr.setRequestHeader(header, token);
+	             	});
+		            
+	             	$("button[data-number=1]").click(function(){
+		                $('#serviceTypeModal').modal("hide");
+		            });
+		
+		            $("button[data-number=2]").click(function(){
+		                $('#confirm-delete').modal("hide");
+		            });
+
+            	});
+	            
+            	function remove(id){
+            		var removeId=id;
+            		$("#confirmDelete").removeAttr("onclick");
+            		$("#confirmDelete").attr("onclick","confirmDelete('"+id+"')");
+            	}
+            	
+            	function add(elem, nr){
+            		var finalNr = nr;
+            		var currentHtml = $("#serviceTypeInputs").html();
+					var txt = '<div class="input-group" id="'+finalNr+'">'+
+						'<input class="form-control form-control-lg" type="text" id="services'+finalNr+'.name" name="services['+finalNr+'].name" value="">'+
+						
+						'<div class="form-group" id="editDeleteButtonGroup">'+
+						
+						'<button type="button" class="btn btn-icons btn-inverse-success" id="updateBtn'+finalNr+'" onclick="create('+finalNr+')">'+
+						'<i class="fa fa-check"></i></button>'+
+						
+						'<button type="button" class="btn btn-icons btn-inverse-danger" onclick="cancel('+finalNr+')" th:title="#{action.remove}">'+
+						'<i class="fa fa-times"></i></button>'+
+						
+						'<button type="button" class="btn btn-icons btn-inverse-secondary" id="progressBtn'+finalNr+'" style="display:none">'+
+						'<i class="fa fa-spin fa-spinner"></i></button>'+
+						
+						'</div>';
+						
+						'</div>';
+					
+					$(elem).removeAttr("onclick");
+					$(elem).attr("onclick","add(this,"+(finalNr+1)+")");
+					$("#serviceTypeInputs").html(currentHtml + txt);					
+					
+            	}
+            	
+            	function cancel(id){
+            		if($("#"+id) != undefined){
+        				$("#"+id).remove();
+            		}
+					$("#addService").removeAttr("onclick");
+					$("#addService").attr("onclick","add(this,"+(id+1)+")");
+            	}
+            	
+            	function update(id, indexId){
+            		$("#progressBtn"+id).show();
+            		$("#updateBtn"+id).hide();
+            		$("#removeBtn"+id).hide();
+            		
+            		var id = document.getElementById("services"+indexId+".id").value;
+            		var name = document.getElementById("services"+indexId+".name").value;
+            		console.log(" NAME="+ name);
+            		//call update method
+            		editServiceType(id, name, function(data){
+            			$("#progressBtn"+id).hide();
+            			if(data.error != "error"){
+            				console.log(data.result);
+            				$("#alertSuccess").html(data.message + 
+            						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+            						);
+            				$("#alertSuccess").show();
+            				refreshEditServiceHtml(id, data.result[0]);
+            			}else{
+            				$("#alertError").html(data.message + 
+            						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+            						);
+            				$("#alertError").show();
+            			}
+            		});
+            	}
+            	
+            	function create(id){
+            		$("#progressBtn"+id).show();
+            		$("#updateBtn"+id).hide();
+            		$("#removeBtn"+id).hide();
+
+            		//call create method
+            		var name = document.getElementById("services"+id+".name").value;
+            		
+            		createServiceType(name, function(data){
+            			$("#progressBtn"+id).hide();
+            			
+            			if(data.error != "error"){
+            				console.log(data.result);
+            				$("#alertSuccess").html(data.message + 
+            						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+            						);
+            				$("#alertSuccess").show();
+                			refreshServiceHtml(id, data.result[0]);
+            			}else{
+            				$("#alertError").html(data.message + 
+            						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+            						);
+            				$("#alertError").show();
+            			}
+            		});
+            	}
+            	
+            	function confirmDelete(id){
+            		$("#progressBtn"+id).show();
+            		$("#updateBtn"+id).hide();
+            		$("#removeBtn"+id).hide();
+
+            		//Call delete method
+            		deleteServiceType(id, function(data){
+						$("#progressBtn"+id).hide();
+                		
+            			if(data.error != "error"){
+            				console.log(data.response);
+            				$("#alertSuccess").html(data.message + 
+            						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+            						);
+                			var elem = document.getElementById(id);
+                    		$(elem).remove();
+            				$("#alertSuccess").show();
+            			}else{
+            				$("#alertError").html(data.message + 
+            						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+            						);
+            				$("#alertError").show();
+            			}
+            		});
+            	}
+            	
+            	function refreshEditServiceHtml(id, response){
+            		var currentHtml = $("#serviceTypeInputs").html();            		
+					var txt = '<input type="hidden" id="services'+response.id+'.id" name="services['+response.id+'].id" value="'+response.id+'">'+
+						'<input class="form-control form-control-lg" type="text" id="services'+response.id+'.name" name="services['+response.id+'].name" value="'+response.name+'">'+
+						'<input type="hidden" id="services'+response.id+'.addeddate" name="services['+response.id+'].addeddate" value="'+response.addeddate+'">'+
+
+						'<div class="form-group" id="editDeleteButtonGroup">'+
+
+						'<button type="button" class="btn btn-icons btn-inverse-success" id="updateBtn'+response.id+'" onclick="update('+id+', '+response.id+')">'+
+						'<i class="fa fa-check"></i></button>'+
+						
+						'<button type="button" class="btn btn-icons btn-inverse-danger" id="removeBtn'+response.id+'" data-toggle="modal" data-target="#confirm-delete" onclick="remove('+response.id+')" >'+
+                            '<i class="fa fa-trash"></i></button>'+
+                        
+                        '<button type="button" class="btn btn-icons btn-inverse-secondary" id="progressBtn'+response.id+'" style="display:none">'+
+                            '<i class="fa fa-spin fa-spinner"></i></button>'
+
+                        '</div>'+
+						//'<button type="button" class="btn btn-icons btn-inverse-danger" onclick="cancel('+response.id+')" th:title="#{action.remove}">'+
+						//'<i class="fa fa-times"></i></button>'+
+						
+						'</div>';
+					
+					$("#"+id).html(txt);
+            	}
+            	
+            	function refreshServiceHtml(id, response){
+            		var currentHtml = $("#serviceTypeInputs").html();
+            		
+            		$("#"+id).attr("id", response.id);
+            		
+					var txt = '<input type="hidden" id="services'+response.id+'.id" name="services['+response.id+'].id" value="'+response.id+'">'+
+						'<input class="form-control form-control-lg" type="text" id="services'+response.id+'.name" name="services['+response.id+'].name" value="'+response.name+'">'+
+						'<input type="hidden" id="services'+response.id+'.addeddate" name="services['+response.id+'].addeddate" value="'+response.addeddate+'">'+
+
+						'<div class="form-group" id="editDeleteButtonGroup">'+
+
+						'<button type="button" class="btn btn-icons btn-inverse-success" id="updateBtn'+response.id+'" onclick="update('+response.id+','+response.id+')">'+
+						'<i class="fa fa-check"></i></button>'+
+						
+						'<button type="button" class="btn btn-icons btn-inverse-danger" id="removeBtn'+response.id+'" data-toggle="modal" data-target="#confirm-delete" onclick="remove('+response.id+')" >'+
+                            '<i class="fa fa-trash"></i></button>'+
+                        
+                        '<button type="button" class="btn btn-icons btn-inverse-secondary" id="progressBtn'+response.id+'" style="display:none">'+
+                            '<i class="fa fa-spin fa-spinner"></i></button>'
+
+                        '</div>'+
+						//'<button type="button" class="btn btn-icons btn-inverse-danger" onclick="cancel('+response.id+')" th:title="#{action.remove}">'+
+						//'<i class="fa fa-times"></i></button>'+
+						
+					'</div>';
+					$("#"+id).remove();
+					$("#"+response.id).html(txt);
+            	}
+            	
+            	
+            	function createServiceType(name, callback){
+            		$.post("/api/serviceType/create", {"name" : name}, callback);
+            	}
+            	
+            	function editServiceType(id, newName, callback){
+            		$.post("/api/serviceType/edit", {"id" : id, "newName": newName}, callback);
+            	}
+            	
+            	function deleteServiceType(id, callback){
+            		$.post("/api/serviceType/delete", {"id" : id}, callback);
+            	}
+            </script>
+          </div>
+          <!-- content-wrapper ends -->
+		  
+		  <section th:replace="demo_1/partials/_footer :: footer">
+		  	<!-- partial:partials/_footer.html -->
+		  </section>
+          <!-- partial -->
+          
+        </div>
+        <!-- main-panel ends -->
+        
+      </div>
+    
+		
+    <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="/assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="/assets/vendors/js/vendor.bundle.addons.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page-->
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>    
+    <!-- End plugin js for this page-->
+    <!-- inject:js -->
+    <script src="/assets/js/shared/off-canvas.js"></script>
+    <script src="/assets/js/shared/misc.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    <script src="/assets/js/demo_1/personnel.js"></script>
+    <!-- End custom js for this page-->
+  </body>
+</html>

@@ -26,6 +26,19 @@ public class DateUtil {
 		return cal.getTime();
 	}
 	
+	public static Date getStartWorkingHr(String startHour) {
+		Calendar cal = Calendar.getInstance();
+		String[] hourMin = startHour.split(":");
+		int hr = Integer.parseInt(hourMin[0]);
+		int min = Integer.parseInt(hourMin[0]);
+		
+		cal.setTime(new Date());
+		cal.set(Calendar.HOUR_OF_DAY, hr);
+		cal.set(Calendar.MINUTE, min);
+		
+		return cal.getTime();
+	}
+	
 	public static Date getEndWorkingHr() {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
@@ -33,6 +46,19 @@ public class DateUtil {
 		cal.set(Calendar.MINUTE,30);
 		cal.set(Calendar.SECOND,0);
 		cal.set(Calendar.MILLISECOND,0); 
+		return cal.getTime();
+	}
+	
+	public static Date getEndWorkingHr(String endHour) {
+		Calendar cal = Calendar.getInstance();
+		String[] hourMin = endHour.split(":");
+		int hr = Integer.parseInt(hourMin[0]);
+		int min = Integer.parseInt(hourMin[0]);
+		
+		cal.setTime(new Date());
+		cal.set(Calendar.HOUR_OF_DAY, hr);
+		cal.set(Calendar.MINUTE, min);
+		
 		return cal.getTime();
 	}
 	

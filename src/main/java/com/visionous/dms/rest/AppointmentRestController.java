@@ -290,8 +290,7 @@ public class AppointmentRestController {
         
         List<Appointment> appointments = appointmentRepository.findByPersonnelId(personnelId);
         
-        List<Appointment> userss = new ArrayList<>();
-        if (userss.isEmpty()) {
+        if (appointments.isEmpty()) {
 			String messageNoUserFound = messageSource.getMessage("alert.noUserFound", null, LocaleContextHolder.getLocale());
             result.setMessage(messageNoUserFound); 
         } else {

@@ -40,6 +40,7 @@ import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Questionnaire;
 import com.visionous.dms.pojo.QuestionnaireResponse;
@@ -72,10 +73,10 @@ public class CustomerModelController extends ModelControllerImpl{
 	private QuestionnaireRepository questionnaireRepository;
     private MessageSource messages;
 	private TeethRepository teethRepository;
-	
+	private GlobalSettings globalSettings;
+
 	private static String currentPage = LandingPages.CUSTOMER.value();
 
-	
 	/**
 	 * @param customerRepository
 	 */
@@ -83,7 +84,7 @@ public class CustomerModelController extends ModelControllerImpl{
 	public CustomerModelController(CustomerRepository customerRepository, AccountRepository accountRepository, 
 			RoleRepository roleRepository, TeethRepository teethRepository, RecordRepository recordRepository,
 			QuestionnaireRepository questionnaireRepository, QuestionnaireResponseRepository questionnaireResponseRepository,
-			 MessageSource messages) {
+			 MessageSource messages, GlobalSettings globalSettings) {
 		this.customerRepository = customerRepository;
 		this.accountRepository = accountRepository;	
 		this.teethRepository = teethRepository;
@@ -92,6 +93,7 @@ public class CustomerModelController extends ModelControllerImpl{
 		this.questionnaireResponseRepository = questionnaireResponseRepository;
 		this.recordRepository = recordRepository;
 		this.messages=messages;
+		this.globalSettings = globalSettings;
 	}
 	
 	
@@ -393,6 +395,39 @@ public class CustomerModelController extends ModelControllerImpl{
 
 		Locale locales = LocaleContextHolder.getLocale();
 		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
+		
+		int startDay = 1;
+		int endDay = 5;
+		String startTime = "08:00";
+		String endTime = "18:00";
+		int bookingSplit = 60;
+		
+		if(this.globalSettings != null) {
+			String[] dayPeriod = this.globalSettings.getBusinessDays().split(",");
+			List<Integer> daysDisabled = new ArrayList<>();
+			int dayStartNr = Integer.parseInt(dayPeriod[0]);
+			int dayEndNr = Integer.parseInt(dayPeriod[1]);
+			for(int x=0; x<=6; x++) {
+				if(dayStartNr > x || x > dayEndNr) {
+					daysDisabled.add(x);	
+				}
+			}
+			super.addModelCollectionToView("disabledDays", daysDisabled);
+			String[] timePeriod = this.globalSettings.getBusinessTimes().split(",");
+			
+			bookingSplit = this.globalSettings.getAppointmentTimeSplit();
+			super.addModelCollectionToView("bookingSplit", bookingSplit);
+			
+			String[] startTimeArr = timePeriod[0].split(":");
+			super.addModelCollectionToView("startTime", startTimeArr[0]);
+			super.addModelCollectionToView("startMinute", startTimeArr[1]);
+			String[] endTimeArr = timePeriod[1].split(":");
+			super.addModelCollectionToView("endTime", endTimeArr[0]);
+			super.addModelCollectionToView("endMinute", endTimeArr[1]);
+			
+		}
+		
+		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
 	}
 	
 	/**
