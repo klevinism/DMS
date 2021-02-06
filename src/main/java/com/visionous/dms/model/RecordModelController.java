@@ -141,14 +141,17 @@ public class RecordModelController extends ModelControllerImpl {
 				
 				if(uploadedFiles != null){
 					StringBuilder attachments = new StringBuilder();
+
 					for(MultipartFile file : uploadedFiles) {
-						try {
-						    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss-"));
-							String path = FileManager.write(file, "/tmp/records/"); 
-						    String fileName = date + file.getOriginalFilename();
-							attachments.append(fileName+","); 
-						} catch (IOException e) {
-							e.printStackTrace();
+						if(file.getOriginalFilename() != null && !file.getOriginalFilename().equals("")) {
+							try {
+							    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss-"));
+								String path = FileManager.write(file, "/tmp/records/"); 
+							    String fileName = date + file.getOriginalFilename();
+								attachments.append(fileName+","); 
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 					newRecord.setAttachments(attachments.toString());
