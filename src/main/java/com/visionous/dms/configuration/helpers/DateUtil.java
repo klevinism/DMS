@@ -53,7 +53,7 @@ public class DateUtil {
 		Calendar cal = Calendar.getInstance();
 		String[] hourMin = endHour.split(":");
 		int hr = Integer.parseInt(hourMin[0]);
-		int min = Integer.parseInt(hourMin[0]);
+		int min = Integer.parseInt(hourMin[1]);
 		
 		cal.setTime(new Date());
 		cal.set(Calendar.HOUR_OF_DAY, hr);
@@ -74,7 +74,7 @@ public class DateUtil {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
 		cal.set(Calendar.MONTH, 0);
-		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.DAY_OF_MONTH, 0);
 		return cal.getTime();
 	}
 	

@@ -151,21 +151,22 @@ public class HomeModelController extends ModelControllerImpl{
 				endDay = Integer.parseInt(dayPeriod[1]);
 				
 				startTime = timePeriod[0];
-				endTime = timePeriod[0];
+				endTime = timePeriod[1];
 			}
 
-			Date appointmentEndTime = DateUtil.getEndWorkingHr(startTime);
+			Date appointmentEndTime = DateUtil.getEndWorkingHr(endTime);
 
 			Account acc = AccountUtil.currentLoggedInUser();
 			Optional<Account> currentAccount = accountRepository.findByUsername(acc.getUsername());
 			currentAccount.ifPresent(account -> {
 				
 				Period monthPeriodOfThisYear = DateUtil.getPeriodBetween(DateUtil.getBegginingOfYear(), new Date());
+				System.out.println( DateUtil.getStartWorkingHr() +"-----"+ appointmentEndTime);
 				List<Appointment> todaysAppointments = appointmentRepository.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(account.getId(), DateUtil.getStartWorkingHr(), appointmentEndTime);
 				List<Record> top10records = recordRepository.findFirst10ByPersonnelIdOrderByServicedateDesc(account.getId()); 
 				List<Integer> nrOfRecordsForEachMonth = new ArrayList<>();
 				for(int month=0 ; month <= monthPeriodOfThisYear.getMonths(); month++) {
-					
+
 					Date beginMonthDate = DateUtil.getCurrentDateByMonthAndDay(month, 1);
 										
 					Date endMonthDate = DateUtil.getCurrentDateByMonthAndDay(month, DateUtil.getCalendarFromDate(beginMonthDate).getActualMaximum(Calendar.DAY_OF_MONTH));
