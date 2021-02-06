@@ -1,8 +1,40 @@
 <div class="card" th:fragment="create">
   <div class="card-body">
+  	<h4 class="card-title">[[#{Customer}]] </h4>
+	<div class="form-group" th:if="${loggedInAccount.roles[0].name == 'ADMIN'}">      
+		<div class="form-check form-check-flat" >
+		    <label class="form-check-label">
+		    <input type="checkbox" class="form-check-inputform-control-lg" onchange="oldCustomer(this)"> [[#{OldCustomer}]] ?</label>
+		</div>
+	</div>
     <hr/>
-      <div class="form-group">      
-        <label for="type">Customer </label>
+      <div class="form-group" th:if="${loggedInAccount.roles[0].name == 'ADMIN'}">      
+		<div class="form-group" id="registerDayCalendarDiv" style="display:none">
+		  <label for="Birthday">[[#{RegisterDate}]]</label>
+		  <input type="date" class="form-control form-control-lg"  id="registerDayCalendarDiv" th:placeholder="*{registerdate}"  th:field="*{registerdate}" disabled>
+		</div>
       </div>
   </div>
+  <script>
+  function oldCustomer(e){
+	  if($(e).is(':checked')){
+		  showOldFields();
+	  }else{
+		  hideOldFields();
+	  }
+  }
+  function showOldFields(){
+	  $("#divSelfGenerateFields").show();
+	  $("#registerDayCalendarDiv").show();
+	  $("#divSelfGenerateFields").find("button").removeAttr("disabled");
+	  $("#registerDayCalendarDiv").find("input").removeAttr("disabled");
+  }
+  function hideOldFields(){
+	  $("#divSelfGenerateFields").hide();
+	  $("#registerDayCalendarDiv").hide();
+	  $("#divSelfGenerateFields").find("button").attr("disabled","disabled");
+	  $("#registerDayCalendarDiv").find("input").attr("disabled","disabled");
+	  $("form").trigger("reset");
+  }  
+  </script>
 </div>

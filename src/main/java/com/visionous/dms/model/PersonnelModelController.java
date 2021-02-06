@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.FieldError;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
@@ -91,8 +93,10 @@ public class PersonnelModelController extends ModelControllerImpl{
 		if(super.getAllControllerParams().containsKey("modelAttribute")) {
 			if(super.getAllControllerParams().containsKey("action")) {
 				if(super.hasResultBindingError()) {
+					System.out.println(" HAS BINDING RESULT RUN()");
 					super.setControllerParam("viewType", super.getAllControllerParams().get("action").toString().toLowerCase());
 				}else {
+					System.out.println(" HAS NOOO BINDONG RESULT RUN()");
 					persistModelAttributes(
 							(Personnel) super.getAllControllerParams().get("modelAttribute"), 
 							super.getAllControllerParams().get("action").toString().toLowerCase()
@@ -158,15 +162,14 @@ public class PersonnelModelController extends ModelControllerImpl{
 			if(newPersonnel.getAccount().getRoles().get(0).getName().equals("PERSONNEL")) {
 				if(emailExist(newPersonnel.getAccount().getEmail())) {
 			        String message = messages.getMessage("alert.emailExists", null, LocaleContextHolder.getLocale());
-					super.addModelCollectionToView("errorEmail", message);
-					super.addModelCollectionToView("selected", newPersonnel);
+			        super.getBindingResult().addError(new FieldError("account", "account.email",newPersonnel.getAccount().getEmail(), false, null, null, message));
+					
 					super.removeControllerParam("viewType");
 					super.addControllerParam("viewType", Actions.CREATE.getValue());
-
-				}else if(usernameExist(newPersonnel.getAccount().getUsername())) {
+				}else if(usernameExist(newPersonnel.getAccount().getUsername())) {					
 			        String message = messages.getMessage("alert.usernameExists", null, LocaleContextHolder.getLocale());
-					super.addModelCollectionToView("errorUsername", message);
-					super.addModelCollectionToView("selected", newPersonnel);
+					super.getBindingResult().addError(new FieldError("account", "account.username", newPersonnel.getAccount().getUsername(), false, null, null, message));
+
 					super.removeControllerParam("viewType");
 					super.addControllerParam("viewType", Actions.CREATE.getValue());
 				}else {
@@ -232,7 +235,6 @@ public class PersonnelModelController extends ModelControllerImpl{
 		if(viewType.equals(Actions.CREATE.getValue())) {
 
 			if(!super.hasResultBindingError()) {
-				
 				Personnel newPersonnel = new Personnel();
 				newPersonnel.setAccount(new Account());
 				super.addModelCollectionToView("personnel", newPersonnel);
@@ -241,7 +243,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 			Iterable<Role> allRoles = roleRepository.findAll();
 			super.addModelCollectionToView("allRoles", allRoles);
 			super.addModelCollectionToView("isPersonnelCreation", true);
-
+			
 		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
 			String personnelId = super.getAllControllerParams().get("id").toString();
 			Optional<Personnel> personnel = personnelRepository.findById(Long.valueOf(personnelId));
@@ -259,9 +261,8 @@ public class PersonnelModelController extends ModelControllerImpl{
 				Iterable<Role> allRoles = roleRepository.findAll();
 				super.addModelCollectionToView("allRoles", allRoles);
 			}
-			
 		}
-		
+
 	}
 	
 	/**

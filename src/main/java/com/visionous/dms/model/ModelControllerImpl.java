@@ -22,7 +22,7 @@ public class ModelControllerImpl implements ModelController{
 	private Map<String, Object> paramMap;
 	private Model viewModel;
 	
-	private boolean resultBindingError;
+	private BindingResult resultBindingError;
 	
 	/**
 	 * @param model
@@ -137,11 +137,7 @@ public class ModelControllerImpl implements ModelController{
 
 	@Override
 	public ModelController addBindingResult(BindingResult bindingResult) {
-		if(bindingResult.hasErrors()) {			
-			this.resultBindingError = true;
-		}else {
-			this.resultBindingError = false;
-		}
+		this.resultBindingError = bindingResult;
 		return this;
 	}
 
@@ -149,6 +145,11 @@ public class ModelControllerImpl implements ModelController{
 	 * @return the resultBindingError
 	 */
 	public boolean hasResultBindingError() {
+		if(resultBindingError == null) return false;
+		return resultBindingError.hasErrors();
+	}
+	
+	public BindingResult getBindingResult() {
 		return resultBindingError;
 	}
 }
