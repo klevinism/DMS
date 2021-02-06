@@ -228,8 +228,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 		
 		if(viewType.equals(Actions.CREATE.getValue())) {
 
-			if((super.getModelCollectionToView("errorEmail") == null) && (super.getModelCollectionToView("errorUsername") == null) 
-				&& !super.hasResultBindingError()) {
+			if(!super.hasResultBindingError()) {
 				
 				Personnel newPersonnel = new Personnel();
 				newPersonnel.setAccount(new Account());
