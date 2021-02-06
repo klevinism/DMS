@@ -5,9 +5,12 @@ package com.visionous.dms.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,19 +62,23 @@ public class QuestionnaireModelViewController {
 	 * @return
 	 */
 	@PostMapping("") 
-	public String questionnairePost(@ModelAttribute Questionnaire questionnaire,
+	public String questionnairePost(@Valid Questionnaire questionnaire, BindingResult errors,
 			@RequestParam(required = true) String action,
 			Model model) {
-		System.out.println(questionnaire.getCustomerId());
-		String redirectUrl = "/customer/"+questionnaire.getCustomerId()+"/history/create"; 
-		System.out.println(redirectUrl);
+
 		questionnaireModelController.init()
 			.addControllerParam("action", action)
 			.addControllerParam("viewType", action)
+			.addBindingResult(errors)
 			.addModelAttributes(questionnaire)
 			.setViewModel(model)
 			.run(); // GetValuesForView
+
+		if(questionnaireModelController.hasResultBindingError()) {
+			return "demo_1/pages/create_questionnaire";
+		}
 		
+		String redirectUrl = "/customer/"+questionnaire.getCustomerId()+"/history/create";
 		return "redirect:"+redirectUrl; 
 	}
 	 

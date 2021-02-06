@@ -3,22 +3,20 @@
     <h4 class="card-title">[[#{CreateAccount}]]</h4>
     <hr/>
     
-      <div class="form-group" id="attachmentInput">
-							    
-		    <div class="col-md-6 grid-margin" >
-			<div class="form-group ">
-				<label>[[#{ProfileImage}]]</label>
-				<input id="recordAttachments" type="file" class="file" name="profileimage" multiple="false" data-preview-file-type="any">
-			</div>
-			
-			</div>
+      <div class="form-group" id="attachmentInput">						    
+	    <div class="col-md-6 grid-margin" >
+		<div class="form-group ">
+			<label>[[#{ProfileImage}]]</label>
+			<input id="recordAttachments" type="file" class="file" name="profileimage" multiple="false" data-preview-file-type="any">
+		</div>
+		
+		</div>
 	  </div>
     
       <div class="form-group">      
         <label for="username">[[#{Username}]]</label>
         <input type="text" class="form-control form-control-lg" th:placeholder="*{account.username}" th:field="*{account.username}">
         <p class="alert alert-danger" th:if="${#fields.hasErrors('account.username')}" th:errors="*{account.username}"></p>
-        <p class="alert alert-danger" th:if="${errorUsername != null}" th:text="${errorUsername}"></p>
       </div>
       
       <div class="form-group">      
@@ -30,20 +28,25 @@
       <div class="form-group">      
         <label for="name">[[#{Name}]]</label>
         <input type="text" class="form-control form-control-lg" th:placeholder="*{account.name}" th:field="*{account.name}">
+        <p class="alert alert-danger" id="nameEmpty" style="display:none"></p>
         <p class="alert alert-danger" th:if="${#fields.hasErrors('account.name')}" th:errors="*{account.name}"></p>
       </div>
       
       <div class="form-group">      
         <label for="surname">[[#{Surname}]]</label>
         <input type="text" class="form-control form-control-lg" th:placeholder="*{account.surname}" th:field="*{account.surname}">
+        <p class="alert alert-danger" id="surnameEmpty" style="display:none"></p>
         <p class="alert alert-danger" th:if="${#fields.hasErrors('account.surname')}" th:errors="*{account.surname}"></p>
+      </div>
+      
+      <div class="form-group" id="divSelfGenerateFields" style="display:none">      
+        <button class="btn btn-primary" disabled>[[#{SelfGenerateFields}]]</button>
       </div>
       
       <div class="form-group">      
         <label for="email">[[#{Email}]]</label>
         <input type="text" class="form-control form-control-lg" th:placeholder="*{account.email}" th:field="*{account.email}">
         <p class="alert alert-danger" th:if="${#fields.hasErrors('account.email')}" th:errors="*{account.email}"></p>
-        <p class="alert alert-danger" th:if="${errorEmail != null}" th:text="${errorEmail}"></p>
       </div>
       <div class="form-group">      
         <label for="phone">[[#{PhoneNr}]]</label>
@@ -66,7 +69,6 @@
       
       <div class="form-group">
         <label for="roles">[[#{Roles}]]</label>
-        
         <select th:field="*{account.roles}" th:with="roleName = ${isPersonnelCreation !=null ? 'PERSONNEL' : 'CUSTOMER'}">
         	<option th:each="role: ${allRoles}" th:if="${role.name == roleName}"  th:value="${role.id}" th:text="${role.name}"></option>
         </select>
@@ -92,7 +94,6 @@
         <input type="text" class="form-control form-control-lg" th:placeholder="*{account.country}"  th:field="*{account.country}">
         <p class="alert alert-danger" th:if="${#fields.hasErrors('account.country')}" th:errors="*{account.country}"></p>
       </div>
-      
       <script>
       $('#birthdayCalendar').datetimepicker({
      	    "allowInputToggle": true,
@@ -100,8 +101,49 @@
      	    "showClear": true,
      	    "format": "YYYY-MM-DD",
      	    "daysOfWeekDisabled": []
-       });
+      });
+      
+      $('#registerDayCalendarDiv').datetimepicker({
+   	    "allowInputToggle": true,
+   	    "showClose": true,
+   	    "showClear": true,
+   	    "format": "YYYY-MM-DD",
+   	    "daysOfWeekDisabled": []
+      });
+      
 
+	  $("#divSelfGenerateFields").find("button").click(function(e){
+		  $("#nameEmpty").hide();
+		  $("#surnameEmpty").hide();
+		  e.preventDefault();
+		  var nameElem = document.getElementById("account.name");
+		  var surnameElem = document.getElementById("account.surname");
+		  console.log(nameElem.value != null);
+		  console.log(nameElem.value.trim() != "");
+		  console.log(surnameElem.value != null);
+		  console.log(surnameElem.value.trim() != "");
+		  if((nameElem.value != null && nameElem.value.trim() != "")&&
+				  (surnameElem.value != null && surnameElem.value.trim() != "")){
+			  var name = nameElem.value;
+			  var surname = surnameElem.value;
+			  var defEmail="@hotmail.com";
+			  document.getElementById("account.username").value=name.toLowerCase()+"."+surname.toLowerCase();
+			  document.getElementById("account.password").value="1234";
+			  document.getElementById("account.email").value= name.toLowerCase()+"."+surname.toLowerCase()+defEmail;
+			  document.getElementById("account.phone").value="0694444333";
+			  document.getElementById("account.address").value = "Tirane";
+			  document.getElementById("account.city").value = "Tirane";
+			  document.getElementById("account.country").value="Shqiperi";
+		  }else{
+		  	if(nameElem.value==null || nameElem.value.trim() == ""){
+		  		$("#nameEmpty").html("[[#{alert.fieldEmpty}]]");
+				$("#nameEmpty").show();
+		  	}else if(surnameElem.value==null || surnameElem.value.trim() == ""){
+		  		$("#surnameEmpty").html("[[#{alert.fieldEmpty}]]");
+				$("#surnameEmpty").show();
+		  	}
+		 }
+	  });
       </script>
   </div>
 </div>

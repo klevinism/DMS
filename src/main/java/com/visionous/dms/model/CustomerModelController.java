@@ -29,6 +29,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.FieldError;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +41,7 @@ import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Questionnaire;
 import com.visionous.dms.pojo.QuestionnaireResponse;
@@ -68,14 +70,15 @@ public class CustomerModelController extends ModelControllerImpl{
 	private AccountRepository accountRepository;
 	private RoleRepository roleRepository;
 	private RecordRepository recordRepository;
+	private HistoryRepository historyRepository;
 	private QuestionnaireResponseRepository questionnaireResponseRepository;
 	private QuestionnaireRepository questionnaireRepository;
     private MessageSource messages;
 	private TeethRepository teethRepository;
-	
+	private GlobalSettings globalSettings;
+
 	private static String currentPage = LandingPages.CUSTOMER.value();
 
-	
 	/**
 	 * @param customerRepository
 	 */
@@ -83,7 +86,7 @@ public class CustomerModelController extends ModelControllerImpl{
 	public CustomerModelController(CustomerRepository customerRepository, AccountRepository accountRepository, 
 			RoleRepository roleRepository, TeethRepository teethRepository, RecordRepository recordRepository,
 			QuestionnaireRepository questionnaireRepository, QuestionnaireResponseRepository questionnaireResponseRepository,
-			 MessageSource messages) {
+			 MessageSource messages, GlobalSettings globalSettings, HistoryRepository historyRepository) {
 		this.customerRepository = customerRepository;
 		this.accountRepository = accountRepository;	
 		this.teethRepository = teethRepository;
@@ -92,6 +95,8 @@ public class CustomerModelController extends ModelControllerImpl{
 		this.questionnaireResponseRepository = questionnaireResponseRepository;
 		this.recordRepository = recordRepository;
 		this.messages=messages;
+		this.globalSettings = globalSettings;
+		this.historyRepository = historyRepository;
 	}
 	
 	
@@ -137,10 +142,12 @@ public class CustomerModelController extends ModelControllerImpl{
 				account.setPersonnel(null);
 				if(account.getCustomer().getCustomerHistory() != null && account.getCustomer().getQuestionnaire() != null) {
 					questionnaireRepository.deleteById(account.getCustomer().getQuestionnaire().getId());
+					historyRepository.delete(account.getCustomer().getCustomerHistory());
 				}
-				
+
 				account.setCustomer(null);
 				account.setRoles(null);
+				
 				accountRepository.delete(account);
 			});
 			
@@ -185,22 +192,24 @@ public class CustomerModelController extends ModelControllerImpl{
 			if(newCustomer.getAccount().getRoles().get(0).getName().equals("CUSTOMER")) {	
 				if(emailExist(newCustomer.getAccount().getEmail())) {
 			        String message = messages.getMessage("alert.emailExists", null, LocaleContextHolder.getLocale());
-					super.addModelCollectionToView("errorEmail", message);
-					super.addModelCollectionToView("selected", newCustomer);
+			        super.getBindingResult().addError(new FieldError("account", "account.email", newCustomer.getAccount().getEmail(), false, null, null, message));
+					
 					super.removeControllerParam("viewType");
 					super.addControllerParam("viewType", Actions.CREATE.getValue());
 
 				}else if(usernameExist(newCustomer.getAccount().getUsername())) {
 			        String message = messages.getMessage("alert.usernameExists", null, LocaleContextHolder.getLocale());
-					super.addModelCollectionToView("errorUsername", message);
-					super.addModelCollectionToView("selected", newCustomer);
+			        super.getBindingResult().addError(new FieldError("account", "account.username", newCustomer.getAccount().getUsername(), false, null, null, message));
+
 					super.removeControllerParam("viewType");
 					super.addControllerParam("viewType", Actions.CREATE.getValue());
 				}else {
 					super.addModelCollectionToView("errorUsername", null);
 					super.addModelCollectionToView("errorEmail", null);
 					newCustomer.getAccount().setCustomer(null);
-					newCustomer.setRegisterdate(new Date(System.currentTimeMillis()));
+					if(newCustomer.getRegisterdate() == null) {
+						newCustomer.setRegisterdate(new Date(System.currentTimeMillis()));
+					}
 					newCustomer.getAccount().setPersonnel(null);
 					newCustomer.getAccount().setActive(true);
 					newCustomer.getAccount().setEnabled(true);
@@ -284,10 +293,7 @@ public class CustomerModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("viewType", viewType);
 		
 		if(viewType.equals(Actions.CREATE.getValue())) {
-			
-			if((super.getModelCollectionToView("errorEmail") == null) && (super.getModelCollectionToView("errorUsername") == null) 
-				&& !super.hasResultBindingError()) {
-			
+			if(!super.hasResultBindingError()) {
 				Customer newCustomer = new Customer();
 				newCustomer.setAccount(new Account());
 				super.addModelCollectionToView("customer", newCustomer);
@@ -391,6 +397,39 @@ public class CustomerModelController extends ModelControllerImpl{
 
 		Locale locales = LocaleContextHolder.getLocale();
 		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
+		
+		int startDay = 1;
+		int endDay = 5;
+		String startTime = "08:00";
+		String endTime = "18:00";
+		int bookingSplit = 60;
+		
+		if(this.globalSettings != null) {
+			String[] dayPeriod = this.globalSettings.getBusinessDays().split(",");
+			List<Integer> daysDisabled = new ArrayList<>();
+			int dayStartNr = Integer.parseInt(dayPeriod[0]);
+			int dayEndNr = Integer.parseInt(dayPeriod[1]);
+			for(int x=0; x<=6; x++) {
+				if(dayStartNr > x || x > dayEndNr) {
+					daysDisabled.add(x);	
+				}
+			}
+			super.addModelCollectionToView("disabledDays", daysDisabled);
+			String[] timePeriod = this.globalSettings.getBusinessTimes().split(",");
+			
+			bookingSplit = this.globalSettings.getAppointmentTimeSplit();
+			super.addModelCollectionToView("bookingSplit", bookingSplit);
+			
+			String[] startTimeArr = timePeriod[0].split(":");
+			super.addModelCollectionToView("startTime", startTimeArr[0]);
+			super.addModelCollectionToView("startMinute", startTimeArr[1]);
+			String[] endTimeArr = timePeriod[1].split(":");
+			super.addModelCollectionToView("endTime", endTimeArr[0]);
+			super.addModelCollectionToView("endMinute", endTimeArr[1]);
+			
+		}
+		
+		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
 	}
 	
 	/**

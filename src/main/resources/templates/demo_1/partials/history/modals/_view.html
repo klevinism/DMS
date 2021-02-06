@@ -66,7 +66,7 @@
 									th:onmouseover="'hoverRecord(\'__${record.tooth.name}__\')'" 
 									th:onclick="'window.location=\'/customer/'+*{id}+'/history/'+*{customerHistory.id}+'/record/'+${record.id}+'\''">
 									
-									<td th:text="${#dates.format(record.servicedate, 'dd/MM/yyyy')}"></td>
+									<td th:text="${#dates.format(record.servicedate, 'd-M-yyyy')}"></td>
 									<td th:text="${record.serviceType.name}"></td>
 									<td id="tooth" th:text="${record.tooth.name}"></td>
 									<td th:text="${record.servicecomment}"></td>
@@ -104,18 +104,18 @@
 		
         $(document).ready(function() {
         	if($('#allRecords').html() != undefined){
+		        $.fn.dataTable.moment( 'D-M-YYYY' );
 	            $('#allRecords').DataTable({
+	                
 	            	"bPaginate": false,
 	                "bLengthChange": false,
 	                "bFilter": false,
 	                "bInfo": false,
-	                columnDefs : [
-	                    { targets: 0, sortable: false},
-	                ],
-	                order: []
+	                order: [0,"desc"]
 	            });
         	}
         });
+        
         </script>
       </div>
     </div>

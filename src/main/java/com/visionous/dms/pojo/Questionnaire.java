@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
+import javax.validation.Valid;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -52,6 +53,7 @@ public class Questionnaire implements Serializable{
 	@JoinColumn(name="customerid")
 	private Customer customer;
 
+	@Valid
 	@OneToMany(mappedBy = "questionnaire", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	private List<QuestionnaireResponse> questionnaireResponse;
 	

@@ -27,16 +27,18 @@
               <div class="col grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
+                  
+                    <a class="btn btn-primary" th:href="${currentPage}+'/create'"> [[#{action.add}]] [[#{Customer}]]</a>
+                    <hr />
                     <div class="row">
-                      <div class="col">
-                        <a class="btn btn-primary" th:href="${currentPage}+'/create'"> [[#{action.add}]] [[#{Customer}]]</a>
-                        <hr />
+                      <div class="col tbl-overflow">
                         <table id="patientTable" class="table table-hover">
 	                      <thead>
 	                        <tr>
 	                          <th><!-- Selection column --></th>
 	                          <th>[[#{Id}]]</th>
 	                          <th>[[#{Username}]]</th>
+	                          <th>[[#{Name}]], [[#{Surname}]]</th>
 	                          <th>[[#{RegisterDate}]]</th>
 	                          <th>[[#{LastVisit}]]</th>
 	                          <th>[[#{TreatedTooth}]]</th>
@@ -65,12 +67,16 @@
 		                      </td>
 							  <td width="1%" th:text="${user.id}">id</td>
 	                          <td ><a th:href="${currentPage}+'/dashboard/'+${user.id}" th:text="${user.username}">username</a></td>
+	                          <td >
+	                          	<a th:href="${currentPage}+'/dashboard/'+${user.id}" th:text="${user.name}+','+${user.surname}">name, surname</a>
+	                          </td>
+	                          
 							  <td >
-							  	<h5 th:text="${#dates.format(customer.registerdate, 'dd/MM/yyyy')}"></h5>
+							  	<h5 th:text="${#dates.format(customer.registerdate, 'd-M-yyyy')}"></h5>
 							  </td>
 							  
 	                          <td >
-							  	<h5 th:text="${lastVisitRecord != null ? #dates.format(lastVisitRecord.servicedate, 'dd/MM/yyyy') : ''}"></h5>
+							  	<h5 th:text="${lastVisitRecord != null ? #dates.format(lastVisitRecord.servicedate, 'd-M-yyyy') : ''}"></h5>
 							  </td>
 
 							  <td >
@@ -121,6 +127,7 @@
 		    </script>
 	        <script>
 		        $(document).ready(function() {
+	                   $.fn.dataTable.moment( 'D-M-YYYY' );
 		            $('#patientTable').DataTable({
 		            	"oLanguage": {
 		            		  "sLengthMenu": tableLengthMenu,
@@ -129,7 +136,8 @@
 		            		  "sInfoEmpty": tableInfoEmpty,
 		            		  "sInfoFiltered": tableInfoFiltered,
 		            		  "sSearch": tableSearch
-		            		}
+		            		},
+		            		order:[4, "desc"]
 		            });
 		        });
 	        </script>
@@ -159,10 +167,14 @@
     <script src="/assets/vendors/js/vendor.bundle.base.js"></script>
     <script src="/assets/vendors/js/vendor.bundle.addons.js"></script>
     <!-- endinject -->
-    <!-- Plugin js for this page-->
+    <!-- Plugin js for this page-->    
+    <script type="text/javascript" src="/assets/vendors/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
     <script type="text/javascript" src="/assets/vendors/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+    <script src="//cdn.datatables.net/plug-ins/1.10.12/sorting/datetime-moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>
     <!-- End plugin js for this page-->
     <!-- inject:js -->
     <script src="/assets/js/shared/off-canvas.js"></script>

@@ -3,6 +3,7 @@
  */
 package com.visionous.dms.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +23,7 @@ import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.History;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Record;
@@ -48,11 +50,12 @@ public class HistoryModelController extends ModelControllerImpl{
 	private AccountRepository accountRepository;
 	private TeethRepository teethRepository;
 	private RecordRepository recordRepository;
+	private GlobalSettings globalSettings;
 	
 	@Autowired
 	private HistoryModelController(HistoryRepository historyRepository, RecordRepository recordRepository,
 			CustomerRepository customerRepository, PersonnelRepository personnelRepository,
-			AccountRepository accountRepository, TeethRepository teethRepository) {
+			AccountRepository accountRepository, TeethRepository teethRepository, GlobalSettings globalSettings) {
 		
 		this.historyRepository = historyRepository;
 		this.customerRepository = customerRepository;
@@ -60,6 +63,7 @@ public class HistoryModelController extends ModelControllerImpl{
 		this.accountRepository = accountRepository;
 		this.teethRepository = teethRepository;
 		this.recordRepository = recordRepository;
+		this.globalSettings = globalSettings;
 	}
 	
 	/**
@@ -102,24 +106,23 @@ public class HistoryModelController extends ModelControllerImpl{
 				Optional<Customer> customer = customerRepository.findById(Long.valueOf(super.getAllControllerParams().get("id").toString()));
 
 				customer.ifPresent(currentCustomer -> {
-					newHistory.setCustomer(currentCustomer);
-					newHistory.setRecords(null);
-					newHistory.setStartdate(new Date());
-					
-					AccountUserDetail currentAccountDetails =  AccountUtil.currentLoggedInUser();	
-					Optional<Account> loggedInAccount = accountRepository.findByUsername(currentAccountDetails.getUsername());
-					
-					loggedInAccount.ifPresent( account -> {
-						System.out.println(account.toString());
-						Optional<Personnel> supervisor = personnelRepository.findById(account.getId());
+					if(currentCustomer.getCustomerHistory() == null) {					
+						newHistory.setCustomer(currentCustomer);
+						newHistory.setRecords(null);
+						newHistory.setStartdate(new Date());
 						
-						newHistory.setSupervisor(supervisor.get());				
-
-					});
-					History createdNewHistory = historyRepository.saveAndFlush(newHistory);
-					currentCustomer.setCustomerHistory(createdNewHistory);
-					Customer editCustomer = customerRepository.saveAndFlush(currentCustomer);
-
+						AccountUserDetail currentAccountDetails =  AccountUtil.currentLoggedInUser();	
+						Optional<Account> loggedInAccount = accountRepository.findByUsername(currentAccountDetails.getUsername());
+						
+						loggedInAccount.ifPresent( account -> {
+							Optional<Personnel> supervisor = personnelRepository.findById(account.getId());
+							newHistory.setSupervisor(supervisor.get());
+						});
+						History createdNewHistory = historyRepository.saveAndFlush(newHistory);
+						currentCustomer.setCustomerHistory(createdNewHistory);
+						Customer editCustomer = customerRepository.saveAndFlush(currentCustomer);
+						
+					}
 				});
 			}
 		}else if(action.equals(Actions.VIEW.getValue())) {
@@ -180,9 +183,15 @@ public class HistoryModelController extends ModelControllerImpl{
 			super.addModelCollectionToView("currentRoles", account.getRoles());
 			super.addModelCollectionToView("loggedInAccount", account);
 		});
+		
 		Locale locales = LocaleContextHolder.getLocale();
 		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
+		
+		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+
+		
 	}
+	
 	
 	/**
 	 *
