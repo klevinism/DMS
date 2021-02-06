@@ -92,10 +92,14 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 		// If action occurred, persist object to db
 		if(super.getAllControllerParams().containsKey("modelAttribute")) {
 			if(super.getAllControllerParams().containsKey("action")) {
-				persistModelAttributes(
+				if(super.hasResultBindingError()) {
+					super.setControllerParam("viewType", super.getAllControllerParams().get("action").toString().toLowerCase());
+				}else {
+					persistModelAttributes(
 						(Questionnaire) super.getAllControllerParams().get("modelAttribute"), 
 						super.getAllControllerParams().get("action").toString().toLowerCase()
-						); 
+						);
+				}
 			}
 		}
 		
@@ -139,17 +143,17 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 					newQuestionnaire.setQuestionnaireResponse(questionnaire.getQuestionnaireResponse());
 					newQuestionnaire.getQuestionnaireResponse().forEach(singleQuestionnaireResponse -> {
 	
-						singleQuestionnaireResponse.setId(null);
-						singleQuestionnaireResponse.setResponseDate(new Date()); 
-						singleQuestionnaireResponse.setQuestionId(singleQuestionnaireResponse.getQuestionForm().getId());
+							singleQuestionnaireResponse.setId(null);
+							singleQuestionnaireResponse.setResponseDate(new Date()); 
+							singleQuestionnaireResponse.setQuestionId(singleQuestionnaireResponse.getQuestionForm().getId());
+							
+							singleQuestionnaireResponse.setQuestionnaire(newQuestionnaire);
+		
+							questionnaireFormRepository.flush();
+		
+							QuestionnaireResponse newQuestionnaireResponse = questionnaireResponseRepository.saveAndFlush(singleQuestionnaireResponse);	
+
 						
-						singleQuestionnaireResponse.setQuestionnaire(newQuestionnaire);
-	
-						questionnaireFormRepository.flush();
-	
-						QuestionnaireResponse newQuestionnaireResponse = questionnaireResponseRepository.saveAndFlush(singleQuestionnaireResponse);
-	
-						System.out.println(newQuestionnaireResponse.getResponse() + " " + newQuestionnaireResponse.getQuestionId());
 					});
 					
 				}
@@ -167,61 +171,65 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("viewType", viewType);
 		
 		if(viewType.equals(Actions.CREATE.getValue())) {
-			if(super.getAllControllerParams().get("id") != null) {
-				Long customerId = Long.valueOf(super.getAllControllerParams().get("id").toString());
-				
-				Optional<Customer> customer= customerRepository.findById(customerId);
-				super.addModelCollectionToView("customer", customer.get());
-				
-				List<QuestionnaireForm> allQuestions = questionnaireFormRepository.findAll();
-				super.addModelCollectionToView("allQuestions", allQuestions);
-				
-				Optional<Questionnaire> questionnaire = questionnaireRepository.findByCustomerId(customerId);
-				if(questionnaire.isPresent()) {
-					super.addModelCollectionToView("selected", questionnaire.get());
-				}else {
-					Questionnaire newQuestionnaire = new Questionnaire();
-					newQuestionnaire.setCustomerId(customerId);
-					newQuestionnaire.setCustomer(customer.get());
-					
-					List<QuestionnaireResponse> questionnaireResponses = new ArrayList<>();
-					allQuestions.forEach(questionForm -> {
-						QuestionnaireResponse newQuestionnaireResponse = new QuestionnaireResponse();
-						newQuestionnaireResponse.setQuestionForm(questionForm);
-						questionnaireResponses.add(newQuestionnaireResponse);
-					});
-					
-					newQuestionnaire.setQuestionnaireResponse(questionnaireResponses);
-					
-					super.addModelCollectionToView("selected", newQuestionnaire);
-				}
+			
+			List<QuestionnaireForm> allQuestions = questionnaireFormRepository.findAll();
+			super.addModelCollectionToView("allQuestions", allQuestions);
+			
+			System.out.println(super.hasResultBindingError() + " << BINDING ERRORS?");
+			if(super.hasResultBindingError())
+				super.getBindingResult().getAllErrors().forEach(x->System.out.println(x.toString()));
 
-			}else {
-				if(super.getAllControllerParams().get("modelAttribute") != null) {
-					Questionnaire questionnaire = (Questionnaire) super.getAllControllerParams().get("modelAttribute");
-					Long customerId = questionnaire.getCustomerId();
-
+			if(!super.hasResultBindingError()) {
+				if(super.getAllControllerParams().get("id") != null) {
+					Long customerId = Long.valueOf(super.getAllControllerParams().get("id").toString());
+					
 					Optional<Customer> customer= customerRepository.findById(customerId);
 					super.addModelCollectionToView("customer", customer.get());
-
-					List<QuestionnaireForm> allQuestions = questionnaireFormRepository.findAll();
-					super.addModelCollectionToView("allQuestions", allQuestions);
-					
-					Optional<Questionnaire> questionnaires = questionnaireRepository.findByCustomerId(customer.get().getId());
-					if(questionnaires.isPresent()) {
-						super.addModelCollectionToView("selected", questionnaires.get());
+			
+					Optional<Questionnaire> questionnaire = questionnaireRepository.findByCustomerId(customerId);
+					if(questionnaire.isPresent()) {
+						super.addModelCollectionToView("questionnaire", questionnaire.get());
 					}else {
 						Questionnaire newQuestionnaire = new Questionnaire();
+						newQuestionnaire.setCustomerId(customerId);
+						newQuestionnaire.setCustomer(customer.get());
+
 						List<QuestionnaireResponse> questionnaireResponses = new ArrayList<>();
-						
 						allQuestions.forEach(questionForm -> {
 							QuestionnaireResponse newQuestionnaireResponse = new QuestionnaireResponse();
 							newQuestionnaireResponse.setQuestionForm(questionForm);
 							questionnaireResponses.add(newQuestionnaireResponse);
 						});
+						
 						newQuestionnaire.setQuestionnaireResponse(questionnaireResponses);
-						newQuestionnaire.setCustomer(customer.get());
-						super.addModelCollectionToView("selected", newQuestionnaire);
+						
+						super.addModelCollectionToView("questionnaire", newQuestionnaire);
+					}
+	
+				}else {
+					if(super.getAllControllerParams().get("modelAttribute") != null) {
+						Questionnaire questionnaire = (Questionnaire) super.getAllControllerParams().get("modelAttribute");
+						Long customerId = questionnaire.getCustomerId();
+	
+						Optional<Customer> customer= customerRepository.findById(customerId);
+						super.addModelCollectionToView("customer", customer.get());
+						
+						Optional<Questionnaire> questionnaires = questionnaireRepository.findByCustomerId(customer.get().getId());
+						if(questionnaires.isPresent()) {
+							super.addModelCollectionToView("questionnaire", questionnaires.get());
+						}else {
+							Questionnaire newQuestionnaire = new Questionnaire();
+							List<QuestionnaireResponse> questionnaireResponses = new ArrayList<>();
+							
+							allQuestions.forEach(questionForm -> {
+								QuestionnaireResponse newQuestionnaireResponse = new QuestionnaireResponse();
+								newQuestionnaireResponse.setQuestionForm(questionForm);
+								questionnaireResponses.add(newQuestionnaireResponse);
+							});
+							newQuestionnaire.setQuestionnaireResponse(questionnaireResponses);
+							newQuestionnaire.setCustomer(customer.get());
+							super.addModelCollectionToView("questionnaire", newQuestionnaire);
+						}
 					}
 				}
 			}

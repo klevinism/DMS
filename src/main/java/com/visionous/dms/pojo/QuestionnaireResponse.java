@@ -21,6 +21,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -43,6 +44,7 @@ public class QuestionnaireResponse implements Serializable{
 	@Column(name="questionid", insertable = false, updatable = false)
 	private Long questionId;
 	
+	@NotEmpty(message = "{alert.fieldEmpty}")
 	private String response;
 	
 	@Column(name="questionnaireid", insertable = false, updatable = false)

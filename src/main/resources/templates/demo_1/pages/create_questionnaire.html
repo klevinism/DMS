@@ -28,7 +28,7 @@
               														createPersonnelView = 'demo_1/partials/personnel/modals/_'+${viewType}+' :: '+ ${viewType}" >
               	<div class="card"> 
               		<div class="card-body">
-              	<form th:object="${selected}" th:action="@{/customer/__${selected.customer.id}__/questionnaire}"  method="post" >
+              	<form th:object="${questionnaire}" th:action="@{/customer/__${questionnaire.customerId}__/questionnaire}"  method="post" >
               	
               		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
               		<input type="hidden" th:if="*{customerId != null}" th:field="*{customerId}">
@@ -61,7 +61,11 @@
 	          						<input type="radio" th:field="*{questionnaireResponse[__${itemStat.index}__].response}" value="no">
 	          						
 	          						<label th:for="*{questionnaireResponse[__${itemStat.index}__].response}" th:text="#{No}"></label>
+	          						
+	          						<p class="alert alert-danger" th:if="${#fields.hasErrors('questionnaireResponse['+__${itemStat.index}__+'].response')}" th:errors="*{questionnaireResponse[__${itemStat.index}__].response}"></p>
+	          						
           						</span>
+          						
           						<span th:if="*{#lists.size(questionnaireResponse) &lt;= __${itemStat.index}__}">
           							<input type="radio" th:id="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+1}" th:name="'questionnaireResponse['+${itemStat.index}+'].response'" value="yes" >
 
