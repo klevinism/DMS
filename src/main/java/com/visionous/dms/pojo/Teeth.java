@@ -18,7 +18,7 @@ import javax.persistence.SequenceGenerator;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.visionous.dms.configuration.helpers.DmsCoreVersion;
+import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
  * @author delimeta
@@ -30,7 +30,7 @@ public class Teeth implements Serializable{
     /**
 	 * 
 	 */
-	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
+	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TEETH_SEQ")

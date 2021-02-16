@@ -36,7 +36,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.visionous.dms.configuration.helpers.DmsCoreVersion;
+import com.visionous.dms.configuration.helpers.DmsCore;
 import com.visionous.dms.configuration.helpers.annotations.ValidEmail;
 
 /**
@@ -49,7 +49,7 @@ public class Account implements Serializable{
     /**
 	 *  
 	 */
-	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
+	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ACC_SEQ")
@@ -109,7 +109,7 @@ public class Account implements Serializable{
 	
     @JsonIgnore
     @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER) 
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER) 
     @JoinTable(name = "authority",
             joinColumns = @JoinColumn(name = "accountid"),
             inverseJoinColumns = @JoinColumn(name = "roleid"))
@@ -163,9 +163,25 @@ public class Account implements Serializable{
 	 * @param account
 	 */
 	public Account(Account account) {
+		this.id = account.id;
+		this.name = account.name;
+		this.surname = account.surname;
 		this.username = account.username;
 		this.password = account.password;
+		this.address = account.address;
+		this.age = account.age;
+		this.birthday = account.birthday;
+		this.city = account.city;
+		this.country = account.country;
+		this.customer = account.customer;
+		this.personnel = account.personnel;
+		this.email = account.email;
+		this.gender = account.gender;
 		this.roles = account.roles;
+		this.image = account.image;
+		this.phone = account.phone;
+		this.reset = account.reset;
+		this.verification = account.verification;
 		this.enabled = account.enabled;
 		this.active = account.active;
 	}

@@ -4,6 +4,8 @@
 package com.visionous.dms.pojo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
-import com.visionous.dms.configuration.helpers.DmsCoreVersion;
+import com.visionous.dms.configuration.helpers.DmsCore;
 import com.visionous.dms.configuration.helpers.annotations.ValidEmail;
 
 /**
@@ -28,7 +30,7 @@ public class GlobalSettings implements Serializable{
     /**
 	 *  
 	 */
-	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
+	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GLOBAL_SETTINGS_SEQ")
@@ -58,6 +60,12 @@ public class GlobalSettings implements Serializable{
 
 	@Column(name = "appointmentsTimesSplit")
 	private Integer appointmentTimeSplit;
+	
+	/**
+	 * 
+	 */
+	public GlobalSettings() {
+	}
 	
 	/**
 	 * @return the id
@@ -107,7 +115,89 @@ public class GlobalSettings implements Serializable{
 	public String getBusinessDays() {
 		return businessDays;
 	}
+	
+	public Integer getBusinessStartDay() {
+		return Integer.parseInt(this.getBusinessDays().split(",")[0]);
+	}
+	
+	public Integer getBusinessEndDay() {
+		return Integer.parseInt(this.getBusinessDays().split(",")[1]);
+	}
+	
+	public void setCurrentSetting(GlobalSettings newSettings) {
+		this.id = newSettings.id;
+		this.appointmentTimeSplit = newSettings.appointmentTimeSplit;
+		this.businessDays = newSettings.businessDays;
+		this.businessEmail = newSettings.businessEmail;
+		this.businessImage = newSettings.businessImage;
+		this.businessName = newSettings.businessName;
+		this.businessPassword = newSettings.businessPassword;		
+		this.businessTimes = newSettings.businessTimes;
+	}
+	
+	/**
+	 * @return
+	 */
+	public List<Integer> getNonBusinessDays(){
+		String[] dayPeriod = getBusinessDays().split(",");
+		List<Integer> daysDisabled = new ArrayList<>();
+		int dayStartNr = Integer.parseInt(dayPeriod[0]);
+		int dayEndNr = Integer.parseInt(dayPeriod[1]);
+		
+		for(int x=0; x<=6; x++) {
+			if(dayStartNr > x || x > dayEndNr) {
+				daysDisabled.add(x);	
+			}
+		}
+		return daysDisabled;
+	}
+	
+	/**
+	 * Returns a string representing the starting time of business and formatted
+	 * like: "18:30"
+	 *  
+	 * @return business end-time array 
+	 */
+	public String getBusinessStartTime() {
+		return getBusinessTimes().split(",")[0];
+	}
 
+	/**
+	 * Returns an array containing 2 elements representing hours and minutes in
+	 * format ["hh","mm"].
+	 * 
+	 * Examples:
+	 * 	["08","30"] => represents 08:30
+	 *  
+	 * @return business start-time array 
+	 */
+	public String[] getBusinessStartTimes() {
+		return getBusinessStartTime().trim().split(":");
+	}
+	
+	/**
+	 * Returns a string representing the starting time of business and formatted
+	 * like: "18:30"
+	 *  
+	 * @return business end-time array 
+	 */
+	public String getBusinessEndTime() {
+		return getBusinessTimes().split(",")[1];
+	}
+	
+	/**
+	 * Returns an array containing 2 elements representing hours and minutes in
+	 * format ["hh","mm"].
+	 * 
+	 * Examples:
+	 * 	["18","30"] => represents 18:30 
+	 *  
+	 * @return business end-time array 
+	 */
+	public String[] getBusinessEndTimes() {
+		return getBusinessEndTime().trim().split(":");
+	}
+	
 	/**
 	 * @param businessDays the businessDays to set
 	 */

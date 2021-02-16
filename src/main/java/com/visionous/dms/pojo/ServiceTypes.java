@@ -19,13 +19,15 @@ public class ServiceTypes {
 	 */
 	public ServiceTypes() {
 		this.services = new ArrayList<>();
-		// TODO Auto-generated constructor stub
-	}
-
-	public void addAllServices(List<ServiceType> serviceType) {
-		this.services.addAll(serviceType);
 	}
 	
+	/**
+	 * @param findAll
+	 */
+	public ServiceTypes(List<ServiceType> allServices) {
+		this.services = allServices;
+	}
+
 	/**
 	 * @return the services
 	 */
@@ -39,6 +41,5 @@ public class ServiceTypes {
 	public void setServices(List<ServiceType> services) {
 		this.services = services;
 	}
-	
 	
 }

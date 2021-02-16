@@ -5,29 +5,20 @@ package com.visionous.dms.rest;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,12 +31,12 @@ import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Appointment;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.Personnel;
-import com.visionous.dms.repository.AccountRepository;
-import com.visionous.dms.repository.AppointmentRepository;
-import com.visionous.dms.repository.CustomerRepository;
-import com.visionous.dms.repository.PersonnelRepository;
-import com.visionous.dms.repository.RecordRepository;
 import com.visionous.dms.rest.response.ResponseBody;
+import com.visionous.dms.service.AccountService;
+import com.visionous.dms.service.AppointmentService;
+import com.visionous.dms.service.CustomerService;
+import com.visionous.dms.service.PersonnelService;
+import com.visionous.dms.service.RecordService;
 
 /**
  * @author delimeta
@@ -53,30 +44,38 @@ import com.visionous.dms.rest.response.ResponseBody;
  */
 @RestController
 public class AppointmentRestController {
-	private MessageSource messageSource;
+		
+	private AppointmentService appointmentService;
+	private PersonnelService personnelService;
 	
-	private AppointmentRepository appointmentRepository;
-	private PersonnelRepository personnelRepository;
-	private CustomerRepository customerRepository;
-	private AccountRepository accountRepository;
-	private RecordRepository recordRepository;
+	private CustomerService customerService;
+	private AccountService accountService;
+	private RecordService recordService;
+	
 	private ApplicationEventPublisher eventPublisher;
+	private MessageSource messageSource;
 
 	
 	/**
 	 * 
 	 */
 	@Autowired
-	public AppointmentRestController(AppointmentRepository appointmentRepository, PersonnelRepository personnelRepository, 
-			CustomerRepository customerRepository, MessageSource messageSource, 
-			RecordRepository recordRepository, AccountRepository accountRepostory, ApplicationEventPublisher eventPublisher) {
-		this.appointmentRepository = appointmentRepository;
-		this.personnelRepository = personnelRepository;
-		this.customerRepository = customerRepository;
-		this.messageSource = messageSource;
-		this.recordRepository = recordRepository;
-		this.accountRepository = accountRepostory;
+	public AppointmentRestController(AppointmentService appointmentService, PersonnelService personnelService, 
+			CustomerService customerService, 
+			MessageSource messageSource, 
+			RecordService recordService, 
+			AccountService accountService, 
+			ApplicationEventPublisher eventPublisher) {
+		this.appointmentService = appointmentService;
+		this.personnelService = personnelService;
+		
+		this.customerService = customerService;
+		this.recordService = recordService;
+		
+		this.accountService = accountService;
+		
 		this.eventPublisher = eventPublisher;
+		this.messageSource = messageSource;
 	}
 	
 	@PostMapping("/api/book")
@@ -86,7 +85,7 @@ public class AppointmentRestController {
 
         ResponseBody<Appointment> result = new ResponseBody<>();
         
-        List<Appointment> anyAppointment = appointmentRepository.findByAppointmentDate(appointmentDate);
+        List<Appointment> anyAppointment = appointmentService.findByAppointmentDate(appointmentDate);
         
         String noAppointmentSet = messageSource.getMessage("alert.noAppointmentSet", null, LocaleContextHolder.getLocale());
         String success = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
@@ -98,8 +97,8 @@ public class AppointmentRestController {
         	result.setMessage(noAppointmentSet + " " + new SimpleDateFormat("dd-MM-yy hh:mm").format(appointmentDate));
         }else {
         	Appointment newAppointment = new Appointment();
-        	Optional<Personnel> personnel = personnelRepository.findById(personnelId);
-        	Optional<Customer> customer = customerRepository.findById(customerId);
+        	Optional<Personnel> personnel = personnelService.findById(personnelId);
+        	Optional<Customer> customer = customerService.findById(customerId);
         	
         	if(personnel.isPresent() && customer.isPresent()) {
         		newAppointment.setPersonnel(personnel.get());
@@ -108,7 +107,7 @@ public class AppointmentRestController {
         	newAppointment.setAddeddate(new Date());
         	newAppointment.setAppointmentDate(appointmentDate); 
         	
-        	Appointment created = appointmentRepository.saveAndFlush(newAppointment);
+        	Appointment created = appointmentService.create(newAppointment);
         	if(created.getId() != null) {
         		result.addResult(created);
         		result.setError(success);
@@ -137,7 +136,7 @@ public class AppointmentRestController {
         
         if(personnelIds.length > 0) {
         	for(int cnt=0; cnt<personnelIds.length; cnt++) {
-        		Optional<Personnel> singlePersonnel = personnelRepository.findById(personnelIds[cnt]);
+        		Optional<Personnel> singlePersonnel = personnelService.findById(personnelIds[cnt]);
         		singlePersonnel.ifPresent(personnel -> personnels.add(personnel));
         		
         		try {
@@ -168,7 +167,7 @@ public class AppointmentRestController {
 							endingDate = DateUtil.setDays(start, daysToAdd);
 						} 
 						
-						Integer records = recordRepository.countAllByPersonnelIdAndServicedateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
+						Integer records = recordService.countByPersonnelIdAndServicedateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
 
 						start = DateUtil.setDays(start, daysToAdd);
 						recordsForPersonnel.add(records);
@@ -208,7 +207,7 @@ public class AppointmentRestController {
         
         if(personnelIds.length > 0) {
         	for(int cnt=0; cnt<personnelIds.length; cnt++) {
-        		Optional<Personnel> singlePersonnel = personnelRepository.findById(personnelIds[cnt]);
+        		Optional<Personnel> singlePersonnel = personnelService.findById(personnelIds[cnt]);
         		singlePersonnel.ifPresent(personnel -> personnels.add(personnel));
         		
         		try {
@@ -218,7 +217,7 @@ public class AppointmentRestController {
         			e.printStackTrace();
         		}
         		        		
-				if(start != null) {
+				if(start != null && singlePersonnel.isPresent()) {
 	        		int daysToAdd = DateUtil.calculateDaysToAddFromPeriod(start, end);
 	        		
 	        		// getRecords for period startDate ~ endDate > add by daysToAdd
@@ -227,7 +226,7 @@ public class AppointmentRestController {
 						Date startingDate = setDayToBegginingOfPeriod(start, daysToAdd);
 						Date endingDate = setDayToEndingOfPeriod(start, daysToAdd);
 						
-						Integer records = appointmentRepository.countAllByPersonnelIdAndAppointmentDateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
+						Integer records = appointmentService.countAllByPersonnelIdAndAppointmentDateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
 						
 						start = DateUtil.setDays(start, daysToAdd);
 						recordsForPersonnel.add(records);
@@ -288,7 +287,7 @@ public class AppointmentRestController {
     public ResponseEntity<?> getSearchResultViaAjax(@RequestParam(name = "personnelId", required = false) Long personnelId) { 
         ResponseBody<Appointment> result = new ResponseBody<>();
         
-        List<Appointment> appointments = appointmentRepository.findByPersonnelId(personnelId);
+        List<Appointment> appointments = appointmentService.findByPersonnelId(personnelId);
         
         if (appointments.isEmpty()) {
 			String messageNoUserFound = messageSource.getMessage("alert.noUserFound", null, LocaleContextHolder.getLocale());
@@ -308,7 +307,7 @@ public class AppointmentRestController {
 		
         ResponseBody<Personnel> result = new ResponseBody<>();
 
-        List<Personnel> personnel = personnelRepository.findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_Name(true, true, "PERSONNEL");
+        List<Personnel> personnel = personnelService.findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_Name(true, true, "PERSONNEL");
         if(personnel.size() != 0) {
         	result.setResult(personnel);
         }
@@ -323,14 +322,14 @@ public class AppointmentRestController {
 		
 		ResponseBody<Personnel> result = new ResponseBody<>();
 
-		Optional<Account> acc = accountRepository.findById(accountId);
+		Optional<Account> acc = accountService.findById(accountId);
 		acc.ifPresent(account->{
 			if((account.getPersonnel() != null) || (account.getCustomer() != null)){
 				BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 				if(encoder.matches(oldPassword, account.getPassword())) {
 					String pass = new BCryptPasswordEncoder().encode(newPassword);					
 					account.setPassword(pass);
-					accountRepository.saveAndFlush(account);
+					accountService.createPlain(account);
 					String messageSuccess = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
 					result.setError(messageSuccess);
 				}else {
@@ -352,7 +351,7 @@ public class AppointmentRestController {
 		
 		ResponseBody<Appointment> result = new ResponseBody<>();
 
-		Optional<Account> acc = accountRepository.findById(accountId);
+		Optional<Account> acc = accountService.findById(accountId);
 		acc.ifPresent(account->{
 			
 			if((account.getPersonnel() != null) || (account.getCustomer() != null)){
@@ -360,7 +359,7 @@ public class AppointmentRestController {
 				Date start = startDate;
 				Date end = DateUtil.addMinutes(start, 30);
 				
-				List<Appointment> all = appointmentRepository.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(accountId, start, end);
+				List<Appointment> all = appointmentService.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(accountId, start, end);
 				all.stream().forEach(appointment -> appointment.getPersonnel().getAccount().setPassword(""));
 
 				if(all.isEmpty()) {
@@ -392,7 +391,7 @@ public class AppointmentRestController {
     public ResponseEntity<?> sendConfirmation(@RequestParam(name = "id", required = true) Long personnelId) {
 		ResponseBody<Personnel> result = new ResponseBody<>();
 
-		Optional<Account> acc = accountRepository.findById(personnelId);
+		Optional<Account> acc = accountService.findById(personnelId);
 		acc.ifPresent(account->{
 	        String appUrl = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getContextPath();
 	        try {

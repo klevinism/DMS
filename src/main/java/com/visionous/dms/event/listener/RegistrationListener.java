@@ -12,7 +12,6 @@ import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -25,9 +24,8 @@ import com.visionous.dms.event.OnRegistrationCompleteEvent;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Role;
 import com.visionous.dms.pojo.Verification;
-import com.visionous.dms.repository.AccountRepository;
-import com.visionous.dms.repository.RoleRepository;
-import com.visionous.dms.repository.VerificationRepository;
+import com.visionous.dms.service.RoleService;
+import com.visionous.dms.service.VerificationService;
 
 /**
  * @author delimeta
@@ -36,32 +34,24 @@ import com.visionous.dms.repository.VerificationRepository;
 @Component
 public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent>{
 
-    private MessageSource messages;
-    
-	private VerificationRepository verificationRepository;
-	
-    private JavaMailSender mailSender;
-
     private SpringTemplateEngine thymeleafTemplateEngine;
-    
-    private AccountRepository accountRepository;
-    
-    private RoleRepository roleRepository;
+    private VerificationService verificationService;
+    private JavaMailSender mailSender;
+    private RoleService roleService;
 
 	/**
 	 * @param verificationRepository
 	 * @param messages
 	 */
 	@Autowired
-	public RegistrationListener(VerificationRepository verificationRepository, MessageSource messages, 
-			JavaMailSender mailSender, SpringTemplateEngine thymeleafTemplateEngine, 
-			AccountRepository accountRepository, RoleRepository roleRepository) {
-		this.verificationRepository = verificationRepository;
+	public RegistrationListener(VerificationService verificationService, 
+			JavaMailSender mailSender, RoleService roleService,
+			SpringTemplateEngine thymeleafTemplateEngine) {
+		
 		this.mailSender = mailSender;
-		this.messages = messages;
+		this.roleService = roleService;
+		this.verificationService = verificationService;
 		this.thymeleafTemplateEngine = thymeleafTemplateEngine;
-		this.accountRepository = accountRepository;
-		this.roleRepository = roleRepository;
 	}
 	
 	/**
@@ -88,13 +78,13 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         StringBuilder fromAddress= new StringBuilder();
         String token = null;
         String rawPass = account.getPassword();
-        
-        Optional<Role> roleAdmin = roleRepository.findByName("ADMIN");
+         
+        Optional<Role> roleAdmin = roleService.findByName("ADMIN");
         roleAdmin.ifPresent(role -> {
         	fromAddress.append(role.getAccounts().get(0).getEmail());
         });
         
-        Optional<Verification> verification = verificationRepository.findByAccount_id(account.getId());
+        Optional<Verification> verification = verificationService.findByAccount_id(account.getId());
         
         if(verification.isPresent()) {
         	token = verification.get().getToken();
@@ -103,8 +93,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         	token = UUID.randomUUID().toString();
         	template = firstEmailTemplatePath;
         	
-            Verification verificationToken = new Verification(account, token);
-            verificationRepository.saveAndFlush(verificationToken);
+            verificationService.create(new Verification(account, token));
             account.setPassword(rawPass);
         }
         
@@ -115,14 +104,11 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 		
 		vars.put("account", account);
 		vars.put("confirmationUrl", confirmationUrl);
-
 	    thymeleafContext.setVariables(vars);
-	    
 	    String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
-	    
+	     
         MimeMessage mailMessage = mailSender.createMimeMessage();
         try {
-            System.out.println(account.getPassword() + " <<LATER");
         	mailMessage.setSubject("Registration Confirmation", "UTF-8");
         	
         	MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true, "UTF-8");

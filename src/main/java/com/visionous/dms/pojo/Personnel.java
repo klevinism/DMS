@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.visionous.dms.configuration.helpers.DmsCoreVersion;
+import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
  * @author delimeta
@@ -33,7 +33,7 @@ import com.visionous.dms.configuration.helpers.DmsCoreVersion;
 @Entity
 public class Personnel implements Serializable{
 
-	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
+	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 
 	@Id
     private Long id;

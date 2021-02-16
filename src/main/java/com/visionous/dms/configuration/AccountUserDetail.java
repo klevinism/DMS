@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.visionous.dms.configuration.helpers.DmsCoreVersion;
+import com.visionous.dms.configuration.helpers.DmsCore;
 import com.visionous.dms.pojo.Account;
 
 /**
@@ -23,7 +23,9 @@ public class AccountUserDetail extends Account implements UserDetails{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
+	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
+	
+	private Account account;
 	
 	private boolean accountNonExpired;
 	private boolean credentialsNonExpired;
@@ -43,6 +45,8 @@ public class AccountUserDetail extends Account implements UserDetails{
 			Collection<? extends GrantedAuthority> authorities) {
 		
 		super(account);
+
+		this.account = account;
 		
 		this.accountNonExpired = accountNonExpired;
 		this.credentialsNonExpired = credentialsNonExpired;
@@ -51,6 +55,20 @@ public class AccountUserDetail extends Account implements UserDetails{
 		this.authorities = authorities;
 	}
 	
+	/**
+	 * @return the account
+	 */
+	public Account getAccount() {
+		return account;
+	}
+
+	/**
+	 * @param account the account to set
+	 */
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
 	/**
 	 * @return authorities Collection<? extends GrantedAuthority>
 	 */
@@ -82,5 +100,12 @@ public class AccountUserDetail extends Account implements UserDetails{
 	public boolean isCredentialsNonExpired() {
 		return this.credentialsNonExpired;
 	}
+	
+	public boolean isPersonnel() {
+		return this.account.getPersonnel() != null;
+	}
 
+	public boolean isCustomer() {
+		return this.account.getCustomer() != null;
+	}
 }

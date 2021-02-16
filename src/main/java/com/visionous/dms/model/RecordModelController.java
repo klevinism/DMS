@@ -3,54 +3,37 @@
  */
 package com.visionous.dms.model;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.visionous.dms.configuration.AccountUserDetail;
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
-import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.History;
 import com.visionous.dms.pojo.Personnel;
-import com.visionous.dms.pojo.Questionnaire;
-import com.visionous.dms.pojo.QuestionnaireResponse;
 import com.visionous.dms.pojo.Record;
-import com.visionous.dms.pojo.Role;
 import com.visionous.dms.pojo.ServiceType;
 import com.visionous.dms.pojo.Teeth;
-import com.visionous.dms.repository.AccountRepository;
-import com.visionous.dms.repository.CustomerRepository;
-import com.visionous.dms.repository.HistoryRepository;
-import com.visionous.dms.repository.PersonnelRepository;
-import com.visionous.dms.repository.QuestionnaireRepository;
-import com.visionous.dms.repository.QuestionnaireResponseRepository;
-import com.visionous.dms.repository.RecordRepository;
-import com.visionous.dms.repository.ServiceTypeRepository;
-import com.visionous.dms.repository.TeethRepository;
+import com.visionous.dms.service.QuestionnaireResponseService;
+import com.visionous.dms.service.CustomerService;
+import com.visionous.dms.service.HistoryService;
+import com.visionous.dms.service.PersonnelService;
+import com.visionous.dms.service.RecordService;
+import com.visionous.dms.service.ServiceTypeService;
+import com.visionous.dms.service.TeethService;
 
 /**
  * @author delimeta
@@ -62,36 +45,32 @@ public class RecordModelController extends ModelControllerImpl {
 	
 	private static String currentPage = LandingPages.RECORD.value();
 
-	private RecordRepository recordRepository;
-	private CustomerRepository customerRepository;
-	private HistoryRepository historyRepository;
-	private ServiceTypeRepository serviceTypeRepository;
-	private TeethRepository teethRepository;
-	private AccountRepository accountRepository;
-	private PersonnelRepository personnelRepository;
-	private QuestionnaireResponseRepository questionnaireResponseRepository;
-	private QuestionnaireRepository questionnaireRepository;
-    private GlobalSettings globalSettings;
+	private QuestionnaireResponseService questionnaireResponseService;
+	private ServiceTypeService serviceTypeService;
+	private PersonnelService personnelService;
+	private CustomerService customerService;
+	private HistoryService historyService;
+	private GlobalSettings globalSettings;
+	private RecordService recordService;
+	private TeethService teethService;
 
 	/**
 	 * 
 	 */
 	@Autowired
-	public RecordModelController(RecordRepository recordRepository, CustomerRepository customerRepository, 
-			HistoryRepository historyRepository, ServiceTypeRepository serviceTypeRepository,
-			TeethRepository teethRepository, AccountRepository accountRepository,
-			PersonnelRepository personnelRepository, QuestionnaireResponseRepository questionnaireResponseRepository,
-			QuestionnaireRepository questionnaireRepository, GlobalSettings globalSettings) {
-		this.recordRepository = recordRepository;
-		this.customerRepository = customerRepository;
-		this.historyRepository = historyRepository;
-		this.serviceTypeRepository = serviceTypeRepository;
-		this.teethRepository = teethRepository;
-		this.accountRepository = accountRepository;
-		this.personnelRepository = personnelRepository;
-		this.questionnaireResponseRepository = questionnaireResponseRepository;
-		this.questionnaireRepository = questionnaireRepository;
+	public RecordModelController(QuestionnaireResponseService questionnaireResponseService, 
+			ServiceTypeService serviceTypeService, PersonnelService personnelService,
+			CustomerService customerService, HistoryService historyService,
+			GlobalSettings globalSettings, RecordService recordService, TeethService teethService) {
+		
+		this.questionnaireResponseService = questionnaireResponseService;
+		this.serviceTypeService = serviceTypeService;
+		this.personnelService = personnelService;
+		this.customerService = customerService;
+		this.historyService = historyService;
 		this.globalSettings = globalSettings;
+		this.recordService = recordService;
+		this.teethService = teethService;
 	}
 	
 	/**
@@ -121,63 +100,56 @@ public class RecordModelController extends ModelControllerImpl {
 	 */
 	private void persistModelAttributes(Record recordNewModel, String action) {
 		Record newRecord = recordNewModel;
-		
-		if(action.equals(Actions.DELETE.getValue())) {
-			
-		}else if(action.equals(Actions.EDIT.getValue()) ) {
+
+		if(action.equals(Actions.EDIT.getValue()) ) {
 		}else if(action.equals(Actions.CREATE.getValue())) {
-			Long personnelId = newRecord.getPersonnelId();
-			Long historyId = newRecord.getHistoryId();
+			Optional<Personnel> personnel = personnelService.findById(newRecord.getPersonnelId());
+			Optional<History> history = historyService.findById(newRecord.getHistoryId());
 			
-			Optional<Personnel> personnel = personnelRepository.findById(personnelId);
-			Optional<History> history = historyRepository.findById(historyId);
-			Optional<ServiceType> serviceType = serviceTypeRepository.findByName(newRecord.getServiceType().getName());
-			Optional<Teeth> tooth = teethRepository.findByName(newRecord.getTooth().getName());
-			MultipartFile[] uploadedFiles =null;
-			if(super.getAllControllerParams().get("files") != null) {
-				uploadedFiles = (MultipartFile[]) super.getAllControllerParams().get("files");
-			}
+			Optional<ServiceType> serviceType = serviceTypeService.findByName(newRecord.getServiceType().getName());
+			Optional<Teeth> tooth = teethService.findByName(newRecord.getTooth().getName());	
 			
 			if(personnel.isPresent() && history.isPresent() 
-					&& serviceType.isPresent() 
-					&& tooth.isPresent()) {
+					&& serviceType.isPresent() && tooth.isPresent()) {
 				
-				if(uploadedFiles != null){
-					StringBuilder attachments = new StringBuilder();
-
-					for(MultipartFile file : uploadedFiles) {
-						if(file.getOriginalFilename() != null && !file.getOriginalFilename().equals("")) {
-							try {
-							    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss-"));
-								String path = FileManager.write(file, "/tmp/records/"); 
-							    String fileName = date + file.getOriginalFilename();
-								attachments.append(fileName+","); 
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-					newRecord.setAttachments(attachments.toString());
+				if(super.getAllControllerParams().containsKey("files")) {
+					String allRecordAttachmentNames = uploadAllRecordImages(
+							(MultipartFile[]) super.getAllControllerParams().get("files"));
+					newRecord.setAttachments(allRecordAttachmentNames);
 				}
 				
 				newRecord.setHistory(history.get());
 				newRecord.setPersonnel(personnel.get());
 				newRecord.setServiceType(serviceType.get());
 				newRecord.setTooth(tooth.get());
-				newRecord.setServicedate(new Date());
+				recordService.create(newRecord);
 				
 				history.get().addRecord(newRecord);
-				
-				Record createdRecord = recordRepository.saveAndFlush(newRecord);
-				History updateHistory = historyRepository.saveAndFlush(history.get()); 
-			
+				historyService.create(history.get());
 			}
 			
-		}else if(action.equals(Actions.VIEW.getValue())) {
-		}		
-
+		}
 	}
+	
+	private String uploadAllRecordImages(MultipartFile[] filesArray) {
+		StringBuilder attachmentsFileNames = new StringBuilder();
 
+		for(MultipartFile file : filesArray) {
+			try {
+				String imageName = null;
+				if((imageName = FileManager.uploadImage(file, "/tmp/records/")) != null) {
+					attachmentsFileNames.append(imageName);
+					
+					if(!filesArray[filesArray.length-1].equals(file)) 
+						attachmentsFileNames.append(",");
+				}
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+			}
+		}
+		return attachmentsFileNames.toString();
+	}
+	
 	/**
 	 * 
 	 */
@@ -186,78 +158,53 @@ public class RecordModelController extends ModelControllerImpl {
 		
 		if(viewType.equals(Actions.CREATE.getValue())) {
 			if(super.getAllControllerParams().get("historyId") != null) {
-				Long customerId = Long.valueOf(super.getAllControllerParams().get("customerId").toString());
-				Long historyId = Long.valueOf(super.getAllControllerParams().get("historyId").toString());
+				Long customerId = (Long) super.getAllControllerParams().get("customerId");
+				Long historyId = (Long) super.getAllControllerParams().get("historyId");
 				
-				List<Teeth> allTeeth = teethRepository.findAll();
-				super.addModelCollectionToView("listTeeth", allTeeth);
-				
-				AccountUserDetail currentAccountDetails =  AccountUtil.currentLoggedInUser();	
-				Optional<Account> loggedInAccount = accountRepository.findByUsername(currentAccountDetails.getUsername());
-				
-				Optional<Customer> recordCustomer = customerRepository.findById(customerId);
-				recordCustomer.ifPresent(x -> {
-					Optional<Questionnaire> questionnaire = questionnaireRepository.findByCustomerId(x.getId());
-					questionnaire.ifPresent(singlequestionnaire -> {					
-						List<QuestionnaireResponse> questionnaireResponses = questionnaireResponseRepository.findAllByQuestionnaireIdAndResponse(singlequestionnaire.getId(), "yes");
-						super.addModelCollectionToView("anamezeAllergies", questionnaireResponses);
-					});
-				});
+				Optional<Customer> recordCustomer = customerService.findById(customerId);
 				recordCustomer.ifPresent(customer -> {
-					Optional<History> historyCustomer = historyRepository.findById(historyId);
+					Optional<History> customerHistory = historyService.findById(historyId);
 					
-					
-					historyCustomer.ifPresent(history-> {
+					customerHistory.ifPresent(history-> {
 						super.addModelCollectionToView("selectedHistory", history);
-						
-						Record record = new Record();
-						record.setHistory(history);
-						record.setHistoryId(history.getId());
-						record.setPersonnelId(loggedInAccount.get().getId());
-						
-						super.addModelCollectionToView("selected", record);
-						
-					}); 
+						super.addModelCollectionToView("selected", 
+								new Record(history, AccountUtil.currentLoggedInUser().getPersonnel()));
+					});
 					
-					List<ServiceType> serviceTypes = serviceTypeRepository.findAll();
-					super.addModelCollectionToView("services", serviceTypes);
+					if(customer.hasQuestionnaire()) { 
+						super.addModelCollectionToView("anamezeAllergies", 
+								questionnaireResponseService.findAllByQuestionIdAndResponse(customer.getQuestionnaire().getId(), "yes"));
+					}
 					
+					super.addModelCollectionToView("services", serviceTypeService.findAll());
 				});
 			}
 			
-		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
-			
-		}else if(viewType.equals(Actions.VIEW.getValue())) {
-				Long customerId = Long.valueOf(super.getAllControllerParams().get("customerId").toString());
-				
-				if(super.getAllControllerParams().containsKey("id")) {
-					Long recordId = (Long) super.getAllControllerParams().get("id");
-					Optional<Record> selectedRecord = recordRepository.findById(recordId);
-					selectedRecord.ifPresent(record->{
-						
-						super.addModelCollectionToView("selectedRecord", record);
-						
-						if(record.getAttachments() != null) {
-							String attachment = record.getAttachments();
-							String[] attachments = attachment.split(",");
-							if(attachments.length >0 ) {
-								super.addModelCollectionToView("attachmentList", attachments);
-							}
-						}					
-						
-					});
+		}else if(viewType.equals(Actions.VIEW.getValue())) {	
+			if(super.getAllControllerParams().containsKey("id")) {
+				Long recordId = (Long) super.getAllControllerParams().get("id");
+				Optional<Record> selectedRecord = recordService.findById(recordId);
+				selectedRecord.ifPresent(record->{
+					if(record.getAttachments() != null && record.getAttachments().length() > 0) {
+						super.addModelCollectionToView("attachmentList", 
+								record.getAttachments().split(","));
+					}
+					
+					super.addModelCollectionToView("selectedRecord", record);
+				});
 
-					List<Teeth> allTeeth = teethRepository.findAll();
-					super.addModelCollectionToView("listTeeth", allTeeth);
-				}
-				
-				Optional<History> history = historyRepository.findByCustomerId(customerId);
-				super.addModelCollectionToView("selected", history.get());
-				
-				Optional<Customer> customer = customerRepository.findById(customerId);
-				super.addModelCollectionToView("currentCustomer", customer.get());
+			}
+
+			Long customerId = (Long) super.getAllControllerParams().get("customerId");
+			
+			Optional<History> history = historyService.findByCustomerId(customerId);
+			history.ifPresent(selectedHistory -> super.addModelCollectionToView("selected", selectedHistory));
+			
+			Optional<Customer> customer = customerService.findById(customerId);
+			customer.ifPresent(selectedCustomer -> super.addModelCollectionToView("currentCustomer", selectedCustomer));
 		}
 		
+		super.addModelCollectionToView("listTeeth", teethService.findAll());
 	}
 	
 	/**
@@ -268,22 +215,14 @@ public class RecordModelController extends ModelControllerImpl {
 				((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest())
 		);
 		super.addModelCollectionToView("currentPage", currentPage);
+		super.addModelCollectionToView("recordList", recordService.findAllOrderByServicedateDesc());
+
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
-
-		Iterable<Record> records = recordRepository.findAllByOrderByServicedateDesc();
-		super.addModelCollectionToView("recordList", records);
-
-		Optional<Account> loggedInAccount = accountRepository.findByUsername(AccountUtil.currentLoggedInUser().getUsername());
-		loggedInAccount.ifPresent(account -> {
-			super.addModelCollectionToView("currentRoles", account.getRoles());
-			super.addModelCollectionToView("loggedInAccount", account);
-		});
+		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser());
 		
-		Locale locales = LocaleContextHolder.getLocale();
-		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
+		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
 		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
-
 	}
 	
 	@Override

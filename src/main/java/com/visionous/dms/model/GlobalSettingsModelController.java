@@ -4,21 +4,12 @@
 package com.visionous.dms.model;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -29,13 +20,10 @@ import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
-import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.GlobalSettings;
-import com.visionous.dms.pojo.ServiceType;
 import com.visionous.dms.pojo.ServiceTypes;
-import com.visionous.dms.repository.AccountRepository;
-import com.visionous.dms.repository.GlobalSettingsRepository;
-import com.visionous.dms.repository.ServiceTypeRepository;
+import com.visionous.dms.service.GlobalSettingsService;
+import com.visionous.dms.service.ServiceTypeService;
 
 /**
  * @author delimeta
@@ -45,13 +33,14 @@ import com.visionous.dms.repository.ServiceTypeRepository;
 @Controller
 public class GlobalSettingsModelController extends ModelControllerImpl{
 	
-	private final Log logger = LogFactory.getLog(CustomerModelController.class);
+	private final Log logger = LogFactory.getLog(GlobalSettingsModelController.class);
 
 	private static String currentPage = LandingPages.GLOBALSETTINGS.value();
 
-	private AccountRepository accountRepository;
-	private GlobalSettingsRepository globalSettingsRepository;
-	private ServiceTypeRepository serviceTypeRepository;
+	private GlobalSettingsService globalSettingsService;
+	private ServiceTypeService serviceTypeService;
+	
+	// Bean
 	private GlobalSettings globalSettings;
 	private ApplicationContext ctx;
 	
@@ -59,13 +48,16 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 	 * 
 	 */
 	@Autowired
-	public GlobalSettingsModelController(AccountRepository accountRepository, GlobalSettingsRepository globalSettingsRepository,
-			ApplicationContext ctx, GlobalSettings globalSettings, ServiceTypeRepository serviceTypeRepository) {
-		this.accountRepository = accountRepository;
-		this.globalSettingsRepository = globalSettingsRepository;
+	public GlobalSettingsModelController(
+			GlobalSettingsService globalSettingsService,
+			ServiceTypeService serviceTypeService,
+			GlobalSettings globalSettings, 
+			ApplicationContext ctx) {
+				
+		this.globalSettingsService = globalSettingsService;
+		this.serviceTypeService = serviceTypeService;
 		this.globalSettings = globalSettings;
 		this.ctx = ctx;
-		this.serviceTypeRepository = serviceTypeRepository;
 	}
 	
 	/**
@@ -80,13 +72,10 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 					super.setControllerParam("viewType", super.getAllControllerParams().get("action").toString().toLowerCase());
 				}else {
 					if(super.getAllControllerParams().get("modelAttribute") instanceof GlobalSettings) {
-						persistModelAttributes(
-								(GlobalSettings) super.getAllControllerParams().get("modelAttribute"), 
-								super.getAllControllerParams().get("action").toString().toLowerCase()
-								);
+
 					}else {
 						persistModelAttributes(
-								(ServiceTypes) super.getAllControllerParams().get("modelAttribute"), 
+								(GlobalSettings) super.getAllControllerParams().get("modelAttribute"), 
 								super.getAllControllerParams().get("action").toString().toLowerCase()
 								);
 					}
@@ -101,70 +90,44 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 		// Build global view model for Customer
 		this.buildGlobalSettingsGlobalViewModel();
 	}
-	
-	private void persistModelAttributes(ServiceTypes serviceType, String action) {
-		ServiceTypes services = serviceType;
-		if(action.equals(Actions.EDIT.getValue()) ) {
-			for(ServiceType service : services.getServices()) {
-				System.out.println(service.getName());
-				System.out.println(service.getAddeddate());
-			}
-		}
-	}
-	
 	/**
 	 * 
 	 */
 	private void persistModelAttributes(GlobalSettings settings, String action) {
 		GlobalSettings globalSetting = settings;
+		
 		if(action.equals(Actions.DELETE.getValue())) {
-
-			
 		}else if(action.equals(Actions.EDIT.getValue()) ) {
+			
 			if(globalSetting.getId() != null) {
-				
-				if(super.getAllControllerParams().get("businessImage") != null) {
-					
-					MultipartFile uploadedFile = (MultipartFile) super.getAllControllerParams().get("businessImage");
-					System.out.println(uploadedFile.toString());
-					System.out.println(new FileSystemResource("").getFile().getAbsolutePath()+"/tmp/business/logo/");
-					if(!uploadedFile.isEmpty() && (uploadedFile.getOriginalFilename()!= null || !uploadedFile.isEmpty())){
-							StringBuilder attachmentPath = new StringBuilder();
-							try {
-								String path = FileManager.write(uploadedFile, "/tmp/business/logo/");
-							    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss-"));
-							    String fileName = date + uploadedFile.getOriginalFilename();
-								attachmentPath.append(fileName);
-							} catch (IOException e) {
-								e.printStackTrace();
-							} 
-							globalSetting.setBusinessImage(attachmentPath.toString());
-					}else {
-						globalSetting.setBusinessImage(globalSettings.getBusinessImage());
-					}
+				if(super.getAllControllerParams().containsKey("businessImage")) {
+					try {
+						String imageName = null;
+						if((imageName = uploadBusinessImage()) != null) {
+							globalSetting.setBusinessImage(imageName);
+						}else {
+							globalSetting.setBusinessImage(globalSettings.getBusinessImage());
+						}
+					} catch (IOException e) {
+							e.printStackTrace();
+					}						
 				}
 
-				GlobalSettings old = ctx.getBean(GlobalSettings.class);
-				GlobalSettings newSetting = globalSettingsRepository.saveAndFlush(globalSetting);
-				
-				ctx.getBean(GlobalSettings.class).setAppointmentTimeSplit(newSetting.getAppointmentTimeSplit());
-				ctx.getBean(GlobalSettings.class).setBusinessDays(newSetting.getBusinessDays());
-				ctx.getBean(GlobalSettings.class).setBusinessEmail(newSetting.getBusinessEmail());
-				ctx.getBean(GlobalSettings.class).setBusinessPassword(newSetting.getBusinessPassword());
-				ctx.getBean(GlobalSettings.class).setBusinessImage(newSetting.getBusinessImage());
-				ctx.getBean(GlobalSettings.class).setBusinessName(newSetting.getBusinessName());
-				ctx.getBean(GlobalSettings.class).setBusinessTimes(newSetting.getBusinessTimes());
-				
+				GlobalSettings newSetting = globalSettingsService.update(globalSetting);			
+				ctx.getBean(GlobalSettings.class).setCurrentSetting(newSetting);
 				 
 				ctx.getBean(JavaMailSenderImpl.class).setUsername(newSetting.getBusinessEmail());
 				ctx.getBean(JavaMailSenderImpl.class).setPassword(newSetting.getBusinessPassword());
-				
 			}
+			
 		}else if(action.equals(Actions.CREATE.getValue())) {
 
 		}else if(action.equals(Actions.VIEW.getValue())) {
 		}		
-
+	}
+	
+	private String uploadBusinessImage() throws IOException {
+		return FileManager.uploadImage((MultipartFile) super.getAllControllerParams().get("businessImage"), FileManager.BUSINESS_LOGO_IMAGE_PATH);
 	}
 	
 	/**
@@ -179,11 +142,11 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 			
 		}else if (viewType.equals(Actions.EDIT.getValue())) {
 			if(!super.hasResultBindingError()) {
-				List<GlobalSettings> globalSettings = globalSettingsRepository.findAll();
-				super.addModelCollectionToView("globalSettings", globalSettings.get(0));
+				List<GlobalSettings> globalSetting = globalSettingsService.findAll();
+				super.addModelCollectionToView("globalSettings", globalSetting.get(0));
 			}
-			ServiceTypes serviceTypes = new ServiceTypes();
-			serviceTypes.addAllServices(serviceTypeRepository.findAll());
+			
+			ServiceTypes serviceTypes = new ServiceTypes(serviceTypeService.findAll());
 			if(!serviceTypes.getServices().isEmpty()) {
 				super.addModelCollectionToView("services", serviceTypes);
 			}
@@ -201,16 +164,11 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 		);
 
 		super.addModelCollectionToView("currentPage", currentPage);
-		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
 
-		Optional<Account> loggedInAccount = accountRepository.findByUsername(AccountUtil.currentLoggedInUser().getUsername());
-		loggedInAccount.ifPresent(account -> {
-			super.addModelCollectionToView("currentRoles", account.getRoles());
-			super.addModelCollectionToView("loggedInAccount", account);
-		});
+		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
+		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser());
 		
-		Locale locales = LocaleContextHolder.getLocale();
-		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
+		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
 		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
 	}

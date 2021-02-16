@@ -26,7 +26,7 @@ import javax.validation.Valid;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.visionous.dms.configuration.helpers.DmsCoreVersion;
+import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
  * @author delimeta
@@ -36,7 +36,7 @@ import com.visionous.dms.configuration.helpers.DmsCoreVersion;
 @Table(name="questionnaire_form")
 public class QuestionnaireForm implements Serializable{
 
-	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
+	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 	
 	@Id
 	private Long id;

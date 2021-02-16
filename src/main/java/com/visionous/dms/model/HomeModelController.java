@@ -3,26 +3,20 @@
  */
 package com.visionous.dms.model;
 
-import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -34,16 +28,12 @@ import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Appointment;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.GlobalSettings;
-import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Record;
 import com.visionous.dms.pojo.Role;
-import com.visionous.dms.repository.AccountRepository;
-import com.visionous.dms.repository.AppointmentRepository;
-import com.visionous.dms.repository.CustomerRepository;
-import com.visionous.dms.repository.HistoryRepository;
-import com.visionous.dms.repository.PersonnelRepository;
-import com.visionous.dms.repository.RecordRepository;
-import com.visionous.dms.repository.RoleRepository;
+import com.visionous.dms.service.AccountService;
+import com.visionous.dms.service.AppointmentService;
+import com.visionous.dms.service.RecordService;
+import com.visionous.dms.service.RoleService;
 
 /**
  * @author delimeta
@@ -54,15 +44,12 @@ public class HomeModelController extends ModelControllerImpl{
 	
 	private final Log logger = LogFactory.getLog(HomeModelController.class);
 
-	private AccountRepository accountRepository;
-	private RecordRepository recordRepository;
-	private HistoryRepository historyRepository;
-	private AppointmentRepository appointmentRepository;
-	private PersonnelRepository personnelRepository;
-	private CustomerRepository customerRepository;
+	private AccountService accountService;
+	private RecordService recordService;
+	private AppointmentService appointmentService;
 	private GlobalSettings globalSettings;
 	
-	private RoleRepository roleRepository;
+	private RoleService roleService;
 	
 	private static String currentPage = LandingPages.HOME.value();
 
@@ -71,17 +58,13 @@ public class HomeModelController extends ModelControllerImpl{
 	 * @param personnelRepository
 	 */
 	@Autowired
-	public HomeModelController(AccountRepository accountRepository, RecordRepository recordRepository, 
-			AppointmentRepository appointmentRepository, HistoryRepository historyRepository,
-			PersonnelRepository personnelRepository, RoleRepository roleRepository,
-			CustomerRepository customerRepository, GlobalSettings globalSettings){
-		this.accountRepository = accountRepository;
-		this.recordRepository = recordRepository;
-		this.appointmentRepository = appointmentRepository;
-		this.historyRepository = historyRepository;
-		this.personnelRepository = personnelRepository;
-		this.customerRepository = customerRepository;
-		this.roleRepository = roleRepository;
+	public HomeModelController(AccountService accountService, RecordService recordService, 
+			AppointmentService appointmentService, RoleService roleService,
+			GlobalSettings globalSettings){
+		this.accountService = accountService;
+		this.recordService = recordService;
+		this.appointmentService = appointmentService;
+		this.roleService = roleService;
 		this.globalSettings = globalSettings;
 	}
 	
@@ -111,16 +94,11 @@ public class HomeModelController extends ModelControllerImpl{
 	 * 
 	 */
 	private void persistModelAttributes(Customer customerNewModel, String action) {
-		Customer newCustomer = customerNewModel;
-		
+
 		if(action.equals(Actions.DELETE.getValue())) {
 		}else if(action.equals(Actions.EDIT.getValue()) ) {
-	
-			
-		}else if(action.equals(Actions.CREATE.getValue())) {
-			
+		}else if(action.equals(Actions.CREATE.getValue())) {		
 		}else if(action.equals(Actions.VIEW.getValue())) {
-			
 		}		
 	
 	}
@@ -134,44 +112,27 @@ public class HomeModelController extends ModelControllerImpl{
 		if(viewType.equals(Actions.CREATE.getValue())) {
 		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
-			System.out.println(this.globalSettings.getBusinessEmail()+ " EMAIL");
 
-			int startDay = 1;
-			int endDay = 5;
-			String startTime = "08:00";
-			String endTime = "18:00";
-			int bookingSplit = 60;
-			if(this.globalSettings != null) {
-				String[] dayPeriod = this.globalSettings.getBusinessDays().split(",");
-				String[] timePeriod = this.globalSettings.getBusinessTimes().split(",");
-				
-				bookingSplit = this.globalSettings.getAppointmentTimeSplit();
-				
-				startDay = Integer.parseInt(dayPeriod[0]);
-				endDay = Integer.parseInt(dayPeriod[1]);
-				
-				startTime = timePeriod[0];
-				endTime = timePeriod[1];
-			}
+			String endTime = this.globalSettings.getBusinessEndTime();
 
 			Date appointmentEndTime = DateUtil.getEndWorkingHr(endTime);
 
 			Account acc = AccountUtil.currentLoggedInUser();
-			Optional<Account> currentAccount = accountRepository.findByUsername(acc.getUsername());
+			Optional<Account> currentAccount = accountService.findByUsernameOrEmail(acc.getUsername());
 			currentAccount.ifPresent(account -> {
 				
 				Period monthPeriodOfThisYear = DateUtil.getPeriodBetween(DateUtil.getBegginingOfYear(), new Date());
 				System.out.println( DateUtil.getStartWorkingHr() +"-----"+ appointmentEndTime);
-				List<Appointment> todaysAppointments = appointmentRepository.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(account.getId(), DateUtil.getStartWorkingHr(), appointmentEndTime);
-				List<Record> top10records = recordRepository.findFirst10ByPersonnelIdOrderByServicedateDesc(account.getId()); 
+				List<Appointment> todaysAppointments = appointmentService.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(account.getId(), DateUtil.getStartWorkingHr(), appointmentEndTime);
+				List<Record> top10records = recordService.findFirst10ByPersonnelIdOrderByServicedateDesc(account.getId()); 
 				List<Integer> nrOfRecordsForEachMonth = new ArrayList<>();
-				for(int month=0 ; month <= monthPeriodOfThisYear.getMonths(); month++) {
+				 for(int month=0 ; month <= monthPeriodOfThisYear.getMonths(); month++) {
 
 					Date beginMonthDate = DateUtil.getCurrentDateByMonthAndDay(month, 1);
 										
 					Date endMonthDate = DateUtil.getCurrentDateByMonthAndDay(month, DateUtil.getCalendarFromDate(beginMonthDate).getActualMaximum(Calendar.DAY_OF_MONTH));
 
-					Integer countBetweenDates = recordRepository.countByPersonnelIdAndServicedateBetween(account.getId(), beginMonthDate, endMonthDate);
+					Integer countBetweenDates = recordService.countByPersonnelIdAndServicedateBetween(account.getId(), beginMonthDate, endMonthDate);
 					nrOfRecordsForEachMonth.add(countBetweenDates);
 				}
 				
@@ -190,9 +151,9 @@ public class HomeModelController extends ModelControllerImpl{
 				
 				if(account.getRoles().get(0).getName().equals("ADMIN")) {
 					
-					Optional<Role> rolePersonnel = roleRepository.findByName("PERSONNEL");
+					Optional<Role> rolePersonnel = roleService.findByName("PERSONNEL");
 					List<Account> allPersonnel = new ArrayList<>();
-					rolePersonnel.ifPresent(role-> allPersonnel.addAll(accountRepository.findAllByActiveAndEnabledAndRoles_Name(true,true, role.getName())));
+					rolePersonnel.ifPresent(role-> allPersonnel.addAll(accountService.findAllByActiveAndEnabledAndRoles_Name(true,true, role.getName())));
 					
 					if(!allPersonnel.isEmpty()) {
 						super.addModelCollectionToView("allPersonnel", allPersonnel);
@@ -212,8 +173,8 @@ public class HomeModelController extends ModelControllerImpl{
 							endCalendar.set(Calendar.HOUR_OF_DAY, 23);
 							Calendar startCalendar = DateUtil.getCalendarFromDate(startDate);
 							startCalendar.set(Calendar.HOUR_OF_DAY, 0);
-							Integer records = recordRepository.countAllByPersonnelIdAndServicedateBetween(selectedPersonnel.getId(), startCalendar.getTime(), endCalendar.getTime());
-							Integer appointments = appointmentRepository.countAllByPersonnelIdAndAppointmentDateBetween(selectedPersonnel.getId(), startCalendar.getTime(), endCalendar.getTime());
+							Integer records = recordService.countAllByPersonnelIdAndServicedateBetween(selectedPersonnel.getId(), startCalendar.getTime(), endCalendar.getTime());
+							Integer appointments = appointmentService.countAllByPersonnelIdAndAppointmentDateBetween(selectedPersonnel.getId(), startCalendar.getTime(), endCalendar.getTime());
 							dataForAppointment.add(appointments);
 							dataForRange.add(records);
 							startDate = DateUtil.setDays(startDate, 1);
@@ -226,7 +187,7 @@ public class HomeModelController extends ModelControllerImpl{
 					Date endsDate = new Date();
 					Date startsDate = DateUtil.setDayToBegginingOfYear(endsDate);
 					
-					List<Record> allRecordsThisYear = recordRepository.findAllByServicedateBetween(startsDate, endsDate);
+					List<Record> allRecordsThisYear = recordService.findAllByServicedateBetween(startsDate, endsDate);
 					
 					Map<String, Integer> allNewAndOldCustomers = new HashMap<>();
 					Integer allNewCustomers= new Integer(0); 
@@ -257,14 +218,14 @@ public class HomeModelController extends ModelControllerImpl{
 										
 					Date endMonthDate = DateUtil.getCurrentDateByMonthAndDay(month, DateUtil.getCalendarFromDate(beginMonthDate).getActualMaximum(Calendar.DAY_OF_MONTH));
 					Integer countBetweenDates = 0;
-					countBetweenDates = accountRepository.countByEnabledAndActiveAndCustomer_RegisterdateBetween(true,true, beginMonthDate, endMonthDate);
+					countBetweenDates = accountService.countByEnabledAndActiveAndCustomer_RegisterdateBetween(true,true, beginMonthDate, endMonthDate);
 					allNewCustomersForEachMonth.add(countBetweenDates);
 				}
 				
 				if(!allNewCustomersForEachMonth.isEmpty()) {
 					super.addModelCollectionToView("allNewCustomers", allNewCustomersForEachMonth);
 				}
-								
+					
 				
 			});
 		}
@@ -280,13 +241,13 @@ public class HomeModelController extends ModelControllerImpl{
 		 
 		super.addModelCollectionToView("currentPage", currentPage);
 		
-		Optional<Account> loggedInAccount = accountRepository.findByUsername(AccountUtil.currentLoggedInUser().getUsername());
+		Optional<Account> loggedInAccount = accountService.findByUsernameOrEmail(AccountUtil.currentLoggedInUser().getUsername());
 		loggedInAccount.ifPresent(account -> {
 			super.addModelCollectionToView("currentRoles", account.getRoles());
 			super.addModelCollectionToView("loggedInAccount", account);
 		});
-		Locale locales = LocaleContextHolder.getLocale();
-		super.addModelCollectionToView("locale", locales.getLanguage() + "_" + locales.getCountry());
+		
+		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
 		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
 

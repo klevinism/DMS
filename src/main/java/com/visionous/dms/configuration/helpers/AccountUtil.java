@@ -3,6 +3,10 @@
  */
 package com.visionous.dms.configuration.helpers;
 
+import java.time.Period;
+import java.util.Date;
+
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.visionous.dms.configuration.AccountUserDetail;
@@ -26,5 +30,15 @@ public class AccountUtil {
 		}
 		
 		return loggedIn;
+	}
+	
+	public static int calculateAgeFromBirthday(Date birthday) {
+		Date today = new Date();
+		Period period = DateUtil.getPeriodBetween(birthday, today);
+		return period.getYears();
+	}
+	
+	public static String getCurrentLocaleLanguageAndCountry() {
+		return LocaleContextHolder.getLocale().getLanguage() + "_" + LocaleContextHolder.getLocale().getCountry();
 	}
 }

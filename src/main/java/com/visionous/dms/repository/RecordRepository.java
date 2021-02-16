@@ -67,14 +67,6 @@ public interface RecordRepository extends JpaRepository<Record, Long>{
 	List<Record> findAllByPersonnelIdAndServicedateBetween(Long personnelId, Date startDate, Date endDate);
 
 	/**
-	 * @param id
-	 * @param startDate
-	 * @param oneWeekBefore
-	 * @return
-	 */
-	int countAllByPersonnelIdAndServicedateBetween(Long id, Date startDate, Date oneWeekBefore);
-
-	/**
 	 * @param currentDate
 	 * @param endsDate
 	 * @return
