@@ -33,6 +33,9 @@
       </div>
     </form>
     <ul class="navbar-nav ml-auto">
+    
+	 <div id="sound"></div>
+
       <li class="nav-item dropdown" id="notificationDropdown">
         <a class="nav-link count-indicator" id="notificationDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
           <i class="mdi mdi-bell-outline"></i>
@@ -191,14 +194,25 @@
 		 });
 		 
 	    getNotifications();
+
+	    setInterval(function() {
+	    	getNotifications();
+	    }, 900000);
 	    
-	    setTimeout(getNotifications(), 900000);
 	});
+	
+	function playSound(filename){
+		  var mp3Source = '<source src="' + filename + '.mp3" type="audio/mpeg">';
+		  var oggSource = '<source src="' + filename + '.ogg" type="audio/ogg">';
+		  var embedSource = '<embed hidden="true" autostart="true" loop="false" src="' + filename +'.mp3">';
+		  document.getElementById("sound").innerHTML='<audio id="notificationSound">' + mp3Source + oggSource + embedSource + '</audio>';
+		  document.getElementById("notificationSound").play();
+
+	}
   
   function getNotifications(){
 	  var id = $("#accid").val();
 	    refreshNotifications(id, new Date(), function(data){
-	    	
 	    	if(data.error != "error"){
 	    		parseHeaderTemplate(true, data.message,"/customer/dashboard/"+data.result[0].customer.id, data.result.length,data.result[0]);
 	    	}else{
@@ -240,6 +254,7 @@
       '<p class="mb-0 font-weight-medium float-left">'+notifMessage+' </p></a></div>';
 	
       if(hasNewNotification){
+	      playSound("/assets/sound/tik-tok-ringtone");
     	  $("#notificationDropdown").html(text);
       }else{
     	  $("#notificationDropdown").html(nothingText);
