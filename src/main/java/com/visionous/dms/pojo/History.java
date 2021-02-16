@@ -22,7 +22,7 @@ import javax.persistence.SequenceGenerator;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.visionous.dms.configuration.helpers.DmsCoreVersion;
+import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
  * @author delimeta
@@ -34,7 +34,7 @@ public class History implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
+	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "HIS_SEQ")
@@ -50,15 +50,15 @@ public class History implements Serializable{
 	@DateTimeFormat (pattern="dd-MMM-YYYY")
 	private Date startdate;
 
-	@OneToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne(optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "supervisorid")
 	private Personnel supervisor;
 	
-	@OneToMany(mappedBy = "history", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "history", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@PrimaryKeyJoinColumn
 	private Set<Record> records;
 
-	@OneToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne(optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "customerid")
 	private Customer customer;
 

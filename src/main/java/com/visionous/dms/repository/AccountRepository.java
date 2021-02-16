@@ -68,5 +68,5 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 	 * @param email
 	 * @return
 	 */
-	public Object findByEmail(String email);
+	public Optional<Account> findByEmail(String email);
 }

@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -16,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.Valid;
@@ -24,7 +26,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.visionous.dms.configuration.helpers.DmsCoreVersion;
+import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
  * @author delimeta
@@ -36,7 +38,7 @@ public class Customer implements Serializable{
     /**
 	 *  
 	 */
-	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
+	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CUSTOMER_SEQ2")
@@ -61,8 +63,8 @@ public class Customer implements Serializable{
     private Questionnaire questionnaire;
     
 	@JsonIgnore
-    @OneToOne(mappedBy="customer")
-    private Appointment appointment;
+    @OneToMany(mappedBy="customer")
+    private List<Appointment> appointment;
     
 	/**
 	 * @return the id
@@ -149,15 +151,32 @@ public class Customer implements Serializable{
 	/**
 	 * @return the appointment
 	 */
-	public Appointment getAppointment() {
+	public List<Appointment> getAppointment() {
 		return appointment;
 	}
 
 	/**
 	 * @param appointment the appointment to set
 	 */
-	public void setAppointment(Appointment appointment) {
+	public void setAppointment(List<Appointment> appointment) {
 		this.appointment = appointment;
 	}
 
+	/**
+	 * @param appointment
+	 */
+	public void addAppointment(Appointment appointment) {
+		this.appointment.add(appointment);
+	}
+	
+	public boolean hasCustomerHistory() {
+		return this.customerHistory != null;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean hasQuestionnaire() {
+		return this.questionnaire != null;
+	}
 }

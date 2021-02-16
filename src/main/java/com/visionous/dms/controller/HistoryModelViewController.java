@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.visionous.dms.configuration.helpers.Actions;
-import com.visionous.dms.model.CustomerModelController;
 import com.visionous.dms.model.HistoryModelController;
 import com.visionous.dms.pojo.History;
-import com.visionous.dms.pojo.Questionnaire;
 
 /**
  * @author delimeta
@@ -28,7 +26,7 @@ import com.visionous.dms.pojo.Questionnaire;
 @Service
 @RequestMapping("/customer/{customerId}/history")
 public class HistoryModelViewController {
-	private final Log logger = LogFactory.getLog(CustomerModelController.class);
+	private final Log logger = LogFactory.getLog(HistoryModelViewController.class);
 
 	private HistoryModelController historyModelController;
 	

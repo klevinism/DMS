@@ -21,13 +21,12 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import com.visionous.dms.configuration.helpers.LandingPages;
-import com.visionous.dms.event.OnRegistrationCompleteEvent;
 import com.visionous.dms.event.OnResetPasswordEvent;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Reset;
 import com.visionous.dms.pojo.Role;
-import com.visionous.dms.repository.ResetRepository;
-import com.visionous.dms.repository.RoleRepository;
+import com.visionous.dms.service.ResetService;
+import com.visionous.dms.service.RoleService;
 
 /**
  * @author delimeta
@@ -36,20 +35,20 @@ import com.visionous.dms.repository.RoleRepository;
 @Component
 public class ResetListener implements ApplicationListener<OnResetPasswordEvent>{
 	private SpringTemplateEngine thymeleafTemplateEngine;
-	private ResetRepository resetRepository;
+	private ResetService resetService;
     private JavaMailSender mailSender;
-    private RoleRepository roleRepository;
+    private RoleService roleService;
 
     /**
 	 * 
 	 */
     @Autowired
-	public ResetListener(SpringTemplateEngine thymeleafTemplateEngine, ResetRepository resetRepository, JavaMailSender mailSender, 
-			RoleRepository roleRepository) {
+	public ResetListener(SpringTemplateEngine thymeleafTemplateEngine, JavaMailSender mailSender, ResetService resetService, 
+			RoleService roleService) {
 		this.thymeleafTemplateEngine = thymeleafTemplateEngine;
-		this.resetRepository = resetRepository;
+		this.resetService = resetService;
 		this.mailSender = mailSender;
-		this.roleRepository = roleRepository;
+		this.roleService = roleService;
 	}
 	
 	@Override
@@ -61,7 +60,6 @@ public class ResetListener implements ApplicationListener<OnResetPasswordEvent>{
 	 * @param event
 	 */
 	private void resetPassword(OnResetPasswordEvent event) {
-		System.out.println();
 		Context thymeleafContext = new Context();
 		Map<String, Object> vars = new HashMap<>();
 		
@@ -70,14 +68,12 @@ public class ResetListener implements ApplicationListener<OnResetPasswordEvent>{
         String token = UUID.randomUUID().toString();
         
         StringBuilder fromAddress= new StringBuilder();
-        Optional<Role> roleAdmin = roleRepository.findByName("ADMIN");
+        Optional<Role> roleAdmin = roleService.findByName("ADMIN");
         roleAdmin.ifPresent(role -> {
         	fromAddress.append(role.getAccounts().get(0).getEmail());
         });
         
-        
-        Reset resetToken = new Reset(account, token);
-        resetRepository.saveAndFlush(resetToken);
+        resetService.create(new Reset(account, token));
         
         String domainPath = LandingPages.getDomainPathFromRequest(
 				((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest());

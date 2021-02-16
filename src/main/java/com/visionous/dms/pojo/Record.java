@@ -20,7 +20,7 @@ import javax.persistence.SequenceGenerator;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.visionous.dms.configuration.helpers.DmsCoreVersion;
+import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
  * @author delimeta
@@ -32,7 +32,7 @@ public class Record  implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
+	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RECORD_SEQ")
@@ -77,6 +77,23 @@ public class Record  implements Serializable{
 	private Teeth tooth;
 	
 	/**
+	 * 
+	 */
+	public Record() {
+	}
+	
+	/**
+	 * @param history
+	 * @param personnel
+	 */
+	public Record(History history, Personnel personnel) {
+		this.history = history;
+		this.historyId = history.getId();
+		this.personnel = personnel;
+		this.personnelId = personnel.getId();
+	}
+	
+	/**
 	 * @return the id
 	 */
 	public Long getId() {
@@ -103,8 +120,6 @@ public class Record  implements Serializable{
 	public void setHistoryId(Long historyId) {
 		this.historyId = historyId;
 	}
-
-	
 	
 	/**
 	 * @return the personnelId

@@ -35,6 +35,6 @@ public interface PersonnelRepository extends JpaRepository<Personnel, Long> {
 	 * @param string
 	 * @return
 	 */
-	Iterable<Personnel> findAllByAccount_Roles_Name(String roles_name);
+	List<Personnel> findAllByAccount_Roles_Name(String roles_name);
 	
 }

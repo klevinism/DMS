@@ -3,12 +3,8 @@
  */
 package com.visionous.dms.rest;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
@@ -16,17 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.visionous.dms.pojo.Appointment;
-import com.visionous.dms.pojo.Customer;
-import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.ServiceType;
-import com.visionous.dms.repository.AccountRepository;
-import com.visionous.dms.repository.AppointmentRepository;
-import com.visionous.dms.repository.CustomerRepository;
-import com.visionous.dms.repository.PersonnelRepository;
-import com.visionous.dms.repository.RecordRepository;
-import com.visionous.dms.repository.ServiceTypeRepository;
 import com.visionous.dms.rest.response.ResponseBody;
+import com.visionous.dms.service.ServiceTypeService;
 
 /**
  * @author delimeta
@@ -35,27 +23,14 @@ import com.visionous.dms.rest.response.ResponseBody;
 @RestController
 public class ServiceTypeRestController {
 	private MessageSource messageSource;
-	
-	private AppointmentRepository appointmentRepository;
-	private ServiceTypeRepository serviceTypeRepository;
-	private PersonnelRepository personnelRepository;
-	private CustomerRepository customerRepository;
-	private AccountRepository accountRepository;
-	private RecordRepository recordRepository;
+	private ServiceTypeService serviceTypeService;
 	
 	/**
 	 * 
 	 */
-	public ServiceTypeRestController(AppointmentRepository appointmentRepository, PersonnelRepository personnelRepository, 
-			CustomerRepository customerRepository, MessageSource messageSource, 
-			RecordRepository recordRepository, AccountRepository accountRepostory, ServiceTypeRepository serviceTypeRepository) {
-		this.appointmentRepository = appointmentRepository;
-		this.personnelRepository = personnelRepository;
-		this.customerRepository = customerRepository;
+	public ServiceTypeRestController(MessageSource messageSource, ServiceTypeService serviceTypeService) {
 		this.messageSource = messageSource;
-		this.recordRepository = recordRepository;
-		this.accountRepository = accountRepostory;
-		this.serviceTypeRepository = serviceTypeRepository;
+		this.serviceTypeService = serviceTypeService;
 	}
 	
 	@PostMapping("/api/serviceType/create")
@@ -68,7 +43,7 @@ public class ServiceTypeRestController {
         ResponseBody<ServiceType> result = new ResponseBody<>();
         ServiceType service = new ServiceType(serviceTypeName);
         
-        ServiceType savedService = serviceTypeRepository.saveAndFlush(service);
+        ServiceType savedService = serviceTypeService.create(service);
         if(savedService.getId() != null) {
         	result.setError(success);
         	result.setMessage(serviceCreated);
@@ -89,12 +64,12 @@ public class ServiceTypeRestController {
         
         ResponseBody<ServiceType> result = new ResponseBody<>();
         
-        Optional<ServiceType> oldService = serviceTypeRepository.findById(currentServiceId);
+        Optional<ServiceType> oldService = serviceTypeService.findById(currentServiceId);
         
         if(oldService.isPresent()) {
         	oldService.get().setName(newName);
         	
-        	ServiceType newService = serviceTypeRepository.saveAndFlush(oldService.get());
+        	ServiceType newService = serviceTypeService.update(oldService.get());
         	if(newService.getId() != null) {
             	result.setError(success);
             	result.setMessage(serviceEdited);
@@ -120,10 +95,10 @@ public class ServiceTypeRestController {
 
         ResponseBody<ServiceType> result = new ResponseBody<>();
         
-        Optional<ServiceType> oldService = serviceTypeRepository.findById(selectedServiceId);
+        Optional<ServiceType> oldService = serviceTypeService.findById(selectedServiceId);
         
         if(oldService.isPresent()) {
-        	serviceTypeRepository.delete(oldService.get());
+        	serviceTypeService.delete(oldService.get());
 			result.setError(success);
 			result.setMessage(serviceEdited);
         }else {

@@ -7,7 +7,7 @@ import java.util.Locale;
 
 import org.springframework.context.ApplicationEvent;
 
-import com.visionous.dms.configuration.helpers.DmsCoreVersion;
+import com.visionous.dms.configuration.helpers.DmsCore;
 import com.visionous.dms.pojo.Account;
 
 /**
@@ -19,7 +19,7 @@ public class OnRegistrationCompleteEvent extends ApplicationEvent{
     /**
 	 * 
 	 */
-	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
+	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 	
 	private String appUrl;
     private Locale locale;

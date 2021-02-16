@@ -1,10 +1,8 @@
 package com.visionous.dms.service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Service;
 import com.visionous.dms.configuration.AccountUserDetail;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Role;
-import com.visionous.dms.repository.AccountRepository;
 
 
 /**
@@ -30,11 +27,11 @@ import com.visionous.dms.repository.AccountRepository;
 public class AccountUserDetailService implements UserDetailsService{
 	private final Log logger = LogFactory.getLog(AccountUserDetailService.class);
 	
-	private AccountRepository accountRepository;
+	private AccountService accountService;
 	
 	@Autowired
-	private AccountUserDetailService(AccountRepository accountRepository) {
-		this.accountRepository = accountRepository;
+	private AccountUserDetailService(AccountService accountService) {
+		this.accountService = accountService;
 	}
 	
 	/**
@@ -44,7 +41,7 @@ public class AccountUserDetailService implements UserDetailsService{
 	public UserDetails loadUserByUsername(String username){
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		AccountUserDetail accountUserDetail = null;
-		Optional<Account> acc = accountRepository.findByUsernameOrEmail(username, username); 
+		Optional<Account> acc = accountService.findByUsernameOrEmail(username); 
 		
 		if(acc.isPresent()) {
 			authorities.addAll(buildUserAuthority(acc.get().getRoles()));

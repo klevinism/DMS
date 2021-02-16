@@ -14,12 +14,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.visionous.dms.configuration.helpers.DmsCoreVersion;
+import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
  * @author delimeta
@@ -31,7 +32,7 @@ public class Appointment implements Serializable{
     /**
 	 *  
 	 */
-	private static final long serialVersionUID = DmsCoreVersion.SERIAL_VERSION_UID;
+	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "APPOINTMENT_SEQ")
@@ -50,7 +51,7 @@ public class Appointment implements Serializable{
 	@DateTimeFormat (pattern="dd-MM-YYYY")
 	private Date addeddate;
 	
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH )
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH )
 	@JoinColumn(name = "customerid")
 	private Customer customer;
 	

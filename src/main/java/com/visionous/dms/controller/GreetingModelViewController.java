@@ -1,14 +1,11 @@
 package com.visionous.dms.controller;
-
-import java.util.Calendar;
-import java.util.Optional;
-
 /**
  * @author delimeta
  *
  */
+import java.util.Calendar;
+import java.util.Optional;
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,14 +25,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.visionous.dms.event.OnRegistrationCompleteEvent;
 import com.visionous.dms.event.OnResetPasswordEvent;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Reset;
 import com.visionous.dms.pojo.Verification;
-import com.visionous.dms.repository.AccountRepository;
-import com.visionous.dms.repository.ResetRepository;
-import com.visionous.dms.repository.VerificationRepository;
+import com.visionous.dms.service.AccountService;
+import com.visionous.dms.service.ResetService;
+import com.visionous.dms.service.VerificationService;
 
 @Controller
 @RequestMapping("/")
@@ -43,13 +39,13 @@ public class GreetingModelViewController {
 	private final Log logger = LogFactory.getLog(GreetingModelViewController.class);
 	
 	@Autowired
-	private AccountRepository accountRepository;
+	private AccountService accountService;
 	@Autowired
-	private VerificationRepository verificationRepository;
+	private VerificationService verificationService;
 	@Autowired
     private MessageSource messages;
 	@Autowired
-	private ResetRepository resetRepository;
+	private ResetService resetService;
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
 	/**
@@ -116,7 +112,6 @@ public class GreetingModelViewController {
 			
 			return "demo_1/pages/samples/login";
 		}else {
-			System.out.println(SecurityContextHolder.getContext().getAuthentication());
 			return "redirect:/home";
 		}
 	}
@@ -127,8 +122,7 @@ public class GreetingModelViewController {
 	 */
 	@GetMapping("/confirm")
 	public String emailConfirmation(@RequestParam(name = "token", required = true) String token, Model model) {
-		Boolean auth = SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
-		Verification verificationToken = verificationRepository.findByToken(token);
+		Verification verificationToken = verificationService.findByToken(token);
 	    if (verificationToken == null) {
 	        String message = messages.getMessage("alert.invalidToken", null, LocaleContextHolder.getLocale());
 
@@ -145,7 +139,7 @@ public class GreetingModelViewController {
 	    }
 	    user.setEnabled(true);
 	    user.setActive(true);
-	    accountRepository.saveAndFlush(user);
+	    accountService.createPlain(user);
 		return "redirect:/login";
 	}
 	
@@ -169,7 +163,7 @@ public class GreetingModelViewController {
 		String appUrl = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getContextPath();
 		
 		if(username != null) {
-		    Optional<Account> user = accountRepository.findByUsernameOrEmail(username, username);
+		    Optional<Account> user = accountService.findByUsernameOrEmail(username);
 		    if(user.isPresent()) {
 		    	System.out.println("publishing..");
 		    	eventPublisher.publishEvent(
@@ -193,14 +187,13 @@ public class GreetingModelViewController {
 	@GetMapping("/confirmReset")
 	public String resetConfirm(@RequestParam(name = "token", required = true) String token, Model model) {
 		
-		Reset resetToken = resetRepository.findByToken(token);
+		Reset resetToken = resetService.findByToken(token);
 	    if (resetToken == null) {
 	    	String message = messages.getMessage("alert.invalidToken", null, LocaleContextHolder.getLocale());
 	        model.addAttribute("errorMessage", message);
 	        return "demo_1/pages/reset_password";
 	    }
 		
-	    Account user = resetToken.getAccount();
 	    Calendar cal = Calendar.getInstance();
 	    if ((resetToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
 	    	String message = messages.getMessage("alert.tokenExpired", null, LocaleContextHolder.getLocale());
@@ -219,9 +212,8 @@ public class GreetingModelViewController {
 	@PostMapping("/confirmReset")
 	public String resetConfirmPost(@RequestParam(name = "password", required = true) String password, 
 			@RequestParam(name = "token", required = true) String token, Model model) {
-		Boolean auth = SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
 		
-		Reset resetToken = resetRepository.findByToken(token);
+		Reset resetToken = resetService.findByToken(token);
 	    if (resetToken == null) {
 	    	String message = messages.getMessage("alert.invalidToken", null, LocaleContextHolder.getLocale());
 	        model.addAttribute("errorMessage", message);
@@ -237,7 +229,7 @@ public class GreetingModelViewController {
 	    }
 	    
 	    user.setPassword(new BCryptPasswordEncoder().encode(password));
-	    if(accountRepository.saveAndFlush(user) != null) {
+	    if(accountService.createPlain(user) != null) {
 	    	String message = messages.getMessage("alert.passwordChangedSuccessfully", null, LocaleContextHolder.getLocale());
 	    	model.addAttribute("successReset", message);
 	    	return "redirect:/login";
@@ -323,9 +315,9 @@ public class GreetingModelViewController {
 			Model model) {
 		
 		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-        accountRepository.save(user);
+        accountService.createPlain(user);
 
-	    Iterable<Account> accounts = accountRepository.findAll();
+	    Iterable<Account> accounts = accountService.findAll();
 		model.addAttribute("user",accounts);
 		
 		return "demo_1/pages/samples/register";
