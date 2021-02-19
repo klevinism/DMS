@@ -134,8 +134,9 @@ public class AccountModelController extends ModelControllerImpl{
 					
 			try {
 				if(oldAccount.isPresent() && 
-						oldAccount.get().getEmail().equals(newAccount.getEmail()) && 
-						oldAccount.get().getUsername().equals(newAccount.getUsername())) { // Has same username/email after account edit
+						(oldAccount.get().getEmail().equals(newAccount.getEmail()) || 
+						oldAccount.get().getUsername().equals(newAccount.getUsername()))
+						) { // Has same username/email after account edit
 					setImageToAccount((MultipartFile)super.getAllControllerParams().get("profileimage"), newAccount, oldAccount.get());
 					accountService.createPlain(newAccount);
 				}else {
@@ -223,7 +224,7 @@ public class AccountModelController extends ModelControllerImpl{
 			}
 			
 			if(super.hasResultBindingError()) {
-				if(super.getAllControllerParams().containsKey("modelAttribute")) {				
+				if(super.getAllControllerParams().containsKey("modelAttribute")) {	
 					Account account = (Account) super.getAllControllerParams().get("modelAttribute");
 					setImageToAccount((MultipartFile)super.getAllControllerParams().get("profileimage"), account, account);
 				}
