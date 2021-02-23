@@ -120,10 +120,10 @@ public class AccountModelController extends ModelControllerImpl{
 				});			
 			}
 			
-			if(newAccount.getCustomer() != null) {
+			if(newAccount.getCustomer().getId() != null) {
 				newAccount.setPersonnel(null);
 				newAccount.getCustomer().setAccount(newAccount);
-			}else if(newAccount.getPersonnel() != null) {
+			}else if(newAccount.getPersonnel().getId() != null) {
 				newAccount.setCustomer(null);
 				newAccount.getPersonnel().setAccount(newAccount);
 			}

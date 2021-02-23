@@ -127,7 +127,7 @@
      	}
      </script>
      
-     <script th:inline="javascript">
+     <script th:inline="javascript" th:if="${allPersonnel != null}">
 	 /*<![CDATA[*/
 		var visitsName = ""+ /*[[#{Visits}]]*/'';
 	 	var list =  [[${nrOfVisitsList}]];
