@@ -71,15 +71,10 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 				if(super.hasResultBindingError()) {
 					super.setControllerParam("viewType", super.getAllControllerParams().get("action").toString().toLowerCase());
 				}else {
-					if(super.getAllControllerParams().get("modelAttribute") instanceof GlobalSettings) {
-
-					}else {
-						persistModelAttributes(
-								(GlobalSettings) super.getAllControllerParams().get("modelAttribute"), 
-								super.getAllControllerParams().get("action").toString().toLowerCase()
-								);
-					}
-					
+					persistModelAttributes(
+						(GlobalSettings) super.getAllControllerParams().get("modelAttribute"), 
+						super.getAllControllerParams().get("action").toString().toLowerCase()
+						);					
 				}
 			}
 		}
