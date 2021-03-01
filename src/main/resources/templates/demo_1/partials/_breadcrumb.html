@@ -1,18 +1,17 @@
 <div th:fragment="breadcrumb" class="row page-title-header"  th:with="title =  ${#strings.substring(currentPage, 1, #strings.length(currentPage))}">
     <div class="col-12">
-     <div class="page-header" >
-        <h4 class="page-title" >[[#{__${title.matches('[0-9]{1,}') ? title : #strings.toUpperCase(title)}__}]]</h4>
-     </div>
+	    <div class="page-header" >
+	        <h4 class="page-title" >[[#{__${title.matches('[0-9]{1,}') ? title : #strings.toUpperCase(title)}__}]]</h4>
+	    </div>
+		<nav aria-label="breadcrumb">
+		  <ol class="breadcrumb" style="margin-bottom: 0px;">
+		  
+		  <th:block th:each="list: ${currentBreadcrumb}">
+		    <li class="breadcrumb-item" th:each="breadCrumbMap : ${list}" th:with="message=#{__${breadCrumbMap.key}__}"><a th:href="${breadCrumbMap.value}">[[${breadCrumbMap.key.matches('[0-9]{1,}') ? breadCrumbMap.key : message}]]</a></li>		  
+		  </th:block>
 
+		  </ol>
+		</nav>
     </div>
-	<nav aria-label="breadcrumb">
-	  <ol class="breadcrumb" >
-	  
-	  <th:block th:each="list: ${currentBreadcrumb}">
-	    <li class="breadcrumb-item" th:each="breadCrumbMap : ${list}" th:with="message=#{__${breadCrumbMap.key}__}"><a th:href="${breadCrumbMap.value}">[[${breadCrumbMap.key.matches('[0-9]{1,}') ? breadCrumbMap.key : message}]]</a></li>
-	  
-	  </th:block>
-	  
-	  </ol>
-	</nav>
+
 </div>

@@ -402,6 +402,7 @@
 
 /* Sidebar */
 .sidebar {
+	
   min-height: calc(100vh - 63px);
   background: -webkit-gradient(linear, left bottom, left top, from(#5768f3), to(#1c45ef));
   background: linear-gradient(to top, #5768f3, #1c45ef);
@@ -414,6 +415,8 @@
   -moz-transition: width 0.25s ease, background 0.25s ease;
   -ms-transition: width 0.25s ease, background 0.25s ease; }
   .sidebar > .nav {
+  	position:fixed;
+  	list-style: none;
     overflow: hidden;
     -ms-flex-wrap: nowrap;
     flex-wrap: nowrap;
@@ -461,7 +464,7 @@
         padding-top: 0; }
       .sidebar > .nav .nav-item:not(.hover-open) .collapse .sub-menu .nav-item:last-child .nav-link,
       .sidebar > .nav .nav-item:not(.hover-open) .collapsing .sub-menu .nav-item:last-child .nav-link {
-        padding-bottom: 0; }
+        padding-bottom: 0; }    
     .sidebar > .nav .nav-item .nav-link {
       -webkit-box-align: center;
       -ms-flex-align: center;
@@ -469,7 +472,7 @@
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
-      padding: 15px 30px 15px 55px;
+      padding: 15px 30px 15px 25px;
       white-space: nowrap;
       color: #fff; }
       .sidebar > .nav .nav-item .nav-link i.menu-arrow {
@@ -495,11 +498,10 @@
         -webkit-transform: rotate(90deg);
         transform: rotate(90deg); }
       .sidebar > .nav .nav-item .nav-link .menu-icon {
-        display: none;
         margin-right: 1.25rem;
         width: 16px;
         line-height: 1;
-        font-size: 18px;
+        font-size: 30px;
         color: #fff; }
       .sidebar > .nav .nav-item .nav-link .menu-title {
         color: inherit;
@@ -513,7 +515,8 @@
       .sidebar > .nav .nav-item .nav-link:hover {
         color: #f2f2f2; }
     .sidebar > .nav .nav-item.active > .nav-link {
-      color: #fff; }
+      padding-left: 50px;
+      }
       .sidebar > .nav .nav-item.active > .nav-link .menu-title,
       .sidebar > .nav .nav-item.active > .nav-link i {
         color: inherit; }
@@ -522,7 +525,9 @@
       margin-right: auto;
       margin-left: auto;
       margin-top: 30px;
-      margin-bottom: 30px; }
+      margin-bottom: 30px;
+      padding-left: 30px;
+      padding-right: 30px; }
       .sidebar > .nav .nav-item.nav-profile .nav-link {
         display: -webkit-box;
         display: -ms-flexbox;
@@ -560,7 +565,6 @@
     .sidebar > .nav > .nav-item:not(.nav-profile) > .nav-link {
       position: relative; }
       .sidebar > .nav > .nav-item:not(.nav-profile) > .nav-link:before {
-        content: "";
         position: absolute;
         left: 30px;
         right: 50%;
@@ -580,7 +584,7 @@
       transition-property: "background", "color", "box-shadow", "padding"; }
     .sidebar > .nav:not(.sub-menu) > .nav-item:hover:not(.nav-profile):not(.hover-open) > .nav-link:not([aria-expanded="true"]) {
       background: #0f25d5;
-      padding-left: 65px; }
+      padding-left: 50px; }
       .sidebar > .nav:not(.sub-menu) > .nav-item:hover:not(.nav-profile):not(.hover-open) > .nav-link:not([aria-expanded="true"]):before {
         border-color: #fff; }
       .sidebar > .nav:not(.sub-menu) > .nav-item:hover:not(.nav-profile):not(.hover-open) > .nav-link:not([aria-expanded="true"]) .menu-title {
@@ -605,7 +609,7 @@
 /* Footer */
 .footer {
   background: #dbdbdb;
-  padding: 20px 1rem;
+  padding: 10px 1rem;
   transition: all 0.25s ease;
   -moz-transition: all 0.25s ease;
   -webkit-transition: all 0.25s ease;
@@ -672,7 +676,7 @@
 
 .content-wrapper {
   background: #F3F3F3;
-  padding: 1.5rem 1.7rem;
+  padding: 0.5rem 0.7rem;
   width: 100%;
   -webkit-box-flex: 1;
   -ms-flex-positive: 1;
@@ -687,8 +691,7 @@
   display: flex;
   width: 100%;
   padding-bottom: 15px;
-  border-bottom: 1px solid #cdd6dc;
-  margin-bottom: 15px; }
+  border-bottom: 1px solid #cdd6dc;}
   @media (max-width: 992px) {
     .page-header {
       display: inline-block; } }
@@ -729,8 +732,7 @@
       .quick-links li:last-child a {
         padding-right: 0; }
 
-.page-title-header {
-  margin-bottom: 20px; }
+.page-title-header {}
 
 .page-header-toolbar {
   display: -webkit-box;
@@ -833,3 +835,43 @@
     display: none; }
 
 /*# sourceMappingURL=style.css.map */
+
+ .sidebar > .footer {
+    width: 270px;
+	position: fixed;
+	bottom:0px;
+	background: #f3f3f3;
+	padding: 0px 1rem 10px 1rem;
+}
+
+.sidebar > .footer > .auth-footer {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+.sidebar > .footer > .auth-footer li {
+	margin-right: 10px;
+    line-height: 1;
+    padding-right: 10px;
+    border-right: 1px solid gray;
+}
+.sidebar > .footer > .auth-footer li:last-child {
+	margin-right: 10px;
+    line-height: 1;
+    padding-right: 10px;
+    border-right: none;
+}
+
+
+table.dataTable.no-footer {
+  overflow: hidden; /* this is what fixes the expansion */
+  text-overflow: ellipsis; /* not supported in all browsers, but I accepted the tradeoff */
+  white-space: nowrap;
+}
