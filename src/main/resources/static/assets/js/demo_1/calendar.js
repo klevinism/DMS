@@ -206,9 +206,12 @@ function onBeforeUpdateSchedule(e){
 	updateData.raw = changes.raw != null ? changes.raw : schedule.raw;
 	updateData.start = changes.start != null ? changes.start : schedule.start;
 	updateData.end = changes.end  != null ? changes.end : schedule.end;
+	updateData.attendees = changes.attendees  != null ? changes.attendees : schedule.attendees;
+	
 	updateAppointment(updateData, function(data, status){
  		if(data.error != "error"){
- 			cal.updateSchedule(schedule.id, schedule.calendarId, changes);
+ 			var updatedSchedule =  buildNewSchedule(data.result[0], schedule.calendarId);
+ 			cal.updateSchedule(schedule.id, schedule.calendarId, updatedSchedule);
  		}
     });
 }
