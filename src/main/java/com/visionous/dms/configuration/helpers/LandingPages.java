@@ -28,7 +28,8 @@ public enum LandingPages {
     RECORD("/record"), 
     ACCOUNT("/account"), 
     QUESTIONNAIRE("/questionnaire"), 
-    GLOBALSETTINGS("/global"); 
+    GLOBALSETTINGS("/global"),
+    AGENDA("/schedule");
     
     private final String landingPage;
     

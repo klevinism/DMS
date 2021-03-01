@@ -5,6 +5,7 @@ package com.visionous.dms.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -93,5 +94,27 @@ public class AppointmentService implements IAppointmentService{
 	public List<Appointment> findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(Long accountId,
 			Date start, Date end) {
 		return this.appointmentRepository.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateDesc(accountId, start, end);
+	}
+
+
+	/**
+	 * @param appointmentId
+	 * @return
+	 */
+	@Override
+	public Optional<Appointment> findById(Long appointmentId) {
+		return this.appointmentRepository.findById(appointmentId);
+	}
+	
+	/**
+	 * @param personnelId
+	 * @param startRange
+	 * @param endRange
+	 * @return
+	 */
+	@Override
+	public List<Appointment> findAllByPersonnelIdBetweenDateRange(Long personnelId, Date startRange, Date endRange) {
+		return this.appointmentRepository.
+				findAllByPersonnelIdAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(personnelId, startRange, endRange);
 	}
 }

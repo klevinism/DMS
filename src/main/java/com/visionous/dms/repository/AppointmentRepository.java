@@ -62,5 +62,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>{
 	 * @return
 	 */
 	Integer countAllByPersonnelIdAndAppointmentDateBetween(Long personnelId, Date start, Date end);
-
+	
+	/**
+	 * @param personnelId
+	 * @param startRange
+	 * @param endRange
+	 * @return
+	 */
+	List<Appointment> findAllByPersonnelIdAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(
+			Long personnelId, Date startRange, Date endRange);
 }

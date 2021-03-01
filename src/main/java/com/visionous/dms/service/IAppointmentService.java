@@ -5,6 +5,7 @@ package com.visionous.dms.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import com.visionous.dms.pojo.Appointment;
 
@@ -51,4 +52,18 @@ public interface IAppointmentService {
 	 */
 	List<Appointment> findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(Long accountId, Date start,
 			Date end);
+
+	/**
+	 * @param appointmentId
+	 * @return
+	 */
+	Optional<Appointment> findById(Long appointmentId);
+
+	/**
+	 * @param personnelId
+	 * @param startRange
+	 * @param endRange
+	 * @return
+	 */
+	List<Appointment> findAllByPersonnelIdBetweenDateRange(Long personnelId, Date startRange, Date endRange);
 }

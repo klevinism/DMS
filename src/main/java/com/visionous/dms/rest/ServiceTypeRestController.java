@@ -3,11 +3,13 @@
  */
 package com.visionous.dms.rest;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -104,6 +106,27 @@ public class ServiceTypeRestController {
         }else {
         	result.setError("error");
         	result.setMessage(serviceEditedError);
+        }
+        
+        return ResponseEntity.ok(result);
+    }
+	
+	@GetMapping("/api/serviceType/all")
+    public ResponseEntity<?> getAllServiceTypes() { 
+        String success = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+        String error = messageSource.getMessage("alert.errorGeneric", null, LocaleContextHolder.getLocale());
+
+        ResponseBody<List<ServiceType>> result = new ResponseBody<>();
+        
+        List<ServiceType> allServices = serviceTypeService.findAll();
+        
+        if(!allServices.isEmpty()) {
+			result.setError(success);
+			result.setMessage(success);
+			result.addResult(allServices);
+        }else {
+        	result.setError("error");
+        	result.setMessage(error);
         }
         
         return ResponseEntity.ok(result);

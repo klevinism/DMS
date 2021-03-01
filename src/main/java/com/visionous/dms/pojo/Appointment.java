@@ -44,9 +44,15 @@ public class Appointment implements Serializable{
 	
 	@Column(name="personnelid", updatable = false, insertable = false)
 	private Long personnelId;
+	
+	@Column(name="servicetypeid", updatable = false, insertable = false)
+	private Long serviceTypeId;
 
 	@Column(name="appointmentdate")
 	private Date appointmentDate;
+	
+	@Column(name="appointmentenddate")
+	private Date appointmentEndDate;
 	
 	@DateTimeFormat (pattern="dd-MM-YYYY")
 	private Date addeddate;
@@ -58,7 +64,11 @@ public class Appointment implements Serializable{
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH )
 	@JoinColumn(name = "personnelid")
 	private Personnel personnel;
-
+	
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH )
+	@JoinColumn(name = "servicetypeid")
+	private ServiceType serviceType;
+	
 	/**
 	 * @return the id
 	 */
@@ -100,6 +110,20 @@ public class Appointment implements Serializable{
 	public void setPersonnelId(Long personnelId) {
 		this.personnelId = personnelId;
 	}
+	
+	/**
+	 * @return the serviceTypeId
+	 */
+	public Long getServiceTypeId() {
+		return serviceTypeId;
+	}
+
+	/**
+	 * @param serviceTypeId the serviceTypeId to set
+	 */
+	public void setServiceTypeId(Long serviceTypeId) {
+		this.serviceTypeId = serviceTypeId;
+	}
 
 	/**
 	 * @return the appointmentDate
@@ -130,6 +154,20 @@ public class Appointment implements Serializable{
 	}
 
 	/**
+	 * @return the appointmentEndDate
+	 */
+	public Date getAppointmentEndDate() {
+		return appointmentEndDate;
+	}
+
+	/**
+	 * @param appointmentEndDate the appointmentEndDate to set
+	 */
+	public void setAppointmentEndDate(Date appointmentEndDate) {
+		this.appointmentEndDate = appointmentEndDate;
+	}
+
+	/**
 	 * @return the customer
 	 */
 	public Customer getCustomer() {
@@ -155,6 +193,20 @@ public class Appointment implements Serializable{
 	 */
 	public void setPersonnel(Personnel personnel) {
 		this.personnel = personnel;
+	}
+
+	/**
+	 * @return the serviceType
+	 */
+	public ServiceType getServiceType() {
+		return serviceType;
+	}
+
+	/**
+	 * @param serviceType the serviceType to set
+	 */
+	public void setServiceType(ServiceType serviceType) {
+		this.serviceType = serviceType;
 	}
 
 	@Override
