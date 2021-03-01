@@ -8686,7 +8686,7 @@ address p {
 
 .page-title {
   color: #212529;
-  margin: 0.38rem 0 0.75rem; }
+  margin: 0.38rem 1rem; }
 
 .card-title {
   font-family: "roboto", sans-serif;
@@ -10754,7 +10754,7 @@ ul {
   .auth.theme-one .auth-footer {
     list-style-type: none;
     padding-left: 0;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-bottom: 10px;
     display: -webkit-box;
     display: -ms-flexbox;
@@ -10766,13 +10766,13 @@ ul {
       margin-right: 10px;
       line-height: 1;
       padding-right: 10px;
-      border-right: 1px solid rgba(255, 255, 255, 0.4); }
+      border-right: 1px solid gray; }
       .auth.theme-one .auth-footer li:last-child {
         margin-right: 0;
         border-right: none; }
       .auth.theme-one .auth-footer li a {
         font-size: 13px;
-        color: rgba(255, 255, 255, 0.4); }
+        color: #2196f3; }
     @media (max-width: 576px) {
       .auth.theme-one .auth-footer {
         -webkit-box-pack: center;
@@ -10824,6 +10824,15 @@ ul {
 }
 .tbl-overflow {
 	overflow: auto;
+}
+
+.popover{
+	min-width: 30%;
+    max-width: 300%;
+}
+
+.popover-header{
+    background: #2196f3;
 }
 
 /*# sourceMappingURL=style.css.map */
