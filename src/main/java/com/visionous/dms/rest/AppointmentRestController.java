@@ -31,12 +31,14 @@ import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Appointment;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.Personnel;
+import com.visionous.dms.pojo.ServiceType;
 import com.visionous.dms.rest.response.ResponseBody;
 import com.visionous.dms.service.AccountService;
 import com.visionous.dms.service.AppointmentService;
 import com.visionous.dms.service.CustomerService;
 import com.visionous.dms.service.PersonnelService;
 import com.visionous.dms.service.RecordService;
+import com.visionous.dms.service.ServiceTypeService;
 
 /**
  * @author delimeta
@@ -48,6 +50,7 @@ public class AppointmentRestController {
 	private AppointmentService appointmentService;
 	private PersonnelService personnelService;
 	
+	private ServiceTypeService serviceTypeService;
 	private CustomerService customerService;
 	private AccountService accountService;
 	private RecordService recordService;
@@ -61,13 +64,14 @@ public class AppointmentRestController {
 	 */
 	@Autowired
 	public AppointmentRestController(AppointmentService appointmentService, PersonnelService personnelService, 
-			CustomerService customerService, 
-			MessageSource messageSource, 
-			RecordService recordService, 
-			AccountService accountService, 
-			ApplicationEventPublisher eventPublisher) {
+			CustomerService customerService, MessageSource messageSource, 
+			RecordService recordService, AccountService accountService,
+			ServiceTypeService serviceTypeService, ApplicationEventPublisher eventPublisher) {
+		
 		this.appointmentService = appointmentService;
 		this.personnelService = personnelService;
+		
+		this.serviceTypeService = serviceTypeService;
 		
 		this.customerService = customerService;
 		this.recordService = recordService;
@@ -81,7 +85,9 @@ public class AppointmentRestController {
 	@PostMapping("/api/book")
     public ResponseEntity<?> bookAppointment(@RequestParam(name = "customerId", required = true) Long customerId,
     		@RequestParam(name = "personnelId", required = true) Long personnelId,
-    		@RequestParam(name = "appointmentDate", required = true) Date appointmentDate) { 
+    		@RequestParam(name = "appointmentDate", required = true) Date appointmentDate,
+    		@RequestParam(name = "serviceId", required = false) Long serviceId,
+    		@RequestParam(name = "appointmentEndDate", required = false) Date appointmentEndDate) { 
 
         ResponseBody<Appointment> result = new ResponseBody<>();
         
@@ -105,7 +111,21 @@ public class AppointmentRestController {
         		newAppointment.setCustomer(customer.get());
         	}
         	newAppointment.setAddeddate(new Date());
-        	newAppointment.setAppointmentDate(appointmentDate); 
+        	newAppointment.setAppointmentDate(appointmentDate);
+        	
+        	if(serviceId != null) {
+        		Optional<ServiceType> serviceSelected = serviceTypeService.findById(serviceId);
+        		serviceSelected.ifPresent(selected -> {
+        			newAppointment.setServiceType(selected);
+        			newAppointment.setServiceTypeId(selected.getId());
+        		});
+        	}
+        	
+        	if(appointmentEndDate != null) {
+        		newAppointment.setAppointmentEndDate(appointmentEndDate);
+        	}else {
+        		newAppointment.setAppointmentEndDate(DateUtil.addMinutes(appointmentDate, 30));
+        	}
         	
         	Appointment created = appointmentService.create(newAppointment);
         	if(created.getId() != null) {
@@ -116,6 +136,104 @@ public class AppointmentRestController {
         		result.setError("error");
         		result.setMessage(errorCreatingAppointment);
         	}
+        }
+
+        return ResponseEntity.ok(result);
+    }
+	
+	@PostMapping("/api/appointment/edit")
+    public ResponseEntity<?> editAppointment(@RequestParam(name = "id", required = true) Long appointmentId,
+    		@RequestParam(name = "serviceId", required = false) Long serviceId,
+    		@RequestParam(name = "customerId", required = false) Long customerId,
+    		@RequestParam(name = "personnelId", required = false) Long personnelId,
+    		@RequestParam(name = "appointmentDate", required = false) Date appointmentDate,
+    		@RequestParam(name = "appointmentEndDate", required = false) Date appointmentEndDate) { 
+
+        ResponseBody<Appointment> result = new ResponseBody<>();
+        
+        Optional<Appointment> selectedAppointment = appointmentService.findById(appointmentId);
+        
+        String noAppointmentWithId = messageSource.getMessage("alert.noAppointmentWithId", null, LocaleContextHolder.getLocale());
+        String success = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+        String appointmentset = messageSource.getMessage("alert.appointmentSet", null, LocaleContextHolder.getLocale());
+        String errorCreatingAppointment = messageSource.getMessage("alert.errorCreatingAppointment", null, LocaleContextHolder.getLocale());
+        		
+        if(!selectedAppointment.isPresent()) {
+        	result.setError("error");
+        	result.setMessage(noAppointmentWithId + " " + appointmentId);
+        }else {
+        	Appointment newAppointment = selectedAppointment.get();
+        	if(appointmentDate != null) {
+        		newAppointment.setAppointmentDate(appointmentDate);
+        	}else {
+        		newAppointment.setAppointmentDate(new Date());
+        	}
+        	
+        	if(appointmentEndDate != null) {
+        		newAppointment.setAppointmentEndDate(appointmentEndDate);
+        	}else {
+        		newAppointment.setAppointmentEndDate(DateUtil.addMinutes(appointmentDate, 30));
+        	}
+        	
+        	newAppointment.setServiceType(null);
+        	if(serviceId != null) {
+        		Optional<ServiceType> serviceSelected = serviceTypeService.findById(serviceId);
+        		serviceSelected.ifPresent(selected -> {
+        			newAppointment.setServiceType(selected);
+        			newAppointment.setServiceTypeId(selected.getId());
+        		});
+        	}
+        	
+        	if(customerId != null) {
+        		Optional<Customer> customerSelected = customerService.findById(customerId);
+        		customerSelected.ifPresent(customer -> {
+        			newAppointment.setCustomer(customer);
+        			newAppointment.setCustomerId(customer.getId());
+        		});
+        	}
+        	
+        	if(personnelId != null) {
+        		Optional<Personnel> personnelSelected = personnelService.findById(personnelId);
+        		personnelSelected.ifPresent(customer -> {
+        			newAppointment.setPersonnel(customer);
+        			newAppointment.setPersonnelId(customer.getId());
+        		});
+        	}
+        	
+        	newAppointment.setAddeddate(new Date());
+        	
+        	Appointment created = appointmentService.create(newAppointment);
+        	if(created.getId() != null) {
+        		result.addResult(created);
+        		result.setError(success);
+        		result.setMessage(appointmentset);
+        	}else {
+        		result.setError("error");
+        		result.setMessage(errorCreatingAppointment);
+        	}
+        }
+
+        return ResponseEntity.ok(result);
+    }
+	
+	@PostMapping("/api/appointment/delete")
+    public ResponseEntity<?> deleteAppointment(@RequestParam(name = "id", required = true) Long appointmentId) { 
+
+        ResponseBody<Appointment> result = new ResponseBody<>();
+        
+        Optional<Appointment> selectedAppointment = appointmentService.findById(appointmentId);
+        
+        String noAppointmentWithId = messageSource.getMessage("alert.noAppointmentWithId", null, LocaleContextHolder.getLocale());
+        String success = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+        String appointmentset = messageSource.getMessage("alert.appointmentSet", null, LocaleContextHolder.getLocale());
+
+        if(!selectedAppointment.isPresent()) {
+        	result.setError("error");
+        	result.setMessage(noAppointmentWithId + " " + appointmentId);
+        }else {
+    		appointmentService.delete(selectedAppointment.get());
+    		result.setError(success);
+    		result.setMessage(appointmentset);
         }
 
         return ResponseEntity.ok(result);
@@ -284,13 +402,37 @@ public class AppointmentRestController {
 	}
 
 	@GetMapping("/api/availableAppointments")
-    public ResponseEntity<?> getSearchResultViaAjax(@RequestParam(name = "personnelId", required = false) Long personnelId) { 
+    public ResponseEntity<?> getSearchResultViaAjax(@RequestParam(name = "personnelId", required = true) Long personnelId) { 
         ResponseBody<Appointment> result = new ResponseBody<>();
         
         List<Appointment> appointments = appointmentService.findByPersonnelId(personnelId);
         
         if (appointments.isEmpty()) {
 			String messageNoUserFound = messageSource.getMessage("alert.noUserFound", null, LocaleContextHolder.getLocale());
+            result.setMessage(messageNoUserFound); 
+        } else {
+			String messageSuccess = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+            result.setMessage(messageSuccess);
+        }
+        result.setResult(appointments); 
+        
+        return ResponseEntity.ok(result);
+
+    }
+	
+	@GetMapping("/api/availableAppointmentsByDateRange")
+    public ResponseEntity<?> getAvailableAppointments(@RequestParam(name = "personnelId", required = true) Long personnelId,
+    		@RequestParam(name = "start", required = true) Date startRange,
+    		@RequestParam(name = "end", required = true) Date endRange) {
+		
+        ResponseBody<Appointment> result = new ResponseBody<>();
+        System.out.println("personnelId-"+ personnelId);
+        System.out.println("startRange-"+ startRange);
+        System.out.println("endRange-"+ endRange);
+        List<Appointment> appointments = appointmentService.findAllByPersonnelIdBetweenDateRange(personnelId, startRange, endRange);
+
+        if (appointments.isEmpty()) {
+			String messageNoUserFound = messageSource.getMessage("alert.noUpcomingAppointments", null, LocaleContextHolder.getLocale());
             result.setMessage(messageNoUserFound); 
         } else {
 			String messageSuccess = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
@@ -310,6 +452,19 @@ public class AppointmentRestController {
         List<Personnel> personnel = personnelService.findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_Name(true, true, "PERSONNEL");
         if(personnel.size() != 0) {
         	result.setResult(personnel);
+        }
+
+        return ResponseEntity.ok(result);
+	}
+	
+	@GetMapping("/api/getAvailableCustomers")
+    public ResponseEntity<?> getAvailableCustomer() {
+		
+        ResponseBody<Customer> result = new ResponseBody<>();
+
+        List<Customer> customer = customerService.findAll();
+        if(customer.size() != 0) {
+        	result.setResult(customer);
         }
 
         return ResponseEntity.ok(result);

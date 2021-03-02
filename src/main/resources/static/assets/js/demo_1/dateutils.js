@@ -67,11 +67,10 @@ function getDayDateNamesBetween(from, to){
 	var toDate = new Date(to);	
 	var arr = [];
 	
-	for (var i = fromDate.getDate(); i <= toDate.getDate(); i++) {
-		var temp = new Date(fromDate);
-		temp.setDate(i);
-        arr.push(arrayOfWeekdays[temp.getDay()]+", "+temp.getDate());
-    }        
+	while(fromDate <= toDate){
+	   arr.push(arrayOfWeekdays[fromDate.getDay()]+", "+fromDate.getDate());
+	   fromDate = fromDate.addDays(1);
+	}
     
     return arr;
 }
@@ -110,5 +109,34 @@ function getDiffBetweenMinutes(dt2, dt1)
   var diff =(dt2.getTime() - dt1.getTime()) / 1000;
   diff /= 60;
   return Math.abs(Math.round(diff));
-  
  }
+ 
+Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
+
+Date.prototype.addHours = function(hours) {
+    var date = new Date(this.valueOf());
+    date.setHours(date.getHours() + hours);
+    return date;
+}
+
+Date.prototype.addMinutes = function(minutes) {
+    var date = new Date(this.valueOf());
+    date.setMinutes(date.getMinutes() + minutes);
+    return date;
+}
+
+function isValidTimeRange(startDate, endDate){
+    var start = new Date(startDate);
+    var end = new Date(endDate);
+    
+    if (start.getTime() < end.getTime()){
+    	return true;   
+    }else{
+        return false;
+    }
+}
+ 

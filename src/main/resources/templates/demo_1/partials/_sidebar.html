@@ -1,5 +1,5 @@
-<nav class="sidebar sidebar-offcanvas" id="sidebar" th:fragment="sidebar">
-  <ul class="nav">
+<nav class="sidebar sidebar-offcanvas dynamic-active-class-disabled" id="sidebar" th:fragment="sidebar">
+  <ul class="nav" th:with="currentPage = ${#strings.capitalize(#strings.substring(currentPage, 1, #strings.length(currentPage)))}">
     <li class="nav-item nav-profile">
       <a href="#" class="nav-link">
       
@@ -27,33 +27,39 @@
       </a>
     </li>
     <li class="nav-item nav-category">[[#{MainMenu}]]</li>
-    <li class="nav-item">
+    <li th:class="'nav-item'+${currentPage == 'Home' ? ' active' : ''}">
       <a class="nav-link" href="/home">
-        <i class="menu-icon typcn typcn-document-text"></i>
+        <i class="menu-icon mdi mdi-home-outline"></i>
         <span class="menu-title">[[#{Home}]]</span>
       </a>
     </li>
-    <li class="nav-item" th:if="${currentRoles != null}">
+    <li th:class="'nav-item'+${currentPage == 'Personnel' ? ' active' : ''}" th:if="${currentRoles != null}">
       <a class="nav-link" href="/admin/personnel" th:if="${not currentRoles.?[name == 'ADMIN'].isEmpty()}">
-        <i class="menu-icon typcn typcn-document-text" ></i>
+        <i class="menu-icon mdi mdi-doctor" ></i>
         <span class="menu-title">[[#{Personnel}]]</span>
       </a>
     </li>
-    <li class="nav-item" th:if="${currentRoles != null}">
+    <li th:class="'nav-item'+${currentPage == 'Customer' ? ' active' : ''}" th:if="${currentRoles != null}">
       <a class="nav-link" href="/customer" th:if="${not currentRoles.?[name == 'ADMIN' or name == 'PERSONNEL'].isEmpty()}">
-        <i class="menu-icon typcn typcn-document-text"></i>
+        <i class="menu-icon mdi mdi-account-multiple-outline"></i>
         <span class="menu-title">[[#{Customers}]]</span>
       </a>
     </li>
-    <li class="nav-item" th:if="${currentRoles != null}">
+    <li th:class="'nav-item'+${currentPage == 'Schedule' ? ' active' : ''}" th:if="${currentRoles != null}">
+      <a class="nav-link" href="/schedule" >
+        <i class="menu-icon mdi mdi-calendar-outline" ></i>
+        <span class="menu-title">[[#{Schedule}]]</span>
+      </a>
+    </li>
+    <li th:class="'nav-item'+${currentPage == 'Global' ? ' active' : ''}" th:if="${currentRoles != null}">
       <a class="nav-link" href="/admin/global" th:if="${currentRoles[0].name == 'ADMIN'}">
-        <i class="menu-icon typcn typcn-document-text" ></i>
+        <i class="menu-icon mdi mdi-cogs" ></i>
         <span class="menu-title">[[#{GeneralSettings}]]</span>
       </a>
     </li>
-    <li class="nav-item" >
+    <li th:class="'nav-item'+${currentPage == 'Logout' ? ' active' : ''}" >
       <a class="nav-link" href="/logout" >
-        <i class="menu-icon typcn typcn-document-text"></i>
+    	<i class="menu-icon mdi mdi-power"></i>
         <span class="menu-title">[[#{SignOut}]]</span>
       </a>
     </li>
@@ -128,4 +134,7 @@
       </div>
     </li>-->
   </ul>
+	<section th:replace="demo_1/partials/_footer :: footer">
+	<!-- partial:partials/_footer.html -->
+	</section>
 </nav>

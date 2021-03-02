@@ -107,7 +107,7 @@
 	 var imgsrc = /*[[${'http://localhost:8080/resources/'+'__${imgsuburl}__'+'/img/profile/'+'__*{image}__'}]]*/+'';
 	 var imgtitle = /*[[${'__*{image}__'}]]*/+'';
      var input = $("#recordAttachments").fileinput({
-   	  "initialPreview": ["<img width='150px' height='200px' title='"+imgtitle+"' src='"+imgsrc+"'>"],
+   	  "initialPreview": ["<img title='"+imgtitle+"' src='"+imgsrc+"'>"],
    	  "initialCaption":imgtitle,
  	 });
      var birthday = /*[[*{birthday}]]*/'';

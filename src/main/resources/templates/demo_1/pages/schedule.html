@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+  <section th:replace="demo_1/partials/_header :: header">
+  </section>
+  <body>
+    <div class="container-scroller">
+      <section th:replace="demo_1/partials/_navbar :: navbar">
+  	  </section>
+      <!-- partial:partials/_navbar.html -->
+      
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        
+        <section th:replace="demo_1/partials/_sidebar :: sidebar">
+        <!-- partial:partials/_sidebar.html -->
+        </section>
+        
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <!-- Page Title Header Starts-->
+            <section th:replace="demo_1/partials/_breadcrumb :: breadcrumb">
+			  	<!-- partial:partials/_breadcrumb.html -->
+  			</section>
+            <!-- Page Title Header Ends-->
+            <div class="row">
+                     
+              <div class="col-md-12 ">
+              	<div class="card"> 
+              		<div class="card-body" >
+		              	
+					    <div id="menu">
+					      <span id="menu-navi">
+					      	<button type="button" class="btn btn-secondary btn-sm move-day" onclick="moveCalendarToRange(this)" data-action="move-prev">
+					          <i class="calendar-icon fa fa-angle-left" data-action="move-prev"></i>
+					        </button>
+					        <button type="button" class="btn btn-secondary btn-sm move-today" onclick="moveCalendarToRange(this)" data-action="move-today">[[#{Today}]]</button>
+					        <button type="button" class="btn btn-secondary btn-sm move-day" onclick="moveCalendarToRange(this)" data-action="move-next">
+					          <i class="calendar-icon fa fa-angle-right" data-action="move-next"></i>
+					        </button>
+					      </span>
+					      <span id="renderRange" class="render-range"> 2012-02</span>
+					    </div>
+					
+					    <div id="calendar"></div>
+    				</div>	
+		  		</div>
+              </div>
+
+			</div>
+          </div>
+          
+          
+      <div id="PopoverContent" class="card-body" style="display:none">
+			<div id="wrapper">
+				<div class="form-group " id="serviceSelectElem" >
+		          <div class="input-group ">
+		          	<div class="input-group-prepend">
+		              <span class="input-group-text ">
+		                <i class="mdi mdi-tooth-outline fa-lg text-primary"></i>
+		              </span>
+		            </div>
+		            <select data-live-search="true" data-width="auto" data-style="btn-outline-secondary text-primary" th:title="#{DentalService}">
+		            	<option data-tokens="" value=""></option>
+					</select>
+		          </div>
+		        </div>
+				<div class="form-group bg-primary" id="dentistSelectElem">
+			          <div class="input-group">
+			          	<div class="input-group-prepend ">
+			              <span class="input-group-text ">
+			                <i class="mdi mdi-doctor fa-lg text-primary"></i>
+			              </span>
+			            </div>
+			            <select class="form-control" data-live-search="true" data-style="btn-outline-secondary text-primary" th:title="#{personnel}">
+							<option data-tokens="" value="" ></option>
+						</select>
+			          </div>
+				 </div>
+				<div class="form-group" id="customerSelectElem">
+			          <div class="input-group">
+			          	<div class="input-group-prepend ">
+			              <span class="input-group-text ">
+			                <i class="mdi mdi-account-outline fa-lg text-primary"></i>
+			              </span>
+			            </div>
+			            <select class="form-control" data-live-search="true" data-style="btn-outline-secondary text-primary" th:title="#{customer}">
+							<option data-tokens="" value="" ></option>
+						</select>
+			          </div>
+				 </div>
+			</div>
+	
+				 
+			<div class="row bg-outline-primary" id="dateRangeElem" >
+			
+				<div class="col-md-6">
+					<div class="form-group">
+						<div class="input-group ">
+								<div class="input-group-append ">
+	                              <span class="input-group-text bg-outline-secondary text-primary">
+	                                <i class="mdi mdi-calendar-clock fa-lg"></i>
+	                              </span>
+	                            </div>
+							    <input id="fromRange" type="text" value="14:20" class="form-control text-primary" data-toggle="datetimepicker" data-target="#fromRange">
+							    
+							</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<div class="input-group " id="endRange">
+							    <div class="input-group-append ">
+		                             <span class="input-group-text bg-outline-secondary text-primary">
+		                               <i class="mdi mdi-calendar-clock fa-lg"></i>
+		                             </span>
+		                           </div>
+							    <input id="toRange" type="text" value="" class="form-control text-primary" data-toggle="datetimepicker" data-target="#endRange" >
+							    
+							</div>
+					</div>
+				</div>
+	
+
+				
+			</div>
+		
+			<div id="alert" class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none">
+			  <strong>safd</strong>
+			  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+		
+			<div class="modal-footer" id="saveEditElem" style="padding-bottom:0px;">
+				
+				<input type="hidden" id="popoverId">
+	        	<button type="button" class="btn btn-outline-primary"> <i class="fa fa-lg fa-save">  </i> Save</button>
+	      	</div>
+		
+    	</div>
+          
+          <div id="PopoverDetailContent" class="card-body"  style="display:none">
+				<div class="form-group">
+				  <div class="card-body" id="detailBody">
+				  	
+				  	<h5 class="card-text text-primary" ><span id="serviceType"> <i class="mdi mdi-tooth-outline fa-lg"> </i> Dentist</span></h5>
+				    <h5 class="card-text text-primary" ><span id="detailPersonnel"> <i class="mdi mdi-doctor fa-lg "> </i> Dentist</span></h5>
+				    <h5 class="card-text text-primary" ><span id="detailCustomer"> <i class="mdi mdi-account-outline fa-lg"> </i> Customer</span></h5>
+				    <h5 class="card-text text-primary"><span id="detailTimeRange"> <i class="mdi mdi-calendar-clock fa-lg ">  </i> 12:00 - 13:00 02/2021</span></h5>
+		
+				  </div>
+				
+				  <div class="modal-footer" id="editDeleteElem" style="padding-bottom:0px;">
+		        	<button type="button" class="btn btn-outline-primary " id="editDetailBtn"> <i class="fa fa-lg fa-edit">  </i> [[#{Edit}]]</button>
+		        	<button type="button" class="btn btn-outline-danger" id="deleteDetailBtn"> <i class="fa fa-lg fa-trash-o">  </i> [[#{Delete}]]</button>
+		      	  </div>
+		      	</div>
+		  </div>
+          <!-- content-wrapper ends -->
+	  	  
+
+          <!-- partial -->
+          
+        </div>
+        <!-- main-panel ends -->
+        
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    
+    <script th:inline="javascript">
+	/*<![CDATA[*/ 
+
+    	var dayNames = ["DJEL","HEN","MART","MERK","ENJ","PREM","SHTUN"];
+    	var editName = /*[[#{Edit}]]*/'';
+    	var saveName = /*[[#{Save}]]*/'';
+    	var deleteName = /*[[#{Delete}]]*/'';
+    	var alertPatient = /*[[#{alert.selectPatient}]]*/'';
+    	var alertPersonnel = /*[[#{alert.selectPersonnel}]]*/'';
+    	var alertDate = /*[[#{alert.invalidDate}]]*/'';
+
+    	var serviceDefaultName = /*[[#{DentalService}]]*/'';
+    	var accId = /*[[${loggedInAccount.id}]]*/'';
+   	/*]]>*/
+    </script>
+    <script>
+    
+    /* Detail popover elements */
+    var detailElemPopover = null;
+    var detailPopOverElem$ = $("#PopoverDetailContent");
+    var detailBodyElem$ = $(detailPopOverElem$).find("#detailBody");
+    var detailEditDeleteElem$ = $(detailPopOverElem$).find("#editDeleteElem");
+    
+    /* Save/Edit popover elements */
+    var elemPopover = null;
+    var editIconElem$ ="<i class='fa fa-lg fa-edit'></i> "+editName;
+    var saveIconElem$ ="<i class='fa fa-lg fa-save'></i> "+saveName;
+  	var serviceElem$ = $("#PopoverContent").find("#serviceSelectElem");
+  	var dentistElem$ = $("#PopoverContent").find("#dentistSelectElem");
+  	var customerElem$ = $("#PopoverContent").find("#customerSelectElem");
+  	var dateRangeElem$ = $("#PopoverContent").find("#dateRangeElem");
+  	var alertElem$ = $("#PopoverContent").find("#alert");
+  	var saveEditElem$ = $("#PopoverContent").find("#saveEditElem");
+  	var wrapperElem$ = $("#PopoverContent").find("#wrapper");
+  	
+    $(document).ready(function(){
+        var token = $("meta[name='_csrf']").attr("content");
+     	var header = $("meta[name='_csrf_header']").attr("content");
+     	
+     	$(document).ajaxSend(function(e, xhr, options) {
+     	    xhr.setRequestHeader(header, token);
+     	});
+        
+      	setRenderRangeText(); // render first date range text
+
+      	//createSampleSchedules(cal);
+      	
+      	initServiceTypeSelectPicker($(serviceElem$).find("select")); // Init personnel select picker
+      	initPersonnelSelectPicker($(dentistElem$).find("select")); // Init personnel select picker
+      	initCustomerSelectPicker($(customerElem$).find("select"))// Init customer select picker
+      	
+      	initCalendar();
+    });
+
+  	var rangePickerOptions = {
+   		"format": "HH:mm",
+   		"showClear" :true,
+   		"showClose" :true,
+   		"collapse": true,
+   		"useCurrent":false
+   	};
+  	
+    initDatePickers(); // init date pickers with current date
+
+    
+    
+    function initCalendar(){
+        
+    	var endDate = new Date(cal.getDateRangeEnd());
+    	endDate = new Date(endDate.setHours(23));
+    	endDate = new Date(endDate.setMinutes(59));
+    	endDate = new Date(endDate.setSeconds(59));
+    	
+        var dataObj = {
+            start : new Date(cal.getDateRangeStart()),
+        	end : endDate,
+        	personnelId : accId
+        };
+        
+    	lazyLoadSchedules(dataObj);
+    }
+    
+    function initDatePickers(){
+      	
+        rangePickerOptions.date = new Date();
+	    fromRangePicker = $("#fromRange").datetimepicker(rangePickerOptions);
+	    
+	    rangePickerOptions.date = new Date().addHours(3);
+	    toRangePicker = $("#toRange").datetimepicker(rangePickerOptions);
+    }
+    
+	function createSampleSchedules(calendar){
+	    calendar.createSchedules([
+      	    {
+      	        id: '1',
+      	        calendarId: '1',
+      	        title: 'my schedule',
+      	        category: 'time',
+      	        dueDateClass: '',
+      	        start: new Date().addDays(2).toISOString(),
+      	        end: new Date().addDays(2).addHours(2).toISOString(),
+      	        attendees: [["Klevin", "Delimeta"] , "Arbri"],
+      	        raw : ["Teeth: 3:1 Whitening"]
+      	    },
+      	    {
+      	        id: '41',
+      	        calendarId: '1',
+      	        title: 'second schedule',
+      	        category: 'time',
+      	        dueDateClass: '',
+      	        isReadOnly: true,
+      	        start: new Date().addHours(3).toISOString(),
+      	        end: new Date().addHours(5).toISOString()
+      	    }
+      	]);
+	}
+	function initServiceTypeSelectPicker(elem){
+	    getAvailableServiceTypes(function(data, response){
+	        console.log("services",data);
+	        if(data.error != "error"){
+	    	    buildOptions(elem, data.result[0]);
+	        }
+	    });
+	}
+	
+	function initPersonnelSelectPicker(elem){
+	    getAvailablePersonnel(function(data, response){
+	        if(data.error != "error"){
+	    	    buildOptions(elem, data.result);
+	        }
+	    });
+	}
+	
+	function initCustomerSelectPicker(elem){
+	    getAvailableCustomers(function(data, response){
+	        if(data.error != "error"){
+	    	    buildOptions(elem, data.result);
+	        }
+	    });
+	}
+	
+	function buildOptions(element, data){
+	    data.forEach(function(obj){
+	        var optionName = obj.name == null ? obj.account.name + ", "+obj.account.surname : obj.name;
+		    var optionEl$ = $("<option></option>");
+	        $(optionEl$).html(optionName);
+	        $(optionEl$).val(obj.id);
+	        $(optionEl$).attr("data-tokens", optionName)
+	        $(element).append(optionEl$);
+	    });
+	}
+	
+	function updateAppointment(schedule, callback){
+	    var appointment = buildAppointmentBody(schedule);
+     	$.post("/api/appointment/edit", appointment, callback);
+	}
+	
+	function createAppointment(schedule, callback){
+	    var appointment = buildAppointmentBody(schedule);
+	    appointment.id = null;
+	    console.log("creating new appointment", appointment);
+     	$.post("/api/book", appointment, callback);
+	}
+	
+	function deleteAppointment(schedule, callback){
+	    var appointment = buildAppointmentBody(schedule);
+     	$.post("/api/appointment/delete", appointment, callback);
+	}
+	
+	function getAvailablePersonnel(callback){
+     	$.get("/api/getAvailablePersonnel", callback);
+	}
+	
+	function getAvailableCustomers(callback){
+     	$.get("/api/getAvailableCustomers", callback);
+	}
+	
+	function getAvailableServiceTypes(callback){
+     	$.get("/api/serviceType/all", callback);
+	}
+	
+	function getAvailableAppointments(obj, callback){
+     	$.get("/api/availableAppointmentsByDateRange", obj, callback);
+	}
+	
+	function buildAppointmentBody(e){
+	    return {
+	        "id": e.id,
+	        "appointmentDate": new Date(e.start),
+	        "appointmentEndDate": new Date(e.end),
+	        "serviceId": e.raw.serviceId != null ? e.raw.serviceId : null,
+	        "personnelId": e.raw.personnelId,
+	        "customerId": e.raw.customerId
+	    }
+	}
+    </script>
+    
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="/assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="/assets/vendors/js/vendor.bundle.addons.js"></script>
+    <!-- endinject -->    
+    
+    <!-- Plugin js for this page-->
+    
+    <script type="text/javascript" src="/assets/vendors/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/plug-ins/1.10.12/sorting/datetime-moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+    <!-- End plugin js for this page-->
+    <!-- inject:js -->
+    <script src="/assets/js/shared/off-canvas.js"></script>
+    <script src="/assets/js/shared/misc.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    
+    <script src="/assets/js/demo_1/calendar.js"></script>
+    <script src="/assets/js/demo_1/calendar_popover.js"></script>
+    
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    
+    <!-- End custom js for this page-->
+  
+  </body>
+</html>

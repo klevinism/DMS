@@ -26,13 +26,13 @@
             <div class="row">
               <div class="col grid-margin stretch-card">
                 <div class="card">
-                  <div class="card-body">
+                  <div class="card-body ">
                   
                     <a class="btn btn-primary" th:href="${currentPage}+'/create'"> [[#{action.add}]] [[#{Customer}]]</a>
                     <hr />
                     <div class="row">
-                      <div class="col tbl-overflow">
-                        <table id="patientTable" class="table table-hover">
+                      <div class="col  tbl-overflow">
+                        <table id="patientTable" class="table table-hover wrap">
 	                      <thead>
 	                        <tr>
 	                          <th><!-- Selection column --></th>
@@ -91,17 +91,15 @@
 	                          <td width="2%">
 	                          	
 	                              <div class="btn-group" style="display:none;" name="actionButton" th:id="'actionButton' + ${user.id}">
-									<a type="button" th:if="${customer.customerHistory}" th:href="'/customer/' + ${user.id} + '/history/' + ${user.id} + '/record'" class="btn btn-secondary btn-sm">[[#{DentalHistory}]]</a>
-		                        	<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			                          	<span class="sr-only">Toggle Action</span>
-										<a class="btn btn-primary" th:href="'/customer/edit/' + ${user.id} " >[[#{Actions}]]</a>
+									<a type="button"  class="btn btn-primary icon-btn" th:if="${customer.customerHistory}" th:href="'/customer/' + ${user.id} + '/history/' + ${user.id} + '/record'" ><i class="mdi mdi-history"></i> [[' '+#{DentalHistory}]]</a>
+		                        	<button type="button" class="btn btn-primary icon-btn dropdown-toggle " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="mdi mdi-circle-edit-outline"></i>
 			                        </button>
 			                        <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
 			                          <h6 class="dropdown-header">[[#{QuickActions}]]</h6>
 			                          <a class="dropdown-item" th:href="${currentPage}+'/view/' + ${user.id} ">[[#{View}]]</a>
 			                          <a class="dropdown-item" th:href="'/account' + '/edit/' + ${user.id}">[[#{Edit}]]</a>
 			                          <a class="dropdown-item"  th:href="${currentPage}+'/' + ${user.id} + '/?modal=true&view=' + ${T(com.visionous.dms.configuration.helpers.Actions).DELETE} +'' ">[[#{Delete}]]</a>
-			                          <div class="dropdown-divider"></div>
 			                        </div>
 			                        
 			                      </div>
@@ -127,8 +125,8 @@
 		    </script>
 	        <script>
 		        $(document).ready(function() {
-	                   $.fn.dataTable.moment( 'D-M-YYYY' );
-		            $('#patientTable').DataTable({
+	                $.fn.dataTable.moment( 'D-M-YYYY' );
+		            var table = $('#patientTable').DataTable({
 		            	"oLanguage": {
 		            		  "sLengthMenu": tableLengthMenu,
 		            		  "sZeroRecords": tableZeroRecord,
@@ -137,16 +135,15 @@
 		            		  "sInfoFiltered": tableInfoFiltered,
 		            		  "sSearch": tableSearch
 		            		},
-		            		order:[4, "desc"]
+	            		order:[4, "desc"],
+
 		            });
+		            
 		        });
 	        </script>
           </div>
           <!-- content-wrapper ends -->
-		  
-		  <section th:replace="demo_1/partials/_footer :: footer">
-		  	<!-- partial:partials/_footer.html -->
-		  </section>
+
           <!-- partial -->
           
         </div>

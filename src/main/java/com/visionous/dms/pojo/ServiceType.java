@@ -4,7 +4,9 @@
 package com.visionous.dms.pojo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -12,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
@@ -49,6 +52,10 @@ public class ServiceType implements Serializable{
 	@OneToOne(mappedBy = "serviceType", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@PrimaryKeyJoinColumn
 	private Record record;
+    
+    @JsonIgnore
+    @OneToMany(mappedBy="serviceType", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    private List<Appointment> appointment = new ArrayList<>();
 	
 	/**
 	 * 
@@ -118,5 +125,17 @@ public class ServiceType implements Serializable{
 		this.record = record;
 	}
 
-		
+	/**
+	 * @return the appointment
+	 */
+	public List<Appointment> getAppointment() {
+		return appointment;
+	}
+
+	/**
+	 * @param appointment the appointment to set
+	 */
+	public void setAppointment(List<Appointment> appointment) {
+		this.appointment = appointment;
+	}
 }
