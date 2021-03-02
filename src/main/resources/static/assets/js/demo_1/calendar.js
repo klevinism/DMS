@@ -238,19 +238,20 @@ function moveCalendarToRange(elem){
     	personnelId : accId
     };
 	
-	toggleLoadButton(elem);    
-	lazyLoadSchedules(dataObj);
-	toggleLoadButton(elem);
+	   
+	lazyLoadSchedules(elem, dataObj);
 	
 	setRenderRangeText();
 	dismissPopover();
 }
 
-function lazyLoadSchedules(obj){
+function lazyLoadSchedules(loadElem, obj){
+	toggleLoadButton(loadElem);
     getAvailableAppointments(obj, function(data, result){
         if(data.error != "error"){
             renderDataOnCalendar(data.result);
         }
+        toggleLoadButton(loadElem);
     });
 }
 
