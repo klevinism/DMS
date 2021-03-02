@@ -426,9 +426,6 @@ public class AppointmentRestController {
     		@RequestParam(name = "end", required = true) Date endRange) {
 		
         ResponseBody<Appointment> result = new ResponseBody<>();
-        System.out.println("personnelId-"+ personnelId);
-        System.out.println("startRange-"+ startRange);
-        System.out.println("endRange-"+ endRange);
         List<Appointment> appointments = appointmentService.findAllByPersonnelIdBetweenDateRange(personnelId, startRange, endRange);
 
         if (appointments.isEmpty()) {
