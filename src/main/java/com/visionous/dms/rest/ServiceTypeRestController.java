@@ -116,14 +116,14 @@ public class ServiceTypeRestController {
         String success = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
         String error = messageSource.getMessage("alert.errorGeneric", null, LocaleContextHolder.getLocale());
 
-        ResponseBody<List<ServiceType>> result = new ResponseBody<>();
+        ResponseBody<ServiceType> result = new ResponseBody<>();
         
         List<ServiceType> allServices = serviceTypeService.findAll();
         
         if(!allServices.isEmpty()) {
 			result.setError(success);
 			result.setMessage(success);
-			result.addResult(allServices);
+			result.setResult(allServices);
         }else {
         	result.setError("error");
         	result.setMessage(error);

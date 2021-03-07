@@ -3,6 +3,11 @@
  */
 package com.visionous.dms.model;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -12,7 +17,10 @@ import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Account;
+import com.visionous.dms.pojo.Appointment;
 import com.visionous.dms.pojo.GlobalSettings;
+import com.visionous.dms.pojo.ServiceType;
+import com.visionous.dms.service.AppointmentService;
 
 /**
  * @author delimeta
@@ -23,13 +31,14 @@ public class ScheduleModelController extends ModelControllerImpl{
 	private static String currentPage = LandingPages.AGENDA.value();
 	
 	private GlobalSettings globalSettings;
-	
+	private AppointmentService appointmentService;
 	/**
 	 * 
 	 */
 	@Autowired
-	public ScheduleModelController(GlobalSettings globalSettings) {
+	public ScheduleModelController(GlobalSettings globalSettings, AppointmentService appointmentService) {
 		this.globalSettings = globalSettings;
+		this.appointmentService = appointmentService;
 	}
 	
 	/**
@@ -81,9 +90,20 @@ public class ScheduleModelController extends ModelControllerImpl{
 		}else if(viewType.equals(Actions.EDIT.getValue())) {
 			
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
-			
+			List<Object[]> mostUsedFromServiceType = appointmentService.findTopAppointmentsByMostUsedServiceType();
+			List<ServiceType> servicesMostUsed = new ArrayList<>(); 
+			servicesMostUsed.addAll(
+					mostUsedFromServiceType.stream().map(
+							mapper -> {
+								System.out.println(mapper[0].toString() + " " + mapper[1].toString());
+									ServiceType ser = new ServiceType(); 
+									ser.setId(Long.valueOf(mapper[0].toString()));
+									ser.setName(mapper[1].toString()); 
+									return ser;
+								}).collect(Collectors.toList()));
+			super.addModelCollectionToView("top5ServiceTypes", servicesMostUsed); 
 		}
-		
+
 	}
     
 	/**

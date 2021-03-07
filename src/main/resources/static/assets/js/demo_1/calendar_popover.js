@@ -1,4 +1,6 @@
 function dismissPopover(){
+    if(cal.getViewName() == "month" && currentCalendarGuide){currentCalendarGuide.clearGuideElement();}
+
 	if($(elemPopover).popover()){
 		$(elemPopover).popover('dispose');
 	    elemPopover = null;
@@ -21,10 +23,11 @@ function renderEditPopover(elem, i){
   
   setInputFields(popUpElem$, i);
   setDateToDateTimePickers(i);
+  var popupcontainer = i.container ? $(i.container).parent().parent() : $(calElement$);
 
   $(elem).popover({
         sanitize: false,
-      	container: calElement$,
+      	container: $(popupcontainer),
         html: true,
         content: function () {
             return popUpElem$;
@@ -35,7 +38,7 @@ function renderEditPopover(elem, i){
    $(popUpElem$).find("select").selectpicker('refresh');
    $(alertEl$).hide();
    
-   initEventOfSaveEdit(popUpElem$);
+   initEventOfSaveEdit(popUpElem$, i);
   	
    elemPopover = elem;
 }
@@ -88,7 +91,7 @@ function setDateToDateTimePickers(i){
 
 }
 
-function initEventOfSaveEdit(popUpElem$){
+function initEventOfSaveEdit(popUpElem$, i){
     var saveEditButton = $(popUpElem$).find("#saveEditElem").find("button");
     
     var scheduleId = $(popUpElem$).find("#popoverId").val();
@@ -117,6 +120,7 @@ function initEventOfSaveEdit(popUpElem$){
 						$(popUpElem$).find("#alert").show();
 					}
 					toggleLoadButton(e.target);
+					hideSchedulesBasedOnFilters();
 				});
 			  	
 			}else{
@@ -135,41 +139,74 @@ function initEventOfSaveEdit(popUpElem$){
 						$(popUpElem$).find("#alert").show();
 					}
 					toggleLoadButton(e.target);
+					hideSchedulesBasedOnFilters();
 				});
-			} 
+			}
 		}									
   	});
 }
 
 function buildNewSchedule(data, calendarId){
-	var calendarOptions = (options = getCalendarOptions(calendarId)) ? options : cal.getOptions().calendars[0];
 	
 	var dentistName = data.personnel.account.name+", "+data.personnel.account.surname;
 	var customerName = data.customer.account.name+", "+data.customer.account.surname;
 	var serviceType = data.serviceType;
 	
-	var title = moment(new Date(data.appointmentDate)).format("HH:mm") + ' - ' + moment(new Date(data.appointmentEndDate)).format("HH:mm") + ' | ' +
+	var isReadOnly = data.personnel.id == accId ? false : true;
+	var title =  
+		moment(new Date(data.appointmentDate)).format("HH:mm") + ' - ' + moment(new Date(data.appointmentEndDate)).format("HH:mm") + ' | ' +
     	(serviceType != null? data.serviceType.name : serviceDefaultName) + ' | '+ customerName;
-    	
+    
+    
 	return {
 		id : data.id+'',
-		calendarId: calendarOptions.id,
+		calendarId: calendarId+'',
         title: title,
         category: 'time',
         start: new Date(data.appointmentDate).toISOString(),
         end: new Date(data.appointmentEndDate).toISOString(),
         attendees: [dentistName, customerName],
+        isReadOnly: isReadOnly,
         raw : {
         	serviceId: data.serviceType != null? data.serviceType.id : null,
         	personnelId: data.personnel.id,
         	customerId: data.customer.id,
         	appointmentDate: new Date(data.appointmentDate).toISOString(),
         	appointmentEndDate: new Date(data.appointmentEndDate).toISOString(),
+        	calendarCategory: 'appointment'
         }
 	}
 }
 
+function buildNewVisitSchedule(data, calendarId){
+	var dentistName = data.personnel.account.name+", "+data.personnel.account.surname;
+	var customerName = data.history.customer.account.name+", "+data.history.customer.account.surname;
+	var serviceType = data.serviceType;
+	
+	var isReadOnly = data.personnel.id == accId ? false : true;
+	var title =  
+		moment(new Date(data.servicedate)).format("HH:mm") + ' - ' + moment(new Date(data.servicedate).addMinutes(30)).format("HH:mm") + ' | ' +
+    	(serviceType != null? data.serviceType.name : serviceDefaultName) + ' | '+ customerName;
 
+	return {
+		id : data.id+'',
+		calendarId: calendarId+'',
+        title: title,
+        category: 'time',
+        start: new Date(data.servicedate).toISOString(),
+        end: new Date(data.servicedate).addMinutes(30).toISOString(),
+        attendees: [dentistName, customerName],
+        isReadOnly: isReadOnly,
+        raw : {
+        	serviceId: data.serviceType != null? data.serviceType.id : null,
+        	personnelId: data.personnel.id,
+        	customerId: data.history.customer.id,
+        	appointmentDate: new Date(data.servicedate).toISOString(),
+        	appointmentEndDate: new Date(data.servicedate).addMinutes(30).toISOString(),
+        	calendarCategory: 'visit'
+        }
+	}
+}
 
 function getNewScheduleValues(elem){
     var serviceEl$ = $(elem).find("#"+$(serviceElem$).attr('id')).find("option:selected");
@@ -203,6 +240,7 @@ function getNewScheduleValues(elem){
 	}
     
     var calId = cal._options.calendars[0].id;
+    
     var title = moment(new Date(startTime)).format("HH:mm") + ' - ' + moment(new Date(endTime)).format("HH:mm") + ' | ' +
     	serviceType + ' | '+ customer;
     	
@@ -232,11 +270,14 @@ function renderDetailPopover(elem, i){
 	var dentist = i.attendees[0];
 	var patient = i.attendees[1];
 	var raw = i.raw;
+	var serviceId = raw.serviceId != null ? raw.serviceId : serviceDefaultName;
 	var popUpElem$ = "<div class='form-group'>"+"</div>";
+	var currentCalendar = findCalendarById(i.calendarId);
 	
 	var serviceEl$ = $(detailBodyElem$).find("#serviceType");
-	var serviceText = $(serviceElem$).find("select").find('option[value="'+i.raw.serviceId+'"]').text();	
-	serviceText = serviceText != null && serviceText != '' ? serviceText : serviceDefaultName;
+	var serviceTextEl$ = $(serviceElem$).find("select").find('option[value="'+i.raw.serviceId+'"]');
+	var serviceText = serviceTextEl$ != null && serviceTextEl$.text() != '' ? serviceTextEl$.text() : serviceDefaultName;	
+	
 	var icon = $(serviceEl$).find("i");
 	$(serviceEl$).html("");
 	$(serviceEl$).append(icon).append(serviceText);
@@ -261,19 +302,30 @@ function renderDetailPopover(elem, i){
    	if(!i.isReadOnly && new Date() <= new Date(start)){
    		popUpElem$ = $(popUpElem$).append(detailEditDeleteElem$);    
    	}
+
+   	var readOnlyIcon = '<i class="fa fa-lock mr-1" title="'+lockedDefaultName+'" style="color:'+currentCalendar.color+'"></i> ';
+   	
+   	var categoryIcon = '<i class="fa fa-calendar ml-1 mr-1" title="'+appointmentDefaultName+'" style="color:'+currentCalendar.color+'"></i> ';
+   	if(raw.calendarCategory == 'visit'){
+   		categoryIcon = '<i class="fa fa-stethoscope ml-1 mr-1" title="'+visitsDefaultName+'" style="color:'+currentCalendar.color+'"></i> ';
+   	}
+   	var popoverContainerEl$ = cal.getViewName() == 'month' ? $(elem).parent().parent().parent() : $(elem).parent().parent().parent().parent();
+   	
    	
     // open detail view
     $(elem).parent().popover({
         sanitize: false,
-      	container: $(elem).parent().parent().parent().parent(),
+      	container: popoverContainerEl$,
         html: true,
-        title: "<div class='modal-header' style='border:0 none;'><h5 class='modal-title text-white'> "+(title.charAt(0).toUpperCase() + title.slice(1))+"</h5>  <button type='button' class='close text-white' onClick='dismissPopover()'>&times;</button></div>",
+        title: "<div class='modal-header p-1' style='border:0 none;'><h5 class='modal-title' style='color:"+currentCalendar.color+"'> "+ readOnlyIcon + categoryIcon+
+        		(title.charAt(0).toUpperCase() + title.slice(1))+"</h5>  <button type='button m-1' class='close' style='color:"+currentCalendar.color+"' onClick='dismissPopover()'>&times;</button></div>",
         content: function () {
             return popUpElem$;
         }
     });
     
- 	$(elem).parent().popover("show");
+ 	var popupElm = $(elem).parent().popover("show");
+ 	$(popoverContainerEl$).find(".popover-header").css("background-color", currentCalendar.bgColor)
     
 	$(popUpElem$).find("#editDetailBtn").on("click", function(e){
 		console.log("Edit Schedule event", e);
@@ -292,6 +344,7 @@ function renderDetailPopover(elem, i){
 				$(popUpElem$).find("#alert").show();
 			}
 			toggleLoadButton(e.target);
+			hideSchedulesBasedOnFilters();
 		});
 		
 	});
@@ -301,7 +354,7 @@ function renderDetailPopover(elem, i){
 function toggleLoadButton(elem){
 	var iconEl$ = $(elem).find("i") != null? $(elem).find("i") : $(elem);
 	  
-	$(iconEl$).toggleClass(" fa-spin fa-spinner");
+	$(iconEl$).toggleClass("fa-spin fa-spinner");
 	$(elem).prop("disabled", (_, val) => !val);
 }
 

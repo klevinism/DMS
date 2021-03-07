@@ -20,6 +20,7 @@ import javax.persistence.SequenceGenerator;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
@@ -72,6 +73,7 @@ public class Record  implements Serializable{
 	@JoinColumn(name = "serviceid")
 	private ServiceType serviceType;
 	
+	@JsonIgnore
 	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "toothid")
 	private Teeth tooth;

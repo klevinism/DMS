@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.visionous.dms.pojo.Appointment;
+import com.visionous.dms.pojo.ServiceType;
 import com.visionous.dms.repository.AppointmentRepository;
 
 /**
@@ -116,5 +117,22 @@ public class AppointmentService implements IAppointmentService{
 	public List<Appointment> findAllByPersonnelIdBetweenDateRange(Long personnelId, Date startRange, Date endRange) {
 		return this.appointmentRepository.
 				findAllByPersonnelIdAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(personnelId, startRange, endRange);
+	}
+
+
+	/**
+	 * @param startRange
+	 * @param endRange
+	 * @return
+	 */
+	@Override
+	public List<Appointment> findAllBetweenDateRange(Date startRange, Date endRange) {
+		return this.appointmentRepository.
+				findAllByAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateDesc(startRange, endRange);
+	}
+
+	@Override
+	public List<Object[]> findTopAppointmentsByMostUsedServiceType() {
+		return this.appointmentRepository.topAppointmentsByMostUsedServiceType();
 	}
 }

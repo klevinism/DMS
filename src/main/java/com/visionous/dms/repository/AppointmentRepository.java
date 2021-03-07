@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.visionous.dms.pojo.Appointment;
+import com.visionous.dms.pojo.ServiceType;
 
 /**
  * @author delimeta
@@ -71,4 +73,18 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>{
 	 */
 	List<Appointment> findAllByPersonnelIdAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(
 			Long personnelId, Date startRange, Date endRange);
+
+	/**
+	 * @param startRange
+	 * @param endRange
+	 * @return
+	 */
+	List<Appointment> findAllByAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateDesc(
+			Date startRange, Date endRange);
+
+	/**
+	 * @return
+	 */
+	@Query("select t.serviceType.id, t.serviceType.name from Appointment t group by t.serviceType.id, t.serviceType.name order by count(t.serviceType.id) desc")
+	List<Object[]> topAppointmentsByMostUsedServiceType();
 }

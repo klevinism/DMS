@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.visionous.dms.pojo.Appointment;
+import com.visionous.dms.pojo.ServiceType;
 
 /**
  * @author delimeta
@@ -66,4 +67,17 @@ public interface IAppointmentService {
 	 * @return
 	 */
 	List<Appointment> findAllByPersonnelIdBetweenDateRange(Long personnelId, Date startRange, Date endRange);
+
+	/**
+	 * @param startRange
+	 * @param endRange
+	 * @return
+	 */
+	List<Appointment> findAllBetweenDateRange(Date startRange, Date endRange);
+	
+	
+	/**
+	 * @return
+	 */
+	List<Object[]> findTopAppointmentsByMostUsedServiceType();
 }
