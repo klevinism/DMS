@@ -126,10 +126,18 @@ function initEventOfSaveEdit(popUpElem$, i){
 			}else{
 				newSchedule.id = newSchedule.start;
 				toggleLoadButton(e.target);
-				console.log("newSchedule",newSchedule);
 				createAppointment(newSchedule, function(data, status){
 					if(data.error != "error"){
 						newSchedule.id = data.result[0].id+'';
+						newSchedule.calendarId = data.result[0].personnel.id + '';
+						newSchedule.raw.calendarCategory = 'appointment';
+						
+						if(newSchedule.calendarId == accId){
+							newSchedule.isReadOnly = false;
+						}else{
+							newSchedule.isReadOnly = true;
+						}
+						
 					    cal.createSchedules([newSchedule]);
 			    		cal.render();
 			    		dismissPopover();

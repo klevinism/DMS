@@ -250,6 +250,12 @@
 			            <select class="form-control" data-live-search="true" data-style="btn-outline-secondary text-primary" th:title="#{customer}">
 							<option data-tokens="" value="" ></option>
 						</select>
+						<div class="input-group-prepend ">
+							<!-- Button trigger create customer modal -->
+							<button type="button" class="btn btn-outline-secondary text-primary" data-toggle="modal" data-target="#createCustomerModal">
+							  <i class="mdi mdi-account-plus-outline fa-lg"></i>
+							</button>
+						</div>
 			          </div>
 				 </div>
 			</div>
@@ -320,6 +326,30 @@
 		      	  </div>
 		      	</div>
 		  </div>
+		  
+		    <!-- Create Customer Modal -->
+			<div class="modal fade" id="createCustomerModal"role="dialog" aria-labelledby="createCustomerModal" aria-hidden="true">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title" >[[#{CreateCustomer}]]</h5>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+			      </div>
+			      <div class="modal-body">
+			      	<section th:replace="'demo_1/partials/account/modals/_modalcreate.html'">
+						  	<!-- partial:partials/_footer.html -->
+			  		</section>
+			  		<p class="alert alert-danger" style="display:none" id="customerModalError"></p>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal"> <i class="fa fa-times"></i> [[#{action.close}]]</button>
+			        <button type="button" class="btn btn-primary" onclick="createCustomer(this)"><i class="fa fa-save"></i> [[#{Create}]]</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
           <!-- content-wrapper ends -->
 	  	  
 
@@ -402,7 +432,17 @@
   	
   	
   	var currentCalendarGuide;
+
   	
+  	var currentpopover;
+  	
+   	$('#createCustomerModal').on('show.bs.modal', function (e) {
+    	   dismissPopover();
+    	   console.log($('#createCustomerModal').find('#fullname'));
+    	  $('#fullname').click();
+    	  $('#fullname').focus();
+   	});
+
     $(document).ready(function(){
         var token = $("meta[name='_csrf']").attr("content");
      	var header = $("meta[name='_csrf_header']").attr("content");
@@ -411,6 +451,32 @@
      	    xhr.setRequestHeader(header, token);
      	});
         
+       	$('#createCustomerModal').on('show.bs.modal', function (e) {
+			currentpopover = $(elemPopover).parent().parent().find(".popover");
+			if(currentpopover.length == 0){
+			    currentpopover = $("#calendar").find(".popover");
+			}
+			
+			$(currentpopover).popover('hide');
+			
+       		$('#fullname').focus();
+       		$(this).modal('toggle');
+       	});
+       	
+       	$('#createCustomerModal').on('hide.bs.modal', function (e) {
+       	    $(currentpopover).popover("show");
+       	 	$("#fullname").removeClass("border-danger");
+       	 	$("#phone").removeClass("border-danger");
+       	 	$("#birthdayCalendar").removeClass("border-danger");
+       	 	$("#input[name=gender]").removeClass("border-danger");
+       	 	
+
+       	 	$("#fullname").val('');
+       	 	$("#phone").val('');
+       	 	$("#birthdayCalendar").val(moment(new Date()).format('YYYY-MM-DD'));
+       	 	$("#input[name=gender]").val('');
+       	});
+     	
      	$("#newScheduleBtn .btn-block").click(function(e){
      		renderEditPopover($("#newScheduleBtn"), {
      			start: new Date().addMinutes(30),
@@ -478,6 +544,77 @@
       	initMenuEventHandlers();
     });
 
+    function createCustomer(elem){
+        var errorModalP = $("#customerModalError");
+        $(errorModalP).hide();
+        
+        var fullname = $("#fullname").val();
+        var phone = $("#phone").val();
+        var birthday = $("#birthdayCalendar").val();
+        var gender = $("input[name=gender]:checked").val();
+
+
+	    if($("#fullname").hasClass("border-danger")){
+    	    $("#fullname").removeClass("border-danger"); 
+	    }
+	    
+	    if($("#phone").hasClass("border-danger")){
+	        $("#phone").removeClass("border-danger"); 
+	    }
+	    
+	    if($("#birthdayCalendar").hasClass("border-danger")){
+	        $("#birthdayCalendar").removeClass("border-danger"); 
+	    }
+	    
+	    if($("input[name=gender]").hasClass("border-danger")){
+	        $("input[name=gender]").removeClass("border-danger"); 
+	    }
+	    
+    	if(fullname != null && fullname.length > 4 
+    	        && phone != null && phone.length > 6 
+    	        && birthday != null && birthday.length > 2
+    	        && gender != null && birthday.length > 0){
+            
+            var obj = {
+    	            'fullname':fullname,
+    	            'phone':phone,
+    	            'birthday':new Date(birthday),
+    	            'gender':gender
+    	    }
+    	    
+    	    toggleLoadButton($(elem));
+    	    createSimpleAccount(obj, function (data, result){
+    	        if(data.error != "error"){    	            
+    	            buildOptions($(currentpopover).find("#"+$(customerElem$).attr("id")).find("select"), data.result);
+    	            
+    	            $(currentpopover).find("#"+$(customerElem$).attr("id")).find("select").selectpicker('refresh');
+    	            $(currentpopover).find("#"+$(customerElem$).attr("id")).find("select").selectpicker('val', data.result[0].id);
+    	            
+    	            buildOptions($(wrapperElem$).find("#"+$(customerElem$).attr("id")).find("select"), data.result);
+
+    	            $('#createCustomerModal').modal('hide');
+    	        }else{
+    	            $(errorModalP).html(data.message);
+    	            $(errorModalP).show();
+    	        }
+    	        toggleLoadButton($(elem));
+    	    });
+    	    
+    	}else{
+    	    if(fullname == null || fullname.length < 4 ){
+       	        $("#fullname").toggleClass("border-danger");    	        
+    	    }
+        	if(phone == null || phone.length < 6 ){
+        	    $("#phone").toggleClass("border-danger");    
+        	}
+            if(birthday == null || birthday.length < 2){
+                $("#birthdayCalendar").toggleClass("border-danger");
+            }
+            if(gender == null || birthday.length < 1){
+                $("input[name=gender]").toggleClass("border-danger");                
+            }
+    	}
+    }
     
     function hideSchedulesBasedOnFilters(){
     	var appointmentFilter = $('#appointmentFilter').is(':checked');
@@ -806,6 +943,8 @@
             var serviceName = schedules[schedule].title.split("|");
             var serviceName = serviceName[1].trim(" ");
             
+            console.log(current);
+            
             var dentist = current.attendees[0].split(",").join(" ");
             var patient = current.attendees[1].split(",").join(" ");
             
@@ -1004,6 +1143,10 @@
 	
 	function getAllRecordsByDateRange(obj, callback){
 	 	$.get("/api/record/get", obj, callback);
+	}
+	
+	function createSimpleAccount(obj, callback){
+	    $.post("/api/account/create/simple", obj, callback);
 	}
 	
 	function buildAppointmentBody(e){

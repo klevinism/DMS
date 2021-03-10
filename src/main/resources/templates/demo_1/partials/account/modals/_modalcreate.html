@@ -1,0 +1,54 @@
+  <div class="card-body"  th:fragment="createAccountModal">
+      <div class="row">
+      	<div class="col-md-12">
+	      <div class="form-group">
+	      	<label for="Birthday">[[#{Name}+' '+#{Surname}+' *']]</label>
+	        <input type="text" autofocus id="fullname" class="form-control form-control-lg" name="fullname" >
+	      </div>
+	    </div>
+      </div>
+      
+      <div class="row">
+      	<div class="col-md-6">
+	      <div class="form-group">
+	        <label for="Birthday">[[#{PhoneNr}+' *']]</label>
+	        <input type="number" id="phone" class="form-control form-control-lg" >
+	      </div>
+   		</div>   
+		<div class="col-md-6">
+			<div class="form-group"  >
+		       <label for="Birthday">[[#{Birthday}+ ' *']]</label>
+		       <input type="date" class="form-control form-control-lg"  id="birthdayCalendar">
+			</div>
+		 </div>
+      </div>
+      
+	  <label for="gender">[[#{Gender} + ' *']]</label>
+
+	  <div class="row">
+	  	<div class="col-md-6">
+	  	  
+		  <div class="form-radio form-radio-flat">
+		    <label class="form-check-label">
+		      <input type="radio" name="gender" class="form-check-inputform-control-lg" value="male" > [[#{Male}]] <i class="input-helper"></i></label>
+		  </div>
+		</div>  
+		<div class="col-md-6">
+		  <div class="form-radio form-radio-flat">
+		    <label class="form-check-label">
+		      <input type="radio" name="gender" class="form-check-input" value="female"  > [[#{Female}]] <i class="input-helper"></i></label>
+		  </div>
+		</div>
+	   </div>
+      
+      
+      <script>
+      $('#birthdayCalendar').datetimepicker({
+     	    "allowInputToggle": true,
+     	    "showClose": true,
+     	    "showClear": true,
+     	    "format": "YYYY-MM-DD",
+     	    "daysOfWeekDisabled": []
+      });
+      </script>
+  </div>
