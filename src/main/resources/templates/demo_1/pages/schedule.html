@@ -49,7 +49,7 @@
 		                            <button class="btn btn-light pl-1" style="width: 100%;" type="button" data-toggle="collapse" data-target="#calendarFilters" aria-expanded="true" aria-controls="calendarFilters">
 			                            <div class="d-flex align-items-center">
 			                              <i class="fa fa-calendar-o fa-sm mr-1" style="font-size:15px;"></i>
-			                              <small class="font-weight-bold mr-2 mb-0">[[#{Calendars}]]</small>
+			                              <small class="font-weight-bold pl-1 mr-2 mb-0">[[#{Calendars}]]</small>
 			                              <div class="badge badge-outline-primary badge-pill" id="calendarFilterCount">0</div>
 			                            </div>
 		                            </button>
@@ -81,7 +81,7 @@
 		                            <button class="btn btn-light pl-1" style="width: 100%;" type="button" data-toggle="collapse" data-target="#serviceFilters" aria-expanded="true" aria-controls="serviceFilters">
 			                            <div class="d-flex align-items-center">
 			                              <i class="fa fa-medkit fa-sm mr-1" style="font-size:15px;"></i>
-			                              <small class="font-weight-bold mr-2 mb-0">[[#{DentalServices}]]</small>
+			                              <small class="font-weight-bold pl-1 mr-2 mb-0">[[#{DentalServices}]]</small>
 			                              <div class="badge badge-outline-primary badge-pill" id="serviceFilterCount">0</div>
 			                            </div>
 		                            </button>
@@ -268,7 +268,7 @@
 						<div class="input-group ">
 								<div class="input-group-append ">
 	                              <span class="input-group-text bg-outline-secondary text-primary">
-	                                <i class="mdi mdi-calendar-clock fa-lg"></i>
+		                          	  <i class="fa fa-clock-o fa-lg"></i>
 	                              </span>
 	                            </div>
 							    <input id="fromRange" type="text" value="14:20" class="form-control text-primary" data-toggle="datetimepicker" data-target="#fromRange">
@@ -281,7 +281,7 @@
 						<div class="input-group " id="endRange">
 							    <div class="input-group-append ">
 		                             <span class="input-group-text bg-outline-secondary text-primary">
-		                               <i class="mdi mdi-calendar-clock fa-lg"></i>
+		                               <i class="fa fa-clock-o fa-lg"></i>
 		                             </span>
 		                           </div>
 							    <input id="toRange" type="text" value="" class="form-control text-primary" data-toggle="datetimepicker" data-target="#endRange" >
@@ -316,7 +316,7 @@
 				  	<h5 class="card-text text-primary" ><span id="serviceType"> <i class="mdi mdi-tooth-outline fa-lg"> </i> Dentist</span></h5>
 				    <h5 class="card-text text-primary" ><span id="detailPersonnel"> <i class="mdi mdi-doctor fa-lg "> </i> Dentist</span></h5>
 				    <h5 class="card-text text-primary" ><span id="detailCustomer"> <i class="mdi mdi-account-outline fa-lg"> </i> Customer</span></h5>
-				    <h5 class="card-text text-primary"><span id="detailTimeRange"> <i class="mdi mdi-calendar-clock fa-lg ">  </i> 12:00 - 13:00 02/2021</span></h5>
+				    <h5 class="card-text text-primary"><span id="detailTimeRange"> <i class="fa fa-clock-o fa-lg"></i> 12:00 - 13:00 02/2021</span></h5>
 		
 				  </div>
 				
@@ -852,11 +852,19 @@
 		
 		$(element).on('ifChecked', function(e){
         	cal.toggleSchedules($(this).attr("id"), false, true);
+        	var currNr = parseInt($("#calendarFilterCount").text());
+		    $("#calendarFilterCount").text(currNr+1);
+        	
 			hideSchedulesBasedOnFilters();
      	});
      	
      	$(element).on('ifUnchecked', function(e){
         	cal.toggleSchedules($(this).attr("id"), true, true);
+        	var currNr = parseInt($("#calendarFilterCount").text());
+        	if(currNr != 0){
+        	    $("#calendarFilterCount").text(currNr-1);
+        	}
+        	
 			hideSchedulesBasedOnFilters();
      	});
     }
@@ -942,9 +950,7 @@
             var current = schedules[schedule];
             var serviceName = schedules[schedule].title.split("|");
             var serviceName = serviceName[1].trim(" ");
-            
-            console.log(current);
-            
+                        
             var dentist = current.attendees[0].split(",").join(" ");
             var patient = current.attendees[1].split(",").join(" ");
             
@@ -1107,46 +1113,76 @@
 	
 	function updateAppointment(schedule, callback){
 	    var appointment = buildAppointmentBody(schedule);
-     	$.post("/api/appointment/edit", appointment, callback);
+     	$.post("/api/appointment/edit", appointment, function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function createAppointment(schedule, callback){
 	    var appointment = buildAppointmentBody(schedule);
-	    appointment.id = null;
-     	$.post("/api/book", appointment, callback);
+	    appointment.id = null;	    
+     	$.post("/api/book", appointment, function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function deleteAppointment(schedule, callback){
 	    var appointment = buildAppointmentBody(schedule);
-     	$.post("/api/appointment/delete", appointment, callback);
+     	$.post("/api/appointment/delete", appointment, function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function getAvailablePersonnel(callback){
-     	$.get("/api/getAvailablePersonnel", callback);
+     	$.get("/api/getAvailablePersonnel", function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function getAvailableCustomers(callback){
-     	$.get("/api/getAvailableCustomers", callback);
+     	$.get("/api/getAvailableCustomers", function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function getAvailableServiceTypes(callback){
-     	$.get("/api/serviceType/all", callback);
+     	$.get("/api/serviceType/all", function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function getAvailableAppointments(obj, callback){
-     	$.get("/api/availableAppointmentsByDateRange", obj, callback);
+     	$.get("/api/availableAppointmentsByDateRange", obj, function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function getAllAppointmentsByDateRange(obj, callback){
-     	$.get("/api/allAppointmentsByDateRange", obj, callback);
+     	$.get("/api/allAppointmentsByDateRange", obj, function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function getAllRecordsByDateRange(obj, callback){
-	 	$.get("/api/record/get", obj, callback);
+	 	$.get("/api/record/get", obj, function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function createSimpleAccount(obj, callback){
-	    $.post("/api/account/create/simple", obj, callback);
+	    $.post("/api/account/create/simple", obj, function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
+	}
+	
+	function handleDmsResponse(data, response, status, callback){
+	    if(status.status == 403 ||status.status == 401 || status.status == 402){
+	        location.reload();
+	    }
+	    
+	    if(status.status == 200){
+	        callback(data, response);
+	    }
 	}
 	
 	function buildAppointmentBody(e){
