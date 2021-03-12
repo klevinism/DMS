@@ -748,8 +748,7 @@
       .page-header-toolbar .toolbar-item {
         margin-top: 20px; } }
   .page-header-toolbar .btn-group,
-  .page-header-toolbar .btn {
-    border: none; }
+  .page-header-toolbar .btn { }
     .page-header-toolbar .btn-group i,
     .page-header-toolbar .btn i {
       font-size: 1.24rem;
@@ -771,7 +770,7 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  width: 46%; }
+  width: 100%; }
   @media (max-width: 992px) {
     .sort-wrapper {
       width: 100%; } }
@@ -875,3 +874,22 @@ table.dataTable.no-footer {
   text-overflow: ellipsis; /* not supported in all browsers, but I accepted the tradeoff */
   white-space: nowrap;
 }
+
+#overlay {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top:0px;
+  left:0px;
+  color: #2196f3;
+  opacity: 1;
+  z-index:1;
+ }
+ 
+ #overlay > #spinnerOverlay{
+    position: absolute;
+   	top: 50%;
+   	left: 50%;
+   	transform: translate(-50%, -50%);
+ }

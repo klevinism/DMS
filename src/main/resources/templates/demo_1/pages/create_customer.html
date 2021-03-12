@@ -32,13 +32,12 @@
               	
               		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
               		
-
                     <div class="form-group">
 		             	<section th:replace="__${bodyUrl}__">
 						  	<!-- partial:partials/_footer.html -->
 			  			</section>
 		  			</div>
-		  			<div class="form-group">
+		  			<div class="form-group mt-4">
 	          			<section th:replace="__${createAccountView}__">
 						  	<!-- partial:partials/_footer.html -->
 			  			</section>
@@ -49,6 +48,26 @@
 			      </div>
 		  			
 		  		</form>
+		  		
+		  		<script>
+		  		$("form").find("button[type='submit']").on("click", function(e){
+		  		   e.preventDefault();
+
+		 		   var nameElem = document.getElementById("account.name");
+		 		   var surnameElem = document.getElementById("account.surname");
+		  		   
+		 		   if(nameElem.value != null && surnameElem.value!=null){
+		 		       var userNameElem = $("#appAccWrapper").find("input[type='text']");
+		 		       var passElem = $("#appAccWrapper").find("input[type='password']");
+		 		       if((userNameElem.value == null || userNameElem.value == '') || (passElem.value == null || passElem.value == '')){
+			 		       $("#appAccWrapper").find("input[type='text']").val(nameElem.value + "." + surnameElem.value);
+			 		       $("#appAccWrapper").find("input[type='password']").val(nameElem.value + "." + surnameElem.value+".1234");   
+		 		       }
+		 		   }
+		 		   
+		 		   $("form").submit();
+		  		});
+		  		</script>
 		  			</div>
 		  		</div>
               </div>

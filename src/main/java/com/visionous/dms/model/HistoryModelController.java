@@ -147,8 +147,8 @@ public class HistoryModelController extends ModelControllerImpl{
 		Iterable<History> histories = historyService.findAll();
 		super.addModelCollectionToView("personnelList", histories);
 		
-		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
-		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser());
+		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getAccount().getRoles());
+		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser().getAccount());
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		

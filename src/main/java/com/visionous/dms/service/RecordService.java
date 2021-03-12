@@ -128,7 +128,9 @@ public class RecordService implements IRecordService{
 	 */
 	@Override
 	public Record create(Record newRecord) {
-		newRecord.setServicedate(new Date());
+		if(newRecord.getServicedate() == null) {
+			newRecord.setServicedate(new Date());
+		}
 		return this.recordRepository.saveAndFlush(newRecord);
 	}
 

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.model.AccountModelController;
 import com.visionous.dms.pojo.Account;
@@ -64,12 +65,16 @@ public class AccountModelViewController {
 			return "demo_1/pages/"+action.toLowerCase()+"_account";
 		}
 		
-		if(account.getCustomer() != null) {
-			return "redirect:/customer/dashboard/"+account.getId();
-		}else if(account.getPersonnel() != null) {
-			return "redirect:/admin/personnel/dashboard/"+account.getId();
+		if(!account.getId().equals(AccountUtil.currentLoggedInUser().getAccount().getId())) {
+			if(account.getCustomer() != null) {
+				return "redirect:/customer/dashboard/"+account.getId();
+			}else if(account.getPersonnel() != null) {
+				return "redirect:/admin/personnel/dashboard/"+account.getId();
+			}else {
+				return "/";
+			}
 		}else {
-			return "/";
+			return "redirect:/account";
 		}
 	}
 	

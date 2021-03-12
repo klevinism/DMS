@@ -241,11 +241,8 @@ public class HomeModelController extends ModelControllerImpl{
 		 
 		super.addModelCollectionToView("currentPage", currentPage);
 		
-		Optional<Account> loggedInAccount = accountService.findByUsernameOrEmail(AccountUtil.currentLoggedInUser().getUsername());
-		loggedInAccount.ifPresent(account -> {
-			super.addModelCollectionToView("currentRoles", account.getRoles());
-			super.addModelCollectionToView("loggedInAccount", account);
-		});
+		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getAccount().getRoles());
+		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser().getAccount());
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		

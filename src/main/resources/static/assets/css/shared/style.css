@@ -10220,9 +10220,6 @@ pre {
     .dropdown-menu a:not([href]):not([tabindex]):hover.dropdown-item:active,
     .dropdown-menu a:not([href]):not([tabindex]):focus.dropdown-item:active {
       background: initial; }
-  .dropdown-menu .dropdown-item {
-    background: #fff;
-    color: #212529; }
     .dropdown-menu .dropdown-item:hover {
       background: #ebf3ff;
       color: #212529; }
@@ -10827,12 +10824,47 @@ ul {
 }
 
 .popover{
-	min-width: 30%;
-    max-width: 300%;
+	min-width: 400px;
+    max-width: 450px;
 }
 
 .popover-header{
     background: #2196f3;
 }
 
-/*# sourceMappingURL=style.css.map */
+.badge-outline-primary {
+    color: #0087f3;
+    border: 1px solid rgba(33, 150, 243, 0.3);
+}
+
+/*# sourceMappingURL=style.css.map   WIDGETS*/
+
+.calendar-aside {
+    display: block;
+}
+
+.calendar-aside .list {
+    position: relative;
+    padding: 10px 8px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    border-radius: 5px;
+    -webkit-transition-duration: 0.25s;
+    transition-duration: 0.25s;
+    -webkit-transition-property: background;
+    transition-property: background;
+}
+
+.calendar-aside .list:hover {
+    background: #fbfbfb;
+}
+
+.calendar-aside .list .user-text {
+    margin-bottom: 0;
+    margin-left: 20px;
+    font-size: 0.875rem;
+}

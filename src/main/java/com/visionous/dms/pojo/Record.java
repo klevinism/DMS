@@ -4,7 +4,9 @@
 package com.visionous.dms.pojo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,12 +16,20 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
@@ -51,14 +61,13 @@ public class Record  implements Serializable{
 	
 	private String attachments;
 	
-	@DateTimeFormat (pattern="dd-MMM-YYYY")
+
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(iso = ISO.DATE)
 	private Date servicedate;
 	
 	@Column(name = "historyid", insertable = false, updatable = false)
 	private Long historyId;
-	
-	@Column(name = "toothid", insertable = false, updatable = false)
-	private Long toothId;
 	
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL,  optional = false)
 	@JoinColumn(name="historyid")
@@ -71,10 +80,14 @@ public class Record  implements Serializable{
 	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER) 
 	@JoinColumn(name = "serviceid")
 	private ServiceType serviceType;
-	
-	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-	@JoinColumn(name = "toothid")
-	private Teeth tooth;
+
+    @JsonIgnore
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(cascade = CascadeType.REFRESH) 
+    @JoinTable(name = "record_tooth",
+            joinColumns = @JoinColumn(name = "record_id"),
+            inverseJoinColumns = @JoinColumn(name = "tooth_id"))
+    private List<Teeth> visitedTeeth  = new ArrayList<>();
 	
 	/**
 	 * 
@@ -233,33 +246,6 @@ public class Record  implements Serializable{
 		this.serviceType = serviceType;
 	}
 	
-	/**
-	 * @return the toothId
-	 */
-	public Long getToothId() {
-		return toothId;
-	}
-
-	/**
-	 * @param toothId the toothId to set
-	 */
-	public void setToothId(Long toothId) {
-		this.toothId = toothId;
-	}
-
-	/**
-	 * @return the tooth
-	 */
-	public Teeth getTooth() {
-		return tooth;
-	}
-
-	/**
-	 * @param tooth the tooth to set
-	 */
-	public void setTooth(Teeth tooth) {
-		this.tooth = tooth;
-	}
 
 	/**
 	 * @return the attachments
@@ -275,4 +261,26 @@ public class Record  implements Serializable{
 		this.attachments = attachments;
 	}
 
+	/**
+	 * @return the visitedTeeth
+	 */
+	public List<Teeth> getVisitedTeeth() {
+		return visitedTeeth;
+	}
+
+	/**
+	 * @param visitedTeeth the visitedTeeth to set
+	 */
+	public void setVisitedTeeth(List<Teeth> visitedTeeth) {
+		this.visitedTeeth = visitedTeeth;
+	}
+
+	/**
+	 * @param tooth
+	 */
+	public void addVisitedTooth(Teeth tooth) {
+		this.visitedTeeth.add(tooth);
+	}
+	
+	
 }

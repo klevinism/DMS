@@ -426,9 +426,6 @@ public class AppointmentRestController {
     		@RequestParam(name = "end", required = true) Date endRange) {
 		
         ResponseBody<Appointment> result = new ResponseBody<>();
-        System.out.println("personnelId-"+ personnelId);
-        System.out.println("startRange-"+ startRange);
-        System.out.println("endRange-"+ endRange);
         List<Appointment> appointments = appointmentService.findAllByPersonnelIdBetweenDateRange(personnelId, startRange, endRange);
 
         if (appointments.isEmpty()) {
@@ -443,6 +440,32 @@ public class AppointmentRestController {
         return ResponseEntity.ok(result);
 
     }
+	
+	@GetMapping("/api/allAppointmentsByDateRange")
+    public ResponseEntity<?> getAllAppointmentsByDateRange(@RequestParam(name = "personnelId", required = false) Long personnelId,
+    		@RequestParam(name = "start", required = true) Date startRange,
+    		@RequestParam(name = "end", required = true) Date endRange) {
+		
+        ResponseBody<Appointment> result = new ResponseBody<>();
+        
+        if(personnelId != null) {
+        	return this.getAvailableAppointments(personnelId, startRange, endRange);
+        }else {
+        	List<Appointment> appointments = appointmentService.findAllBetweenDateRange(startRange, endRange);
+
+            if (appointments.isEmpty()) {
+    			String messageNoUserFound = messageSource.getMessage("alert.noUpcomingAppointments", null, LocaleContextHolder.getLocale());
+                result.setMessage(messageNoUserFound); 
+            } else {
+    			String messageSuccess = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+                result.setMessage(messageSuccess);
+            }
+            result.setResult(appointments); 
+            
+            return ResponseEntity.ok(result);
+        }
+	}
+	
 	
 	@GetMapping("/api/getAvailablePersonnel")
     public ResponseEntity<?> getAvailablePersonnel() {

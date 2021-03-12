@@ -140,10 +140,18 @@ public class CustomerModelController extends ModelControllerImpl{
 			});
 			
 		}else if(action.equals(Actions.CREATE.getValue())) {
-			logger.debug(" Creating new Customer with username = " + newCustomer.getAccount().getUsername());
+			logger.debug(" Creating new Customer with email = " + newCustomer.getAccount().getEmail());
 
 			if(newCustomer.getAccount().getRoles().get(0).getName().equals("CUSTOMER")) {
 
+				if(newCustomer.getAccount().getUsername() == null) {
+					String name = newCustomer.getAccount().getName();
+					String surname = newCustomer.getAccount().getSurname();
+					newCustomer.getAccount().setUsername(name+"."+surname);
+					newCustomer.getAccount().setPassword(name+"."+surname+".1234");
+				}
+				
+				
 					try {
 						String imageName = null;
 						if((imageName = uploadProfileImage()) != null) {
@@ -153,17 +161,11 @@ public class CustomerModelController extends ModelControllerImpl{
 						
 					} catch (IOException e) {
 						logger.error(e.getMessage());
-					} catch (EmailExistsException e) {
+					} catch (EmailExistsException | UsernameExistsException e) {
 						super.getBindingResult().addError(new FieldError("account", "account.email", newCustomer.getAccount().getEmail(), false, null, null, messageEmailExists));
 						logger.error(messageEmailExists);
 						
 				        super.removeControllerParam("viewType");
-						super.addControllerParam("viewType", Actions.CREATE.getValue());
-					} catch (UsernameExistsException e) {
-						super.getBindingResult().addError(new FieldError("account", "account.username", newCustomer.getAccount().getUsername(), false, null, null, messageUsernameExists));
-						logger.error(messageUsernameExists);
-						
-					    super.removeControllerParam("viewType");
 						super.addControllerParam("viewType", Actions.CREATE.getValue());
 					}
 			}
@@ -243,9 +245,9 @@ public class CustomerModelController extends ModelControllerImpl{
 		);
 
 		super.addModelCollectionToView("currentPage", currentPage);
- 		
-		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser());
-		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
+
+		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getAccount().getRoles());
+		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser().getAccount());
 		
 		super.addModelCollectionToView("customerList", customerService.findAll());
 

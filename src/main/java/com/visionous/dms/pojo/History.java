@@ -22,6 +22,7 @@ import javax.persistence.SequenceGenerator;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
@@ -53,7 +54,8 @@ public class History implements Serializable{
 	@OneToOne(optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "supervisorid")
 	private Personnel supervisor;
-	
+
+	@JsonIgnore
 	@OneToMany(mappedBy = "history", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@PrimaryKeyJoinColumn
 	private Set<Record> records;

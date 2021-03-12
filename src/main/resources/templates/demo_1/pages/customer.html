@@ -76,11 +76,12 @@
 							  </td>
 							  
 	                          <td >
-							  	<h5 th:text="${lastVisitRecord != null ? #dates.format(lastVisitRecord.servicedate, 'd-M-yyyy') : ''}"></h5>
+							  	<h5 th:text="${lastVisitRecord != null ? #dates.format(lastVisitRecord.servicedate, 'd-M-yyyy') : ''}"></h5>							  	
 							  </td>
 
 							  <td >
-							  	<h5 th:text="${lastVisitRecord != null ? lastVisitRecord.tooth.name : ''}"></h5>
+							  	<h5 th:if="${lastVisitRecord != null}" th:with=" names = ${#lists.size(lastVisitRecord.visitedTeeth) > 0 ? #strings.listJoin(lastVisitRecord.visitedTeeth.![name],' , ') : ''}" 
+							  		th:text="${names != null ? #strings.abbreviate(names,19) : ''}"></h5>
 							  </td>
 							  <td >
 							  	<h5 th:text="${lastVisitRecord != null ? lastVisitRecord.serviceType.name : ''}"></h5>

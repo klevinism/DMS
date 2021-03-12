@@ -25,24 +25,187 @@
             <!-- Page Title Header Ends-->
             <div class="row">
                      
-              <div class="col-md-12 ">
+              <div class="col-lg-12 ">
               	<div class="card"> 
               		<div class="card-body" >
-		              	
-					    <div id="menu">
-					      <span id="menu-navi">
-					      	<button type="button" class="btn btn-secondary btn-sm move-day" onclick="moveCalendarToRange(this)" data-action="move-prev">
-					          <i class="calendar-icon fa fa-angle-left" data-action="move-prev"></i>
-					        </button>
-					        <button type="button" class="btn btn-secondary btn-sm move-today" onclick="moveCalendarToRange(this)" data-action="move-today">[[#{Today}]]</button>
-					        <button type="button" class="btn btn-secondary btn-sm move-day" onclick="moveCalendarToRange(this)" data-action="move-next">
-					          <i class="calendar-icon fa fa-angle-right" data-action="move-next"></i>
-					        </button>
-					      </span>
-					      <span id="renderRange" class="render-range"> 2012-02</span>
-					    </div>
-					
-					    <div id="calendar"></div>
+	              		<div class="row">
+	              			<div class="col-md-2 border-right">
+	              			<div class="wrapper">
+	              				  
+	              				  <div class="btn-group btn-block " id="newScheduleBtn">
+									<button class="btn btn-primary btn-block " ><i class="mdi mdi-plus"></i>[[#{action.newAppointment}]]</button>
+			                        <button type="button" class="btn btn-primary  dropdown-toggle dropdown-toggle-split" id="dropdownMenuSplitButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			                          <span class="sr-only">Toggle Dropdown</span>
+			                        </button>
+			                        <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
+			                          <h6 class="dropdown-header">[[#{MostUsed}]]</h6>
+			                          <button class="dropdown-item btn-block" th:each="obj ,i : ${top5ServiceTypes}" th:if="${i.index}<5" th:data-id="${obj.id}" >
+			                          <i class="mdi mdi-tooth-outline fa-sm"> </i> [[${obj.name}]]
+			                          </button>
+			                        </div>
+			                      </div>
+	              				  
+		                          <div class="wrapper d-flex justify-content-between align-items-center mb-2 mt-2 pr-auto border-bottom">
+		                            <button class="btn btn-light pl-1" style="width: 100%;" type="button" data-toggle="collapse" data-target="#calendarFilters" aria-expanded="true" aria-controls="calendarFilters">
+			                            <div class="d-flex align-items-center">
+			                              <i class="fa fa-calendar-o fa-sm mr-1" style="font-size:15px;"></i>
+			                              <small class="font-weight-bold pl-1 mr-2 mb-0">[[#{Calendars}]]</small>
+			                              <div class="badge badge-outline-primary badge-pill" id="calendarFilterCount">0</div>
+			                            </div>
+		                            </button>
+		                            <div class="text-gray pl-auto" id="selection">
+			                            <button type="button" class="btn btn-icons btn-rounded btn-light dropdown-toggle-split text-gray" id="dropdownMenuIconButton3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			                            	<i class="mdi mdi-dots-horizontal"></i>
+			                            </button>
+			                        
+			                            <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton3">
+			                              <button class="dropdown-item" onclick="toggleCheck('all');">[[#{action.all}]]</button>
+			                              <button class="dropdown-item" onclick="toggleCheck('none');">[[#{action.none}]]</button>
+			                            </div>
+			                        </div>
+		                          </div>
+		                          <div class="calendar-aside collapse show overflow-auto" id="calendarFilters" style="max-height:300px;">
+		                          	<div class="list p-1" th:if="${currentRoles[0].name == 'ADMIN'}">
+		                          		<label th:for="${loggedInAccount.id}" class="d-flex justify-content-end mr-auto">
+		                          			<img class="img-xs rounded-circle" th:src="'/resources/personnel/img/profile/'+${loggedInAccount.image}" style="float:left">
+		                          				<div class="user-text ml-1">[[#{Me}]] </div>
+		                          		</label>
+		                          		<div class="mb-1">
+		                          			<input tabindex="-1" type="checkbox" class="icheck-flat " th:id="${loggedInAccount.id}" th:value="${loggedInAccount.name} + ' ' + ${loggedInAccount.surname}" checked>
+		                          		</div>
+		                          	</div>
+		                          	
+		                          </div>
+		                          
+		                          <div class="wrapper d-flex justify-content-between align-items-center mb-2 mt-2 pr-auto border-bottom">
+		                            <button class="btn btn-light pl-1" style="width: 100%;" type="button" data-toggle="collapse" data-target="#serviceFilters" aria-expanded="true" aria-controls="serviceFilters">
+			                            <div class="d-flex align-items-center">
+			                              <i class="fa fa-medkit fa-sm mr-1" style="font-size:15px;"></i>
+			                              <small class="font-weight-bold pl-1 mr-2 mb-0">[[#{DentalServices}]]</small>
+			                              <div class="badge badge-outline-primary badge-pill" id="serviceFilterCount">0</div>
+			                            </div>
+		                            </button>
+		                            <div class="text-gray pl-auto" id="serviceSelection">
+			                            <button type="button" class="btn btn-icons btn-rounded btn-light dropdown-toggle-split text-gray" id="dropdownMenuIconButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			                            	<i class="mdi mdi-dots-horizontal"></i>
+			                            </button>
+			                        
+			                            <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton2">
+			                              <button class="dropdown-item" onclick="toggleServiceCheck('all');">[[#{action.all}]]</button>
+			                              <button class="dropdown-item" onclick="toggleServiceCheck('none');">[[#{action.none}]]</button>
+			                            </div>
+			                        </div>
+			                        
+		                          </div>
+		                          <div class="calendar-aside collapse show " id="serviceFilters" style="">
+                         			<div class="calendar-aside mb-2 ">
+		                          		<div class="form-group input-group overflow-auto">
+                             				<select class="form-control js-example-basic-multiple text-primary" name="states[]" id="services" multiple="multiple">
+											</select>
+		                          		</div>
+		                          	</div>
+		                          </div>
+		                          
+		                          <div class="wrapper pl-0 mb-2 pr-0 mt-3">
+								  <div class="wrapper d-flex justify-content-between align-items-center mb-2 border-bottom">
+		                            <button class="btn btn-light pl-1" style="width: 100%;" type="button" data-toggle="collapse" data-target="#results" aria-expanded="true" aria-controls="results">
+			                            <div class="d-flex align-items-center">
+			                              <i class="fa fa-list-alt fa-sm mr-1" style="font-size:15px;"></i>
+										  <small class="font-weight-bold pl-1 mr-2 mb-0">[[#{FilterResults}]]</small>
+	                                      <div class="badge badge-outline-primary badge-pill" id="resultCount">2</div>
+			                            </div>
+		                            </button>
+			                        
+		                          </div>
+		                          <div class="calendar-aside collapse show overflow-auto" id="results" style="max-height:400px; ">
+			                          
+		                          </div>
+		                          </div>		                        
+		                      </div>
+
+
+		                    </div>
+			              	<div class="col-md-10">
+			              		<div id="menu" class="page-header-toolbar">
+							      <div id="menu-navi" class="btn-group ">
+							      
+							      	<button type="button" class="btn btn-light btn-sm  text-primary" onclick="moveCalendarToRange(this)" data-action="move-prev">
+							          <i class="fa fa-angle-left fa-sm" data-action="move-prev"></i>
+							        </button>
+							        <button id="today" type="button" class="btn btn-sm btn-primary" onclick="moveCalendarToRange(this)" data-action="move-today">[[#{Today}]]</button>
+							        <button type="button" class="btn btn-light btn-sm  text-primary" onclick="moveCalendarToRange(this)" data-action="move-next">
+							          <i class="fa fa-angle-right fa-sm" data-action="move-next"></i>
+							        </button>
+							        
+							      </div>
+							      <div class="sort-wrapper">
+							      	<h3 id="renderRange" class="render-range filter-wrapper" style="margin:0 auto;"> 2012-02</h3>
+							      </div>
+		
+			                      
+			                      <div class="btn-group ml-lg-auto ml-2 text-primary" role="group" aria-label="Basic example">
+		                            <button type="button" data-type='viewType' data-action='day' class="btn btn-light text-primary " role="toggle">
+		                               Day
+		                            </button>
+		                            <button type="button" data-type='viewType' data-action='week' class="btn btn-light active text-primary " role="toggle">
+		                              Week
+		                            </button>
+		                            <button type="button" data-type='viewType' data-action='month' class="btn btn-light text-primary " role="toggle">
+		                              Month
+		                            </button>
+		                            
+
+		                          </div>
+								  <div class="btn-group ml-1 " role="group" aria-label="Basic example">
+									  	<div class="dropdown ">
+					                      <button class="btn btn-light text-primary" type="button" id="dropdownexport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					                      	<i class="mdi mdi-export-variant fa-sm"></i>
+					                      </button>
+					                      <div class="dropdown-menu" aria-labelledby="dropdownexport" style="">
+					                        <button class="dropdown-item" role="toggle" data-type="export" data-action="csv" href="#">[[#{ExportCsv}]]</button>
+					                        <button class="dropdown-item" role="toggle" data-type="export" data-action="excel" href="#">[[#{ExportExcel}]]</button>
+					                      </div>
+				                        </div>
+									  	<div class="dropdown " id="filters">
+					                      <button class="btn btn-light text-primary" type="button" id="dropdownfilter" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					                      	<i class="mdi mdi-tune fa-sm"></i>
+					                      </button>
+					                      <div class="dropdown-menu " aria-labelledby="dropdownfilter" style="">
+					                      	<div class="wrapper  mx-2 my-2">
+				                          		
+				                          		<div class="d-flex align-items-center mb-2" th:title="#{allAppointmentsForSelectedCalendars}">
+					                            	<small class="font-weight-bold mr-2 mb-0"><i class="fa fa-calendar fa-sm mr-1" style="font-size:15px;"></i> [[#{Appointments}]] <i class="mdi mdi-information-outline fa-sm text-sm"></i></small>
+					                            </div>
+				                          		<div class="custom-control custom-switch" >
+				                          			<input type="checkbox" class="custom-control-input"  id="appointmentFilter" checked>
+				                          			<label class="custom-control-label" for="appointmentFilter"></label>
+				                          		</div>
+				                          	</div>
+					                      	<div class="wrapper  mx-2 my-2">
+					                            <div class="d-flex align-items-center mb-2 count-indicator" th:title="#{allAppointmentsForSelectedVisitors}">
+					                                <small class="font-weight-bold mr-2 mb-0"><i class="fa fa-stethoscope fa-sm mr-1" style="font-size:15px;"></i> [[#{Visits}]] <i class="mdi mdi-information-outline fa-sm text-sm"></i></small>
+					                            </div>
+				                          	</div>
+				                          	<div class="wrapper  mx-2 my-2">
+				                          		<div class="custom-control custom-switch pb-2 mb-2" >
+				                          			<input type="checkbox" class="custom-control-input"  id="visitsFilter" >
+				                          			<label class="custom-control-label" for="visitsFilter"></label>
+				                          		</div>
+				                          	</div>
+					                      </div>
+				                        </div>
+								  </div>
+			                      
+			                      
+								</div>
+								
+							    <div id="calendar" style="position:relative">
+								    <div id="overlay" style="display:none">
+								    	<i id="spinnerOverlay" class="fa fa-spin fa-spinner fa-3x"></i>
+								    </div>
+							    </div>
+			              	</div>
+	              		</div>
     				</div>	
 		  		</div>
               </div>
@@ -87,6 +250,12 @@
 			            <select class="form-control" data-live-search="true" data-style="btn-outline-secondary text-primary" th:title="#{customer}">
 							<option data-tokens="" value="" ></option>
 						</select>
+						<div class="input-group-prepend ">
+							<!-- Button trigger create customer modal -->
+							<button type="button" class="btn btn-outline-secondary text-primary" data-toggle="modal" data-target="#createCustomerModal">
+							  <i class="mdi mdi-account-plus-outline fa-lg"></i>
+							</button>
+						</div>
 			          </div>
 				 </div>
 			</div>
@@ -99,7 +268,7 @@
 						<div class="input-group ">
 								<div class="input-group-append ">
 	                              <span class="input-group-text bg-outline-secondary text-primary">
-	                                <i class="mdi mdi-calendar-clock fa-lg"></i>
+		                          	  <i class="fa fa-clock-o fa-lg"></i>
 	                              </span>
 	                            </div>
 							    <input id="fromRange" type="text" value="14:20" class="form-control text-primary" data-toggle="datetimepicker" data-target="#fromRange">
@@ -112,7 +281,7 @@
 						<div class="input-group " id="endRange">
 							    <div class="input-group-append ">
 		                             <span class="input-group-text bg-outline-secondary text-primary">
-		                               <i class="mdi mdi-calendar-clock fa-lg"></i>
+		                               <i class="fa fa-clock-o fa-lg"></i>
 		                             </span>
 		                           </div>
 							    <input id="toRange" type="text" value="" class="form-control text-primary" data-toggle="datetimepicker" data-target="#endRange" >
@@ -126,7 +295,7 @@
 			</div>
 		
 			<div id="alert" class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none">
-			  <strong>safd</strong>
+			  <strong>alert</strong>
 			  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
 			    <span aria-hidden="true">&times;</span>
 			  </button>
@@ -147,7 +316,7 @@
 				  	<h5 class="card-text text-primary" ><span id="serviceType"> <i class="mdi mdi-tooth-outline fa-lg"> </i> Dentist</span></h5>
 				    <h5 class="card-text text-primary" ><span id="detailPersonnel"> <i class="mdi mdi-doctor fa-lg "> </i> Dentist</span></h5>
 				    <h5 class="card-text text-primary" ><span id="detailCustomer"> <i class="mdi mdi-account-outline fa-lg"> </i> Customer</span></h5>
-				    <h5 class="card-text text-primary"><span id="detailTimeRange"> <i class="mdi mdi-calendar-clock fa-lg ">  </i> 12:00 - 13:00 02/2021</span></h5>
+				    <h5 class="card-text text-primary"><span id="detailTimeRange"> <i class="fa fa-clock-o fa-lg"></i> 12:00 - 13:00 02/2021</span></h5>
 		
 				  </div>
 				
@@ -157,6 +326,30 @@
 		      	  </div>
 		      	</div>
 		  </div>
+		  
+		    <!-- Create Customer Modal -->
+			<div class="modal fade" id="createCustomerModal"role="dialog" aria-labelledby="createCustomerModal" aria-hidden="true">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title" >[[#{CreateCustomer}]]</h5>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+			      </div>
+			      <div class="modal-body">
+			      	<section th:replace="'demo_1/partials/account/modals/_modalcreate.html'">
+						  	<!-- partial:partials/_footer.html -->
+			  		</section>
+			  		<p class="alert alert-danger" style="display:none" id="customerModalError"></p>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal"> <i class="fa fa-times"></i> [[#{action.close}]]</button>
+			        <button type="button" class="btn btn-primary" onclick="createCustomer(this)"><i class="fa fa-save"></i> [[#{Create}]]</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
           <!-- content-wrapper ends -->
 	  	  
 
@@ -172,19 +365,50 @@
     <script th:inline="javascript">
 	/*<![CDATA[*/ 
 
-    	var dayNames = ["DJEL","HEN","MART","MERK","ENJ","PREM","SHTUN"];
+		var strmonthNames = /*[[#{monthname.short.array}]]*/'';
+		strmonthNames = strmonthNames.substring(1, strmonthNames.length-1);
+		var monthNames = strmonthNames.split(",");
+		
+		var strdayNames = /*[[#{dayname.full.array}]]*/[]; 
+		strdayNames = strdayNames.substring(1, strdayNames.length-1);
+		var dayNames = strdayNames.split(",");
+
     	var editName = /*[[#{Edit}]]*/'';
     	var saveName = /*[[#{Save}]]*/'';
     	var deleteName = /*[[#{Delete}]]*/'';
     	var alertPatient = /*[[#{alert.selectPatient}]]*/'';
     	var alertPersonnel = /*[[#{alert.selectPersonnel}]]*/'';
     	var alertDate = /*[[#{alert.invalidDate}]]*/'';
+		var selectedOptionsName = /*[[#{alert.selectedOptions}]]*/'';
 
     	var serviceDefaultName = /*[[#{DentalService}]]*/'';
     	var accId = /*[[${loggedInAccount.id}]]*/'';
+    	var accFullName = /*[[${loggedInAccount.name} + ', ' + ${loggedInAccount.surname}]]*/'';
+    	var lockedDefaultName = /*[[#{alert.lockedAppointment}]]*/'';
+    	var appointmentDefaultName = /*[[#{alert.anAppointment}]]*/'';
+    	var visitsDefaultName = /*[[#{alert.aVisit}]]*/'';
+    	var meDefaultName = /*[[#{Me}]]*/'';
    	/*]]>*/
     </script>
     <script>
+    
+    var colorArr = [
+    	{'background':'black','color':'white'},
+    	{'background':'red','color':'white'},
+    	{'background':'green','color':'white'},
+    	{'background':'blue','color':'white'},
+    	{'background':'grey','color':'white'},
+    	{'background':'orange','color':'black'},
+    	{'background':'yellow','color':'black'},
+    	{'background':'pink','color':'black'},
+    	{'background':'purple','color':'white'}];
+
+    
+    var menuElem$ = $("#menu");
+    
+    var calendarFiltersElem$ = $("#calendarFilters");
+    var serviceFilterElem$ = $("#serviceFilters");
+    var filtersResultElem$ = $("#results");
     
     /* Detail popover elements */
     var detailElemPopover = null;
@@ -204,6 +428,21 @@
   	var saveEditElem$ = $("#PopoverContent").find("#saveEditElem");
   	var wrapperElem$ = $("#PopoverContent").find("#wrapper");
   	
+  	var calendarOverlayElem$ = $("#overlay");
+  	
+  	
+  	var currentCalendarGuide;
+
+  	
+  	var currentpopover;
+  	
+   	$('#createCustomerModal').on('show.bs.modal', function (e) {
+    	   dismissPopover();
+    	   console.log($('#createCustomerModal').find('#fullname'));
+    	  $('#fullname').click();
+    	  $('#fullname').focus();
+   	});
+
     $(document).ready(function(){
         var token = $("meta[name='_csrf']").attr("content");
      	var header = $("meta[name='_csrf_header']").attr("content");
@@ -212,17 +451,352 @@
      	    xhr.setRequestHeader(header, token);
      	});
         
-      	setRenderRangeText(); // render first date range text
+       	$('#createCustomerModal').on('show.bs.modal', function (e) {
+			currentpopover = $(elemPopover).parent().parent().find(".popover");
+			if(currentpopover.length == 0){
+			    currentpopover = $("#calendar").find(".popover");
+			}
+			
+			$(currentpopover).popover('hide');
+			
+       		$('#fullname').focus();
+       		$(this).modal('toggle');
+       	});
+       	
+       	$('#createCustomerModal').on('hide.bs.modal', function (e) {
+       	    $(currentpopover).popover("show");
+       	 	$("#fullname").removeClass("border-danger");
+       	 	$("#phone").removeClass("border-danger");
+       	 	$("#birthdayCalendar").removeClass("border-danger");
+       	 	$("#input[name=gender]").removeClass("border-danger");
+       	 	
 
-      	//createSampleSchedules(cal);
+       	 	$("#fullname").val('');
+       	 	$("#phone").val('');
+       	 	$("#birthdayCalendar").val(moment(new Date()).format('YYYY-MM-DD'));
+       	 	$("#input[name=gender]").val('');
+       	});
+     	
+     	$("#newScheduleBtn .btn-block").click(function(e){
+     		renderEditPopover($("#newScheduleBtn"), {
+     			start: new Date().addMinutes(30),
+     			end : new Date().addHours(1),
+     			container : $(this).parent()
+     		});
+     		
+     		var popup = $("#newScheduleBtn").parent(); 
+     		popup.find("#"+$(serviceElem$).attr('id')).find("select").selectpicker("val", e.target.dataset.id);
+     		if(popup.find("#"+$(dentistElem$).attr('id')).find("select").find("option[value='"+accId+"']").length > 0){
+     		   popup.find("#"+$(dentistElem$).attr('id')).find("select").selectpicker("val", accId);    
+     		   popup.find("#"+$(customerElem$).attr('id')).find("select").selectpicker("toggle");
+     		}else{
+     		   popup.find("#"+$(dentistElem$).attr('id')).find("select").selectpicker("toggle");
+     		}
+     		
+     	});
+     	
+     	$('#appointmentFilter').on('change', function(e){
+     		if(e.target.checked){
+     			var allAppointments = findAllSchedulesByCustomCategory('appointment');
+     			allAppointments.forEach(function(appointment){
+     				appointment.isVisible = true;
+     			});
+     		}else{
+     			var allAppointments = findAllSchedulesByCustomCategory('appointment');
+     			allAppointments.forEach(function(appointment){
+     				appointment.isVisible = false;
+     			});
+     		}
+     		refreshScheduleVisibility();
+			hideSchedulesBasedOnFilters();
+     	});
+     	
+     	$('#visitsFilter').on('change', function(e){
+     		if(e.target.checked){
+     			var allVisits = findAllSchedulesByCustomCategory('visit');
+     			allVisits.forEach(function(visit){
+     				visit.isVisible = true;
+     			});
+     		}else{
+     			var allVisits = findAllSchedulesByCustomCategory('visit');
+     			allVisits.forEach(function(visit){
+     				visit.isVisible = false;
+     			});
+     		}
+     		refreshScheduleVisibility();
+			hideSchedulesBasedOnFilters();
+     	});
+     	
+     	$("#calendarFilters").find('.dropdown-menu ').on('click', function (e) {
+     	   e.stopPropagation();
+     	});
+
+      	setRenderRangeText(); // render first date range text
       	
+      	//initServiceTypeFilters()
       	initServiceTypeSelectPicker($(serviceElem$).find("select")); // Init personnel select picker
+
       	initPersonnelSelectPicker($(dentistElem$).find("select")); // Init personnel select picker
       	initCustomerSelectPicker($(customerElem$).find("select"))// Init customer select picker
       	
-      	initCalendar();
+		reloadCalendar();
+      	
+      	initMenuEventHandlers();
     });
 
+    function createCustomer(elem){
+        var errorModalP = $("#customerModalError");
+        $(errorModalP).hide();
+        
+        var fullname = $("#fullname").val();
+        var phone = $("#phone").val();
+        var birthday = $("#birthdayCalendar").val();
+        var gender = $("input[name=gender]:checked").val();
+
+
+	    if($("#fullname").hasClass("border-danger")){
+    	    $("#fullname").removeClass("border-danger"); 
+	    }
+	    
+	    if($("#phone").hasClass("border-danger")){
+	        $("#phone").removeClass("border-danger"); 
+	    }
+	    
+	    if($("#birthdayCalendar").hasClass("border-danger")){
+	        $("#birthdayCalendar").removeClass("border-danger"); 
+	    }
+	    
+	    if($("input[name=gender]").hasClass("border-danger")){
+	        $("input[name=gender]").removeClass("border-danger"); 
+	    }
+	    
+    	if(fullname != null && fullname.length > 4 
+    	        && phone != null && phone.length > 6 
+    	        && birthday != null && birthday.length > 2
+    	        && gender != null && birthday.length > 0){
+            
+            var obj = {
+    	            'fullname':fullname,
+    	            'phone':phone,
+    	            'birthday':new Date(birthday),
+    	            'gender':gender
+    	    }
+    	    
+    	    toggleLoadButton($(elem));
+    	    createSimpleAccount(obj, function (data, result){
+    	        if(data.error != "error"){    	            
+    	            buildOptions($(currentpopover).find("#"+$(customerElem$).attr("id")).find("select"), data.result);
+    	            
+    	            $(currentpopover).find("#"+$(customerElem$).attr("id")).find("select").selectpicker('refresh');
+    	            $(currentpopover).find("#"+$(customerElem$).attr("id")).find("select").selectpicker('val', data.result[0].id);
+    	            
+    	            buildOptions($(wrapperElem$).find("#"+$(customerElem$).attr("id")).find("select"), data.result);
+
+    	            $('#createCustomerModal').modal('hide');
+    	        }else{
+    	            $(errorModalP).html(data.message);
+    	            $(errorModalP).show();
+    	        }
+    	        toggleLoadButton($(elem));
+    	    });
+    	    
+    	}else{
+    	    if(fullname == null || fullname.length < 4 ){
+       	        $("#fullname").toggleClass("border-danger");    	        
+    	    }
+        	if(phone == null || phone.length < 6 ){
+        	    $("#phone").toggleClass("border-danger");    
+        	}
+            if(birthday == null || birthday.length < 2){
+                $("#birthdayCalendar").toggleClass("border-danger");
+            }
+            if(gender == null || birthday.length < 1){
+                $("input[name=gender]").toggleClass("border-danger");                
+            }
+    	}
+    }
+    
+    function hideSchedulesBasedOnFilters(){
+    	var appointmentFilter = $('#appointmentFilter').is(':checked');
+    	var visitFilter = $('#visitsFilter').is(':checked');    	
+		var selectedCalendars = $("#calendarFilters").find(".icheck-flat:not(:checked)");
+		var serviceFilters = $(serviceFilterElem$).find("select").find("option:not(:selected)");
+		
+		var allCalendars = $("#calendarFilters").find(".icheck-flat");
+		if(allCalendars != null && allCalendars.length > 0){
+		    var idArr = [];
+		    allCalendars.each(function(calendar){
+		        idArr.push($(allCalendars[calendar]).attr("id"));
+		    });
+		    
+		    var allNotInArray = findAllSchedulesNotInCalendarIdArray(idArr);
+		    if(allNotInArray.length > 0){
+			    allNotInArray.forEach(function(schedule){
+			        cal.deleteSchedule(schedule.id, schedule.calendarId); 
+			    });
+		    }
+		}
+		
+    	if(selectedCalendars != null && selectedCalendars.length >0){
+    		var id = $(selectedCalendars).attr('id');
+    		selectedCalendars.each(function (calendar){
+    			cal.toggleSchedules($(selectedCalendars[calendar]).attr('id')+'', true, true);
+    		});
+    	}
+    	
+    	if(serviceFilters != null && serviceFilters.length >0){
+   			serviceFilters.each(function (service){
+   				var serviceIdSchedule = findAllSchedulesByServiceId($(serviceFilters[service]).val());
+   				serviceIdSchedule.forEach(function(schedule){
+   					schedule.isVisible = false;
+   				});
+   			});
+    	}
+		
+    	if(appointmentFilter == false){// hide all appointments
+   		    var allAppointments = findAllSchedulesByCustomCategory('appointment');
+   			allAppointments.forEach(function(appointment){
+   				appointment.isVisible = false;
+   			});
+    	}
+    	
+    	if(visitFilter == false){// Hide all visits
+    		var allVisits = findAllSchedulesByCustomCategory('visit');
+   			allVisits.forEach(function(visit){
+   				visit.isVisible = false;
+   			});
+    	}
+    	
+    	refreshScheduleVisibility();
+    	
+    	
+    	refreshFilterResults();
+    }
+    
+    function refreshFilterResults(){
+        var allVisibleSchedules = findAllSchedulesByVisibility(true);
+        $(filtersResultElem$).html("");
+        
+        var wrapper = '<div class="item-wrapper d-flex p-2 border-bottom "> </div>';
+		var iconDiv = '<div class="status-wrapper d-flex align-items-start pr-3">'+
+	          '<span class="rounded-circle p-1 mt-2 mx-auto">'+
+      		  '<i class="fa fa-calendar m-1" style="color:white"></i></span></div>';        
+        var textDiv = '<div class="text-wrapper"></div>';
+        
+        var titleEl = '<h6 class="d-block mb-1">Dentist appoinment:metro</h6>';
+        var pEl = '<p class="d-block mb-1">paragraph</p>'
+        var timeEl = '<small class="d-block mb-2"><strong>7 Feb 2017, 16:00</strong></small>';
+        var footerEl = '<small class="text-gray d-block">First Remainder : 1 Hours min before</small>';
+        
+        
+        allVisibleSchedules.forEach(function(schedules){
+           var colorscheme = getCalendarOptions(schedules.calendarId+'')  != null ? getCalendarOptions(schedules.calendarId+'') : cal._calendarColor;
+		   
+           var categoryIcon = '<i class="fa fa-calendar ml-1 mr-1" title="'+appointmentDefaultName+'" style="color:'+colorscheme.color+'"></i> ';
+           if(schedules.raw.calendarCategory == 'visit'){
+           		categoryIcon = '<i class="fa fa-stethoscope ml-1 mr-1" title="'+visitsDefaultName+'" style="color:'+colorscheme.color+'"></i> ';
+           }
+           
+           var toothIcon = '<i class="mdi mdi-tooth-outline fa-sm"> </i>';
+           var docIcon = '<i class="mdi mdi-doctor fa-sm "> </i>';
+           var patIcon = '<i class="mdi mdi-account-outline fa-sm"> </i>';
+           var calTimeIcon = '<i class="mdi mdi-calendar-clock fa-sm ">  </i>';
+           
+           var ic = $(iconDiv); 
+           $(ic).find("span").html(categoryIcon);
+           $(ic).find("span").css("background-color",colorscheme.bgColor);
+		   
+           var schedTitleService = schedules.title.split("|");
+           
+           var title = $(titleEl).html(toothIcon + " <u>" + schedTitleService[1].trim("") +"</u>");
+           
+           var pDoc = $(pEl).html(docIcon + schedules.attendees[0]);
+           var pPat = $(pEl).html(patIcon + schedules.attendees[1]);
+           
+           var tim = $(timeEl);
+           $(tim).find("strong").html(calTimeIcon+" "+renderPeriodToElement([], new Date(schedules.start), new Date(schedules.end), true).join(' '));
+           
+           var divContainer = $(textDiv).append(title).append(pDoc).append(pPat).append(tim);
+           
+           var wr = $(wrapper).append(ic).append(divContainer);
+           
+           $(wr).on('mouseenter', function(e){
+               dismissPopover();
+               var schedElem = cal.getElement(schedules.id, schedules.calendarId);
+               renderDetailPopover(schedElem, schedules);
+               var t = $(schedElem).offset().top;
+               $(cal._layout.container).find(".tui-full-calendar-timegrid-container").scrollTop(t);
+           });
+			
+           $(filtersResultElem$).append(wr);
+           
+        });
+        
+        $(filtersResultElem$).parent().find("#resultCount").text(allVisibleSchedules.length);
+        
+    }
+    
+    function reloadCalendar(elem){
+		var endDate = new Date(cal.getDateRangeEnd());
+		endDate = new Date(endDate.setHours(23));
+		endDate = new Date(endDate.setMinutes(59));
+		endDate = new Date(endDate.setSeconds(59));
+		
+		var obj = {
+			start: new Date(cal.getDateRangeStart()),
+			end: new Date(endDate)
+		};
+		
+		$(calendarOverlayElem$).show();
+		$(calendarOverlayElem$).parent().css("opacity", "0.3");
+		
+		toggleLoadButton(elem);
+		
+		getAllAppointmentsByDateRange(obj, function(data, result){
+			if(data.error != "error"){
+				renderDataOnCalendar(data.result, false);
+				hideSchedulesBasedOnFilters();
+			}
+		});
+		
+   		var obj = {
+			serviceDate: new Date(cal.getDateRangeStart()),
+			serviceEndDate: new Date(endDate)
+		};
+		getAllRecordsByDateRange(obj, function(data, result){
+			if(data.error != "error"){
+				renderDataOnVisitCalendar(data.result, false);
+				hideSchedulesBasedOnFilters();
+			}
+			
+			$(calendarOverlayElem$).hide();
+	        $(calendarOverlayElem$).parent().css("opacity", "1");
+	        toggleLoadButton(elem);
+		});
+    }
+    
+    function randomColor(){
+    	return colorArr[Math.floor(Math.random() * colorArr.length)];
+    }
+    
+	function toggleCheck(action){
+		switch(action){
+			case 'all' : $("#calendarFilters").find(".icheck-flat:not(:disabled)").iCheck('check');break;
+			case 'none': $("#calendarFilters").find(".icheck-flat:not(:disabled)").iCheck('uncheck');break;
+			default : filterSingleCalendar(action);break;
+		}
+	}
+	
+	function toggleServiceCheck(action){
+		switch(action){
+			case 'all' : var selected = [];
+            	$(serviceFilterElem$).find("select").find("option").each(function(i,e){
+                	selected[selected.length]=$(e).attr("value");
+            	});$(serviceFilterElem$).find("select").val(selected).trigger('change');break;
+			case 'none': $(serviceFilterElem$).find("select").val(null).trigger('change');break;
+			default : break;
+		}
+	}
   	var rangePickerOptions = {
    		"format": "HH:mm",
    		"showClear" :true,
@@ -233,22 +807,80 @@
   	
     initDatePickers(); // init date pickers with current date
 
+    function initPersonnelCalendars(){
+    	var personnelICheck = $(calendarFiltersElem$).find(".icheck-flat");
+    	personnelICheck.each(function(elem){
+    		var personnelData = {
+    			id : $(personnelICheck[elem]).attr("id"),
+    			name: $(personnelICheck[elem]).attr("value")
+    		};
+    		var color = randomColor();
+    		createICheckForPersonnel(personnelData, color, $(personnelICheck[elem]));
+    		initCalendarForSinglePersonnel(personnelData, color);
+    	});
+    	
+    	$("#calendarFilterCount").text(personnelICheck.length);
+    }
     
-    
-    function initCalendar(){
-        
-    	var endDate = new Date(cal.getDateRangeEnd());
+    function initCalendarForSinglePersonnel(personnel, colorScheme){
+        var endDate = new Date(cal.getDateRangeEnd());
     	endDate = new Date(endDate.setHours(23));
     	endDate = new Date(endDate.setMinutes(59));
     	endDate = new Date(endDate.setSeconds(59));
     	
-        var dataObj = {
+    	var dataObj = {
             start : new Date(cal.getDateRangeStart()),
         	end : endDate,
-        	personnelId : accId
+        	personnelId : personnel.id
         };
         
-    	lazyLoadSchedules(dataObj);
+       
+        createCalendarProp(personnel, colorScheme);
+        
+    }
+    
+    function createICheckForPersonnel(personnel, colorScheme, element){
+    	
+    	var color = 'icheckbox_flat';
+    	color += (colorScheme.background != "black") ? '-'+colorScheme.background : '';
+		
+		$(element).iCheck({
+     		checkboxClass: color,
+     		disabledClass: 'disabled-blue',
+     		increaseArea: '10%' // optional
+	    });
+		
+		$(element).on('ifChecked', function(e){
+        	cal.toggleSchedules($(this).attr("id"), false, true);
+        	var currNr = parseInt($("#calendarFilterCount").text());
+		    $("#calendarFilterCount").text(currNr+1);
+        	
+			hideSchedulesBasedOnFilters();
+     	});
+     	
+     	$(element).on('ifUnchecked', function(e){
+        	cal.toggleSchedules($(this).attr("id"), true, true);
+        	var currNr = parseInt($("#calendarFilterCount").text());
+        	if(currNr != 0){
+        	    $("#calendarFilterCount").text(currNr-1);
+        	}
+        	
+			hideSchedulesBasedOnFilters();
+     	});
+    }
+    
+    function createCalendarProp(personnel, colorScheme){
+    	var props = cal.getOptions().calendars;
+    	var defProp = {
+			id: personnel.id+'',
+			name: personnel.name,
+			color: colorScheme.color,
+			bgColor: colorScheme.background,
+			dragBgColor: colorScheme.background,
+			borderColor: colorScheme.background
+    	};
+    	props.push(defProp);
+    	cal.setCalendars(props);
     }
     
     function initDatePickers(){
@@ -258,6 +890,81 @@
 	    
 	    rangePickerOptions.date = new Date().addHours(3);
 	    toRangePicker = $("#toRange").datetimepicker(rangePickerOptions);
+    }
+    
+    function initMenuEventHandlers(){
+        $(menuElem$).find(".btn-group").find('button[role="toggle"]').on("click", function(e){            
+        	$(this).parent().find('button[role="toggle"]').removeClass("active");
+        	$(this).addClass("active");
+        	
+        	var dataType = $(this).attr('data-type');
+        	console.log("dataType",dataType);
+        	if(dataType == "viewType"){
+        	    cal.changeView($(this).attr('data-action')+'');
+        	    moveCalendarToRange($("#today"));
+        	    window.scrollTo(0,document.body.scrollHeight);
+        	}else{
+        	    var allCurrentVisibleSchedules = findAllCurrentVisibleSchedules();
+        	    var exportData = buildDataExportArray(allCurrentVisibleSchedules);
+        	    switch($(this).attr('data-action')){
+        	    	case 'csv': download(buildCsvContent(exportData), '.csv');break;
+        	    	case 'excel': download(buildExcelContent(exportData), '.xls');break;
+        	    	default: break;
+            	}
+        	}
+        });
+    }
+    
+    function download(fileContent, format){
+        var fileName = accFullName + "-" + new Date(cal.getDateRangeStart()).getTime() + "-" + new Date(cal.getDateRangeEnd()).getTime();
+        var encodedUri = encodeURI(fileContent);
+        var link = document.createElement("a");
+        link.setAttribute("style", "display:none");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", fileName+format);
+        document.body.appendChild(link); // Required for FF
+        link.click();
+    }
+    
+    function buildExcelContent(data){
+        return 'data:application/vnd.ms-excel;charset=utf-8,' 
+        	+ data.map(e => Object.keys(e).map(key => e[key]).join(" \t")).join("\r\n");
+    }
+    
+    function buildCsvContent(data){
+        return "data:text/csv;charset=utf-8," 
+            + data.map(e => Object.keys(e).map(key => e[key]).join(",")).join("\n");
+    }
+    
+    function buildDataExportArray(schedules){
+        var data = [];
+        var headers = { "0" : "Id",
+                "1": "Type",
+                "2": "Dental Service",
+                "3": "Doctor",
+                "4": "Patient",
+                "5": "Start Time",
+                "6": "End Time"}
+        data.push(headers);
+        for(var schedule in schedules){
+            var current = schedules[schedule];
+            var serviceName = schedules[schedule].title.split("|");
+            var serviceName = serviceName[1].trim(" ");
+                        
+            var dentist = current.attendees[0].split(",").join(" ");
+            var patient = current.attendees[1].split(",").join(" ");
+            
+            data.push({
+                "Id": current.id,
+                "Type": current.raw.calendarCategory.charAt(0).toUpperCase() + current.raw.calendarCategory.slice(1),
+                "Dental Service": serviceName,
+                "Doctor": dentist.charAt(0).toUpperCase() + dentist.slice(1),
+                "Patient": patient.charAt(0).toUpperCase() + patient.slice(1),
+                "Start Time": moment(new Date(current.start)).format("DD/MM/YYYY"),
+                "End Time": moment(new Date(current.end)).format("DD/MM/YYYY")
+            });
+        }
+        return data;
     }
     
 	function createSampleSchedules(calendar){
@@ -287,9 +994,9 @@
 	}
 	function initServiceTypeSelectPicker(elem){
 	    getAvailableServiceTypes(function(data, response){
-	        console.log("services",data);
 	        if(data.error != "error"){
-	    	    buildOptions(elem, data.result[0]);
+	    	    buildOptions(elem, data.result);
+	    	    buildServiceFilters(data.result);
 	        }
 	    });
 	}
@@ -298,9 +1005,94 @@
 	    getAvailablePersonnel(function(data, response){
 	        if(data.error != "error"){
 	    	    buildOptions(elem, data.result);
+	    	    buildPersonnelFilters(data.result);
 	        }
 	    });
 	}
+	   
+    function buildPersonnelFilters(allPersonnel){
+		var pFullName;
+		var pImgPath = "/resources/personnel/img/profile";
+		var pChecked = true;
+		
+		var allPersonnelArrEl$ = [];
+		allPersonnel.forEach(function(personnel){
+		    var div = '<div class="list p-1"></div>';
+    		var lbl = '<label for="'+personnel.id+'" class="d-flex justify-content-end mr-auto" ></label>';
+			var img = '<img class="img-xs rounded-circle" src="/resources/personnel/img/face5.jpg" style="float:left">';
+			var text = '<div class="user-text ml-1">Marina Michel</div>';
+			var checkbox = '<div class="mb-1"><input tabindex="-1" type="checkbox" class="icheck-flat " id="" value="" ></div>';
+
+			var pFullName;
+			var pImgPath = "/resources/personnel/img/profile/";
+			var pChecked = true;
+		
+			var pName = personnel.account.name.charAt(0).toUpperCase() + personnel.account.name.slice(1); 
+			var pSurname = personnel.account.surname.charAt(0).toUpperCase() + personnel.account.surname.slice(1);
+			pFullName = pName+" "+pSurname;
+			if(personnel.account.image != null){
+				pImgPath += personnel.account.image;
+			}else{
+			    pImgPath = 'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg';
+			}
+			
+			if(personnel.id == accId){
+				pFullName = meDefaultName;
+			}
+			
+			var input = $(checkbox).find("input");
+			input.attr("id", personnel.id);
+			input.attr("value", pFullName);
+			input.attr("checked", pChecked ? true : false);
+			text = $(text).text(pFullName);
+			
+			img  = $(img);
+			$(img).attr("src",pImgPath)
+			
+			var lblEl = $(lbl).append(img).append(text);
+			var divEl = $(div).append(lblEl).append($(input));
+			$(calendarFiltersElem$).append(divEl);
+			
+		});
+     	initPersonnelCalendars(); //Other personnel calendars
+   		            
+    }
+    
+    function buildServiceFilters(services){
+    	services.forEach(function(service){
+			if(service.id != null && service.name != null){
+				$(serviceFilterElem$).find("select").append(new Option(service.name,service.id,true, true));
+			}		
+    	});
+    	
+    	$("#serviceFilterCount").text(services.length);
+   		$(serviceFilterElem$).find("select").select2();
+   		
+     	$(serviceFilterElem$).find("select").on('change.select2', function(event) {
+		  let select = $(this),
+		    ul = select.next('span.select2').find('ul');
+			
+		  select.select2('data').forEach(function (service){
+			var serviceIdSchedule = findAllSchedulesByServiceId(service.id);
+			serviceIdSchedule.forEach(function(schedule){
+				schedule.isVisible = true;
+			});
+   		  });
+   		  
+		  let count = select.select2('data').length;
+		  
+		  hideSchedulesBasedOnFilters();
+		  
+		  if(count > 3){
+			  ul.find('.select2-selection__choice').remove();
+			  ul.prepend(function() {
+			  	return "<li class='select2-selection__choice'>" + count + " " + selectedOptionsName+" </li>";
+			  });
+		  }
+		});
+		$(serviceFilterElem$).find("select").trigger('change.select2');
+		
+    }
 	
 	function initCustomerSelectPicker(elem){
 	    getAvailableCustomers(function(data, response){
@@ -323,35 +1115,76 @@
 	
 	function updateAppointment(schedule, callback){
 	    var appointment = buildAppointmentBody(schedule);
-     	$.post("/api/appointment/edit", appointment, callback);
+     	$.post("/api/appointment/edit", appointment, function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function createAppointment(schedule, callback){
 	    var appointment = buildAppointmentBody(schedule);
-	    appointment.id = null;
-	    console.log("creating new appointment", appointment);
-     	$.post("/api/book", appointment, callback);
+	    appointment.id = null;	    
+     	$.post("/api/book", appointment, function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function deleteAppointment(schedule, callback){
 	    var appointment = buildAppointmentBody(schedule);
-     	$.post("/api/appointment/delete", appointment, callback);
+     	$.post("/api/appointment/delete", appointment, function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function getAvailablePersonnel(callback){
-     	$.get("/api/getAvailablePersonnel", callback);
+     	$.get("/api/getAvailablePersonnel", function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function getAvailableCustomers(callback){
-     	$.get("/api/getAvailableCustomers", callback);
+     	$.get("/api/getAvailableCustomers", function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function getAvailableServiceTypes(callback){
-     	$.get("/api/serviceType/all", callback);
+     	$.get("/api/serviceType/all", function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
 	}
 	
 	function getAvailableAppointments(obj, callback){
-     	$.get("/api/availableAppointmentsByDateRange", obj, callback);
+     	$.get("/api/availableAppointmentsByDateRange", obj, function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
+	}
+	
+	function getAllAppointmentsByDateRange(obj, callback){
+     	$.get("/api/allAppointmentsByDateRange", obj, function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
+	}
+	
+	function getAllRecordsByDateRange(obj, callback){
+	 	$.get("/api/record/get", obj, function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
+	}
+	
+	function createSimpleAccount(obj, callback){
+	    $.post("/api/account/create/simple", obj, function (data, response, status){
+     	   handleDmsResponse(data, response, status, callback);
+     	});
+	}
+	
+	function handleDmsResponse(data, response, status, callback){
+	    if(status.status == 403 ||status.status == 401 || status.status == 402){
+	        location.reload();
+	    }
+	    
+	    if(status.status == 200){
+	        callback(data, response);
+	    }
 	}
 	
 	function buildAppointmentBody(e){
@@ -386,10 +1219,14 @@
     <!-- endinject -->
     <!-- Custom js for this page-->
     
+    	  <script type="text/javascript" src="/assets/vendors/icheck-1.0.3/icheck.min.js" ></script> 
+    
+    
     <script src="/assets/js/demo_1/calendar.js"></script>
     <script src="/assets/js/demo_1/calendar_popover.js"></script>
     
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     
     <!-- End custom js for this page-->
   
