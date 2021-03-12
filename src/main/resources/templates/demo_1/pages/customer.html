@@ -80,8 +80,8 @@
 							  </td>
 
 							  <td >
-							  	<h5 th:with=" names = ${lastVisitRecord != null && #lists.size(lastVisitRecord.visitedTeeth) > 1 ? lastVisitRecord.visitedTeeth[0].name + ', ' + lastVisitRecord.visitedTeeth[1].name + '...' : lastVisitRecord.visitedTeeth[0].name}" 
-							  		th:text="${names != null ? names : ''}"></h5>
+							  	<h5 th:if="${lastVisitRecord != null}" th:with=" names = ${#lists.size(lastVisitRecord.visitedTeeth) > 0 ? #strings.listJoin(lastVisitRecord.visitedTeeth.![name],' , ') : ''}" 
+							  		th:text="${names != null ? #strings.abbreviate(names,19) : ''}"></h5>
 							  </td>
 							  <td >
 							  	<h5 th:text="${lastVisitRecord != null ? lastVisitRecord.serviceType.name : ''}"></h5>

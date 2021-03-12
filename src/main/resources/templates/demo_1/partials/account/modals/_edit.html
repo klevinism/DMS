@@ -15,13 +15,11 @@
 	  <input type="hidden" th:field="*{password}">  
 	  
 	  <div class="form-group" id="attachmentInput">
-	    <div class="col-md-6 grid-margin" >
-			<div class="form-group " th:with="imgsuburl = *{roles[0].name == 'ADMIN' || roles[0].name == 'PERSONNEL' ? 'personnel' : 'customer'}">
-				<label>[[#{ProfileImage}]]</label>
-				<input id="recordAttachments" type="file" class="file" th:if="*{image != null}" name="profileimage" th:value="@{/resources/__${imgsuburl}__/img/profile/__*{image}__}" multiple="false" data-preview-file-type="any">
-				<input id="recordAttachments" type="file" class="file" th:if="*{image == null}" name="profileimage" multiple="false" data-preview-file-type="any">
-			</div>		
-		</div>
+		<div class="col-md-6 grid-margin" th:with="imgsuburl = *{roles[0].name == 'ADMIN' || roles[0].name == 'PERSONNEL' ? 'personnel' : 'customer'}">
+			<label>[[#{ProfileImage}]]</label>
+			<input id="recordAttachments" type="file" class="file" th:if="*{image != null}" name="profileimage" th:value="@{/resources/__${imgsuburl}__/img/profile/__*{image}__}" multiple="false" data-preview-file-type="any">
+			<input id="recordAttachments" type="file" class="file" th:if="*{image == null}" name="profileimage" multiple="false" data-preview-file-type="any">
+		</div>		
 	  </div>
 	  
       <div class="form-group">      
@@ -71,7 +69,7 @@
 		  </div>
 		</div>
       
-      <div class="form-group">
+      <div class="form-group" style="display:none">
         <label for="roles">[[#{Roles}]]</label>
         
         <select th:field="*{roles[0].name}"  th:with="roleName = *{customer !=null ? 'CUSTOMER' : 'PERSONNEL'}, name = *{roles[0].name}">
@@ -107,8 +105,17 @@
 	 var imgsrc = /*[[${'http://localhost:8080/resources/'+'__${imgsuburl}__'+'/img/profile/'+'__*{image}__'}]]*/+'';
 	 var imgtitle = /*[[${'__*{image}__'}]]*/+'';
      var input = $("#recordAttachments").fileinput({
-   	  "initialPreview": ["<img title='"+imgtitle+"' src='"+imgsrc+"'>"],
-   	  "initialCaption":imgtitle,
+      showCancel: false,
+      showUpload: false,
+      autoReplace:true,
+      showCaption: true,
+      fileType:"any",
+      showDrag:false,
+      maxFileCount: 1,
+      browseIcon:'<i class="fa fa-folder-open-o"></i>&nbsp;',
+      removeIcon:'<i class="fa fa-trash-o"></i>',
+      "initialPreview": ["<img title='"+imgtitle+"' src='"+imgsrc+"'>"],
+   	  "initialCaption": imgtitle,
  	 });
      var birthday = /*[[*{birthday}]]*/'';
      $('#birthdayCalendar').val(getFormattedDate(new Date(birthday)));
@@ -125,7 +132,6 @@
     	    console.log(year + "-" + month + "-" + day);
     	    return year + "-" + month + "-" + day;
     	}
-     console.log(birthday);
     /*]]>*/
     </script>
   </div>

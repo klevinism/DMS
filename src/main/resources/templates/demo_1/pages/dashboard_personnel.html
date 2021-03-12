@@ -25,7 +25,7 @@
             
             <!-- Page Title Header Ends-->
             <div class="row">
-              <div class="col-md-8 grid-margin stretch-card"  th:with="accountUrl = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType},
+              <div class="col-md-4 grid-margin stretch-card"  th:with="accountUrl = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType},
               														bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
               	<div class="card"> 
               		<div class="card-body">
@@ -40,9 +40,7 @@
           			<section th:replace="__${bodyUrl}__">
 					  	<!-- partial:partials/_footer.html -->
 		  			</section>
-		  			
-		  			<hr />
-		  			
+		  					  			
 		  		</form>
 		  			</div>
 		  		</div>

@@ -82,7 +82,6 @@ function select(type){
 
 function refreshSelect2(){
 	var val= $("#toothSelect").find(":selected");
-	
 	var val = val === Array ? val[0]:val; 
 	$("[name='tooth']").each(function(index, tooth){
 		if($(tooth).attr("fill-opacity") > 0 && $(tooth).attr("id") != val.attr("id")){
@@ -106,6 +105,10 @@ for(var x=0; x<elems.length; x++){
 }
 $(document).ready(function() {
 	$('#toothSelect').select2();
+	var val= $("#toothSelect").find(":selected");
+	if(val.val() != null){
+		$("#hiddenSelectedTeeth").find("input:first").val(val.val());
+	}
 });
 
 

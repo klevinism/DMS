@@ -1,12 +1,10 @@
-<div class="card" th:fragment="create">
-  <div class="card-body">
-    <hr/>
-      <div class="form-group">      
-        <label for="type">[[#{PersonnelType}]]</label>
-        <select class="form-control form-control-lg " th:field="*{type}">
-        	<option value="DENTIST" >[[#{Dentist}]]</option>
-        	<option value="DENTIST">[[#{DentistAssociate}]]</option>
-        </select>
-      </div>
-  </div>
+<div class="my-2" th:fragment="create">
+  <hr/>
+    <div class="form-group">      
+      <label for="type" >[[#{PersonnelType}]]</label>
+      <select class="form-control form-control-lg " th:field="*{type}">
+      	<option value="DENTIST" >[[#{Dentist}]]</option>
+      	<option value="DENTIST">[[#{DentistAssociate}]]</option>
+      </select>
+    </div>
 </div>

@@ -1,23 +1,14 @@
-<div class="card" th:fragment="view">
-  <div class="card-body">
+  <div th:fragment="view">
       <div class="form-group">      
        <div class="d-flex flex-column flex-lg-row">
     	  <h4 class="card-title">[[#{PersonnelType}]]</h4>
 	      <ul class="nav nav-tabs sales-mini-tabs ml-lg-auto mb-4 mb-md-0" role="tablist">
 	        <li class="nav-item">
-	          <a class="btn btn-primary" th:href="'/admin/personnel/edit/'+*{id}">[[#{Edit}]]</a>
+	          <a class="btn btn-icons btn-rounded  btn-inverse-outline-primary btn-sm " data-toggle="tooltip" data-html="true" th:title="#{Edit}" th:href="'/admin/personnel/edit/'+*{id}"><i class="fa fa-edit"></i></a>
 	        </li>
 	      </ul>
 	    </div>
-        <hr />
-        <select class="form-control form-control-lg " th:field="*{type}" disabled>
-			<option value="ADMIN"> [[#{Administrator}]]</option>
-        	<option value="DENTIST"> [[#{Dentist}]]</option>
-        	<option value="DENTISTASSOCIATE"> [[#{DentistAssociate}]]</option>
-        	<option value="HR"> [[#{Hr}]]</option>
-        	<option value="HRASSOCIATE"> [[#{HrAssociate}]]</option>
-        </select>
+	    <p>[[*{type}]]</p>
       </div>
       
   </div>
-</div>

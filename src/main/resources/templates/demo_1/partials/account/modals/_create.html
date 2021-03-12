@@ -1,99 +1,150 @@
-<div class="card" th:fragment="create">
-  <div class="card-body">
+  <div th:fragment="create">
     <h4 class="card-title">[[#{CreateAccount}]]</h4>
     <hr/>
+
+    <div class="row pt-0">
+	<div class="form-group col-sm-6 " id="attachmentInput">
+	    <div class="form-group" th:if="${isPersonnelCreation == null}">
+      
+		  <div class="form-check form-check-flat my-0" data-toggle="tooltip" data-html="true" th:title="#{CreateLoginAccountInfo}">
+		    <label for="createAcc" class="form-check-label"  ><i class="fa fa-info-circle" style="cursor: pointer;"></i>
+		      <input type="checkbox" id="createAcc" class="form-check-inputform-control-lg" value="create" > [[#{CreateLoginAccount}]] </label>
+		  </div>
+	    </div>				    
+		<label>[[#{ProfileImage}]]</label>
+		<input id="recordAttachments" type="file" class="file" name="profileimage" multiple="false" data-preview-file-type="any">		
+	</div>
+    </div>
+
+    <div id="appAccWrapper" th:style="${isPersonnelCreation == null ? 'display:none' : ''}">
     
-      <div class="form-group" id="attachmentInput">						    
-	    <div class="col-md-6 grid-margin" >
-		<div class="form-group ">
-			<label>[[#{ProfileImage}]]</label>
-			<input id="recordAttachments" type="file" class="file" name="profileimage" multiple="false" data-preview-file-type="any">
-		</div>
-		
-		</div>
-	  </div>
-    
-      <div class="form-group">      
-        <label for="username">[[#{Username}]]</label>
-        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.username}" th:field="*{account.username}">
-        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.username')}" th:errors="*{account.username}"></p>
+      <div class="row">
+      
+      	<div class="col-sm-6">
+			<div class="form-group">      
+		        <label for="username">[[#{Username}]] <span class="text-danger">*</span></label>
+		        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.username}" th:field="*{account.username}">
+		        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.username')}" th:errors="*{account.username}"></p>
+	      	</div>
+      	</div>
+      	<div class="col-sm-6">      	
+	      <div class="form-group">      
+	        <label for="password">[[#{Password}]] <span class="text-danger">*</span></label>
+	        <input type="password" class="form-control form-control-lg" th:field="*{account.password}">
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.password')}" th:errors="*{account.password}"></p>
+	      </div>
+      	</div>
       </div>
       
-      <div class="form-group">      
-        <label for="password">[[#{Password}]]</label>
-        <input type="password" class="form-control form-control-lg" th:field="*{account.password}">
-        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.password')}" th:errors="*{account.password}"></p>
+      
+
+	</div>
+      
+      <div class="row">
+      
+      	<div class="col-sm-6">
+      	  <div class="form-group">      
+	        <label for="name">[[#{Name}]] <span class="text-danger">*</span></label>
+	        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.name}" th:field="*{account.name}">
+	        <p class="alert alert-danger" id="nameEmpty" style="display:none"></p>
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.name')}" th:errors="*{account.name}"></p>
+	      </div>
+      	</div>
+      	<div class="col-sm-6">
+	      <div class="form-group">      
+	        <label for="surname">[[#{Surname}]] <span class="text-danger">*</span></label>
+	        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.surname}" th:field="*{account.surname}">
+	        <p class="alert alert-danger" id="surnameEmpty" style="display:none"></p>
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.surname')}" th:errors="*{account.surname}"></p>
+	      </div>      	
+      	</div>
+      	
       </div>
 
-      <div class="form-group">      
-        <label for="name">[[#{Name}]]</label>
-        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.name}" th:field="*{account.name}">
-        <p class="alert alert-danger" id="nameEmpty" style="display:none"></p>
-        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.name')}" th:errors="*{account.name}"></p>
-      </div>
-      
-      <div class="form-group">      
-        <label for="surname">[[#{Surname}]]</label>
-        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.surname}" th:field="*{account.surname}">
-        <p class="alert alert-danger" id="surnameEmpty" style="display:none"></p>
-        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.surname')}" th:errors="*{account.surname}"></p>
-      </div>
-      
+
+
       <div class="form-group" id="divSelfGenerateFields" style="display:none">      
         <button class="btn btn-primary" disabled>[[#{SelfGenerateFields}]]</button>
       </div>
+
+      <div class="row">
       
-      <div class="form-group">      
-        <label for="email">[[#{Email}]]</label>
-        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.email}" th:field="*{account.email}">
-        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.email')}" th:errors="*{account.email}"></p>
-      </div>
-      <div class="form-group">      
-        <label for="phone">[[#{PhoneNr}]]</label>
-        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.phone}"  th:field="*{account.phone}">
-        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.email')}" th:errors="*{account.phone}"></p>
+      	<div class="col-sm-6">
+		  <div class="form-group">      
+	        <label for="email">[[#{Email}]] <span class="text-danger">*</span></label>
+	        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.email}" th:field="*{account.email}">
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.email')}" th:errors="*{account.email}"></p>
+	      </div>
+      	</div>
+      	<div class="col-sm-6">
+	      <div class="form-group">      
+	        <label for="phone">[[#{PhoneNr}]] <span class="text-danger">*</span></label>
+	        <input type="number" class="form-control form-control-lg" th:placeholder="*{account.phone}"  th:field="*{account.phone}">
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.email')}" th:errors="*{account.phone}"></p>
+	      </div>
+      	</div>
       </div>
       
-	  <div class="form-group">
-		  <label for="gender">[[#{Gender}]]</label>	
-		  <div class="form-radio form-radio-flat">
+      <div class="row mb-3">
+        <div class="col-sm-1" for="gender">[[#{Gender}]] <span class="text-danger">*</span></div>
+      	<div class="col-sm-5">
+      	  <div class="form-radio form-radio-flat">
 		    <label class="form-check-label">
 		      <input type="radio" class="form-check-inputform-control-lg" value="male" th:checked="*{account.gender == 'male'}" th:field="*{account.gender}"> [[#{Male}]] <i class="input-helper"></i></label>
 		  </div>
-		  <div class="form-radio form-radio-flat">
+      	</div>
+      	<div class="col-sm-6">
+      	  <div class="form-radio form-radio-flat">
 		    <label class="form-check-label">
 		      <input type="radio" class="form-check-input"value="female"  th:checked="*{account.gender == 'female'}"  th:field="*{account.gender}"> [[#{Female}]] <i class="input-helper"></i></label>
 		  </div>
-		  <p class="alert alert-danger" th:if="${#fields.hasErrors('account.gender')}" th:errors="*{account.gender}"></p>
-	  </div>
+      	</div>
+		<p class="alert alert-danger" th:if="${#fields.hasErrors('account.gender')}" th:errors="*{account.gender}"></p>
+      </div>
       
-      <div class="form-group">
-        <label for="roles">[[#{Roles}]]</label>
+      <div class="row">
+      
+      	<div class="col-sm-6">
+	      <div class="form-group" id="birthdayCalendar" >
+	        <label for="Birthday">[[#{Birthday}]] <span class="text-danger">*</span></label>
+	        <input type="date" class="form-control form-control-lg" id="birthdayCalendar" th:placeholder="*{account.birthday}"  th:field="*{account.birthday}">
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.birthday')}" th:errors="*{account.birthday}"></p>
+	      </div>
+      	</div>
+      	<div class="col-sm-6">
+	      <div class="form-group">
+	        <label for="address">[[#{Address}]]</label>
+	        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.address}" th:field="*{account.address}">
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.address')}" th:errors="*{account.address}"></p>
+	      </div>
+      	</div>
+      </div>
+      
+      <div class="row">
+      
+      	<div class="col-sm-6">
+	      <div class="form-group">
+	        <label for="city">[[#{City}]]</label>
+	        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.city}" th:field="*{account.city}">
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.city')}" th:errors="*{account.city}"></p>
+	      </div>
+      	</div>
+      	<div class="col-sm-6">
+	      <div class="form-group">
+	        <label for="country">[[#{Country}]]</label>
+	        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.country}"  th:field="*{account.country}">
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.country')}" th:errors="*{account.country}"></p>
+	      </div>
+      	</div>
+      </div>
+      
+      <div class="form-group" style="display:none;">
+         <label for="roles"> [[#{Roles}]] </label>
         <select th:field="*{account.roles}" th:with="roleName = ${isPersonnelCreation !=null ? 'PERSONNEL' : 'CUSTOMER'}">
         	<option th:each="role: ${allRoles}" th:if="${role.name == roleName}"  th:value="${role.id}" th:text="${role.name}"></option>
         </select>
       </div>
       
-      <div class="form-group" id="birthdayCalendar" >
-        <label for="Birthday">[[#{Birthday}]]</label>
-        <input type="date" class="form-control form-control-lg" id="birthdayCalendar" th:placeholder="*{account.birthday}"  th:field="*{account.birthday}">
-        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.birthday')}" th:errors="*{account.birthday}"></p>
-      </div>
-      <div class="form-group">
-        <label for="address">[[#{Address}]]</label>
-        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.address}" th:field="*{account.address}">
-        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.address')}" th:errors="*{account.address}"></p>
-      </div>
-      <div class="form-group">
-        <label for="city">[[#{City}]]</label>
-        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.city}" th:field="*{account.city}">
-        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.city')}" th:errors="*{account.city}"></p>
-      </div>
-      <div class="form-group">
-        <label for="country">[[#{Country}]]</label>
-        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.country}"  th:field="*{account.country}">
-        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.country')}" th:errors="*{account.country}"></p>
-      </div>
       <script>
       $('#birthdayCalendar').datetimepicker({
      	    "allowInputToggle": true,
@@ -111,17 +162,44 @@
    	    "daysOfWeekDisabled": []
       });
       
+      var input = $("#recordAttachments").fileinput({
+          showCancel: false,
+          showUpload: false,
+          autoReplace:true,
+          showCaption: true,
+          fileType:"any",
+          showDrag:false,
+          maxFileCount: 1,
+          dropZoneEnabled:false,
+          browseIcon:'<i class="fa fa-folder-open-o"></i>&nbsp;',
+          removeIcon:'<i class="fa fa-trash-o"></i>',
 
+      });
+
+      $("#createAcc").on("change",function(e){
+          
+          if($(e.target).is(":checked")){
+              showCreateAcc();
+          }else{
+              hideCreateAcc();
+          }
+      });
+      
+      function showCreateAcc(){
+          $("#appAccWrapper").show();
+      }
+      
+      function hideCreateAcc(){
+          $("#appAccWrapper").find("input").val("");
+          $("#appAccWrapper").hide();
+      }
+      
 	  $("#divSelfGenerateFields").find("button").click(function(e){
 		  $("#nameEmpty").hide();
 		  $("#surnameEmpty").hide();
 		  e.preventDefault();
 		  var nameElem = document.getElementById("account.name");
 		  var surnameElem = document.getElementById("account.surname");
-		  console.log(nameElem.value != null);
-		  console.log(nameElem.value.trim() != "");
-		  console.log(surnameElem.value != null);
-		  console.log(surnameElem.value.trim() != "");
 		  if((nameElem.value != null && nameElem.value.trim() != "")&&
 				  (surnameElem.value != null && surnameElem.value.trim() != "")){
 			  var name = nameElem.value;
@@ -145,5 +223,4 @@
 		 }
 	  });
       </script>
-  </div>
-</div>
+</div> 

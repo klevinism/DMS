@@ -90,18 +90,16 @@ public class Account implements Serializable{
 	@DateTimeFormat(iso = ISO.DATE)
 	private Date birthday;
 	
+	@Nullable
 	private String image;
 
-	@NotNull(message = "Enter address")
-	@NotEmpty(message = "Enter address")
+	@Nullable
 	private String address;
 
-	@NotNull(message = "Enter city")
-	@NotEmpty(message = "Enter city")
+	@Nullable
 	private String city;
 	
-	@NotNull(message = "Enter country")
-	@NotEmpty(message = "Enter country")
+	@Nullable
 	private String country;
 	
     @JsonIgnore
