@@ -1,6 +1,6 @@
-<div class="my-2" th:fragment="create">
-  	<h4 class="card-title">[[#{Customer}]] </h4>
-  	<hr/>
+<div class="my-2" th:fragment="create"> 
+  	<h4 class="card-title" th:if="${loggedInAccount.roles[0].name == 'ADMIN'}">[[#{Customer}]] </h4>
+  	<hr th:if="${loggedInAccount.roles[0].name == 'ADMIN'}" />
 	<div class="form-group" th:if="${loggedInAccount.roles[0].name == 'ADMIN'}">      
 		<div class="form-check form-check-flat" >
 		    <label class="form-check-label">
