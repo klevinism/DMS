@@ -21,10 +21,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.visionous.dms.configuration.helpers.DmsCore;
 
@@ -57,7 +60,9 @@ public class Record  implements Serializable{
 	
 	private String attachments;
 	
-	@DateTimeFormat (pattern="dd-MMM-YYYY")
+
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(iso = ISO.DATE)
 	private Date servicedate;
 	
 	@Column(name = "historyid", insertable = false, updatable = false)

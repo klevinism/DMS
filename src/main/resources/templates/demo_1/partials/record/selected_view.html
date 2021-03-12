@@ -62,25 +62,28 @@
 	                       		</div>
 	                       		<div class="row ml-lg-1" id="selectedTeeth">
 	                       				<div th:if="*{#lists.size(visitedTeeth)} < ${#lists.size(listTeeth)}" class="card-description">
-	                       					<input class="mx-1 my-1" th:each="toothVisited,stat: *{visitedTeeth}"  th:id="*{visitedTeeth[__${stat.index}__].id}" th:value="*{visitedTeeth[__${stat.index}__].name}" disabled>  
+	                       					<input class="mx-1 my-1" th:each="toothVisited,stat: *{visitedTeeth}"  th:id="*{visitedTeeth[__${stat.index}__].id}" th:value="*{visitedTeeth[__${stat.index}__].name}" style="width:50px"  disabled>  
 									  	</div>
 									  	<div th:if="*{#lists.size(visitedTeeth)} == ${#lists.size(listTeeth)}" class="card-description" >
 									  		<input class="mx-1 my-1" th:id="'all'" th:value="#{AllTeeth}" disabled>
 									  	</div>
 								</div>
 	                       		<div class="row ml-lg-1">
-	                       		
 		                       		<div class="form-group">
 		                       			<div class="form-group">
-		                       				<label th:for="*{serviceType}" ><h4> <u>[[#{DentalService}]]</u></h4></label>
+		                       				<label th:for="*{servicedate}" ><h4 class="card-title"> <u>[[#{ServiceDate}]]</u></h4></label>
+		                       				<p class="card-description" th:text="*{#dates.format(servicedate, 'HH:mm, dd-MM-yyyy')}"></p>
+										</div>
+		                       			<div class="form-group">
+		                       				<label th:for="*{serviceType}" ><h4 class="card-title"> <u>[[#{DentalService}]]</u></h4></label>
 		                       				<p class="card-description">[[*{serviceType.name}]]</p>
 										</div>
 										<div class="form-group ">
-											<label th:for="*{servicedetail}" ><h4><u>[[#{ServiceDetail}]]</u></h4></label>
+											<label th:for="*{servicedetail}" ><h4 class="card-title"><u>[[#{ServiceDetail}]]</u></h4></label>
 											<p class="card-description">[[*{servicedetail}]]</p>
 										</div>
 										<div class="form-group ">
-											<label th:for="*{servicecomment}" ><h4><u>[[#{Comment}]]</u></h4></label>
+											<label th:for="*{servicecomment}" ><h4 class="card-title"><u>[[#{Comment}]]</u></h4></label>
 											<p class="card-description">[[*{servicecomment}]]</p>
 										</div>
 										<div class="form-group ">

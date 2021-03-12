@@ -28,7 +28,7 @@
                 <div class="card">
                   <div class="card-body">
                  				<div class="row ml-lg-1">
-									<div class="  col-md-4 d-flex justify-content-between">
+									<div class="col-md-4 d-flex justify-content-between">
 			                          <h4 class="card-title">[[#{NewDentalVisit}]]</h4>
 			                            <div class="dropdown ml-lg-auto toolbar-item">
 					                      <button class="btn btn-outline-light " type="button" id="selectTeeth" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -105,11 +105,25 @@
 									  	</div>
 		                       		</div>
 		                       		<div class="form-group ">
-			                          	<label  for="multipleTeeth">
-			                          		<input  type="checkbox" id="multipleTeeth" > [[#{MultipleTeeth}]] 
-			                          	</label>
+			                          	<div class="form-check" >
+				                          	<label class="form-check-label" for="multipleTeeth">
+			                          			<input  type="checkbox" id="multipleTeeth" class="form-check-input" > [[#{MultipleTeeth}]] 
+			                          		</label>
+			                          	</div>
+			                        </div>
+			                        
+			                        <div class="form-group " th:if="${loggedInAccount.roles[0].name == 'ADMIN'}">
+										<div class="form-check" >
+				                          	<label class="form-check-label" for="oldVisit">
+				                          		<input  type="checkbox" class="form-check-input" id="oldVisit" > [[#{OldVisit}]] 
+				                          	</label>
+			                          	</div>
 			                        </div> 
-	                       		<div class="row ml-lg-1">
+									  <div class="form-group" id="oldVisitDay" style="display:none" th:if="${loggedInAccount.roles[0].name == 'ADMIN'}">      
+										  <label for="oldVisitDate">[[#{VisitDate}]]</label>
+										  <input type="text" class="form-control form-control-lg"  id="oldVisitDate" th:field="*{servicedate}" disabled>
+								      </div>
+	                       		<div class="row ml-lg-0">
 	                       		
 		                       		<div class="form-group">
 		                       			<div class="form-group">
@@ -121,7 +135,7 @@
 										</div>
 										<div class="form-group ">
 											<label th:for="*{servicedetail}" >[[#{ServiceDetail}]]
-											<input class="form-control form-control-lg" type="text" th:field="*{servicedetail}">
+												<input class="form-control form-control-lg" type="text" th:field="*{servicedetail}">
 											</label>
 										</div>
 										<div class="form-group ">
@@ -130,13 +144,13 @@
 											<textarea class="form-control" th:field="*{servicecomment}"></textarea>
 										</div>
 										<div class="form-group ">
-										<div class="form-check">
-											<label class="form-check-label" for="attachmentsCheckbox" >
-												<input type="checkbox" id="attachmentsCheckbox" class="form-check-input" >
-											
-												<i class="input-helper">[[#{Attachments}]]</i>
-											</label>
-										</div>
+											<div class="form-check">
+												<label class="form-check-label" for="attachmentsCheckbox" >
+													<input type="checkbox" id="attachmentsCheckbox" class="form-check-input" >
+												
+													<i class="input-helper">[[#{Attachments}]]</i>
+												</label>
+											</div>
 										</div>
 										<div class="col-md-12" style="display:none" id="attachmentInput">
 							    
@@ -167,6 +181,26 @@
 				            	  }else{
 				            		  $("#attachmentInput").hide();
 				            	  }
+				              });
+				              
+				              $('#oldVisitDate').datetimepicker({
+				             	    "allowInputToggle": true,
+				             	    "showClose": true,
+				             	    "showClear": true,
+				             	    "useCurrent":true,
+				             	   	"defaultDate":new Date(),
+				             	    "format": "DD-MM-YYYY HH:mm",
+				              });
+				              
+				              $("#oldVisit").on("change", function(e){
+				                  if($(e.target).is(":checked")){
+				                      $("#oldVisitDate").attr("disabled", false);
+				                      $("#oldVisitDay").show();
+				                  }else{
+				                      $("#oldVisitDate").attr("disabled", true);
+				                      $("#oldVisitDay").hide();
+				                      
+				                  }
 				              });
 				              
 				              $("#multipleTeeth").on("change", function(e) {

@@ -110,9 +110,6 @@ public class RecordModelController extends ModelControllerImpl {
 			Optional<Personnel> personnel = personnelService.findById(newRecord.getPersonnelId());
 			Optional<History> history = historyService.findById(newRecord.getHistoryId());
 			
-			
-			System.out.println(newRecord.getVisitedTeeth().size() + "SIZEEEEEE");
-			
 			if(!newRecord.getVisitedTeeth().isEmpty()) {
 				
 				List<Teeth> visitedTeeth = newRecord.getVisitedTeeth().stream()
