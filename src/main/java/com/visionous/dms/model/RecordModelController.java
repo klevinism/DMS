@@ -4,8 +4,12 @@
 package com.visionous.dms.model;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -106,28 +110,38 @@ public class RecordModelController extends ModelControllerImpl {
 			Optional<Personnel> personnel = personnelService.findById(newRecord.getPersonnelId());
 			Optional<History> history = historyService.findById(newRecord.getHistoryId());
 			
-			Optional<ServiceType> serviceType = serviceTypeService.findByName(newRecord.getServiceType().getName());
-			Optional<Teeth> tooth = teethService.findByName(newRecord.getTooth().getName());	
-			
-			if(personnel.isPresent() && history.isPresent() 
-					&& serviceType.isPresent() && tooth.isPresent()) {
+			if(!newRecord.getVisitedTeeth().isEmpty()) {
 				
-				if(super.getAllControllerParams().containsKey("files")) {
-					String allRecordAttachmentNames = uploadAllRecordImages(
-							(MultipartFile[]) super.getAllControllerParams().get("files"));
-					newRecord.setAttachments(allRecordAttachmentNames);
+				List<Teeth> visitedTeeth = newRecord.getVisitedTeeth().stream()
+						.map(visitedTooth -> {
+								Optional<Teeth> tooth = teethService.findByName(visitedTooth.getName());
+								return tooth.isPresent() ? tooth.get() : null;
+							})
+						.filter(Objects::nonNull)
+						.collect(Collectors.toList());
+				
+				Optional<ServiceType> serviceType = serviceTypeService.findByName(newRecord.getServiceType().getName());
+				
+				if(personnel.isPresent() && history.isPresent() 
+						&& serviceType.isPresent() && !visitedTeeth.isEmpty()) {
+					
+					if(super.getAllControllerParams().containsKey("files")) {
+						String allRecordAttachmentNames = uploadAllRecordImages(
+								(MultipartFile[]) super.getAllControllerParams().get("files"));
+						newRecord.setAttachments(allRecordAttachmentNames);
+					}
+					
+					newRecord.setHistory(history.get());
+					newRecord.setPersonnel(personnel.get());
+					newRecord.setServiceType(serviceType.get());
+					newRecord.setVisitedTeeth(visitedTeeth);
+					
+					recordService.create(newRecord);
+					
+					history.get().addRecord(newRecord);
+					historyService.create(history.get());
 				}
-				
-				newRecord.setHistory(history.get());
-				newRecord.setPersonnel(personnel.get());
-				newRecord.setServiceType(serviceType.get());
-				newRecord.setTooth(tooth.get());
-				recordService.create(newRecord);
-				
-				history.get().addRecord(newRecord);
-				historyService.create(history.get());
 			}
-			
 		}
 	}
 	
@@ -167,8 +181,11 @@ public class RecordModelController extends ModelControllerImpl {
 					
 					customerHistory.ifPresent(history-> {
 						super.addModelCollectionToView("selectedHistory", history);
-						super.addModelCollectionToView("selected", 
-								new Record(history, AccountUtil.currentLoggedInUser().getPersonnel()));
+						Record record = new Record(history, AccountUtil.currentLoggedInUser().getPersonnel());
+						List<Teeth> toothList = new ArrayList<>();
+						toothList.add(new Teeth());
+						record.setVisitedTeeth(toothList);
+						super.addModelCollectionToView("selected", record);
 					});
 					
 					if(customer.hasQuestionnaire()) { 
@@ -217,8 +234,8 @@ public class RecordModelController extends ModelControllerImpl {
 		super.addModelCollectionToView("currentPage", currentPage);
 		super.addModelCollectionToView("recordList", recordService.findAllOrderByServicedateDesc());
 
-		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
-		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser());
+		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getAccount().getRoles());
+		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser().getAccount());
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		

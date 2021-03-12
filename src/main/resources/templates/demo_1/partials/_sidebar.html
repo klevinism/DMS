@@ -1,17 +1,8 @@
 <nav class="sidebar sidebar-offcanvas dynamic-active-class-disabled" id="sidebar" th:fragment="sidebar">
-  <ul class="nav" th:with="currentPage = ${#strings.capitalize(#strings.substring(currentPage, 1, #strings.length(currentPage)))}">
+  <ul class="nav" style="width: inherit;" th:with="currentPage = ${#strings.capitalize(#strings.substring(currentPage, 1, #strings.length(currentPage)))}">
     <li class="nav-item nav-profile">
       <a href="#" class="nav-link">
-      
-        <div class="profile-image" th:if="${not currentRoles.?[name == 'CUSTOMER'].isEmpty() && loggedInAccount.image != null}">
-          <img class="img-xs rounded-circle" th:src="@{/resources/customer/img/profile/__${loggedInAccount.image}__}"  alt="profile image">
-          <div class="dot-indicator bg-success"></div>
-        </div>
-        <div class="profile-image" th:if="${not currentRoles.?[name == 'PERSONNEL'].isEmpty() && loggedInAccount.image != null}">
-          <img class="img-xs rounded-circle" th:src="@{/resources/personnel/img/profile/__${loggedInAccount.image}__}"  alt="profile image">
-          <div class="dot-indicator bg-success"></div>
-        </div>
-        <div class="profile-image" th:if="${not currentRoles.?[name == 'ADMIN'].isEmpty() && loggedInAccount.image != null}">
+        <div class="profile-image" th:if="${loggedInAccount.image != null}">
           <img class="img-xs rounded-circle" th:src="@{/resources/personnel/img/profile/__${loggedInAccount.image}__}"  alt="profile image">
           <div class="dot-indicator bg-success"></div>
         </div>

@@ -12,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
@@ -44,10 +45,9 @@ public class Teeth implements Serializable{
 	@DateTimeFormat (pattern="dd-MMM-YYYY")
 	private String addeddate;
 	
-	@OneToOne(mappedBy = "tooth", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@PrimaryKeyJoinColumn
-	private Record record;
-
+    @ManyToMany(mappedBy = "visitedTeeth", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    private List<Record> allRecords;
+    
 	/**
 	 * @return the id
 	 */
@@ -103,19 +103,19 @@ public class Teeth implements Serializable{
 	public void setAddeddate(String addeddate) {
 		this.addeddate = addeddate;
 	}
-
+	
 	/**
 	 * @return the allRecords
 	 */
-	public Record getAllRecords() {
-		return record;
+	public List<Record> getAllRecords() {
+		return allRecords;
 	}
 
 	/**
-	 * @param record the allRecords to set
+	 * @param allRecords the allRecords to set
 	 */
-	public void setAllRecords(Record record) {
-		this.record = record;
+	public void setAllRecords(List<Record> allRecords) {
+		this.allRecords = allRecords;
 	}
 
 	@Override

@@ -138,7 +138,12 @@ public class AccountModelController extends ModelControllerImpl{
 						oldAccount.get().getUsername().equals(newAccount.getUsername()))
 						) { // Has same username/email after account edit
 					setImageToAccount((MultipartFile)super.getAllControllerParams().get("profileimage"), newAccount, oldAccount.get());
-					accountService.createPlain(newAccount);
+					Account created = accountService.createPlain(newAccount);
+					
+					if(created != null && AccountUtil.currentLoggedInUser().getId().equals(created.getId())) { // Self Edit
+						AccountUtil.currentLoggedInUser().setAccount(created);
+					}
+					
 				}else {
 					accountService.update(newAccount);	
 				}
@@ -242,11 +247,11 @@ public class AccountModelController extends ModelControllerImpl{
 				Optional<Customer> selectedCustomer = customerService.findById(accountId);
 				selectedCustomer.ifPresent(customer -> super.addModelCollectionToView("selected", customer));
 			}else {
-				if(AccountUtil.currentLoggedInUser().getPersonnel() != null) {
-					super.addModelCollectionToView("selected", AccountUtil.currentLoggedInUser().getPersonnel());
+				if(AccountUtil.currentLoggedInUser().getAccount().getPersonnel() != null) {
+					super.addModelCollectionToView("selected", AccountUtil.currentLoggedInUser().getAccount().getPersonnel());
 				}
 				else {
-					super.addModelCollectionToView("selected", AccountUtil.currentLoggedInUser().getCustomer());
+					super.addModelCollectionToView("selected", AccountUtil.currentLoggedInUser().getAccount().getCustomer());
 				}
 			}
 		}
@@ -264,8 +269,8 @@ public class AccountModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("accountList", accountService.findAll());
 
-		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
-		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser());
+		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getAccount().getRoles());
+		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser().getAccount());
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		

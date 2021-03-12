@@ -259,9 +259,9 @@ public class PersonnelModelController extends ModelControllerImpl{
 			monthlyVisitPerc.add(perc);
 			super.addModelCollectionToView("monthlyGrowth", monthlyVisitPerc);
 		});
-		
-		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
-		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser());
+
+		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getAccount().getRoles());
+		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser().getAccount());
 	
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		

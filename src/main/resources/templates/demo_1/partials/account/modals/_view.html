@@ -1,5 +1,4 @@
-<div class="card" th:fragment="view">
-  <div class="card-body">
+<div class="card-body p-0" th:fragment="view">
   
   <div class="row">
           <div class="col-sm-6 col-md-4" th:if="*{account.image != null }" th:with="imgsuburl = *{account.roles[0].name == 'ADMIN' || account.roles[0].name == 'PERSONNEL' ? 'personnel' : 'customer'}">
@@ -9,28 +8,70 @@
               <img th:src="'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg'" alt="" width="100%" border="0" class="rounded"  />
           </div>
           <div class="col-sm-6 col-md-8">
+          
+          <div class="d-flex flex-column flex-lg-row">
+       	  <div class="data-wrapper d-flex mt-2 mt-lg-0">
               <h4>[[*{account.name}]] [[*{account.surname}]]</h4>
+    	  </div>
+    	  <div class="ml-lg-auto">
+    	  	<!-- Split button -->
+              <div class="dropdown" name="actionButton" >
+                 <button type="button" class="btn btn-icons btn-rounded  btn-inverse-outline-primary btn-sm dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                   	<i class="fa fa-ellipsis-v"></i>
+                 </button>
+                 <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
+                   <h6 class="dropdown-header">[[#{Actions}]]</h6>
+                   <a class="dropdown-item" th:href="'/account/edit/'+*{id} "><i class="mdi mdi-pencil-outline fa-lg"></i> [[' '+#{Edit}]]</a>
+                   
+                   <a class="dropdown-item" th:with="path = *{account.roles[0].name == 'PERSONNEL' ? '/admin/personnel' : '/customer'}"  th:href="${path}+'/delete/'+*{id} "><i class="mdi mdi-trash-can-outline fa-lg"></i> [[' '+#{Delete}]]</a>
+                   <div class="dropdown-divider" th:if="*{!account.enabled && !account.active}"></div>
+			       <a class="dropdown-item" th:if="*{!account.enabled && !account.active}" href="#" th:onclick="'resendConfirmation('+__*{account.id}__+');'">[[#{ReConfirm}]]</a>
+                 </div>
+               </div>
+		  </div>
+	      </div>
               <small><cite th:title="*{account.address} +','+ *{account.city} +','+ *{account.country}"><i class="mdi mdi-map-marker"></i>[[*{account.address} +','+ *{account.city} +','+ *{account.country}]]</cite></small>
-              <small><cite title="Age"> <i class="mdi mdi-gift"></i>[[*{account.age}]] </cite></small>
-              <p>
+              <small><cite th:title="#{Age}"> <i class="mdi mdi-gift"></i>[[*{account.age}]] </cite></small>
+              
+              <p th:with="activeLabel = *{account.active} ? 'Active' : 'Inactive',
+              			activeClass = *{account.active} ? badge-success : badge-danger">
                   <i class="mdi mdi-email-box"></i>[[*{account.email}]]<br />
                   <i class="mdi mdi-cellphone"></i><a href="">[[*{account.phone}]]</a><br />
-                  <i class="mdi mdi-calendar" th:if="${registerdate != null}">[[*{#dates.format(registerdate, 'dd/MM/yyyy')}]]</i></p>
-              <!-- Split button -->
-              <div class="dropdown" name="actionButton" >
-                     	<button type="button" class="btn btn-primary btn-sm dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        	<i class="mdi mdi-circle-edit-outline fa-lg"></i>
-                      </button>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
-                        <h6 class="dropdown-header">[[#{Actions}]]</h6>
-                        <a class="dropdown-item" th:href="'/account/edit/'+*{id} "><i class="mdi mdi-pencil-outline fa-lg"></i> [[' '+#{Edit}]]</a>
-                        
-                        <a class="dropdown-item" th:with="path = *{account.roles[0].name == 'PERSONNEL' ? '/admin/personnel' : '/customer'}"  th:href="${path}+'/delete/'+*{id} "><i class="mdi mdi-trash-can-outline fa-lg"></i> [[' '+#{Delete}]]</a>
-                      </div>
-                      
-               </div>
+                  <i class="mdi mdi-calendar" th:if="${registerdate != null}">[[*{#dates.format(registerdate, 'dd/MM/yyyy')}]]</i>
+	              <span th:if="*{account.roles[0].name == 'PERSONNEL'}"  th:classappend="'badge ' + ${activeClass}" style="color:white" th:text="#{__${activeLabel}__}">Enabled</span>
+					
+                  </p>
+              
           </div>
       </div>
   
-  </div>
 </div>
+
+<script>
+$(document).ready(function(){
+   	var token = $("meta[name='_csrf']").attr("content");
+   	var header = $("meta[name='_csrf_header']").attr("content");
+   	
+    $(document).ajaxSend(function(e, xhr, options) {
+	    xhr.setRequestHeader(header, token);
+	});
+});
+function resendConfirmation(id){
+	
+	if(id != undefined || id != null){
+		reConfirm(personnelId,  function (data){
+			if(data.error != "error"){
+				setTimeout(function(){ $("#success").hide(); }, 5000);
+			}else if(data.error === "error"){
+				setTimeout(function(){ $("#error").hide(); }, 5000);
+			}
+		});
+	}	
+}
+
+function reConfirm(personnelId, callback){
+	$.post("/api/personnel/sendConfirmation", {"id" : personnelId}, callback);
+}
+
+
+</script>

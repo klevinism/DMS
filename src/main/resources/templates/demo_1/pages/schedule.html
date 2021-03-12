@@ -67,7 +67,7 @@
 		                          <div class="calendar-aside collapse show overflow-auto" id="calendarFilters" style="max-height:300px;">
 		                          	<div class="list p-1" th:if="${currentRoles[0].name == 'ADMIN'}">
 		                          		<label th:for="${loggedInAccount.id}" class="d-flex justify-content-end mr-auto">
-		                          			<img class="img-xs rounded-circle" th:src="${loggedInAccount.image}" style="float:left">
+		                          			<img class="img-xs rounded-circle" th:src="'/resources/personnel/img/profile/'+${loggedInAccount.image}" style="float:left">
 		                          				<div class="user-text ml-1">[[#{Me}]] </div>
 		                          		</label>
 		                          		<div class="mb-1">
@@ -1012,7 +1012,7 @@
 	   
     function buildPersonnelFilters(allPersonnel){
 		var pFullName;
-		var pImgPath = "/resources/personnel/img/";
+		var pImgPath = "/resources/personnel/img/profile";
 		var pChecked = true;
 		
 		var allPersonnelArrEl$ = [];
@@ -1024,14 +1024,14 @@
 			var checkbox = '<div class="mb-1"><input tabindex="-1" type="checkbox" class="icheck-flat " id="" value="" ></div>';
 
 			var pFullName;
-			var pImgPath = "/resources/personnel/img/";
+			var pImgPath = "/resources/personnel/img/profile/";
 			var pChecked = true;
 		
 			var pName = personnel.account.name.charAt(0).toUpperCase() + personnel.account.name.slice(1); 
 			var pSurname = personnel.account.surname.charAt(0).toUpperCase() + personnel.account.surname.slice(1);
 			pFullName = pName+" "+pSurname;
-			if(personnel.account.profileimg != null){
-				pImgPath += personnel.account.profileimg;
+			if(personnel.account.image != null){
+				pImgPath += personnel.account.image;
 			}else{
 			    pImgPath = 'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg';
 			}
@@ -1045,7 +1045,9 @@
 			input.attr("value", pFullName);
 			input.attr("checked", pChecked ? true : false);
 			text = $(text).text(pFullName);
-			$(img).attr("src",pImgPath);
+			
+			img  = $(img);
+			$(img).attr("src",pImgPath)
 			
 			var lblEl = $(lbl).append(img).append(text);
 			var divEl = $(div).append(lblEl).append($(input));
