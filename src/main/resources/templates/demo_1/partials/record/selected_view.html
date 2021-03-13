@@ -108,7 +108,6 @@
 				            	  showUpload:false,
 				              });
 				              $("#attachmentsCheckbox").change(function(){
-				            	  console.log(":changed?");
 				            	  if(this.checked){
 				            		  $("#attachmentInput").show();
 				            	  }else{
@@ -122,12 +121,12 @@
 				              
 				              function selectTeethOnSvg(){
 				                  var selected = $("#selectedTeeth").find("input");
-				                  if(selected != null && selected.length > 1){
-				                      console.log(selected);
+
+				                  if(selected != null && selected.length > 0 && Number.isInteger($(selected).attr("id"))){ //Select each
 				                   selected.each(function(element){
 				                   		$(".dentalFace").find("#"+$(selected[element]).attr("id")).attr("fill-opacity","0.6");
 				                   });
-				                  }else if(selected != null && $(selected).attr("id") == 'all'){
+				                  }else if(selected != null && selected.length == 1 && !Number.isInteger($(selected).attr("id"))){ // Select all
 				                      $(".dentalFace").find("path").attr("fill-opacity","0.6");   
 				                  }
 				                  
