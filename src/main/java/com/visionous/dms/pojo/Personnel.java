@@ -36,6 +36,8 @@ public class Personnel implements Serializable{
 	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PERSON_SEQ")
+    @SequenceGenerator(sequenceName = "personnel_seq", allocationSize = 1, initialValue = 2, name = "PERSON_SEQ")
     private Long id;
 	
 	private String type;

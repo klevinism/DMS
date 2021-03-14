@@ -68,7 +68,7 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
         if(!allSettings.isEmpty()) {
         	return allSettings.get(0);
         }
-        return null;
+        return new GlobalSettings();
     }
 	
 	@Override

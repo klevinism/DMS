@@ -50,7 +50,7 @@ public class Account implements Serializable{
 
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ACC_SEQ")
-    @SequenceGenerator(sequenceName = "account_seq", allocationSize = 1, name = "ACC_SEQ")
+    @SequenceGenerator(sequenceName = "account_seq", allocationSize = 1, initialValue = 2, name = "ACC_SEQ")
     private Long id;
 	
     @NotNull(message = "Name should not be empty")

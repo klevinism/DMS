@@ -36,7 +36,7 @@ public class Role implements Serializable{
 
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USER_ID_SEQ")
-    @SequenceGenerator(sequenceName = "user_id_seq", allocationSize = 1, name = "USER_ID_SEQ")    
+    @SequenceGenerator(sequenceName = "user_id_seq",initialValue = 6, allocationSize = 1, name = "USER_ID_SEQ")    
     private Long id;
     
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 

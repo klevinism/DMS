@@ -34,7 +34,7 @@ public class GlobalSettings implements Serializable{
 
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GLOBAL_SETTINGS_SEQ")
-    @SequenceGenerator(sequenceName = "global_settings_seq", allocationSize = 1, name = "GLOBAL_SETTINGS_SEQ")
+    @SequenceGenerator(sequenceName = "global_settings_seq",initialValue = 2, allocationSize = 1, name = "GLOBAL_SETTINGS_SEQ")
     private Long id;
 	
 	@Column(name = "business_name")

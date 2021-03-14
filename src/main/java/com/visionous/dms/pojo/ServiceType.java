@@ -40,7 +40,7 @@ public class ServiceType implements Serializable{
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SERVICE_TYPE_SEQ")
-    @SequenceGenerator(sequenceName = "service_type_seq", allocationSize = 1, name = "SERVICE_TYPE_SEQ")
+    @SequenceGenerator(sequenceName = "service_type_seq", initialValue = 2, allocationSize = 1, name = "SERVICE_TYPE_SEQ")
 	private Long id;
 	
 	private String name;

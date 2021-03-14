@@ -39,6 +39,8 @@ public class QuestionnaireForm implements Serializable{
 	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "QUEST_FORM_SEQ")
+    @SequenceGenerator(sequenceName = "questionnaire_form_seq", allocationSize = 1, initialValue = 16, name = "QUEST_FORM_SEQ")
 	private Long id;
 	
 	private String question;
