@@ -47,7 +47,7 @@
                         
 								<div class="dentalFace">
 									<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1145 1800" xml:space="preserve">
-								      <image overflow="visible" width="1145" height="1800" xlink:href="/assets/vendors/mouth/img/mouthinternational.png"></image>
+								      <image overflow="visible" width="1145" height="1800" xlink:href="/assets/vendors/mouth/img/mouthinternational2.png"></image>
 								    <path th:id="${listTeeth[0]?.id}" name="tooth" onmouseenter="hoverTooth(this)" onclick="onClickTooth(this)"data-toggle="tooltip" data-html="true" th:title="${listTeeth[0].description}" vector-effect="non-scaling-stroke" d="M187.333,722.667c28.357,2.767,79.105,16.333,73.333,65c-6.214,52.389-41,58-86,51.667s-71.667-14-64-66S160,720,187.333,722.667z" fill="red" fill-opacity="0" stroke="red" stroke-opacity="1" cursor="pointer"></path>
 								    <path th:id="${listTeeth[1]?.id}" name="tooth" onmouseenter="hoverTooth(this)" onclick="onClickTooth(this)" data-toggle="tooltip" data-html="true" th:title="${listTeeth[1].description}" vector-effect="non-scaling-stroke" d="M195.667,600.333c45.083,9.167,56.392,18.335,65.588,37.333c8.996,18.583,10.996,63.333-21.921,76c-21.99,8.462-42.333,3.25-57.333,1.583s-58.273-2.401-63-51.25c-3.75-38.75,31-60.667,40.333-63.667S189.77,599.134,195.667,600.333z" fill="#FF0000" fill-opacity="0" stroke="#FF0000" stroke-opacity="1" cursor="pointer"></path>
 								    <path th:id="${listTeeth[2]?.id}" name="tooth" onmouseenter="hoverTooth(this)" onclick="onClickTooth(this)" data-toggle="tooltip" data-html="true" th:title="${listTeeth[2].description}" vector-effect="non-scaling-stroke" d="M189.667,478c23.44-5,78.334,18.667,88.667,33.667s14.005,54.285-2,73.333c-15.333,18.25-46.961,21.396-83.974,9.333c-38.61-12.583-48.183-25.931-47.026-63.667C146.25,500.75,178.28,480.429,189.667,478z" fill="#FF0000" fill-opacity="0" stroke="#FF0000" stroke-opacity="1" cursor="pointer"></path>
@@ -85,14 +85,14 @@
 							    </div>
 							</div>
 							
-							<div class="col-md-8 d-flex grid-margin"> 
+							<div class="col-md-5 d-flex grid-margin"> 
 							
                		 <form id="dentalRecordForm" enctype="multipart/form-data" style="display:none;" method="post" th:action="@{/customer/__${selected.history.customerId}__/history/__${selected.historyId}__/record}" th:object="${selected}">
 							<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
 							<input type="hidden" th:field="*{historyId}">
 							<input type="hidden" th:field="*{personnelId}">
 							<div class="col-md-12">						    
-							<div class="ml-lg-5">
+							<div class="ml-lg-2">
 			                          <label>[[#{VisitingTooth}]] </label>
 		                       		<div class="form-group">
 		                       		
@@ -230,6 +230,23 @@
 				              });
 				              </script>
 					</form>
+					</div>
+					<div class="col-md-3 mt-2 mt-lg-1">
+						<div class="card text-primary">
+	                      <div class="card-body">
+	                        <div class="d-flex justify-content-between">
+	                        </div>
+	                        <div class="d-flex justify-content-between pb-2 align-items-center">
+	                          <h2 class="font-weight-semibold mb-0">4,624</h2>
+	                          <div class="icon-holder">
+	                            <i class="fa fa-dollar"></i>
+	                          </div>
+	                        </div>
+	                        <div class="d-flex justify-content-between">
+	                          <h5 class="font-weight-semibold mb-0">Amount Due</h5>
+	                        </div>
+	                      </div>
+	                    </div>
 					</div>
 							</div>
 
