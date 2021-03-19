@@ -311,12 +311,23 @@
 						                    
 						                    <div class="card-body"  style="overflow-y: scroll; height:600px">
 
+												<div class="row">
+													<div class="col-sm-7 align-items-center">
+						                    			<label >Service Name</label>
+						                    			
+													</div>
+													<div class="col-sm-5 ">
+														<label >Price <i class="mdi mdi-information-outline fa-sm text-sm" data-toggle="tooltip" data-placement="top" title="(w/o VAT)"></i></label>
+													</div>
+												</div>
 						                    	<div class="form-group" id="serviceTypeInputs">
 							                    	<div class="input-group" th:each="service, itr: ${services.services}" th:with="id = *{services[__${itr.index}__].id}" th:id="${id}">
 														<input type="hidden" th:field="*{services[__${itr.index}__].id}">
 														<input class="form-control form-control-lg" type="text" th:field="*{services[__${itr.index}__].name}">
+														
+														<input class="form-control form-control-lg ml-2" style="max-width: 22%;" type="number" th:field="*{services[__${itr.index}__].price}">
 														<input type="hidden" th:field="*{services[__${itr.index}__].addeddate}">
-														<div class="form-group" id="editDeleteButtonGroup">
+														<div class="form-group ml-1" id="editDeleteButtonGroup">
 															<button type="button" class="btn btn-icons btn-inverse-success" th:id="'updateBtn'+${id}" th:onclick="'update('+${id}+','+__${itr.index}__+')'">
 									                            <i class="fa fa-check"></i>
 									                        </button>
@@ -393,8 +404,8 @@
             		var currentHtml = $("#serviceTypeInputs").html();
 					var txt = '<div class="input-group" id="'+finalNr+'">'+
 						'<input class="form-control form-control-lg" type="text" id="services'+finalNr+'.name" name="services['+finalNr+'].name" value="">'+
-						
-						'<div class="form-group" id="editDeleteButtonGroup">'+
+						'<input class="form-control form-control-lg ml-2" type="number" id="services'+finalNr+'.price" style="max-width: 22%;" name="services['+finalNr+'].price" value="0">'+
+						'<div class="form-group ml-1" id="editDeleteButtonGroup">'+
 						
 						'<button type="button" class="btn btn-icons btn-inverse-success" id="updateBtn'+finalNr+'" onclick="create('+finalNr+')">'+
 						'<i class="fa fa-check"></i></button>'+
@@ -430,9 +441,16 @@
             		
             		var id = document.getElementById("services"+indexId+".id").value;
             		var name = document.getElementById("services"+indexId+".name").value;
-            		console.log(" NAME="+ name);
+            		var price = document.getElementById("services"+indexId+".price").value;
+					
+            		var data = {
+            		    "id" : id,
+            		    "newName": name,
+            		    "price" : parseInt(price)
+            		}
+            		
             		//call update method
-            		editServiceType(id, name, function(data){
+            		editServiceType(data, function(data){
             			$("#progressBtn"+id).hide();
             			if(data.error != "error"){
             				console.log(data.result);
@@ -457,8 +475,13 @@
 
             		//call create method
             		var name = document.getElementById("services"+id+".name").value;
+            		var price = document.getElementById("services"+id+".price").value;
+            		var data = {
+            		    "name" : name,
+            		    "price": parseInt(price)
+            		};
             		
-            		createServiceType(name, function(data){
+            		createServiceType(data, function(data){
             			$("#progressBtn"+id).hide();
             			
             			if(data.error != "error"){
@@ -507,9 +530,10 @@
             		var currentHtml = $("#serviceTypeInputs").html();            		
 					var txt = '<input type="hidden" id="services'+response.id+'.id" name="services['+response.id+'].id" value="'+response.id+'">'+
 						'<input class="form-control form-control-lg" type="text" id="services'+response.id+'.name" name="services['+response.id+'].name" value="'+response.name+'">'+
+						'<input class="form-control form-control-lg ml-2" type="number" id="services'+response.id+'.price" style="max-width: 22%;" name="services['+response.id+'].price" value="'+response.price+'">'+
 						'<input type="hidden" id="services'+response.id+'.addeddate" name="services['+response.id+'].addeddate" value="'+response.addeddate+'">'+
 
-						'<div class="form-group" id="editDeleteButtonGroup">'+
+						'<div class="form-group ml-1" id="editDeleteButtonGroup">'+
 
 						'<button type="button" class="btn btn-icons btn-inverse-success" id="updateBtn'+response.id+'" onclick="update('+id+', '+response.id+')">'+
 						'<i class="fa fa-check"></i></button>'+
@@ -536,6 +560,8 @@
             		
 					var txt = '<input type="hidden" id="services'+response.id+'.id" name="services['+response.id+'].id" value="'+response.id+'">'+
 						'<input class="form-control form-control-lg" type="text" id="services'+response.id+'.name" name="services['+response.id+'].name" value="'+response.name+'">'+
+						'<input class="form-control form-control-lg ml-2" type="number" id="services'+response.id+'.price" style="max-width: 22%;" name="services['+response.id+'].price" value="'+response.price+'">'+
+
 						'<input type="hidden" id="services'+response.id+'.addeddate" name="services['+response.id+'].addeddate" value="'+response.addeddate+'">'+
 
 						'<div class="form-group" id="editDeleteButtonGroup">'+
@@ -559,12 +585,12 @@
             	}
             	
             	
-            	function createServiceType(name, callback){
-            		$.post("/api/serviceType/create", {"name" : name}, callback);
+            	function createServiceType(data, callback){
+            		$.post("/api/serviceType/create", data, callback);
             	}
-            	
-            	function editServiceType(id, newName, callback){
-            		$.post("/api/serviceType/edit", {"id" : id, "newName": newName}, callback);
+
+            	function editServiceType(data, callback){
+            		$.post("/api/serviceType/edit", data, callback);
             	}
             	
             	function deleteServiceType(id, callback){

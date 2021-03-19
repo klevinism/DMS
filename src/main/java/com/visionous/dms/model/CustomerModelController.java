@@ -229,11 +229,10 @@ public class CustomerModelController extends ModelControllerImpl{
 				super.addModelCollectionToView("allRoles", allRoles);
 			}
 			
-			super.addModelCollectionToView("lastCustomerRecord", 
+		}
+		super.addModelCollectionToView("lastCustomerRecord", 
 				recordService.findLastRecordForAllCustomers(customerService.findAll())
 				);
-		}
-		
 	}
 	
 	/**

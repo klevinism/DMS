@@ -48,6 +48,8 @@ public class ServiceType implements Serializable{
 	@DateTimeFormat (pattern="dd-MM-YYYY")
 	private Date addeddate;
 	
+	private int price;
+	
     @JsonIgnore
 	@OneToOne(mappedBy = "serviceType", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@PrimaryKeyJoinColumn
@@ -57,6 +59,9 @@ public class ServiceType implements Serializable{
     @OneToMany(mappedBy="serviceType", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     private List<Appointment> appointment = new ArrayList<>();
 	
+    @JsonIgnore
+	@OneToMany(cascade = CascadeType.REFRESH, mappedBy="serviceType")
+	private List<RecordReceiptItem> receipts = new ArrayList<>();
 	/**
 	 * 
 	 */
@@ -112,6 +117,20 @@ public class ServiceType implements Serializable{
 	}
 
 	/**
+	 * @return the price
+	 */
+	public int getPrice() {
+		return price;
+	}
+
+	/**
+	 * @param price the price to set
+	 */
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	/**
 	 * @return the record
 	 */
 	public Record getRecord() {
@@ -138,4 +157,19 @@ public class ServiceType implements Serializable{
 	public void setAppointment(List<Appointment> appointment) {
 		this.appointment = appointment;
 	}
+
+	/**
+	 * @return the receipts
+	 */
+	public List<RecordReceiptItem> getReceipts() {
+		return receipts;
+	}
+
+	/**
+	 * @param receipts the receipts to set
+	 */
+	public void setReceipts(List<RecordReceiptItem> receipts) {
+		this.receipts = receipts;
+	}
+	
 }

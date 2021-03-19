@@ -151,4 +151,14 @@ public class AccountService implements IAccountService{
 		return this.accountRepository.countByEnabledAndActiveAndCustomer_RegisterdateBetween(enabled, active, beginMonthDate, endMonthDate);
 	}
 
+	/**
+	 * @param name
+	 * @param surname
+	 * @param birthday
+	 * @return
+	 */
+	public Optional<Account> findByNameAndSurnameAndBirthday(String name, String surname, Date birthday) {
+		return this.accountRepository.findByNameIgnoreCaseAndSurnameIgnoreCaseAndBirthday(name, surname, birthday);
+	}
+
 }
