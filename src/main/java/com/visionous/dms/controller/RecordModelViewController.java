@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.visionous.dms.configuration.helpers.Actions;
+import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.model.RecordModelController;
-import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Record;
 
 /**
@@ -44,8 +44,8 @@ public class RecordModelViewController {
 	 */
 	@PostMapping("") 
 	public String recordPost(@RequestParam("files") MultipartFile[] files, @ModelAttribute Record record,
-			@PathVariable("customerId") Long customerId,
-			@PathVariable("historyId") Long historyId,
+			@PathVariable(name = "customerId", required=true) Long customerId,
+			@PathVariable(name = "historyId", required=true) Long historyId,
 			@RequestParam(required = false) String action,
 			Model model) {
 		
@@ -58,6 +58,18 @@ public class RecordModelViewController {
 			.addModelAttributes(record)
 			.setViewModel(model)
 			.run(); // GetValuesForView
+		
+		if(recordModelController.getModelCollectionToView("selectedRecord") != null) {
+			Record createdRecord = (Record)recordModelController.getModelCollectionToView("selectedRecord");
+			return "redirect:"+LandingPages.CUSTOMER.value()+"/"+
+							createdRecord.getHistory().getCustomerId()+
+							LandingPages.HISTORY.value()+"/"+
+							createdRecord.getHistoryId()+
+							LandingPages.RECORD.value()+"/"+
+							createdRecord.getId()+
+							LandingPages.RECORDRECEIPT.value()+"/"+
+							Actions.CREATE.getValue();
+		}
 		
 		return "demo_1/pages/record"; 
 	}

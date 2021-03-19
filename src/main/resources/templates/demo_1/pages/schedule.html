@@ -960,8 +960,8 @@
                 "Dental Service": serviceName,
                 "Doctor": dentist.charAt(0).toUpperCase() + dentist.slice(1),
                 "Patient": patient.charAt(0).toUpperCase() + patient.slice(1),
-                "Start Time": moment(new Date(current.start)).format("DD/MM/YYYY"),
-                "End Time": moment(new Date(current.end)).format("DD/MM/YYYY")
+                "Start Time": moment(new Date(current.start)).format("DD/MM/YYYY HH:mm"),
+                "End Time": moment(new Date(current.end)).format("DD/MM/YYYY HH:mm")
             });
         }
         return data;

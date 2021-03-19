@@ -11,6 +11,8 @@ function onClickTooth(element){
 		addHiddenInput($(option).val());		
 		
 		$("#dentalRecordForm").show();
+		$("#amountCard").show();
+
 	}
 		
 }
@@ -37,6 +39,7 @@ function onRightClickTooth(element, clearAll){
 	if(clearAll || $("#toothSelect").select2('data').length == 0 ){
 		clearAllTeethSelection();
 		$("#dentalRecordForm").hide();
+		$("#amountCard").hide();
 	}
 }
 
@@ -62,6 +65,7 @@ function select(type){
 		elem.each(function(el){
 			selectSingleTooth(elem[el], false);
 			$("#dentalRecordForm").show();
+			$("#amounCard").show();
 		});
 		if(!multiple){
 			 $("#multipleTeeth").click();
@@ -71,6 +75,8 @@ function select(type){
 	}else if(type == 'none'){
 		clearAllTeethSelection();
 		$("#dentalRecordForm").hide();
+		$("#amounCard").hide();
+
 		if(multiple){
 			 $("#multipleTeeth").click();
 		}else{
