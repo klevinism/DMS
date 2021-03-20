@@ -30,6 +30,8 @@
 							<th>[[#{TreatedTooth}]]</th>
 							<th>[[#{ServiceType}]]</th>
 							<th>[[#{ServiceDetail}]]</th>
+							<th >[[#{Total}]]<i class="mdi mdi-information-outline fa-sm" data-toggle="tooltip" th:title="#{LastReceiptTotal}"></i></th>
+							<th >[[#{Status}]]<i class="mdi mdi-information-outline fa-sm" data-toggle="tooltip" th:title="#{LastReceiptPaymentStatus}"></i></th>
 							<th>[[#{Comment}]]</th>
 						</tr>
 					</thead>
@@ -43,7 +45,11 @@
 							<td th:text="${#strings.abbreviate(visitedTeethTxt,19)}"  data-toggle="tooltip" data-html="true" th:title="${visitedTeethTxt}"></td>
 							<td th:text="${record.serviceType.name}"></td>
 							<td th:text="${record.servicedetail}"></td>
-							<td th:text="${record.servicecomment}"></td>
+							<td th:text="${record.receipt != null ? '__#{currency.ALL}__ '+#numbers.formatDecimal(record.receipt.total,0,'COMMA',0,'POINT') : '__#{NoReceipt}__'}"></td>
+							<td th:with="textclass = ${record.receipt != null && record.receipt.payed ? 'badge badge-outline-success':'badge badge-outline-danger'}">
+								<span th:class="${textclass}" th:text="${record.receipt != null && record.receipt.payed ? '__#{Payed}__' : '__#{NotPayed}__'}"></span></small>
+							</td>
+							<td th:text="${record.servicecomment}" style="white-space: break-spaces;"></td>
 						</tr>
 					</tbody>
 				</table>

@@ -29,9 +29,13 @@ import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.History;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Record;
+import com.visionous.dms.pojo.RecordReceipt;
+import com.visionous.dms.pojo.RecordReceiptItem;
 import com.visionous.dms.pojo.ServiceType;
 import com.visionous.dms.pojo.Teeth;
 import com.visionous.dms.service.QuestionnaireResponseService;
+import com.visionous.dms.service.RecordReceiptItemService;
+import com.visionous.dms.service.RecordReceiptService;
 import com.visionous.dms.service.CustomerService;
 import com.visionous.dms.service.HistoryService;
 import com.visionous.dms.service.PersonnelService;
@@ -56,6 +60,9 @@ public class RecordModelController extends ModelControllerImpl {
 	private HistoryService historyService;
 	private GlobalSettings globalSettings;
 	private RecordService recordService;
+	private RecordReceiptService recordReceiptService;
+	private RecordReceiptItemService recordReceiptItemService;
+
 	private TeethService teethService;
 
 	/**
@@ -65,7 +72,8 @@ public class RecordModelController extends ModelControllerImpl {
 	public RecordModelController(QuestionnaireResponseService questionnaireResponseService, 
 			ServiceTypeService serviceTypeService, PersonnelService personnelService,
 			CustomerService customerService, HistoryService historyService,
-			GlobalSettings globalSettings, RecordService recordService, TeethService teethService) {
+			GlobalSettings globalSettings, RecordService recordService, TeethService teethService,
+			RecordReceiptService recordReceiptService, RecordReceiptItemService recordReceiptItemService) {
 		
 		this.questionnaireResponseService = questionnaireResponseService;
 		this.serviceTypeService = serviceTypeService;
@@ -74,6 +82,8 @@ public class RecordModelController extends ModelControllerImpl {
 		this.historyService = historyService;
 		this.globalSettings = globalSettings;
 		this.recordService = recordService;
+		this.recordReceiptItemService = recordReceiptItemService;
+		this.recordReceiptService = recordReceiptService;
 		this.teethService = teethService;
 	}
 	
@@ -120,7 +130,7 @@ public class RecordModelController extends ModelControllerImpl {
 						.filter(Objects::nonNull)
 						.collect(Collectors.toList());
 				
-				Optional<ServiceType> serviceType = serviceTypeService.findByName(newRecord.getServiceType().getName());
+				Optional<ServiceType> serviceType = serviceTypeService.findById(newRecord.getServiceType().getId());
 				
 				if(personnel.isPresent() && history.isPresent() 
 						&& serviceType.isPresent() && !visitedTeeth.isEmpty()) {
@@ -130,13 +140,12 @@ public class RecordModelController extends ModelControllerImpl {
 								(MultipartFile[]) super.getAllControllerParams().get("files"));
 						newRecord.setAttachments(allRecordAttachmentNames);
 					}
-					
 					newRecord.setHistory(history.get());
 					newRecord.setPersonnel(personnel.get());
 					newRecord.setServiceType(serviceType.get());
 					newRecord.setVisitedTeeth(visitedTeeth);
 					
-					recordService.create(newRecord);
+					super.addModelCollectionToView("selectedRecord", recordService.create(newRecord));
 					
 					history.get().addRecord(newRecord);
 					historyService.create(history.get());
@@ -188,11 +197,6 @@ public class RecordModelController extends ModelControllerImpl {
 						super.addModelCollectionToView("selected", record);
 					});
 					
-					if(customer.hasQuestionnaire()) { 
-						super.addModelCollectionToView("anamezeAllergies", 
-								questionnaireResponseService.findAllByQuestionIdAndResponse(customer.getQuestionnaire().getId(), "yes"));
-					}
-					
 					super.addModelCollectionToView("services", serviceTypeService.findAll());
 				});
 			}
@@ -222,6 +226,17 @@ public class RecordModelController extends ModelControllerImpl {
 		}
 		
 		super.addModelCollectionToView("listTeeth", teethService.findAll());
+		
+		if(super.getAllControllerParams().get("historyId") != null) {
+			Long customerId = (Long) super.getAllControllerParams().get("customerId");
+			Optional<Customer> recordCustomer = customerService.findById(customerId);
+			recordCustomer.ifPresent(customer -> {
+				if(customer.hasQuestionnaire()) { 
+					super.addModelCollectionToView("anamezeAllergies", 
+							questionnaireResponseService.findAllByQuestionIdAndResponse(customer.getQuestionnaire().getId(), "yes"));
+				}
+			});
+		}
 	}
 	
 	/**

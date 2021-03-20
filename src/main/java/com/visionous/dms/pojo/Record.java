@@ -55,12 +55,14 @@ public class Record  implements Serializable{
 	@Column(name = "personnelid", insertable = false, updatable =false)
 	private Long personnelId;
 	
+	@Column(name = "receiptid", insertable = false, updatable =false)
+	private Long receiptId;
+	
 	private String servicedetail;
 	
 	private String servicecomment;
 	
 	private String attachments;
-	
 
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(iso = ISO.DATE)
@@ -81,6 +83,10 @@ public class Record  implements Serializable{
 	@JoinColumn(name = "serviceid")
 	private ServiceType serviceType;
 
+	@OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER) 
+	@JoinColumn(name = "receiptid")
+	private RecordReceipt receipt;
+	
     @JsonIgnore
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(cascade = CascadeType.REFRESH) 
@@ -245,7 +251,34 @@ public class Record  implements Serializable{
 	public void setServiceType(ServiceType serviceType) {
 		this.serviceType = serviceType;
 	}
-	
+
+	/**
+	 * @return the receiptId
+	 */
+	public Long getReceiptId() {
+		return receiptId;
+	}
+
+	/**
+	 * @param receiptId the receiptId to set
+	 */
+	public void setReceiptId(Long receiptId) {
+		this.receiptId = receiptId;
+	}
+
+	/**
+	 * @return the receipt
+	 */
+	public RecordReceipt getReceipt() {
+		return receipt;
+	}
+
+	/**
+	 * @param receipt the receipt to set
+	 */
+	public void setReceipt(RecordReceipt receipt) {
+		this.receipt = receipt;
+	}
 
 	/**
 	 * @return the attachments

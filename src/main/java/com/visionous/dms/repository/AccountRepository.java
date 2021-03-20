@@ -1,15 +1,12 @@
 package com.visionous.dms.repository;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.Personnel;
 
 /**
  * @author delimeta
@@ -69,4 +66,13 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 	 * @return
 	 */
 	public Optional<Account> findByEmail(String email);
+
+	/**
+	 * @param name
+	 * @param surname
+	 * @param birthday
+	 * @return
+	 */
+	public Optional<Account> findByNameIgnoreCaseAndSurnameIgnoreCaseAndBirthday(String name, String surname,
+			Date birthday);
 }
