@@ -104,7 +104,7 @@
 			                          <a class="dropdown-item" th:if="${customer.customerHistory != null && lastVisitRecord!=null}" th:href="'/customer/' + ${user.id} + '/history/' + ${user.id} + '/record/'+${lastVisitRecord.id}"><i class="mdi mdi-history"></i> [[#{LastVisit}]]</a>
 			                          <a class="dropdown-item" th:if="${customer.customerHistory}" th:href="'/customer/' + ${user.id} + '/history/' + ${user.id} + '/record'"><i class="mdi mdi-clipboard-text-outline"></i> [[#{action.allHistory}]]</a>
 			                          <div class="dropdown-divider" th:if="${customer.customerHistory}"></div>
-			                          <h6 class="dropdown-header">[[#{AccountActions}]]</h6>
+			                          <h6 class="dropdown-header">[[#{Account}]]</h6>
 			                          <a class="dropdown-item" th:href="${currentPage}+'/view/' + ${user.id} "><i class="mdi mdi-eye-outline"></i> [[#{View}]]</a>
 			                          <a class="dropdown-item" th:href="'/account' + '/edit/' + ${user.id}"><i class="fa fa-edit"></i> [[#{Edit}]]</a>
 			                          <a class="dropdown-item"  th:href="${currentPage}+'/' + ${user.id} + '/?modal=true&view=' + ${T(com.visionous.dms.configuration.helpers.Actions).DELETE} +'' "><i class="fa fa-trash-o"></i> [[#{Delete}]]</a>
