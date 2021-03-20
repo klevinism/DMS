@@ -24,7 +24,7 @@
   			</section>
             <!-- Page Title Header Ends-->
             <div class="row">
-              <div class="col-md-7 grid-margin stretch-card">
+              <div class="col-md-8 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                  				<div class="row ml-lg-1">
@@ -47,7 +47,7 @@
                         
 								<div class="dentalFace">
 									<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1145 1800" xml:space="preserve">
-								      <image overflow="visible" width="1145" height="1800" xlink:href="https://www.humananatomyillustrations.com/assets/images/demo/mouth.png"></image>
+								      <image overflow="visible" width="1145" height="1800" xlink:href="/assets/vendors/mouth/img/mouthinternational2.png"></image>
 								    <path th:id="${listTeeth[0]?.id}" name="tooth" onmouseenter="hoverTooth(this)" onclick="onClickTooth(this)"data-toggle="tooltip" data-html="true" th:title="${listTeeth[0].description}" vector-effect="non-scaling-stroke" d="M187.333,722.667c28.357,2.767,79.105,16.333,73.333,65c-6.214,52.389-41,58-86,51.667s-71.667-14-64-66S160,720,187.333,722.667z" fill="red" fill-opacity="0" stroke="red" stroke-opacity="1" cursor="pointer"></path>
 								    <path th:id="${listTeeth[1]?.id}" name="tooth" onmouseenter="hoverTooth(this)" onclick="onClickTooth(this)" data-toggle="tooltip" data-html="true" th:title="${listTeeth[1].description}" vector-effect="non-scaling-stroke" d="M195.667,600.333c45.083,9.167,56.392,18.335,65.588,37.333c8.996,18.583,10.996,63.333-21.921,76c-21.99,8.462-42.333,3.25-57.333,1.583s-58.273-2.401-63-51.25c-3.75-38.75,31-60.667,40.333-63.667S189.77,599.134,195.667,600.333z" fill="#FF0000" fill-opacity="0" stroke="#FF0000" stroke-opacity="1" cursor="pointer"></path>
 								    <path th:id="${listTeeth[2]?.id}" name="tooth" onmouseenter="hoverTooth(this)" onclick="onClickTooth(this)" data-toggle="tooltip" data-html="true" th:title="${listTeeth[2].description}" vector-effect="non-scaling-stroke" d="M189.667,478c23.44-5,78.334,18.667,88.667,33.667s14.005,54.285-2,73.333c-15.333,18.25-46.961,21.396-83.974,9.333c-38.61-12.583-48.183-25.931-47.026-63.667C146.25,500.75,178.28,480.429,189.667,478z" fill="#FF0000" fill-opacity="0" stroke="#FF0000" stroke-opacity="1" cursor="pointer"></path>
@@ -85,14 +85,14 @@
 							    </div>
 							</div>
 							
-							<div class="col-md-8 d-flex grid-margin"> 
+							<div class="col-md-5 d-flex grid-margin"> 
 							
                		 <form id="dentalRecordForm" enctype="multipart/form-data" style="display:none;" method="post" th:action="@{/customer/__${selected.history.customerId}__/history/__${selected.historyId}__/record}" th:object="${selected}">
 							<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
 							<input type="hidden" th:field="*{historyId}">
 							<input type="hidden" th:field="*{personnelId}">
 							<div class="col-md-12">						    
-							<div class="ml-lg-5">
+							<div class="ml-lg-2">
 			                          <label>[[#{VisitingTooth}]] </label>
 		                       		<div class="form-group">
 		                       		
@@ -128,8 +128,8 @@
 		                       		<div class="form-group">
 		                       			<div class="form-group">
 		                       			<label th:for="*{serviceType}" >[[#{DentalService}]]
-										<select class="form-control form-control-lg " id="serviceSelect" th:field="*{serviceType.name}" style="font-size: 1em;" >
-											<option th:each="service : ${services}" th:value="${service.name}" th:text="${service.name}"></option>
+										<select class="form-control form-control-lg " id="serviceSelect" th:field="*{serviceType.id}" style="font-size: 1em;" >
+											<option th:each="service : ${services}" th:value="${service.id}" th:text="${service.name}"></option>
 										</select>
 										</label>
 										</div>
@@ -162,7 +162,7 @@
 											
 											</div>
 										</div>
-										<input class="btn btn-primary" type="submit" value="submit">
+										<input class="btn btn-primary" type="submit" th:value="#{Save}">
 		                       		</div>
 	                       		</div>
 	                       	</div> 
@@ -171,6 +171,28 @@
 							  function hoverTooth(elem){
 								    $(elem).tooltip('show');
 							  }
+							  
+							  $(document).ready(function(){
+					          	var token = $("meta[name='_csrf']").attr("content");
+					         	var header = $("meta[name='_csrf_header']").attr("content");
+					         	
+					         	$(document).ajaxSend(function(e, xhr, options) {
+					         	    xhr.setRequestHeader(header, token);
+					         	});
+					         	
+					          	console.log("serviceSelect",$("#serviceSelect").val());
+					          	var data = {
+					          	        id : $("#serviceSelect").val()
+					          	};
+					          	
+					          	getServicePrice(data, function(data, response){
+					          	  console.log(data);
+					          	   if(data.error != "error"){
+					          	       
+					          	       renderServicePrice(data.result[0].price);
+					          	   } 
+					          	});
+							  });
 							  
 				              $("#recordAttachments").fileinput({
 				            	  showUpload:false,
@@ -190,6 +212,21 @@
 				             	    "useCurrent":true,
 				             	   	"defaultDate":new Date(),
 				             	    "format": "YYYY-MM-DD HH:mm",
+				              });
+				              
+				              $("#serviceSelect").on("change", function(e){
+				              	console.log("e",$(this).val());
+				              	var data = {
+					          	        id : $("#serviceSelect").val()
+					          	};
+					          	
+					          	getServicePrice(data, function(data, response){
+					          	  console.log(data);
+					          	   if(data.error != "error"){
+					          	       
+					          	       renderServicePrice(data.result[0].price);
+					          	   } 
+					          	});
 				              });
 				              
 				              $("#oldVisit").on("change", function(e){
@@ -228,9 +265,31 @@
 				                  }
 				                  
 				              });
+				              
+				              function getServicePrice(data, callback){
+				                  $.get("/api/serviceType/get", data, callback);
+				              }
+				              
+				              function renderServicePrice(price){
+				                  $("#dueAmount").text(price);
+				              }
 				              </script>
 					</form>
 					</div>
+							<div class="col-md-3 " id="amountCard" style="display:none;">
+								<div class="card text-primary" >
+			                      <div class="card-body">
+			                        <div class="d-flex justify-content-between">
+			                          <h5 class="font-weight-semibold mb-0"><i class="mdi mdi-cash-multiple"></i> [[#{Total}]] </h5>
+			                        </div> 
+			                        <div class="d-flex justify-content-between p-2 align-items-center">
+			                          <h2 class="font-weight-semibold mb-0" id="dueAmount" >0</h2>
+			                          <div class="icon-holder" id="currency"><b>[[#{currency.ALL}]]</b>
+			                          </div>
+			                        </div>
+			                      </div>
+			                    </div>
+							 </div>
 							</div>
 
 					</div>
@@ -240,7 +299,7 @@
                 
               </div>
               
-              <div class="col-md-5 ">
+              <div class="col-md-4 ">
 			  	<div class="row">
 	              <div class="col-md-12 grid-margin" th:if="${selectedHistory}">
 					<div class="card"> 

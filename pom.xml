@@ -9,11 +9,11 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.visionous</groupId>
-	<artifactId>dms</artifactId>
-	<version>1.4.5-SNAPSHOT</version>
+	<artifactId>dcms</artifactId>
+	<version>1.5.6-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>dms</name>
-	<description>Demo project for Spring Boot</description>
+	<name>Oxident</name>
+	<description>Dental Clinic Management System</description>
 
 	<properties>
 		<java.version>1.8</java.version>

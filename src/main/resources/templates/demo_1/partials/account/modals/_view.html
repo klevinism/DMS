@@ -10,29 +10,34 @@
           <div class="col-sm-6 col-md-8">
           
           <div class="d-flex flex-column flex-lg-row">
-       	  <div class="data-wrapper d-flex mt-2 mt-lg-0">
-              <h4>[[*{account.name}]] [[*{account.surname}]]</h4>
-    	  </div>
-    	  <div class="ml-lg-auto">
-    	  	<!-- Split button -->
-              <div class="dropdown" name="actionButton" >
-                 <button type="button" class="btn btn-icons btn-rounded  btn-inverse-outline-primary btn-sm dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                   	<i class="fa fa-ellipsis-v"></i>
-                 </button>
-                 <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
-                   <h6 class="dropdown-header">[[#{Actions}]]</h6>
-                   <a class="dropdown-item" th:href="'/account/edit/'+*{id} "><i class="mdi mdi-pencil-outline fa-lg"></i> [[' '+#{Edit}]]</a>
-                   
-                   <a class="dropdown-item" th:with="path = *{account.roles[0].name == 'PERSONNEL' ? '/admin/personnel' : '/customer'}"  th:href="${path}+'/delete/'+*{id} "><i class="mdi mdi-trash-can-outline fa-lg"></i> [[' '+#{Delete}]]</a>
-                   <div class="dropdown-divider" th:if="*{!account.enabled && !account.active}"></div>
-			       <a class="dropdown-item" th:if="*{!account.enabled && !account.active}" href="#" th:onclick="'resendConfirmation('+__*{account.id}__+');'">[[#{ReConfirm}]]</a>
-                 </div>
-               </div>
-		  </div>
+	       	  <div class="data-wrapper d-flex mt-3 mt-lg-0">
+	              <h4>[[*{account.name}]] [[*{account.surname}]]</h4>              
+
+	              
+	    	  </div>
+	    	  <div class="ml-lg-auto">
+	    	  	<!-- Split button -->
+	              <div class="dropdown" name="actionButton" >
+	                 <button type="button" class="btn btn-icons btn-rounded  btn-inverse-outline-primary btn-sm dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                   	<i class="fa fa-ellipsis-v"></i>
+	                 </button>
+	                 <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
+	                   <h6 class="dropdown-header">[[#{Actions}]]</h6>
+	                   <a class="dropdown-item" th:href="'/account/edit/'+*{id} "><i class="mdi mdi-pencil-outline fa-lg"></i> [[' '+#{Edit}]]</a>
+	                   
+	                   <a class="dropdown-item" th:with="path = *{account.roles[0].name == 'PERSONNEL' ? '/admin/personnel' : '/customer'}"  th:href="${path}+'/delete/'+*{id} "><i class="mdi mdi-trash-can-outline fa-lg"></i> [[' '+#{Delete}]]</a>
+	                   <div class="dropdown-divider" th:if="*{!account.enabled && !account.active}"></div>
+				       <a class="dropdown-item" th:if="*{!account.enabled && !account.active}" href="#" th:onclick="'resendConfirmation('+__*{account.id}__+');'">[[#{ReConfirm}]]</a>
+	                 </div>
+	               </div>
+			  </div>
 	      </div>
-              <small><cite th:title="*{account.address} +','+ *{account.city} +','+ *{account.country}"><i class="mdi mdi-map-marker"></i>[[*{account.address} +','+ *{account.city} +','+ *{account.country}]]</cite></small>
-              <small><cite th:title="#{Age}"> <i class="mdi mdi-gift"></i>[[*{account.age}]] </cite></small>
-              
+	      <div class="d-flex flex-column">
+			  <small>
+			  	<cite th:title="*{account.address} +','+ *{account.city} +','+ *{account.country}"><i class="mdi mdi-map-marker"></i>[[*{account.address} +','+ *{account.city} +','+ *{account.country}]]
+	            </cite>
+	          </small>
+	          <small><cite th:title="#{Age}"> <i class="mdi mdi-gift"></i>[[*{account.age}]] </cite></small>
               <p th:with="activeLabel = *{account.active} ? 'Active' : 'Inactive',
               			activeClass = *{account.active} ? badge-success : badge-danger">
                   <i class="mdi mdi-email-box"></i>[[*{account.email}]]<br />
@@ -41,7 +46,7 @@
 	              <span th:if="*{account.roles[0].name == 'PERSONNEL'}"  th:classappend="'badge ' + ${activeClass}" style="color:white" th:text="#{__${activeLabel}__}">Enabled</span>
 					
                   </p>
-              
+              </div>
           </div>
       </div>
   

@@ -23,6 +23,7 @@ import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.Role;
 import com.visionous.dms.rest.response.ResponseBody;
+import com.visionous.dms.service.AccountService;
 import com.visionous.dms.service.CustomerService;
 import com.visionous.dms.service.RoleService;
 
@@ -35,16 +36,18 @@ public class CustomerRestController {
 	private MessageSource messageSource;
 	
 	private CustomerService customerService;
+	private AccountService accountService;
 	private RoleService roleService;
 	
 	/**
 	 * 
 	 */
 	@Autowired
-	public CustomerRestController(MessageSource messageSource, CustomerService customerService, RoleService roleService) {
+	public CustomerRestController(MessageSource messageSource, CustomerService customerService, RoleService roleService, AccountService accountService) {
 		 this.messageSource = messageSource;
 		 this.customerService = customerService;
 		 this.roleService = roleService;
+		 this.accountService = accountService;
 	}
 	
 	@PostMapping("/api/account/create/simple")
@@ -65,39 +68,46 @@ public class CustomerRestController {
         		result.setError(messageError);
         		result.setMessage(messagefullNameWrongFormat);
         	}else {
-
-        		String username = nameArr[0].toLowerCase()+"."+nameArr[1].toLowerCase();
-	        	String pass = nameArr[0].toLowerCase()+"."+nameArr[1].toLowerCase()+".1234";
-	        	String email = nameArr[0].toLowerCase()+"."+nameArr[1].toLowerCase()+"@hotmail.com";
-	        	
-	        	Optional<Role> customerRole = roleService.findByName("CUSTOMER");
-	        	
-	        	Account acc = new Account();
-	        	acc.setName(StringUtils.capitalize(nameArr[0]));
-	        	acc.setSurname(StringUtils.capitalize(nameArr[1]));
-	        	acc.setAge(AccountUtil.calculateAgeFromBirthday(birthday));
-	        	acc.setUsername(username);
-	        	acc.setPassword(new BCryptPasswordEncoder().encode(pass));
-	        	acc.setBirthday(birthday);
-	        	acc.setEmail(email);
-	        	acc.setGender(gender);
-	        	acc.setPhone(phoneNr);
-	
-	        	customerRole.ifPresent(role -> acc.addRole(role));
-	        	
-	        	Customer newCustomer = new Customer();
-	        	newCustomer.setAccount(acc);
-	        	
-	        	try {
-					result.addResult(customerService.create(newCustomer));
-					
-				} catch (EmailExistsException e) {
-					result.setError(messageError);
+        		Optional<Account> potential = this.accountService.findByNameAndSurnameAndBirthday(nameArr[0], nameArr[1], birthday);
+        		
+        		if(!potential.isPresent()) {
+        		
+	        		String username = nameArr[0].toLowerCase()+"."+nameArr[1].toLowerCase();
+		        	String pass = nameArr[0].toLowerCase()+"."+nameArr[1].toLowerCase()+".1234";
+		        	String email = nameArr[0].toLowerCase()+"."+nameArr[1].toLowerCase()+"@hotmail.com";
+		        	
+		        	Optional<Role> customerRole = roleService.findByName("CUSTOMER");
+		        	
+		        	Account acc = new Account();
+		        	acc.setName(StringUtils.capitalize(nameArr[0]));
+		        	acc.setSurname(StringUtils.capitalize(nameArr[1]));
+		        	acc.setAge(AccountUtil.calculateAgeFromBirthday(birthday));
+		        	acc.setUsername(username);
+		        	acc.setPassword(new BCryptPasswordEncoder().encode(pass));
+		        	acc.setBirthday(birthday);
+		        	acc.setEmail(email);
+		        	acc.setGender(gender);
+		        	acc.setPhone(phoneNr);
+		
+		        	customerRole.ifPresent(role -> acc.addRole(role));
+		        	
+		        	Customer newCustomer = new Customer();
+		        	newCustomer.setAccount(acc);
+		        	
+		        	try {
+						result.addResult(customerService.create(newCustomer));
+						
+					} catch (EmailExistsException e) {
+						result.setError(messageError);
+						result.setMessage(messageCustomerExists);
+					} catch (UsernameExistsException e) {
+						result.setError(messageError);
+						result.setMessage(messageCustomerExists);
+					}
+        		}else {
+        			result.setError(messageError);
 					result.setMessage(messageCustomerExists);
-				} catch (UsernameExistsException e) {
-					result.setError(messageError);
-					result.setMessage(messageCustomerExists);
-				}
+        		}
         	}
         }else {	
         	String messagefullNameWrongFormat = messageSource.getMessage("alert.fullNameFormat", null, LocaleContextHolder.getLocale());

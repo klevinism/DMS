@@ -69,14 +69,14 @@
 							</thead>
 							<tbody >
 								<tr class="clickable-tr px-2"  th:each="record, iter: ${customerRecords}" onmouseout="clearRecordSelection()" 
-									th:with="var = ${#strings.listJoin(record.visitedTeeth.![name],' , ')}"
+									th:with="var = ${#strings.listJoin(record.visitedTeeth.![name],', ')}"
 									th:onmouseover="'hoverRecord(\'__${var}__\')'"
 									th:onclick="'window.location=\'/customer/'+*{id}+'/history/'+*{customerHistory.id}+'/record/'+${record.id}+'\''">
 									
 									<td th:text="${#dates.format(record.servicedate, 'd-M-yyyy')}"></td>
 									<td th:text="${record.serviceType.name}"></td>
 									<td id="tooth" th:text="${#strings.abbreviate(var,19)}" data-toggle="tooltip" data-html="true" th:title="${var}"></td>
-									<td th:text="${#strings.abbreviate(record.servicecomment,19)}" data-toggle="tooltip" data-html="true" th:title="${record.servicecomment}">
+									<td style="white-space:break-spaces;" th:text="${record.servicecomment}" data-toggle="tooltip" data-html="true" th:title="${record.servicecomment}">
 									</td>
 								</tr>
 							</tbody>

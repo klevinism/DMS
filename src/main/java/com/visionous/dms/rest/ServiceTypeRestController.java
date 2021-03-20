@@ -36,7 +36,8 @@ public class ServiceTypeRestController {
 	}
 	
 	@PostMapping("/api/serviceType/create")
-    public ResponseEntity<?> createService(@RequestParam(name = "name", required = true) String serviceTypeName) { 
+    public ResponseEntity<?> createService(@RequestParam(name = "name", required = true) String serviceTypeName,
+    		@RequestParam(name = "price", required = true) int serviceTypePrice) { 
 
         String success = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
         String serviceCreated = messageSource.getMessage("alert.serviceCreatedSuccessfully", null, LocaleContextHolder.getLocale());
@@ -44,6 +45,7 @@ public class ServiceTypeRestController {
 
         ResponseBody<ServiceType> result = new ResponseBody<>();
         ServiceType service = new ServiceType(serviceTypeName);
+        service.setPrice(serviceTypePrice);
         
         ServiceType savedService = serviceTypeService.create(service);
         if(savedService.getId() != null) {
@@ -58,7 +60,8 @@ public class ServiceTypeRestController {
     }
 
 	@PostMapping("/api/serviceType/edit")
-    public ResponseEntity<?> editService(@RequestParam(name = "id", required = true) Long currentServiceId, @RequestParam(name = "newName", required = true) String newName) { 
+    public ResponseEntity<?> editService(@RequestParam(name = "id", required = true) Long currentServiceId, @RequestParam(name = "newName", required = true) String newName,
+    		@RequestParam(name = "price", required = true) int serviceTypePrice) { 
 
         String success = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
         String serviceEdited = messageSource.getMessage("alert.serviceEditedSuccessfully", null, LocaleContextHolder.getLocale());
@@ -70,6 +73,7 @@ public class ServiceTypeRestController {
         
         if(oldService.isPresent()) {
         	oldService.get().setName(newName);
+        	oldService.get().setPrice(serviceTypePrice);
         	
         	ServiceType newService = serviceTypeService.update(oldService.get());
         	if(newService.getId() != null) {
@@ -124,6 +128,25 @@ public class ServiceTypeRestController {
 			result.setError(success);
 			result.setMessage(success);
 			result.setResult(allServices);
+        }else {
+        	result.setError("error");
+        	result.setMessage(error);
+        }
+        
+        return ResponseEntity.ok(result);
+    }
+	
+	@GetMapping("/api/serviceType/get")
+    public ResponseEntity<?> getAllServiceTypes(@RequestParam(name = "id", required = true) Long selectedServiceId) { 
+        String success = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+        String error = messageSource.getMessage("alert.errorGeneric", null, LocaleContextHolder.getLocale());
+
+        ResponseBody<ServiceType> result = new ResponseBody<>();
+        Optional<ServiceType> selectedService = serviceTypeService.findById(selectedServiceId);
+        
+        if(selectedService.isPresent()) {
+			result.setError(success);
+			result.addResult(selectedService.get());
         }else {
         	result.setError("error");
         	result.setMessage(error);
