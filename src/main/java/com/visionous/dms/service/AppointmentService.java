@@ -135,4 +135,5 @@ public class AppointmentService implements IAppointmentService{
 	public List<Object[]> findTopAppointmentsByMostUsedServiceType() {
 		return this.appointmentRepository.topAppointmentsByMostUsedServiceType();
 	}
+
 }

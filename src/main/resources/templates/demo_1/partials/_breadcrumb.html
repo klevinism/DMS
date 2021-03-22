@@ -1,9 +1,12 @@
 <div th:fragment="breadcrumb" class="row page-title-header"  th:with="title =  ${#strings.substring(currentPage, 1, #strings.length(currentPage))}">
-    <div class="col-12">
-	    <div class="page-header" >
+    <div class="col-12 mb-3">
+	    <div class="page-header pt-1" th:if="${title != 'home'}" >
 	        <h4 class="page-title" >[[#{__${title.matches('[0-9]{1,}') ? title : #strings.toUpperCase(title)}__}]]</h4>
 	    </div>
-		<nav aria-label="breadcrumb">
+	    <div class="page-header pt-1" th:if="${title == 'home'}" th:with="greetings = ${isMorning ? 'GoodMorning' : 'Greetings'}">
+	        <h4 class="page-title" >[[#{__${greetings}__}]] [[#{prefix.title.dr}]] [[${#strings.toUpperCase(loggedInAccount.name)}]] [[${#strings.toUpperCase(loggedInAccount.surname)}]]</h4>
+	    </div>
+		<nav aria-label="breadcrumb" style="background:#e6e4e4">
 		  <ol class="breadcrumb" style="margin-bottom: 0px;">
 		  
 		  <th:block th:each="list: ${currentBreadcrumb}">

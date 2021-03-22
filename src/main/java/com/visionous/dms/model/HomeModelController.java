@@ -7,15 +7,20 @@ import java.text.SimpleDateFormat;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -48,8 +53,9 @@ public class HomeModelController extends ModelControllerImpl{
 	private RecordService recordService;
 	private AppointmentService appointmentService;
 	private GlobalSettings globalSettings;
-	
-	private RoleService roleService;
+    private MessageSource messages;
+
+    private RoleService roleService;
 	
 	private static String currentPage = LandingPages.HOME.value();
 
@@ -59,13 +65,14 @@ public class HomeModelController extends ModelControllerImpl{
 	 */
 	@Autowired
 	public HomeModelController(AccountService accountService, RecordService recordService, 
-			AppointmentService appointmentService, RoleService roleService,
+			AppointmentService appointmentService, RoleService roleService, MessageSource messages,
 			GlobalSettings globalSettings){
 		this.accountService = accountService;
 		this.recordService = recordService;
 		this.appointmentService = appointmentService;
 		this.roleService = roleService;
 		this.globalSettings = globalSettings;
+		this.messages = messages;
 	}
 	
 	/**
@@ -120,9 +127,8 @@ public class HomeModelController extends ModelControllerImpl{
 			Account acc = AccountUtil.currentLoggedInUser();
 			Optional<Account> currentAccount = accountService.findByUsernameOrEmail(acc.getUsername());
 			currentAccount.ifPresent(account -> {
-				
+
 				Period monthPeriodOfThisYear = DateUtil.getPeriodBetween(DateUtil.getBegginingOfYear(), new Date());
-				System.out.println( DateUtil.getStartWorkingHr() +"-----"+ appointmentEndTime);
 				List<Appointment> todaysAppointments = appointmentService.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(account.getId(), DateUtil.getStartWorkingHr(), appointmentEndTime);
 				List<Record> top10records = recordService.findFirst10ByPersonnelIdOrderByServicedateDesc(account.getId()); 
 				List<Integer> nrOfRecordsForEachMonth = new ArrayList<>();
@@ -207,8 +213,133 @@ public class HomeModelController extends ModelControllerImpl{
 					}
 
 					super.addModelCollectionToView("allCustomers", allNewAndOldCustomers);
+					
+					List<Date> lastWorkingDays = new ArrayList<>();
+					List<Integer> workingDays = globalSettings.getWorkingBusinessDays();
+					
+					Calendar currentCalendar = DateUtil.getCalendarFromDate(DateUtil.subtractDays(new Date(), 1));
+					
+					int maxDaysOfWeek = currentCalendar.getActualMaximum(Calendar.DAY_OF_WEEK);
+
+					while(lastWorkingDays.size() != maxDaysOfWeek) {
+						if(workingDays.contains((DateUtil.getNrDayOfWeek(currentCalendar.getTime())-1))) {
+							lastWorkingDays.add(currentCalendar.getTime());
+						}else {
+						}
+						currentCalendar.setTime(DateUtil.subtractDays(currentCalendar.getTime(), 1));
+					}
+					
+					List<String> lastWorkingDates = new ArrayList<>();
+					
+					List<Integer> nrOfVisitsForWorkingDays = new ArrayList<>();
+					List<Integer> nrOfRevenueForWorkingDays = new ArrayList<>();
+					List<Integer> nrOfNewCustomersForWorkingDays = new ArrayList<>();
+					List<Integer> nrOfAppointmentsNoShows = new ArrayList<>();
+					String yesterday = messages.getMessage("Yesterday", null, LocaleContextHolder.getLocale());
+
+					lastWorkingDays.forEach(date -> {
+						Date startDate = DateUtil.getBeginingOfDay(date);
+						Date endDate = DateUtil.getEndOfDay(date);
+						
+						if(DateUtil.getPeriodBetween(startDate, new Date()).getDays() == 1) {
+							lastWorkingDates.add(yesterday);
+							super.addModelCollectionToView("isYesterday", true);
+						}else {
+							lastWorkingDates.add(new SimpleDateFormat(" dd MMMM ").format(startDate));
+						}
+						
+						nrOfVisitsForWorkingDays.add(recordService.countByServicedateBetween(startDate, endDate));
+						
+						Integer currentRevenue = recordService.sumOfReceipts(startDate, endDate);
+						nrOfRevenueForWorkingDays.add(currentRevenue == null ? 0 : currentRevenue);
+						
+						nrOfNewCustomersForWorkingDays.add(
+									accountService.countByEnabledAndActiveAndCustomer_RegisterdateBetween(true,true, startDate, endDate));
+
+						List<Appointment> allAppointmentsBtwDates = appointmentService.findAllBetweenDateRange(startDate, endDate);
+						List<Appointment> noShowAppointmentsForDay = allAppointmentsBtwDates.stream().filter(appointment -> 
+							recordService.findAllByServicedateBetweenAndCustomerId(startDate, endDate, appointment.getCustomerId()).isEmpty()
+						).collect(Collectors.toList());
+						
+						nrOfAppointmentsNoShows.add(noShowAppointmentsForDay.size());
+					});
+					
+					Collections.reverse(lastWorkingDates);
+					
+					Collections.reverse(nrOfVisitsForWorkingDays);
+					Collections.reverse(nrOfRevenueForWorkingDays);
+					Collections.reverse(nrOfNewCustomersForWorkingDays);
+					Collections.reverse(nrOfAppointmentsNoShows);
+					
+					int inc = nrOfVisitsForWorkingDays.get(nrOfVisitsForWorkingDays.size()-1) - nrOfVisitsForWorkingDays.get(0);
+					double visitGrowth;
+					if(inc == 0) {
+						visitGrowth = 0;
+					}else {
+						if(!nrOfVisitsForWorkingDays.get(nrOfVisitsForWorkingDays.size()-1).equals(0)) {
+							visitGrowth = (inc/nrOfVisitsForWorkingDays.get(nrOfVisitsForWorkingDays.size()-1) )*100;
+						}else {
+							visitGrowth = -100;
+						}
+					}
+					
+					int startNr = nrOfRevenueForWorkingDays.get(nrOfRevenueForWorkingDays.size()-1);
+					int endNr = nrOfRevenueForWorkingDays.get(0);
+					int incRevenue = startNr - endNr;
+					double revenueGrowth;
+					if(incRevenue == 0) {
+						revenueGrowth = 0;
+					}else {
+						if(startNr != 0) {
+							revenueGrowth = (incRevenue/startNr)*100;
+						}else {
+							revenueGrowth = -100;
+						}
+					}
+					
+					int startNewCustomerNr = nrOfNewCustomersForWorkingDays.get(nrOfNewCustomersForWorkingDays.size() - 1);
+					int endNewCustomerNr = nrOfNewCustomersForWorkingDays.get(0);
+					int incNewCustomers = startNewCustomerNr - endNewCustomerNr;
+					double newCustomerGrowth;
+					if(incNewCustomers == 0) {
+						newCustomerGrowth = 0;
+					}else {
+						if(startNewCustomerNr != 0) {
+							newCustomerGrowth = (incNewCustomers/startNewCustomerNr)*100;
+						}else {
+							newCustomerGrowth = -100;
+						}
+					}
+					
+					int startNoShowsNr = nrOfAppointmentsNoShows.get(nrOfAppointmentsNoShows.size() - 1);
+					int endNoShowsNr = nrOfAppointmentsNoShows.get(0);
+					int incNoShows = startNoShowsNr - endNoShowsNr;
+					double noShowGrowth;
+					if(incNoShows == 0) {
+						noShowGrowth = 0;
+					}else {
+						if(startNoShowsNr != 0) {
+							noShowGrowth = (incNoShows/startNoShowsNr)*100;
+						}else {
+							noShowGrowth = -100;
+						}
+					}
+					
+					super.addModelCollectionToView("lastWorkingDates", lastWorkingDates);
+
+					super.addModelCollectionToView("nrOfAppointmentsNoShows", nrOfAppointmentsNoShows);
+					super.addModelCollectionToView("noShowGrowth", noShowGrowth);
+					
+					super.addModelCollectionToView("nrOfNewCustomersForWorkingDays", nrOfNewCustomersForWorkingDays);
+					super.addModelCollectionToView("newCustomerGrowth", newCustomerGrowth);
+					
+					super.addModelCollectionToView("nrOfRevenueForWorkingDays", nrOfRevenueForWorkingDays);
+					super.addModelCollectionToView("revenueGrowth", revenueGrowth);
+
+					super.addModelCollectionToView("nrOfVisitsForWorkingDays", nrOfVisitsForWorkingDays);
+					super.addModelCollectionToView("visitsGrowth", visitGrowth);
 				}
-				
+
 				Period periodOfThisYear = DateUtil.getPeriodBetween(DateUtil.getBegginingOfYear(), new Date());
 				
 				List<Integer> allNewCustomersForEachMonth = new ArrayList<>();
@@ -216,7 +347,9 @@ public class HomeModelController extends ModelControllerImpl{
 					
 					Date beginMonthDate = DateUtil.getCurrentDateByMonthAndDay(month, 1);
 										
-					Date endMonthDate = DateUtil.getCurrentDateByMonthAndDay(month, DateUtil.getCalendarFromDate(beginMonthDate).getActualMaximum(Calendar.DAY_OF_MONTH));
+					Date endMonthDate = DateUtil.getCurrentDateByMonthAndDay(month, 
+							DateUtil.getCalendarFromDate(beginMonthDate).getActualMaximum(Calendar.DAY_OF_MONTH));
+					
 					Integer countBetweenDates = 0;
 					countBetweenDates = accountService.countByEnabledAndActiveAndCustomer_RegisterdateBetween(true,true, beginMonthDate, endMonthDate);
 					allNewCustomersForEachMonth.add(countBetweenDates);
@@ -225,7 +358,9 @@ public class HomeModelController extends ModelControllerImpl{
 				if(!allNewCustomersForEachMonth.isEmpty()) {
 					super.addModelCollectionToView("allNewCustomers", allNewCustomersForEachMonth);
 				}
-					
+				
+				
+				super.addModelCollectionToView("isMorning", DateUtil.getCalendarFromDate(new Date()).get(Calendar.HOUR_OF_DAY) <= 10 ? true : false);
 				
 			});
 		}
