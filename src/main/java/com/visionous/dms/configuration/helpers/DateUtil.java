@@ -77,6 +77,23 @@ public class DateUtil {
 		cal.set(Calendar.DAY_OF_MONTH, 0);
 		return cal.getTime();
 	}
+	public static Date getBeginingOfDay(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		return cal.getTime();
+	}
+	
+	public static Date getEndOfDay(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 60);
+		cal.set(Calendar.SECOND, 0);
+		return cal.getTime();
+	}
 	
 	public static Date getCurrentDateByMonthAndDay(int month, int day) {
 		Calendar cal = Calendar.getInstance();
@@ -84,6 +101,12 @@ public class DateUtil {
 		cal.set(Calendar.MONTH, month);
 		cal.set(Calendar.DAY_OF_MONTH, day);
 		return cal.getTime();
+	}
+	
+	public static int getNrDayOfWeek(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return cal.get(Calendar.DAY_OF_WEEK);
 	}
 	
 	public static Calendar getCalendarFromDate(Date date) {
@@ -147,6 +170,18 @@ public class DateUtil {
 	public static Date addMinutes(Date currentDate, int minutesNr) {
 		Calendar temp = DateUtil.getCalendarFromDate(currentDate);
 		temp.add(Calendar.MINUTE, temp.get(Calendar.MINUTE) + minutesNr);
+		return temp.getTime();
+	}
+	
+	public static Date addDays(Date currentDate, int daysNr) {
+		Calendar temp = DateUtil.getCalendarFromDate(currentDate);
+		temp.add(Calendar.DAY_OF_MONTH, temp.get(Calendar.DAY_OF_MONTH) + daysNr);
+		return temp.getTime();
+	}
+	
+	public static Date subtractDays(Date currentDate, int daysNr) {
+		Calendar temp = DateUtil.getCalendarFromDate(currentDate);
+		temp.add(Calendar.DAY_OF_MONTH, -1*daysNr);
 		return temp.getTime();
 	}
 	

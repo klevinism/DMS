@@ -1,4 +1,125 @@
 <div class="row" th:fragment="home">
+			  <div class="col-12 ">
+				<div class="page-header" style="border:none;" th:with="size = ${#lists.size(lastWorkingDates)},
+                        												yesterday = ${lastWorkingDates[size-1]}">
+					<h5 class="page-title" th:if="${isYesterday != null}">[[#{YesterdaysOverview}]]</h5>
+					<h5 class="page-title" th:if="${isYesterday == null}">[[#{OverviewFor}]] [[${yesterday}]]</h5>
+					<small class="text-muted pt-1 d-block" >[[#{HereIsQuickOverview}]] [[#{Yesterday}]]</small>
+				</div>
+			  </div>
+			  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+                <div class="card card-statistics">
+					<div class="card-body pb-0 clearfix" th:with="incrSign = ${visitsGrowth > 0 ? '+' : visitsGrowth < 0 ? '-' : ''},
+						incrText = ${visitsGrowth > 0 ? 'IncreasedBy' : visitsGrowth < 0 ? 'DecreasedBy' : 'NoDifference'},
+						incrTextClass = ${visitsGrowth > 0 ? 'text-success' : visitsGrowth < 0 ? 'text-danger' : 'text-muted'},
+						incrPercNoSign = ${visitsGrowth >= 0 ? visitsGrowth : #strings.substring(visitsGrowth,1,#strings.length(visitsGrowth)-2)}">
+										  
+                      <div class="float-left">
+                        <p class="mb-0 text-left">[[#{Visits}]] 
+                        	<small data-toggle="tooltip" data-html="true" th:title="#{YesterdaysTotalVisits}"><i class="mdi mdi-alert-octagon " aria-hidden="true"></i></small>
+                        </p>
+                        <div class="d-flex align-items-center" th:with="size = ${#lists.size(nrOfVisitsForWorkingDays)},
+                        												visitsYesterday = ${nrOfVisitsForWorkingDays[size-1]}">
+	                      <h4 class="font-weight-semibold">[[${visitsYesterday}]]</h4>
+	                      <h6 th:class="${incrTextClass}+' font-weight-semibold ml-4'">[[${visitsGrowth}]]%</h6>
+	                    </div>
+	                    <small class="text-muted mt-n1 d-block">[[#{__${incrText}__}]] [[${incrPercNoSign}]]% 
+	                    	<small data-toggle="tooltip" data-html="true" th:title="#{ComparedToSevenDaysPrior}"><i class="mdi mdi-alert-octagon " aria-hidden="true"></i></small>
+	                    </small>
+                      </div>
+                      <div class="float-right mb-0">
+                        <i class="fa fa-stethoscope text-primary icon-lg m-2"></i>
+                      </div>                      
+                    </div>
+                    <canvas class="mt-2 chartjs-render-monitor" id="visitsYesterdayGraph" height="45" style="display: block;" width="260"></canvas>
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+                <div class="card card-statistics">
+                  <div class="card-body pb-0" th:with="incrSign = ${revenueGrowth > 0 ? '+' : revenueGrowth < 0 ? '-' : ''},
+							incrText = ${revenueGrowth > 0 ? 'IncreasedBy' : revenueGrowth < 0 ? 'DecreasedBy' : 'NoDifference'},
+							incrTextClass = ${revenueGrowth > 0 ? 'text-success' : revenueGrowth < 0 ? 'text-danger' : 'text-muted'},
+							incrPercNoSign =  ${revenueGrowth >= 0 ? revenueGrowth : #strings.substring(revenueGrowth,1,#strings.length(revenueGrowth)-2)}">
+							
+                      <div class="float-left">
+                        <p class="mb-0 text-left">[[#{Revenue}]]
+                        	<small data-toggle="tooltip" data-html="true" th:title="#{YesterdaysTotalRevenue}"><i class="mdi mdi-alert-octagon " aria-hidden="true"></i></small>
+                        </p>
+                        <div class="d-flex align-items-center" th:with="size = ${#lists.size(nrOfRevenueForWorkingDays)},
+                        												revenueYesterday = ${nrOfRevenueForWorkingDays[size-1]}">
+	                      <h4 class="font-weight-semibold">[[#{currency.ALL}]] [[${#numbers.formatDecimal(revenueYesterday, 0,'COMMA', 0,'POINT')}]]</h4>
+	                      <h6 th:class="${incrTextClass}+' font-weight-semibold ml-4'">[[${revenueGrowth}]]%</h6>
+	                    </div>
+	                    <small class="text-muted mt-n1 d-block">[[#{__${incrText}__}]] [[${incrPercNoSign}]]% 
+	                    	<small data-toggle="tooltip" data-html="true" th:title="#{ComparedToSevenDaysPrior}"><i class="mdi mdi-alert-octagon " aria-hidden="true"></i></small>
+	                    </small>
+                      </div>
+                      <div class="float-right mb-0">
+                        <i class="mdi mdi-cash-multiple text-success icon-lg"></i>
+                      </div>
+                  </div>
+                  <canvas class="mt-2 chartjs-render-monitor" id="revenueYesterdayGraph" height="45" style="display: block;" width="260"></canvas>
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card" >
+                <div class="card card-statistics">
+                  <div class="card-body pb-0" th:with="incrSign = ${newCustomerGrowth > 0 ? '+' : newCustomerGrowth < 0 ? '-' : ''},
+						incrText = ${newCustomerGrowth > 0 ? 'IncreasedBy' : newCustomerGrowth < 0 ? 'DecreasedBy' : 'NoDifference'},
+						incrTextClass = ${newCustomerGrowth > 0 ? 'text-success' : newCustomerGrowth < 0 ? 'text-danger' : 'text-muted'},
+						incrPercNoSign =  ${newCustomerGrowth >= 0 ? newCustomerGrowth : #strings.substring(newCustomerGrowth,1,#strings.length(newCustomerGrowth)-2)}">
+						
+                      <div class="float-left">
+                        <p class="mb-0 text-left">[[#{NewCustomers}]]
+                        	<small data-toggle="tooltip" data-html="true" th:title="#{YesterdaysTotalNewCustomers}"><i class="mdi mdi-alert-octagon " aria-hidden="true"></i></small>
+                        </p>
+                        <div class="d-flex align-items-center" th:with="size = ${#lists.size(nrOfNewCustomersForWorkingDays)},
+                        												newCustomerYesterday = ${nrOfNewCustomersForWorkingDays[size-1]}">
+	                      <h4 class="font-weight-semibold">[[${newCustomerYesterday}]]</h4>
+	                      <h6 th:class="${incrTextClass}+' font-weight-semibold ml-4'">[[${newCustomerGrowth}]]%</h6>
+	                    </div>
+	                    <small class="text-muted mt-n1 d-block">[[#{__${incrText}__}]] [[${incrPercNoSign}]]% 
+	                    	<small data-toggle="tooltip" data-html="true" th:title="#{ComparedToSevenDaysPrior}"><i class="mdi mdi-alert-octagon " aria-hidden="true"></i></small>
+	                    </small>
+                      </div>
+                      <div class="float-right mb-0">
+                        <i class="mdi mdi-account-multiple text-warning icon-lg"></i>
+                      </div>
+                  </div>
+                  <canvas class="mt-2 chartjs-render-monitor" id="newPatientsYesterdayGraph" height="45" style="display: block;" width="260"></canvas>
+                  </div>
+              </div>
+              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+                <div class="card card-statistics">
+                  <div class="card-body pb-0" th:with="incrSign = ${noShowGrowth > 0 ? '+' : noShowGrowth < 0 ? '-' : ''},
+					incrText = ${noShowGrowth > 0 ? 'IncreasedBy' : noShowGrowth < 0 ? 'DecreasedBy' : 'NoDifference'},
+					incrTextClass = ${noShowGrowth > 0 ? 'text-success' : noShowGrowth < 0 ? 'text-danger' : 'text-muted'},
+					incrPercNoSign = ${noShowGrowth >= 0 ? noShowGrowth : #strings.substring(noShowGrowth,1,#strings.length(noShowGrowth)-2)}">
+					
+                      <div class="float-left">
+                        <p class="mb-0 text-left">[[#{NoShows}]]
+                        	<small data-toggle="tooltip" data-html="true" th:title="#{YesterdaysTotalNoShows}"><i class="mdi mdi-alert-octagon " aria-hidden="true"></i></small>
+                        </p>
+                        <div class="d-flex align-items-center" th:with="size = ${#lists.size(nrOfAppointmentsNoShows)},
+                        												noShowsYesterday = ${nrOfAppointmentsNoShows[size-1]}">
+	                      <h4 class="font-weight-semibold">[[${noShowsYesterday}]]</h4>
+	                      <h6 th:class="${incrTextClass}+' font-weight-semibold ml-4'">[[${noShowGrowth}]]%</h6>
+	                    </div>
+	                    <small class="text-muted mt-n1 d-block">[[#{__${incrText}__}]] [[${incrPercNoSign}]]%  
+	                    	<small data-toggle="tooltip" data-html="true" th:title="#{ComparedToSevenDaysPrior}"><i class="mdi mdi-alert-octagon " aria-hidden="true"></i></small>
+	                    </small>
+                      </div>
+                      <div class="float-right mb-0">
+                        <i class="mdi mdi-calendar-remove text-danger icon-lg"></i>
+                      </div>
+                  </div>
+                  <canvas class="mt-2 chartjs-render-monitor" id="noShowsYesterdayGraph" height="45" style="display: block;" width="260"></canvas>
+                </div>
+              </div>
+              <div class="col-12 ">
+				<div class="page-header" style="border:none;">
+					<h5 class="page-title">[[#{Overall}]]</h5>
+				</div>
+			  </div>
    <div class="col-md-8 grid-margin stretch-card">
      <div class="card" >
      		<div class="card-body">
@@ -39,7 +160,6 @@
 					        <hr>
 					        <div class="row">
 	        					<div class="col-md-12 grid-margin">
-	        						<h3>[[#{Overall}]] </h3>
 	        						
 									<canvas id="horizontalVisitsBar"></canvas>
 	        						
@@ -61,7 +181,6 @@
 						    <hr>
 					        <div class="row">
 	        					<div class="col-md-12 grid-margin">
-	        						<h4>[[#{Overall}]]</h4>
 		       						<canvas id="horizontalAppointmentsBar"></canvas>
 	        					</div>
 	        					<div class="col-md-12 grid-margin">
@@ -86,7 +205,7 @@
 		 <div class="row">
 
    			<div class="col-md-12 grid-margin">
-   				<h4>[[#{Overall}]] <small>[[#{VisitBased}]]</small></h4>
+   				<h4>[[#{VisitBased}]]<small></small></h4>
 				
    				<div class="col-md-12 grid-margin tbl-overflow" style="max-height: 25vh;" th:if="${lastVisitList != null}">
 					<canvas id="pieCustomerChart"></canvas>
@@ -121,7 +240,6 @@
 	        	format: 'DD/MM/YYYY'       		
 	        }, function(start, end, label) {
 	        	fireDateChange(start,end);
-	            console.log(new Date(start).toISOString(), new Date(end).toISOString());
 	        });
 	     
      	}
@@ -140,8 +258,212 @@
 	 	var customerLabels = [""+/*[[#{New}]]*/"", ""+/*[[#{Returning}]]*/ ""];
 	 	var allCustomer = [[${allCustomers}]];
 	 	
- 	 	var thisYearCustomerLabel = /*[[#{New}]]+''+[[#{Customers}]]*/ +"";
+ 	 	var thisYearCustomerLabel = /*[[#{New}]]*/ +"";
 	 	var thisYearCustomerValues = [[${allNewCustomers}]];
+	 	
+	 	var nrOfAppointmentsNoShows = [[${nrOfAppointmentsNoShows}]];
+	 	var noShowGrowth = /*[[${noShowGrowth}]]*/;
+	 	
+	 	var nrOfVisitsForWorkingDays = [[${nrOfVisitsForWorkingDays}]];
+	 	var visitsGrowth = /*[[${visitsGrowth}]]*/;
+	 	
+	 	var nrOfNewCustomersForWorkingDays = [[${nrOfNewCustomersForWorkingDays}]];
+	 	var newCustomerGrowth = /*[[${newCustomerGrowth}]]*/;
+	 	
+	 	var nrOfRevenueForWorkingDays = [[${nrOfRevenueForWorkingDays}]];
+
+	 	var revenueGrowth = /*[[${revenueGrowth}]]*/;
+	 	
+	 	var lastWorkingDates = [[${lastWorkingDates}]];
+	 	
+	 	var noShowName = /*[[#{NoShows}]]*/'';
+	 	var revenueName = /*[[#{Revenue}]]*/'';
 	 /*]]>*/
+     </script>
+     <script>
+     	var lineGraphCardOptions = { 
+                responsive: true,
+                elements: {
+                    point: {
+                        radius: 1.5
+                    },
+                    line: {
+                        tension: 0
+                    }
+                },
+	            scales: {
+	                xAxes: [{
+	                    display: false
+	                }],
+	                yAxes: [{
+	                    display: false
+	                }]
+	            },
+	            legend: false,
+	            tooltips: {
+	                // Disable the on-canvas tooltip
+	                enabled: false,
+	                intersect: false,
+
+	                custom: function(tooltipModel) {
+	                    // Tooltip Element
+	                    var tooltipEl = document.getElementById('chartjs-tooltip');
+
+	                    // Create element on first render
+	                    if (!tooltipEl) {
+	                        tooltipEl = document.createElement('div');
+	                        tooltipEl.id = 'chartjs-tooltip';
+	                        tooltipEl.innerHTML = '<table></table>';
+	                        document.body.appendChild(tooltipEl);
+	                    }
+
+	                    // Hide if no tooltip
+	                    if (tooltipModel.opacity === 0) {
+	                        tooltipEl.style.opacity = 0;
+	                        return;
+	                    }
+
+	                    // Set caret Position
+	                    tooltipEl.classList.remove('above', 'below', 'no-transform');
+	                    if (tooltipModel.yAlign) {
+	                        tooltipEl.classList.add(tooltipModel.yAlign);
+	                    } else {
+	                        tooltipEl.classList.add('no-transform');
+	                    }
+
+	                    function getBody(bodyItem) {
+	                        return bodyItem.lines;
+	                    }
+
+	                    // Set Text
+	                    if (tooltipModel.body) {
+	                        var titleLines = tooltipModel.title || [];
+	                        var bodyLines = tooltipModel.body.map(getBody);
+
+	                        var innerHtml = '<thead>';
+
+	                        titleLines.forEach(function(title) {
+	                            innerHtml += '<tr><th>' + title + '</th></tr>';
+	                        });
+	                        innerHtml += '</thead><tbody>';
+
+	                        bodyLines.forEach(function(body, i) {
+	                            var text = body[0].split(":");
+	                            var body = text[1].length > 3 ? text[0]+ " " +text[1].replace(/\B(?=(\d{3})+(?!\d))/g, ",") : text.join(" "); 
+	                            
+	                            var colors = tooltipModel.labelColors[i];
+	                            var style = 'background:' + colors.backgroundColor;
+	                            style += '; border-color:' + colors.borderColor;
+	                            style += '; border-width: 2px';
+	                            var span = '<span style="' + style + '"></span>';
+	                            innerHtml += '<tr><td>' + span + body + '</td></tr>';
+	                        });
+	                        innerHtml += '</tbody>';
+
+	                        var tableRoot = tooltipEl.querySelector('table');
+	                        tableRoot.innerHTML = innerHtml;
+	                    }
+
+	                    // `this` will be the overall tooltip
+	                    var position = this._chart.canvas.getBoundingClientRect();
+	                    var width= Math.max( document.body.scrollWidth, document.body.offsetWidth);
+	                    
+	                    // Display, position, and set styles for font
+	                    tooltipEl.style.opacity = 1;
+	                    tooltipEl.style.position = 'absolute';
+	                    if((position.right + window.pageXOffset + tooltipModel.caretX)+50 >= window.innerWidth){
+	                        tooltipEl.style.left = (position.left + window.pageXOffset + tooltipModel.caretX) - (this._view.width)  + 'px';    
+	                    }else{
+	                        tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
+	                    }
+	                    
+	                    tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+	                    tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily;
+	                    tooltipEl.style.fontSize = tooltipModel.bodyFontSize + 'px';
+	                    tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle;
+	                    tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
+	                    tooltipEl.style.pointerEvents = 'none';
+	                }
+	        },
+            layout: {
+                yAlign: 'bottom',
+                padding: {
+                    left: 0,
+                    right: 0,
+                    top: 2,
+                    bottom: 0
+                },
+       		}
+   		};
+     
+     	var ctx = document.getElementById('visitsYesterdayGraph').getContext('2d');
+		// For a line chart
+		var mylineChart = new Chart(ctx, {
+		    type: 'line',
+	         // The data for our dataset
+	         data: {
+              labels: lastWorkingDates,
+              datasets: [{
+                  label: visitsName,
+                  backgroundColor: '#90ceff80',
+                  borderColor: '#2196f3',
+                  data: nrOfVisitsForWorkingDays
+              }]
+          },
+          options: lineGraphCardOptions
+		});
+		
+     	var ctx = document.getElementById('revenueYesterdayGraph').getContext('2d');
+		// For a line chart
+		
+		var mylineChart = new Chart(ctx, {
+		    type: 'line',
+	         // The data for our dataset
+	         data: {
+              labels: lastWorkingDates,
+              datasets: [{
+                  label: revenueName,
+                  backgroundColor: '#76e0bb82',
+                  borderColor: '#1bca8c',
+                  data: nrOfRevenueForWorkingDays
+              }]
+          },
+          options: lineGraphCardOptions
+		});
+		
+		
+     	var ctx = document.getElementById('newPatientsYesterdayGraph').getContext('2d');
+		// For a line chart
+		var mylineChart = new Chart(ctx, {
+		    type: 'line',
+	         // The data for our dataset
+	         data: {
+              labels: lastWorkingDates,
+              datasets: [{
+                  label: thisYearCustomerLabel,
+                  backgroundColor: '#f5d79585',
+                  borderColor: '#ffaf00',
+                  data: nrOfNewCustomersForWorkingDays
+              }]
+          },
+          options: lineGraphCardOptions
+		});
+		
+     	var ctx = document.getElementById('noShowsYesterdayGraph').getContext('2d');
+		// For a line chart
+		var mylineChart = new Chart(ctx, {
+		    type: 'line',
+	         // The data for our dataset
+	         data: {
+              labels: lastWorkingDates,
+              datasets: [{
+                  label: noShowName,
+                  backgroundColor: '#f5918a87',
+                  borderColor: '#ff6258',
+                  data: nrOfAppointmentsNoShows
+              }]
+          },
+          options: lineGraphCardOptions
+		});
      </script>
 </div>

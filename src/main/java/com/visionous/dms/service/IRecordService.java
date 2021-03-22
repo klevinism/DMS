@@ -77,4 +77,18 @@ public interface IRecordService {
 	 * @return
 	 */
 	Iterable<Record> findAllOrderByServicedateDesc();
+
+	/**
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	Integer countByServicedateBetween(Date startDate, Date endDate);
+
+	/**
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	Integer sumOfReceipts(Date startDate, Date endDate);
 }
