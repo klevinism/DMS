@@ -81,14 +81,10 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 		String template= null;
         Account account = event.getAccount();
         String recipientAddress = account.getEmail();
-        StringBuilder fromAddress= new StringBuilder();
+        String fromAddress= this.globalSettings.getBusinessEmail();
         String token = null;
         String rawPass = account.getPassword();
          
-        Optional<Role> roleAdmin = roleService.findByName("ADMIN");
-        roleAdmin.ifPresent(role -> {
-        	fromAddress.append(role.getAccounts().get(0).getEmail());
-        });
         
         Optional<Verification> verification = verificationService.findByAccount_id(account.getId());
         
