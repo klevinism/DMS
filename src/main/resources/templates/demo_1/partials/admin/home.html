@@ -4,8 +4,10 @@
                         												yesterday = ${lastWorkingDates[size-1]}">
 					<h5 class="page-title" th:if="${isYesterday != null}">[[#{YesterdaysOverview}]]</h5>
 					<h5 class="page-title" th:if="${isYesterday == null}">[[#{OverviewFor}]] [[${yesterday}]]</h5>
-					<small class="text-muted pt-1 d-block" >[[#{HereIsQuickOverview}]] [[#{Yesterday}]]</small>
+					<small class="text-muted pt-1 d-block" th:if="${isYesterday != null}">[[#{HereIsQuickOverview}]] [[${isYesterday != null ? __#{Yesterday}__:__#{yesterday}__}]]</small>
+
 				</div>
+				
 			  </div>
 			  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
                 <div class="card card-statistics">

@@ -110,7 +110,13 @@ function getDiffBetweenMinutes(dt2, dt1)
   diff /= 60;
   return Math.abs(Math.round(diff));
  }
- 
+
+Date.prototype.subtractYears = function(year){
+    var date = new Date(this.valueOf());
+	date.setFullYear(date.getFullYear() - year);
+	return date;
+}
+
 Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);

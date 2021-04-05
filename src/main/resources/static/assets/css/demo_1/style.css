@@ -893,3 +893,286 @@ table.dataTable.no-footer {
    	left: 50%;
    	transform: translate(-50%, -50%);
  }
+
+ 
+ /* ---- Step wizard --- */
+ /* Wizard */
+.wizard {
+  display: block;
+  width: 100%; }
+  .wizard a {
+    outline: 0; }
+  .wizard ul {
+    list-style: none !important;
+    padding: 0;
+    margin: 0; }
+    .wizard ul > li {
+      display: block;
+      padding: 0; }
+  .wizard > .steps {
+    position: relative;
+    display: block;
+    width: 100%; }
+    .wizard > .steps .current-info {
+      position: absolute;
+      left: -999em; }
+    .wizard > .steps .number {
+      font-size: 0.875rem; }
+    .wizard > .steps > ul > li {
+      width: 33%;
+      float: left;
+      text-align: center; }
+    .wizard > .steps a {
+      display: block;
+      width: auto;
+      margin: 0 0.5em 0.5em;
+      padding: 1em;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 0.875rem;
+      font-family: "roboto", sans-serif; }
+      .wizard > .steps a:hover {
+        display: block;
+        width: auto;
+        margin: 0 0.5em 0.5em;
+        padding: 1em;
+        text-decoration: none;
+        border-radius: 5px; }
+      .wizard > .steps a:active {
+        display: block;
+        width: auto;
+        margin: 0 0.5em 0.5em;
+        padding: 1em;
+        text-decoration: none;
+        border-radius: 5px; }
+    .wizard > .steps .disabled a {
+      background: #f7f7f9;
+      color: #6c757d;
+      cursor: default; }
+      .wizard > .steps .disabled a:hover {
+        background: #f7f7f9;
+        color: #6c757d;
+        cursor: default; }
+      .wizard > .steps .disabled a:active {
+        background: #f7f7f9 e;
+        color: #6c757d;
+        cursor: default; }
+    .wizard > .steps .current a {
+      background: #2196f3;
+      color: #ffffff;
+      cursor: default; }
+      .wizard > .steps .current a:hover {
+        background: #2196f3;
+        color: #ffffff;
+        cursor: default; }
+      .wizard > .steps .current a:active {
+        background: #2196f3;
+        color: #ffffff;
+        cursor: default; }
+    .wizard > .steps .done a {
+      background: #82c4f8;
+      color: #ffffff; }
+      .wizard > .steps .done a:hover {
+        background: #82c4f8;
+        color: #ffffff; }
+      .wizard > .steps .done a:active {
+        background: #82c4f8;
+        color: #ffffff; }
+    .wizard > .steps .error a {
+      background: #ff6258;
+      color: #fff; }
+      .wizard > .steps .error a:hover {
+        background: #ff6258;
+        color: #fff; }
+      .wizard > .steps .error a:active {
+        background: #ff6258;
+        color: #fff; }
+  .wizard > .content {
+    display: block;
+    margin: 0.5em;
+    position: relative;
+    width: auto;
+    border-radius: 5px; }
+    .wizard > .content > .title {
+      position: absolute;
+      left: -999em; }
+    .wizard > .content > .body {
+      float: left;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding: 2.5%; }
+      .wizard > .content > .body ul {
+        list-style: disc !important; }
+        .wizard > .content > .body ul > li {
+          display: list-item; }
+      .wizard > .content > .body > iframe {
+        border: 0 none;
+        width: 100%;
+        height: 100%; }
+      .wizard > .content > .body input {
+        display: block;
+        border: 1px solid #dee2e6; }
+      .wizard > .content > .body input[type="checkbox"] {
+        display: inline-block; }
+      .wizard > .content > .body input.error {
+        background: #fbe3e4;
+        border: 1px solid #ffc2be;
+        color: #ff6258; }
+      .wizard > .content > .body label {
+        display: inline-block;
+        margin-bottom: 0.5em; }
+      .wizard > .content > .body label.error {
+        color: #ff6258;
+        display: inline-block;
+        margin-left: 1.5em; }
+  .wizard > .actions {
+    padding-top: 20px;
+    position: relative;
+    display: block;
+    text-align: right;
+    width: 100%; }
+    .wizard > .actions > ul {
+      display: inline-block;
+      text-align: right; }
+      .wizard > .actions > ul > li {
+        float: left;
+        margin: 0 0.5em; }
+  .wizard.vertical > .steps {
+    display: inline;
+    float: left;
+    width: 30%; }
+    .wizard.vertical > .steps > ul > li {
+      float: none;
+      width: 100%;
+      text-align: left; }
+  .wizard.vertical > .content {
+    display: inline;
+    float: left;
+    margin: 0 2.5% 0.5em;
+    width: 65%; }
+  .wizard.vertical > .actions {
+    display: inline;
+    float: right;
+    margin: 0 2.5%;
+    width: 95%; }
+    .wizard.vertical > .actions > ul > li {
+      margin: 0 0 0 1em; }
+
+.tabcontrol {
+  display: block;
+  width: 100%;
+  overflow: hidden; }
+  .tabcontrol a {
+    outline: 0; }
+  .tabcontrol ul {
+    list-style: none !important;
+    padding: 0;
+    margin: 0; }
+    .tabcontrol ul > li {
+      display: block;
+      padding: 0; }
+  .tabcontrol > .steps {
+    position: relative;
+    display: block;
+    width: 100%; }
+    .tabcontrol > .steps .current-info {
+      position: absolute;
+      left: -999em; }
+    .tabcontrol > .steps > ul {
+      position: relative;
+      margin: 6px 0 0;
+      top: 1px;
+      z-index: 1; }
+      .tabcontrol > .steps > ul > li {
+        float: left;
+        margin: 5px 2px 0 0;
+        padding: 1px;
+        -webkit-border-top-left-radius: 5px;
+        -webkit-border-top-right-radius: 5px;
+        -moz-border-radius-topleft: 5px;
+        -moz-border-radius-topright: 5px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px; }
+        .tabcontrol > .steps > ul > li:hover {
+          background: #edecec;
+          border: 1px solid #dee2e6;
+          padding: 0; }
+        .tabcontrol > .steps > ul > li > a {
+          color: #8ba2b5;
+          display: inline-block;
+          border: 0 none;
+          margin: 0;
+          padding: 10px 30px;
+          text-decoration: none; }
+          .tabcontrol > .steps > ul > li > a:hover {
+            text-decoration: none; }
+      .tabcontrol > .steps > ul > li.current {
+        background: #ffffff;
+        border: 1px solid #dee2e6;
+        border-bottom: 0 none;
+        padding: 0 0 1px;
+        margin-top: 0; }
+        .tabcontrol > .steps > ul > li.current > a {
+          padding: 15px 30px 10px; }
+  .tabcontrol > .content {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 35em;
+    overflow: hidden;
+    border-top: 1px solid #dee2e6;
+    padding-top: 20px; }
+    .tabcontrol > .content > .title {
+      position: absolute;
+      left: -999em; }
+    .tabcontrol > .content > .body {
+      float: left;
+      position: absolute;
+      width: 95%;
+      height: 95%;
+      padding: 2.5%; }
+      .tabcontrol > .content > .body ul {
+        list-style: disc !important; }
+        .tabcontrol > .content > .body ul > li {
+          display: list-item; }
+
+.item-purchase-banner {
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  height: 55px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 10px 15px;
+  z-index: 9990;
+  background: #000;
+  color: #ffffff; }
+  .item-purchase-banner .banner-text {
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: 15px;
+    font-weight: 400;
+    color: #ffffff; }
+    .rtl .item-purchase-banner .banner-text {
+      margin-right: auto;
+      margin-left: 15px; }
+  .item-purchase-banner .banner-button {
+    background-image: linear-gradient(109.6deg, #0b85ea 11.2%, #223fc9 91.1%);
+    border: none;
+    color: #ffffff; }
+  .item-purchase-banner .toggler-close {
+    margin-left: auto;
+    color: #ffffff; }
+    .rtl .item-purchase-banner .toggler-close {
+      margin-right: auto;
+      margin-left: 0; }
+
+/*-------------------------------------------------------------------*/
