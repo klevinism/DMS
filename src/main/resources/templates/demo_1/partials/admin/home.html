@@ -4,7 +4,7 @@
                         												yesterday = ${lastWorkingDates[size-1]}">
 					<h5 class="page-title" th:if="${isYesterday != null}">[[#{YesterdaysOverview}]]</h5>
 					<h5 class="page-title" th:if="${isYesterday == null}">[[#{OverviewFor}]] [[${yesterday}]]</h5>
-					<small class="text-muted pt-1 d-block" th:if="${isYesterday != null}">[[#{HereIsQuickOverview}]] [[${isYesterday != null ? __#{Yesterday}__:__#{yesterday}__}]]</small>
+					<small class="text-muted pt-1 d-block" th:if="${isYesterday != null}">[[#{HereIsQuickOverview}]] [[${isYesterday != null ? '__#{Yesterday}__' : '__#{yesterday}__'}]]</small>
 
 				</div>
 				
@@ -122,7 +122,7 @@
 					<h5 class="page-title">[[#{Overall}]]</h5>
 				</div>
 			  </div>
-   <div class="col-md-8 grid-margin stretch-card">
+   <div class="col-md-9 grid-margin stretch-card">
      <div class="card" >
      		<div class="card-body">
      			<div class="row">
@@ -136,7 +136,7 @@
 					        <hr>
 					        <div class="row">
 					        	<div class="col-md-12 grid-margin">
-	        						<select id="multipleSelectPersonnel" multiple="multiple" th:if="${allPersonnel}">
+	        						<select id="multipleSelectPersonnel" th:if="${allPersonnel}">
 									  <option th:each="personnel: ${allPersonnel}" th:value="${personnel.id}" th:text="${personnel.name} + ', ' + ${personnel.surname}"></option>
 									</select>
 	        					</div>
@@ -147,7 +147,7 @@
 						<div class="form-group">      
 					       <div class="d-flex flex-column flex-lg-row">
 					       	  <div class="data-wrapper d-flex mt-2 mt-lg-0">
-					    	  	<h3>[[#{Visits}]] </h3>
+					    	  	<h3>[[#{Visits}]] & [[#{Appointments}]]</h3>
 					    	  </div>
 					    	  <div class="ml-lg-auto">
 				        		<div class="input-group">
@@ -160,69 +160,49 @@
 							  </div>
 						    </div>
 					        <hr>
-					        <div class="row">
-	        					<div class="col-md-12 grid-margin">
-	        						
-									<canvas id="horizontalVisitsBar"></canvas>
-	        						
-	        					</div>
-	        					<div class="col-md-12 grid-margin" >
-	        						
-	        					</div>
-	        				</div>
-				     	</div>
-				     	<div class="form-group">      
-					       <div class="d-flex flex-column flex-lg-row">
-					       	  <div class="data-wrapper d-flex mt-2 mt-lg-0">
-					    	  	<h4>[[#{Appointments}]]</h4>
-					    	  </div>
-					    	  <div class="ml-lg-auto">
-					        		
-							  </div>
-						    </div>
-						    <hr>
-					        <div class="row">
-	        					<div class="col-md-12 grid-margin">
+	        					<div class="col-md-12">
 		       						<canvas id="horizontalAppointmentsBar"></canvas>
 	        					</div>
-	        					<div class="col-md-12 grid-margin">
-	        						
-	        					</div>
-	        				</div>
-				     	</div>
+	        			 </div>
 					</div>
      				</div>
 					
 				</div>
 			</div>
    </div>
-   <div class="col-md-4 grid-margin stretch-card">
-     <div class="card">
-       <div class="card-body d-flex flex-column">
-         <div class="wrapper">
-           <h3>[[#{Customers}]] [[#{ThisYear}]]</h3>
-   		 <hr>
-         </div>
-         
-		 <div class="row">
+   <div class="col-3">
+   <div class="row mb-2">
+   <div class="col-md-12">
+   
+   		<div class="card">
+	       	<div class="card-header p-3">
+	         <h3 class="card-title">[[#{ThisYear}]] <small>[[#{NewCustomers}]]</small></h3>
+	       	</div>
+	       	<div class="card-body">
+	   				<div class="tbl-overflow" th:if="${lastVisitList != null}">
+						<canvas id="lineCustomerChart" style="display: block;" ></canvas>
+	     			</div>
+	   	   	</div>   		    
+       	</div>
+     </div>
+   </div>
+   <div class="row mb-2">
+   	<div class="col-md-12">
 
-   			<div class="col-md-12 grid-margin">
-   				<h4>[[#{VisitBased}]]<small></small></h4>
-				
-   				<div class="col-md-12 grid-margin tbl-overflow" style="max-height: 25vh;" th:if="${lastVisitList != null}">
+     <div class="card">
+       <div class="card-header p-3">
+         <h3 class="card-title">[[#{Visits}]] [[#{ThisYear}]] <small>[[#{CustomerBased}]]</small></h3>
+       </div>
+       <div class="card-body">
+
+   				<div class="tbl-overflow" th:if="${lastVisitList != null}">
 					<canvas id="pieCustomerChart"></canvas>
      			</div>
-   			</div>
-   			<div class="col-md-12 grid-margin">
-				<h4>[[#{New}]]</h4>
-				<div class="col-md-12 grid-margin tbl-overflow" style="max-height: 25vh;" th:if="${lastVisitList != null}">
-      				<canvas id="lineCustomerChart"></canvas>
-     			</div>
-   			</div>
-   		 </div>
+   		</div>
+   		    
        </div>
      </div>
-     
+   </div>
    </div>
   	 <script>
   	 	$(document).ready(function(){
@@ -250,6 +230,8 @@
      <script th:inline="javascript" th:if="${allPersonnel != null}">
 	 /*<![CDATA[*/
 		var visitsName = ""+ /*[[#{Visits}]]*/'';
+		var appointmentsName = ""+ /*[[#{Appointments}]]*/'';
+		
 	 	var list =  [[${nrOfVisitsList}]];
 	 	
 	 	var personnelNames = new Array([[${allPersonnel[0].name}+', '+${allPersonnel[0].surname}]]);	 	

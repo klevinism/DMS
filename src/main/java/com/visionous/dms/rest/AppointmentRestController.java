@@ -274,7 +274,8 @@ public class AppointmentRestController {
     		@RequestParam(name = "endDate", required = true) String endDate){ 
 
         ResponseBody<Map<String,List<Integer>>> result = new ResponseBody<>();
-        
+		String vizits = messageSource.getMessage("Visits", null, LocaleContextHolder.getLocale());
+
         Date start = null;
 		Date end = null;
 		
@@ -311,15 +312,15 @@ public class AppointmentRestController {
 							endingDate = DateUtil.setDayToEndOfYear(start);
 	        			}else{
 							startingDate = DateUtil.setHoursToBegginingOfDay(start);
-							endingDate = DateUtil.setDays(start, daysToAdd);
+							endingDate = DateUtil.addDays(start, daysToAdd);
 						} 
 						
 						Integer records = recordService.countByPersonnelIdAndServicedateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
 
-						start = DateUtil.setDays(start, daysToAdd);
+						start = DateUtil.addDays(start, daysToAdd);
 						recordsForPersonnel.add(records);
 	        		}
-	        		listOfRecords.put(singlePersonnel.get().getAccount().getName(), recordsForPersonnel);
+	        		listOfRecords.put(vizits, recordsForPersonnel);
 	        		
 				}
         	}
@@ -345,7 +346,8 @@ public class AppointmentRestController {
     		@RequestParam(name = "endDate", required = true) String endDate){ 
 
         ResponseBody<Map<String,List<Integer>>> result = new ResponseBody<>();
-        
+		String appointments = messageSource.getMessage("Appointments", null, LocaleContextHolder.getLocale());
+
         Date start = null;
 		Date end = null;
 		
@@ -375,10 +377,10 @@ public class AppointmentRestController {
 						
 						Integer records = appointmentService.countAllByPersonnelIdAndAppointmentDateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
 						
-						start = DateUtil.setDays(start, daysToAdd);
+						start = DateUtil.addDays(start, daysToAdd);
 						recordsForPersonnel.add(records);
 	        		}
-	        		listOfRecords.put(singlePersonnel.get().getAccount().getName(), recordsForPersonnel);
+	        		listOfRecords.put(appointments, recordsForPersonnel);
 				}
         	}
         }
