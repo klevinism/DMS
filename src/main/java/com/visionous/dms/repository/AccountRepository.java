@@ -75,4 +75,10 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 	 */
 	public Optional<Account> findByNameIgnoreCaseAndSurnameIgnoreCaseAndBirthday(String name, String surname,
 			Date birthday);
+
+	/**
+	 * @param phoneNr
+	 * @return
+	 */
+	public Optional<Account> findAllByPhone(Long phoneNr);
 }

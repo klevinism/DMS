@@ -150,4 +150,30 @@ public class RecordService implements IRecordService{
 	public Iterable<Record> findAllOrderByServicedateDesc() {
 		return this.recordRepository.findAllByOrderByServicedateDesc();
 	}
+
+	/**
+	 * @param startDate
+	 * @param endDate
+	 */
+	@Override
+	public Integer countByServicedateBetween(Date startDate, Date endDate) {
+		return this.recordRepository.countByServicedateBetween(startDate, endDate);
+	}
+
+	/**
+	 * @return
+	 */
+	@Override
+	public Integer sumOfReceipts(Date startDate, Date endDate) {
+		return this.recordRepository.sumOfAllReceipts(startDate, endDate);
+	}
+
+	/**
+	 * @param startDate
+	 * @param endDate
+	 * @param customerId
+	 */
+	public List<Record> findAllByServicedateBetweenAndCustomerId(Date startDate, Date endDate, Long customerId) {
+		return this.recordRepository.findAllByServicedateBetweenAndHistory_customerId(startDate, endDate, customerId);
+	}
 }

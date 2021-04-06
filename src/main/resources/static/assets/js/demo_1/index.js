@@ -51,7 +51,7 @@ function getPersonnelAndDateRange(){
 	var dates = $("#appointmentPicker").val().split("-");
 	var set = {
 		date : [dates[0].trim(),dates[1].trim()],
-		personnelsIds: personnelids
+		personnelsIds: [personnelids]
 	}
 	
 	return set;
@@ -64,9 +64,10 @@ function fireDateChange(start, end){
 	$("#appointmentPickerSpinner").show();
 	
 	//Visits
+	removeData(horizontalAppointmentBar);
 	refreshStatistics(dates[0].trim(), dates[1].trim(), personnelAndDateRange["personnelsIds"], function(data){
 		if(data.error != "error"){
-			refreshHorizontalBarChart(data.result[0], personnelAndDateRange["date"]);		
+			refreshHorizontalAppointmentBarChart(data.result[0], personnelAndDateRange["date"]);		
 		}
 	});
 	
@@ -87,9 +88,11 @@ function fireMultiselectChange(element, checked){
 		$("#appointmentPickerSpinner").show();
 		
 		//Visits
+		removeData(horizontalAppointmentBar);
+		
 		refreshStatistics(personnelAndDateRange["date"][0], personnelAndDateRange["date"][1], personnelAndDateRange["personnelsIds"], function(data){
-			if(data.error != "error"){		
-				refreshHorizontalBarChart(data.result[0], personnelAndDateRange["date"]);		
+			if(data.error != "error"){
+				refreshHorizontalAppointmentBarChart(data.result[0], personnelAndDateRange["date"]);		
 			}
 		});
 		

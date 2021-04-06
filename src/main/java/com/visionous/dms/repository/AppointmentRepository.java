@@ -87,4 +87,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>{
 	 */
 	@Query("select t.serviceType.id, t.serviceType.name from Appointment t group by t.serviceType.id, t.serviceType.name order by count(t.serviceType.id) desc")
 	List<Object[]> topAppointmentsByMostUsedServiceType();
+	
 }

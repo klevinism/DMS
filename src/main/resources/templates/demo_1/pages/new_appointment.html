@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+  <div th:replace="demo_1/partials/_header :: header">
+  </div>
+  
+<body>
+
+    <div class="container-scroller">
+      <div class="container-fluid page-body-wrapper full-page-wrapper">
+      
+        <div class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
+          <div class="row w-100">
+          
+            <div class="col-lg-4 mx-auto">
+              <div class="auto-form-wrapper mb-4 " id="appointmentForm">
+              	<div id="example-basic">
+              	
+                <h3 >[[#{Type}]]</h3>
+            	<section>
+	      			<div id="overlay" >
+	      				<div id="backgroundOverlay" style="width:100%; height:100%; opacity:0.6; background:white"></div>
+				    	<i id="spinnerOverlay" class="fa fa-spin fa-spinner fa-3x"></i>
+				    </div>
+			        <button onclick="goNextAuto();" class="btn btn-outline-secondary mb-2">
+				    <div class="item-wrapper d-flex text-left">
+				    
+	                 <div class="status-wrapper d-flex align-items-start pr-3">
+	                   <img class="img-sm rounded-circle" src="https://image.flaticon.com/icons/png/128/2779/2779570.png" >
+	                 </div>
+	                 <div class="text-wrapper">
+	                   <h4 class="d-block mb-1 text-danger">[[#{Emergency}]]</h4>
+	                   <p class="d-block mb-1">
+	                     [[#{FindAppointmentAutomatically}]]
+	                   </p>
+	                 </div>
+	                 
+	                </div>
+	                </button>
+	                
+	                <button  onclick="goNextCustom();" class="btn btn-outline-secondary">
+				    <div class="item-wrapper d-flex text-left">
+	                 <div class="status-wrapper d-flex align-items-start pr-3">
+	                   <img class="img-sm rounded-circle" src="https://images.squarespace-cdn.com/content/v1/5ccc5db816b640627a1eb173/1558713566668-1MEBM37MLJJ6AIIYBR8C/ke17ZwdGBToddI8pDm48kHhlTY0to_qtyxq77jLiHTtZw-zPPgdn4jUwVcJE1ZvWhcwhEtWJXoshNdA9f1qD7T-j82ScS_xjTqFYGqFrT72qZ_E0ELtHpOZiWcSG1QwIMeEVreGuQ8F95X5MZTW1Jw/Agenda-256.png" >
+	                 </div>
+	                 <div class="text-wrapper">
+	                   <h4 class="d-block mb-1 text-primary">[[#{Normal}]]</h4>
+	                   <p class="d-block mb-1">
+	                     [[#{FindAppointmentYourself}]]
+	                   </p>
+	                 </div>
+	                 
+	                </div>
+	                </button>
+	                
+	                <div class="col-md-12" >
+						<div class="alert alert-danger alert-dismissible fade show" role="alert" id="emergencyInfoError" style="display:none">
+						  <p>Alert enter Name and Surname!</p>
+						  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						    <span aria-hidden="true">&times;</span>
+						  </button>
+						</div>
+					</div>
+			    </section>
+			    <h3>[[#{Info}]]</h3>
+			    <section>
+					<div class="row">
+						<div class="col-12">
+							
+							<div class="row">
+							  <div class="col-md-12">
+							    <p>[[#{BasicInformation}]]</p>
+							    <div class="form-group row">
+							      <div class="col-sm-12 input-group" th:title="#{title.yourFullName}">
+							        <input type="text" list="somethingelse" class="form-control" name="firstlastname" id="firstlastname" required th:placeholder="#{Name}+' '+#{Surname}" >
+							        <div class="input-group-append">
+				                       <span class="input-group-text">
+				                         <i class="mdi mdi-account fa-lg"></i>
+				                       </span>
+				                    </div>
+							      </div>
+							    </div>
+							  </div>
+							</div>
+							<div class="row">
+		                        <div class="col-md-6">
+		                          <div class="form-group row">
+		                            <div class="col-sm-12 input-group" th:title="#{Gender}" >
+		                              <select class="form-control" required name="gender" id="gender">
+		                              	<option value=""> [[#{Gender}]] </option>
+		                                <option value="male">[[#{Male}]]</option>
+		                                <option value="female">[[#{Female}]]</option>
+		                              </select>
+		                              <div class="input-group-append">
+				                        <span class="input-group-text">
+				                          <i class="mdi mdi-gender-male-female fa-lg"></i>
+				                        </span>
+				                      </div>
+		                            </div>
+		                          </div>
+		                        </div>
+		                        <div class="col-md-6">
+		                          <div class="form-group row" >
+		                            <div class="col-sm-12">
+		                            <div class="form-group input-group" th:title="#{title.yourBirthday}">
+					                  <input type="text" class="form-control" id="datetimepicker" name="birthday">
+					                  <div class="input-group-append">
+				                        <span class="input-group-text">
+				                          <i class="mdi mdi-cake-variant fa-lg"></i>
+				                        </span>
+				                      </div>
+					      			</div>
+		                            </div>
+		                          </div>
+	                         	</div>
+							 </div>
+							 
+							 <div class="row p-0">
+							    <div class="col-md-12">
+
+							 	<p>[[#{ContactInformation}]]</p>
+								</div>							 
+								<div class="col-md-5">
+		                          <div class="form-group row">
+		                            <div class="col-sm-12 input-group" onclick="toggleLoadButton(this)" th:title="#{title.personalEmail}" >
+		                              <input type="email" class="form-control" name="email" required th:placeholder="#{Email}" id="email" data-toggle="phonenr"  >
+		                              <div class="input-group-append">
+				                        <span class="input-group-text">
+				                          <i class="mdi mdi-at fa-lg"></i>
+				                        </span>
+				                      </div>
+		                            </div>
+		                          </div>
+		                        </div>
+		                        <div class="col-md-2 d-flex justify-content-center ">
+		                            
+		                              [[#{OR}]]
+		                            
+		                        </div>
+		                        <div class="col-md-5">
+		                          <div class="form-group row">
+		                            <div class="col-sm-12 input-group" onclick="toggleLoadButton(this)" th:title="#{title.personalPhoneNr}">
+		                              <input type="number" class="form-control" required name="phonenr" id="phonenr" th:placeholder="#{PhoneNr}" data-toggle="email"  disabled>
+		                              <div class="input-group-append">
+				                        <span class="input-group-text">
+				                          <i class="mdi mdi-phone"></i>
+				                        </span>
+				                      </div> 
+		                            </div>
+		                          </div>
+		                        </div>
+							 </div>
+							<div class="row">
+							<div class="col-md-12" >
+								<div class="alert alert-danger alert-dismissible fade show" role="alert" id="basicInfoError" style="display:none">
+								  <p>Alert enter Name and Surname!</p>
+								  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								    <span aria-hidden="true">&times;</span>
+								  </button>
+								</div>
+							</div>
+				            <div class="col-md-12" style="text-align:right">
+				            	<input type="hidden" id="customerId" value="">
+						    	<button id="contactInfoSubmit" class="btn btn-primary" onclick="contactSubmit(this)" >[[#{action.continue}]]  <i class="fa fa-arrow-right"></i></button>
+				            </div>
+				            </div>
+						</div>
+					</div>
+			    </section>
+			    <h3>[[#{Appointment}]]</h3>
+			    <section>
+ 	             <div class="col-md-12">
+				    <p>[[#{Appointment}]]</p>
+				 </div>
+        	     <div class="row"  id="automaticAppointment" style="display:none">
+        	     	<div class="col-12 alert alert-danger alert-dismissible fade show" role="alert" id="autoAppointmentAlert">
+					  <div class="col-12">
+						  <div class="card-body" id="detailBody">
+					  		<h6 >[[#{Automatic}]] </h6>
+					  		<small>[[#{AvailableDoctorsFound}]]:</small>
+						    <p class="card-text " title="#{DoctorForYourCare}"><span id="detailPersonnel"><i class="mdi mdi-doctor fa-lg "> </i> personneltest, personneltest</span></p>
+						    <small>[[#{ClosestAvailableTimeToBook}]]:</small>
+						    <p class="card-text " title="#{AppointmentTimeFrame}"><span id="detailTimeRange"><i class="mdi mdi-clock fa-lg"></i> 16:30 - 17:30  , 02 Apr 2021</span></p>
+				
+						  </div>
+					  </div>
+					  <button type="button" class="close" data-dismiss="alert" aria-label="Close" title="Change">
+					    <span aria-hidden="true"><i class="fa fa-edit fa-sm"></i></span>
+					  </button>
+					</div>
+				 </div>
+        	     <div class="row"  id="customAppointment">
+	                 <div class="col-md-6">
+	                   <div class="form-group row">
+	                     <div class="col-sm-12 input-group" th:title="#{alert.selectPersonnel}">
+	                       <select class="form-control" id="availablePersonnel" >
+	                         <option value="" >[[#{SelectYourDoctor}]]</option>
+	                       </select>
+	                       <div class="input-group-append">
+	                        <span class="input-group-text">
+	                          <i class="mdi mdi-doctor fa-lg"></i>
+	                        </span>
+	                      </div> 
+	                     </div>
+	                   </div>
+	                 </div>
+	                 <div class="col-md-6">
+	                   <div class="form-group row">
+	                     <div class="col-sm-12 input-group">
+	                       
+	                       <input type="text" class="form-control" th:placeholder="#{VisitDate}" th:title="#{VisitDate}" id="appointmentdatetimepicker">
+	                       <div class="input-group-append">
+	                        <span class="input-group-text">
+	                          <i class="mdi mdi-calendar fa-lg"></i>
+	                        </span>
+	                      </div> 
+	                     </div>
+	                   </div>
+	                 </div>
+					<div class="col-md-12">
+					
+					    <span class="input-group-addon" id="loader" style="display:none">
+					    	<i class="fa fa-spin fa-spinner" ></i>    
+					    </span>
+						<div class="card-body p-0 m-0" id="hours">
+	
+	                    </div>
+					</div>
+                 </div>
+				<div class="row">
+					<div class="col-md-12" >
+						<div class="alert alert-danger alert-dismissible fade show" role="alert" id="bookingError" style="display:none">
+						  <p>Alert!</p>
+						  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						    <span aria-hidden="true">&times;</span>
+						  </button>
+						</div>
+					</div>				 
+	                 <div class="col-md-12" style="text-align:right">
+	                 	<input type="hidden" id="appointmentDate" value="">
+			        	<button id="bookSubmit" type="submit" class="btn btn-primary" onclick="book(this)" disabled>[[#{action.book}]]</button>
+	                 </div>
+	            </div>
+			    </section>
+			    </div>
+    <script th:inline="javascript">
+	/*<![CDATA[*/ 
+    var startTime = parseInt(/*[[${startTime}]]*/'');
+	var endTime = parseInt(/*[[${endTime}]]*/'');
+	var startMinute = parseInt(/*[[${startMinute}]]*/'');
+	var endMinute = parseInt(/*[[${endMinute}]]*/'');
+	var bookingSplit = /*[[${bookingSplit}]]*/'';
+	
+	var dr = /*[[#{prefix.title.dr}]]*/'';
+	var emailDefaultName = /*[[#{Email}]]*/'';
+	var textMessageDefaultName = /*[[#{TextMessage}]]*/'';
+	
+	var alertDefaultFullName=/*[[#{alert.fullNameFormat}]]*/'';
+	var alertDefaultGender=/*[[#{alert.selectGender}]]*/'';
+	var alertDefaultBirthday=/*[[#{alert.selectBirthday}]]*/'';
+	var alertDefaultPhoneNr=/*[[#{alert.invalidPhoneNr}]]*/'';
+	var alertDefaultEmail=/*[[#{alert.invalidEmail}]]*/'';
+	var alertDefaultFillForm = /*[[#{alert.fillForm}]]*/'';
+   	/*]]>*/
+    </script>
+    <script>
+    
+    var alertBasicInfo;
+    var birthdayDateTimePicker;
+    var appointmentDatePicker;
+	
+    $(document).ready(function () {
+
+        var token = $("meta[name='_csrf']").attr("content");
+     	var header = $("meta[name='_csrf_header']").attr("content");
+     	
+     	$(document).ajaxSend(function(e, xhr, options) {
+     	    xhr.setRequestHeader(header, token);
+     	});
+     	
+        $("#example-basic").steps({
+            headerTag: "h3",
+            bodyTag: "section",
+            transitionEffect: "slideLeft",
+            autoFocus: true,
+            enablePagination:false
+        });
+
+        $.get("/api/getAvailablePersonnel", function(data, status){
+     		for(var cnt=0; cnt<data.result.length; cnt++){
+     			var personnelNameSurnameText = "";
+
+     			personnelNameSurnameText = data.result[cnt].account.name + ", " + data.result[cnt].account.surname;
+     			$("#availablePersonnel").html($("#availablePersonnel").html() + 
+     				"<option value='"+data.result[cnt].id+"'>" +
+     					personnelNameSurnameText +
+     				"</option>"
+     			);
+     		}
+        });
+     
+     	$("#availablePersonnel").on("change", function (e){
+     	   reloadAvailableAppointmentsPersonnel(e.target); 
+     	});
+     	
+     	birthdayDateTimePicker = $("section").find("#datetimepicker").datetimepicker({
+        		"format": "DD-MMM-YYYY",
+        		"showClear" :true,
+        		"showClose" :true,
+        		"collapse": true,
+        		"minDate": new Date().subtractYears(100),
+        		"maxDate": new Date().subtractYears(12)
+        });
+         
+        appointmentDatePicker = $("section").find("#appointmentdatetimepicker").datetimepicker({
+        		"format": "DD-MMM-YYYY",
+        		"showClear" :true,
+        		"showClose" :true,
+        		"collapse": true,
+        		"useCurrent":false,
+        		"date" : new Date().addDays(1)
+        }); 
+        appointmentDatePicker.on("dp.change", ({date, oldDate}) => {
+             reloadAvailableAppointmentsDate(date);
+        });
+         
+		alertBasicInfo = $("section").find("#basicInfoError");
+		$(alertBasicInfo).on('close.bs.alert', function (e) {
+		    $(this).hide();
+		    return false;
+		});
+		
+		$("section").find("#autoAppointmentAlert").on('close.bs.alert', function (e) {
+		    $(this).hide();
+		    
+		    $("#customAppointment").show();
+		    $("section").find("#bookSubmit").attr("disabled", true);
+		    return false;
+		});
+		
+		$("section").find("#bookSubmit").attr("disabled", true);
+
+    });
+    
+    function goNextCustom(){
+        $("section").find("#customAppointment").show();
+        $("section").find("#automaticAppointment").hide();
+        goNext();
+    }
+        
+    function goNextAuto(){
+        $("section").find("#automaticAppointment").show();
+        $("section").find("#customAppointment").hide();
+        
+        $("#overlay").show();
+        nextAvailableAppointmentDoctorAndDateTime(null, function(data, result){
+            if(data.error != "error"){
+               refreshAutomaticDiv(data.result[0]);
+               refreshBookingForm(data.result[0]);
+               goNext();
+            } else{
+                $("#emergencyInfoError").html(data.message);
+                $("#emergencyInfoError").show();
+            }
+            
+            $("#overlay").hide();
+        });
+    }
+    
+    function refreshAutomaticDiv(data){
+        $("#detailPersonnel").html($("#detailPersonnel").find("i"));
+        $("#detailPersonnel").html($("#detailPersonnel").html() + dr + " " + data.personnel.account.name + " " +data.personnel.account.surname);
+        
+        $("#detailTimeRange").html($("#detailTimeRange").find("i"));
+        $("#detailTimeRange").append(" ");
+        $("#detailTimeRange").append(renderPeriodToElement([],data.appointmentDate,data.appointmentEndDate,true));
+        
+    }
+    
+	function refreshBookingForm(data){
+
+        /* personnel select field booking */
+        $("#availablePersonnel").val(data.personnel.id);
+        
+        /* book date field booking */
+        var appointmentDate = new Date(data.appointmentDate);
+        appointmentDatePicker.data("DateTimePicker").date(appointmentDate);
+        
+        /* book date and time hidden field booking */
+        $("#appointmentDate").val(appointmentDate);
+        
+        $("#bookSubmit").removeAttr("disabled");
+    }
+	
+	function renderPeriodToElement(element, start, end, isTime){
+		var startFormat = "DD";
+		var endFormat = startFormat;
+		var dateFormat = "YYYY";
+		
+		if(isTime){
+			startFormat = "HH:mm" ;
+			endFormat = startFormat;
+			dateFormat = ", DD MMM YYYY";
+		}
+	    
+	    if(new Date(start).getMonth() < new Date(end).getMonth()){
+	  		element.push(moment(start).format(startFormat) + " " + monthNames[new Date(start).getMonth()]);	
+	  	}else{
+	  		element.push(moment(start).format(startFormat));	
+	  	}
+	    element.push( isTime ? ' - ' : ' ~ ');
+	    element.push(moment(end).format(endFormat));
+	    element.push(' ');
+	    element.push(isTime ? '' : monthNames[new Date(end).getMonth()]);
+	    element.push(' '); 
+	    element.push(moment(end).format(dateFormat));
+	    return element;
+	}
+	
+    function goNext(){
+        $("#example-basic").steps("next");
+    }
+    
+    function contactSubmit(el){
+        if(infoValidate()){
+            var firstLastName = $("#firstlastname").val().trim();
+            var gender = $("#gender").val();
+            var birthday = birthdayDateTimePicker.data("DateTimePicker").date();
+            var email = $("#email").val();
+            var phone = $("#phonenr").val();
+
+            var data = {
+                    "fullname":firstLastName,
+                    "gender": gender,
+                    "birthday": new Date(birthday)
+            }
+            
+            if(email != null && email != ""){
+                data.email = email;
+            }else if(phone != null && email != ""){
+                data.phone = phone;
+            }
+            
+            toggleLoadButtonElement(el);
+            createSimpleCustomer(data, function(data, response){
+                if(data.error != "error"){
+					renderCustomerInput(data.result[0]);
+                    $("#example-basic").steps("next");
+                }else{
+                    if(data.result != null && data.result.length > 0 && data.result[0] != null){
+                        renderCustomerInput(data.result[0]);	
+                        $("#example-basic").steps("next");
+
+                    }else{
+                        alertBasicInfo.html(data.message);
+                        alertBasicInfo.show();    
+                    }
+                }
+                
+                toggleLoadButtonElement(el);
+            });
+            
+        }
+    }
+    
+    function renderCustomerInput(data){
+        if(data.id){
+            $("#customerId").val(data.id);   
+        }
+    }
+    
+    function toggleLoadButton(elem){
+        elem = $(elem).find("input");
+        elem.prop("disabled", false);
+        elem.focus();
+        $("#"+elem.data().toggle).val("");
+        $("#"+elem.data().toggle).prop("disabled", true);
+    }
+    
+    function toggleLoadButtonElement(elem){
+    	var iconEl$ = $(elem).find("i") != null? $(elem).find("i") : $(elem);
+    	  
+    	$(iconEl$).toggleClass("fa-spin fa-spinner");
+    	$(elem).prop("disabled", (_, val) => !val);
+    }
+    
+    function book(el){
+        var customerId = $("#customerId").val();
+        var personnelId = $("#availablePersonnel").val();
+        var appointmentDate = $("#appointmentDate").val();
+
+        var data = {
+        	"customerId": parseInt(customerId),
+        	"personnelId": parseInt(personnelId),
+        	"appointmentDate": new Date(appointmentDate)
+        }
+        
+        if(data.customerId != null && data.personnelId != null && data.appointmentDate != null){
+            toggleLoadButtonElement(el);
+            bookAppointment(data, function(data, response){
+                if(data.error != "error"){
+                    renderSuccessAppointment(data.result[0]);
+                    sendVerificationEmail({"id" : data.result[0].id}, function (dataEmail, responseEmail){
+                        
+                    });
+                }else{
+                    $("#bookingError").html(data.message);
+                    $("#bookingError").show();
+                }
+                
+                toggleLoadButtonElement(el);
+            });    
+        }
+    }
+    
+    function renderSuccessAppointment(data){
+        var successDiv = buildSuccessAppointmentDiv(data);
+        
+        $("#appointmentForm").html(successDiv.html());
+    }
+    
+    function buildSuccessAppointmentDiv(data){
+        var customerFullName = upperCase(data.customer.account.name) + " " + upperCase(data.customer.account.surname);
+        var personnelFullName = dr + " " + upperCase(data.personnel.account.name) + " " + upperCase(data.personnel.account.surname) + " | " + data.personnel.account.phone;
+        var bookingtime = renderPeriodToElement([], data.appointmentDate, data.appointmentEndDate, true);
+        
+        $("#successAppointment").find("#successAppointmentName").html(customerFullName);
+        $("#successAppointment").find("#successAppointmentPersonnel").html(personnelFullName);
+        $("#successAppointment").find("#successAppointmentTime").html(bookingtime);
+        if(!$("#email").is("disabled")){
+            $("#successAppointment").find("#contactWay").html(emailDefaultName)
+        }else if(!$("#phonenr").is("disabled")){
+            $("#successAppointment").find("#contactWay").html(textMessageDefaultName)
+        }
+        
+		return $("#successAppointment");
+    }
+    
+    function upperCase(str){
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+    
+    function infoValidate(){
+        alertBasicInfo.hide();
+        
+        var validName = validNameSurname();
+        var validGenderr = validGender();
+        var validBirthDay = validBirthday();
+        var validContactInfo = validContactinfo();
+        
+        if(validName && validGenderr && validBirthDay && validContactInfo){
+            return true;
+        }
+        return false;
+    }
+    
+    function validNameSurname(){
+        var valid = true;
+        var el = $("#firstlastname");
+
+        if(el.val() == null || el.val() == ""){
+            $(alertBasicInfo).find("p").text(alertDefaultFullName);
+            $(alertBasicInfo).show();
+            valid = false;
+        }if(el.val().split(" ").length <= 1){
+            $(alertBasicInfo).find("p").text(alertDefaultFullName);
+            $(alertBasicInfo).show();
+            valid = false;
+        }
+        
+        return valid;
+    }
+    
+    function validGender(){
+        var valid = true;
+        var el = $("#gender");
+        if(el.val() == null || el.val() == ""){
+            $(alertBasicInfo).find("p").text(alertDefaultGender);
+            $(alertBasicInfo).show();
+            valid = false;
+        }
+        
+        return valid;
+    }
+    
+    function validBirthday(){
+        var valid = true;
+        var el = birthdayDateTimePicker.data("DateTimePicker");
+        if(el.date() == null || el.date() == ""){
+            $(alertBasicInfo).find("p").text(alertDefaultBirthday);
+            $(alertBasicInfo).show();
+            valid = false;
+        }
+        
+        return valid;
+    }
+    
+    function validContactinfo(){
+        var valid = true;
+        var el = $("#email").attr("disabled") ? $("#phonenr") : $("#email");
+        
+        if(el.data().toggle == "phonenr"){
+            if(!validateEmail(el.val())){
+                $(alertBasicInfo).find("p").text(alertDefaultEmail);
+                $(alertBasicInfo).show();
+				valid = false;
+            }
+        }else if(el.data().toggle == "email"){
+    		if(el.val().length < 10){
+    		    $(alertBasicInfo).find("p").text(alertDefaultPhoneNr);
+                $(alertBasicInfo).show();
+				valid = false;
+    		}        
+        }
+        
+        if(el.val() == null || el.val() == ""){
+            $(alertBasicInfo).find("p").text(alertDefaultFillForm);
+            $(alertBasicInfo).show();
+            valid = false;
+        }
+        
+        return valid;
+    }
+    
+    function validateEmail(email) {
+        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+    
+    
+    function showHourTable(date, excludedDates){
+
+    	var beginDate = new Date(date);
+    	beginDate.setHours(startTime);
+    	beginDate.setMinutes(startMinute);
+    	var innerDiv = "";
+    	var endDate = new Date(beginDate);
+    	endDate.setHours(endTime);
+    	endDate.setMinutes(endMinute);
+    	while(beginDate < endDate && beginDate.getHours() < endDate.getHours()  ){
+    		var show = true;
+
+    		for(var cnt=0; cnt<excludedDates.length; cnt++){
+    			var excluded= new Date(excludedDates[cnt]);
+    			if(beginDate.getMonth() === excluded.getMonth() && 
+    					beginDate.getDate() === excluded.getDate() && 
+    					beginDate.getFullYear() === excluded.getFullYear()){
+    				
+    				var before = new Date(excludedDates[cnt]);
+    				before.setMinutes(before.getMinutes() - 30);
+    				
+    				var after = new Date(excludedDates[cnt]);
+    				after.setMinutes(after.getMinutes() + 30)
+    				
+    				if((beginDate.getHours() == excludedDates[cnt].getHours() && beginDate.getMinutes() == excludedDates[cnt].getMinutes())){
+    					beginDate.setMinutes(beginDate.getMinutes() + bookingSplit);
+    					show = false;
+    					break;
+    				}
+    			}
+    		}
+    		
+    		if(show){
+    			var ending = new Date(beginDate);
+    			ending.setMinutes(ending.getMinutes() + bookingSplit);
+    			
+    			innerDiv += "<div class='col-md-3 m-2 px-2' ><div class='cell' ><p>"+ beginDate.getHours() +" : "+(beginDate.getMinutes()<10?'0':'') + beginDate.getMinutes() + " - "+ ending.getHours() +" : "+(ending.getMinutes()<10?'0':'') + ending.getMinutes()+"</p></div></div>";
+    			beginDate.setMinutes(beginDate.getMinutes()+bookingSplit);
+    		}
+    	}
+    	var outterDiv = "<div class='row text-center mx-0'>" + innerDiv + "</div>";
+    	$("#hours").html(outterDiv);
+    	
+    	$(".px-2").click(function(){
+    		var selectedAppointmentTimes = $(this).find(".cell").find("p").text().trim().split("-");
+    		var appointmentDate = new Date(appointmentDatePicker.val());
+    		
+    		var appointmentTimes = selectedAppointmentTimes[0].split(" : ");
+    		appointmentDate.setHours(appointmentTimes[0]);
+    		appointmentDate.setMinutes(appointmentTimes[1]);
+    		
+    		$("#appointmentDate").val(appointmentDate);
+    		$(".px-2").removeClass("active");
+    		$(this).addClass("active");
+    		$("#bookSubmit").removeAttr("disabled");
+    	});
+    }
+    
+    function nextAvailableAppointmentDoctorAndDateTime(data, callback){
+     	$.get("/api/appointment/automatic", data, callback);
+    }
+    
+    function createSimpleCustomer(data, callback){
+        $.post("/api/account/create/simple", data, callback);
+    }
+    
+    function bookAppointment(data, callback){
+        $.post("/api/book", data, callback);
+    }
+    
+    function sendVerificationEmail(data, callback){
+        $.get("/api/appointment/sendVerification", data, callback);
+    }
+    
+    function reloadAvailableAppointmentsDate(date){        
+   		var availablePersonnel = $("#availablePersonnel").val();
+   		if(availablePersonnel != null && availablePersonnel != ""){
+	   		$("#loader").show();
+	  		$.get("/api/availableAppointments",{"personnelId" : availablePersonnel}, function(data, status){
+	   			var excludedDates = new Array();
+	   			
+	   			for(var cnt=0; cnt<data.result.length; cnt++){
+	   				excludedDates.push(new Date(data.result[cnt].appointmentDate));
+	   			}
+	   			showHourTable(date,excludedDates);
+		   		$("#loader").hide();
+	   		});
+   		}
+    }
+    
+    function reloadAvailableAppointmentsPersonnel(personnel){        
+   		var availablePersonnel = personnel.value;
+   		var date = appointmentDatePicker.data("DateTimePicker").date();
+   		
+   		if(availablePersonnel != null && availablePersonnel != ""){
+	   		$("#loader").show();
+	  		$.get("/api/availableAppointments",{"personnelId" : availablePersonnel}, function(data, status){
+	   			var excludedDates = new Array();
+	   			
+	   			for(var cnt=0; cnt<data.result.length; cnt++){
+	   				excludedDates.push(new Date(data.result[cnt].appointmentDate));
+	   			}
+	    			
+	   			showHourTable(date,excludedDates);
+		   		$("#loader").hide();
+	   		});
+   		}
+    }
+    </script>
+    <div class="row" id="successAppointment" style="display:none">
+    	<div class="col-12">
+    		<h2 class="text-success">[[#{email.success}]]</h2>
+    		<h4> [[#{DentalAppointmentFor}]] <span id="successAppointmentName"></span></h4>
+    	</div>
+		<div class="col-12">
+		  <div class="card-body" id="detailBody">
+			<h5>[[#{ResponsibleDoctor}]]:</h5>
+		    <p class="card-text " title="Entitled doctor for your care"><span ><i class="mdi mdi-doctor fa-lg "> </i> <span id="successAppointmentPersonnel">personneltest, personneltest</span></span></p>
+		    <h5>[[#{AppointmentTime}]]:</h5>
+		    <p class="card-text " title="Time frame of your appointment"><span><i class="mdi mdi-clock fa-lg"></i> <span id="successAppointmentTime">16:30 - 17:30  , 02 Apr 2021 </span></span></p>
+		  </div>
+		 </div>
+		 <div class="col-12">
+		  <div class="card-body" id="detailBody">
+	  		<small>[[#{VerifyingYourAppointmentRequest}]] <span id="contactWay"></span> [[#{soon}]]! </small>
+	  		<p class="mt-1"><small>[[#{ThankForChoosing}]] '[[${businessName}]]' [[#{ForYourDentalCare}]]</small></p>
+		  </div>
+		 </div>
+		 <div>
+		 	<a class=" btn btn-primary" th:if="${redirect != null}" th:href="${redirect}"><i class="fa fa-arrow-left"></i>[[#{Back}]]</a>
+		 </div>
+    </div>
+              </div>
+            <div th:replace="demo_1/partials/_footer :: footer">
+			</div>
+            </div>
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="../../../assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="../../../assets/vendors/js/vendor.bundle.addons.js"></script>
+    
+    <script src="../../../assets/vendors/jquery/steps/jquery.steps.min.js"></script>
+          <script type="text/javascript" src="/assets/vendors/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+    
+    <!-- endinject -->
+    <!-- inject:js -->
+    <script src="../../../assets/js/shared/off-canvas.js"></script>
+    <script src="../../../assets/js/shared/misc.js"></script>
+    <!-- endinject -->
+  </body>
+</html>

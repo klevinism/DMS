@@ -23,6 +23,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.event.OnResetPasswordEvent;
 import com.visionous.dms.pojo.Account;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Reset;
 import com.visionous.dms.pojo.Role;
 import com.visionous.dms.service.ResetService;
@@ -37,18 +38,17 @@ public class ResetListener implements ApplicationListener<OnResetPasswordEvent>{
 	private SpringTemplateEngine thymeleafTemplateEngine;
 	private ResetService resetService;
     private JavaMailSender mailSender;
-    private RoleService roleService;
-
+    private GlobalSettings globalSettings;
     /**
 	 * 
 	 */
     @Autowired
 	public ResetListener(SpringTemplateEngine thymeleafTemplateEngine, JavaMailSender mailSender, ResetService resetService, 
-			RoleService roleService) {
+			GlobalSettings globalSettings) {
 		this.thymeleafTemplateEngine = thymeleafTemplateEngine;
 		this.resetService = resetService;
 		this.mailSender = mailSender;
-		this.roleService = roleService;
+		this.globalSettings = globalSettings;
 	}
 	
 	@Override
@@ -67,11 +67,7 @@ public class ResetListener implements ApplicationListener<OnResetPasswordEvent>{
 		String recipientAddress = account.getEmail();
         String token = UUID.randomUUID().toString();
         
-        StringBuilder fromAddress= new StringBuilder();
-        Optional<Role> roleAdmin = roleService.findByName("ADMIN");
-        roleAdmin.ifPresent(role -> {
-        	fromAddress.append(role.getAccounts().get(0).getEmail());
-        });
+        String fromAddress= this.globalSettings.getBusinessEmail();
         
         resetService.create(new Reset(account, token));
         

@@ -51,10 +51,11 @@ public class CustomerRestController {
 	}
 	
 	@PostMapping("/api/account/create/simple")
-    public ResponseEntity<?> createSimpleAccount(@RequestParam(name = "fullname", required = false) String fullName, 
+    public ResponseEntity<?> createSimpleAccount(@RequestParam(name = "fullname", required = true) String fullName,
+    		@RequestParam(name = "birthday", required = true) Date birthday,
+    		@RequestParam(name = "gender", required = true) String gender,
     		@RequestParam(name = "phone", required = false) Long phoneNr,
-    		@RequestParam(name = "birthday", required = false) Date birthday,
-    		@RequestParam(name = "gender", required = false) String gender) {
+    		@RequestParam(name = "email", required = false) String email) {
 		
 		String messageError = messageSource.getMessage("alert.error", null, LocaleContextHolder.getLocale());
 		
@@ -63,18 +64,23 @@ public class CustomerRestController {
         ResponseBody<Customer> result = new ResponseBody<>();
         if(fullName != null && fullName.length() > 1) {
         	String[] nameArr = fullName.split(" ");
+
         	if(nameArr.length < 2) {
             	String messagefullNameWrongFormat = messageSource.getMessage("alert.fullNameFormat", null, LocaleContextHolder.getLocale());
         		result.setError(messageError);
         		result.setMessage(messagefullNameWrongFormat);
         	}else {
+            	nameArr[0] = nameArr[0].trim();
+            	nameArr[0] = nameArr[0].toLowerCase();
+            	nameArr[1] = nameArr[1].trim();
+            	nameArr[1] = nameArr[1].toLowerCase();
+        		
         		Optional<Account> potential = this.accountService.findByNameAndSurnameAndBirthday(nameArr[0], nameArr[1], birthday);
         		
         		if(!potential.isPresent()) {
         		
-	        		String username = nameArr[0].toLowerCase()+"."+nameArr[1].toLowerCase();
-		        	String pass = nameArr[0].toLowerCase()+"."+nameArr[1].toLowerCase()+".1234";
-		        	String email = nameArr[0].toLowerCase()+"."+nameArr[1].toLowerCase()+"@hotmail.com";
+	        		String username = nameArr[0]+"."+nameArr[1];
+		        	String pass = nameArr[0]+"."+nameArr[1]+".1234";
 		        	
 		        	Optional<Role> customerRole = roleService.findByName("CUSTOMER");
 		        	
@@ -87,8 +93,19 @@ public class CustomerRestController {
 		        	acc.setBirthday(birthday);
 		        	acc.setEmail(email);
 		        	acc.setGender(gender);
-		        	acc.setPhone(phoneNr);
 		
+		        	if(email != null) {
+		        		acc.setEmail(email.trim());
+		        	}else {
+		        		acc.setEmail(nameArr[0]+"."+nameArr[1]+"@hotmail.com");
+		        	}
+		        	
+		        	if(phoneNr != null) {
+		        		acc.setPhone(phoneNr);
+		        	}else {
+		        		acc.setPhone(Long.parseLong("0694444333"));
+		        	}
+		        	
 		        	customerRole.ifPresent(role -> acc.addRole(role));
 		        	
 		        	Customer newCustomer = new Customer();
@@ -100,13 +117,20 @@ public class CustomerRestController {
 					} catch (EmailExistsException e) {
 						result.setError(messageError);
 						result.setMessage(messageCustomerExists);
+
+						result.addResult(findAccountByEmailOrPhone(email.trim(), phoneNr));
+						
 					} catch (UsernameExistsException e) {
 						result.setError(messageError);
 						result.setMessage(messageCustomerExists);
+
+						result.addResult(findAccountByEmailOrPhone(email.trim(), phoneNr));
 					}
         		}else {
         			result.setError(messageError);
 					result.setMessage(messageCustomerExists);
+
+					result.addResult(findAccountByEmailOrPhone(email.trim(), phoneNr));
         		}
         	}
         }else {	
@@ -114,7 +138,28 @@ public class CustomerRestController {
     		result.setError(messageError);
     		result.setMessage(messagefullNameWrongFormat);
     	}
+        
         return ResponseEntity.ok(result);
 	}
-	
+
+	/**
+	 * @param email
+	 * @param phoneNr
+	 */
+	private Customer findAccountByEmailOrPhone(String email, Long phoneNr) {
+		if(email != null) {
+			Optional<Account> findByEmail = accountService.findByUsernameOrEmail(email);
+
+			if(findByEmail.isPresent()) {
+				return findByEmail.get().getCustomer();
+			}
+		}else if(phoneNr != null) {
+			Optional<Account> findByPhone = accountService.findByPhoneNr(phoneNr);
+
+			if(findByPhone.isPresent()) {
+				return findByPhone.get().getCustomer();
+			}
+		}
+			return null;
+	}
 }

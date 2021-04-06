@@ -30,12 +30,27 @@ public class DateUtil {
 		Calendar cal = Calendar.getInstance();
 		String[] hourMin = startHour.split(":");
 		int hr = Integer.parseInt(hourMin[0]);
-		int min = Integer.parseInt(hourMin[0]);
+		int min = Integer.parseInt(hourMin[1]);
 		
 		cal.setTime(new Date());
 		cal.set(Calendar.HOUR_OF_DAY, hr);
 		cal.set(Calendar.MINUTE, min);
 		
+		return cal.getTime();
+	}
+	
+	public static Date getStartWorkingHr(String startHour, Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		String[] hourMin = startHour.split(":");
+		int hr = Integer.parseInt(hourMin[0]);
+		int min = Integer.parseInt(hourMin[1]);
+		
+		cal.set(Calendar.HOUR_OF_DAY, hr);
+		cal.set(Calendar.MINUTE, min);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
 		return cal.getTime();
 	}
 	
@@ -45,7 +60,8 @@ public class DateUtil {
 		cal.set(Calendar.HOUR_OF_DAY,18);
 		cal.set(Calendar.MINUTE,30);
 		cal.set(Calendar.SECOND,0);
-		cal.set(Calendar.MILLISECOND,0); 
+		cal.set(Calendar.MILLISECOND,0);
+		
 		return cal.getTime();
 	}
 	
@@ -58,7 +74,23 @@ public class DateUtil {
 		cal.setTime(new Date());
 		cal.set(Calendar.HOUR_OF_DAY, hr);
 		cal.set(Calendar.MINUTE, min);
+		cal.set(Calendar.SECOND, 0);
+
+		return cal.getTime();
+	}
+	
+	public static Date getEndWorkingHr(String endHour, Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		String[] hourMin = endHour.split(":");
+		int hr = Integer.parseInt(hourMin[0]);
+		int min = Integer.parseInt(hourMin[1]);
 		
+		cal.set(Calendar.HOUR_OF_DAY, hr);
+		cal.set(Calendar.MINUTE, min);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
 		return cal.getTime();
 	}
 	
@@ -77,6 +109,23 @@ public class DateUtil {
 		cal.set(Calendar.DAY_OF_MONTH, 0);
 		return cal.getTime();
 	}
+	public static Date getBeginingOfDay(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		return cal.getTime();
+	}
+	
+	public static Date getEndOfDay(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 60);
+		cal.set(Calendar.SECOND, 0);
+		return cal.getTime();
+	}
 	
 	public static Date getCurrentDateByMonthAndDay(int month, int day) {
 		Calendar cal = Calendar.getInstance();
@@ -84,6 +133,12 @@ public class DateUtil {
 		cal.set(Calendar.MONTH, month);
 		cal.set(Calendar.DAY_OF_MONTH, day);
 		return cal.getTime();
+	}
+	
+	public static int getNrDayOfWeek(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return cal.get(Calendar.DAY_OF_WEEK);
 	}
 	
 	public static Calendar getCalendarFromDate(Date date) {
@@ -133,20 +188,32 @@ public class DateUtil {
 	
 	public static Date setDays(Date currentDate, int nrOfDays) {
 		Calendar temp = DateUtil.getCalendarFromDate(currentDate);
-		temp.add(Calendar.DAY_OF_MONTH, nrOfDays);
+		temp.set(Calendar.DATE, nrOfDays);
 		return temp.getTime();
 	}
 	
 	
 	public static Date addHours(Date currentDate, int hoursNr) {
 		Calendar temp = DateUtil.getCalendarFromDate(currentDate);
-		temp.add(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY) + hoursNr);
+		temp.add(Calendar.HOUR_OF_DAY, hoursNr);
 		return temp.getTime();
 	}
 	
 	public static Date addMinutes(Date currentDate, int minutesNr) {
 		Calendar temp = DateUtil.getCalendarFromDate(currentDate);
-		temp.add(Calendar.MINUTE, temp.get(Calendar.MINUTE) + minutesNr);
+		temp.add(Calendar.MINUTE, minutesNr);
+		return temp.getTime();
+	}
+	
+	public static Date addDays(Date currentDate, int daysNr) {
+		Calendar temp = DateUtil.getCalendarFromDate(currentDate);
+		temp.add(Calendar.DAY_OF_MONTH, daysNr);
+		return temp.getTime();
+	}
+	
+	public static Date subtractDays(Date currentDate, int daysNr) {
+		Calendar temp = DateUtil.getCalendarFromDate(currentDate);
+		temp.add(Calendar.DAY_OF_MONTH, -1*daysNr);
 		return temp.getTime();
 	}
 	
@@ -273,4 +340,37 @@ public class DateUtil {
         cal.add(Calendar.MINUTE, expiryTimeInMinutes);
         return new Date(cal.getTime().getTime());
     }
+
+	/**
+	 * @param target
+	 * @param i
+	 * @return
+	 */
+	public static Date setHoursToDate(Date target, int i) {
+		Calendar calendar = DateUtil.getCalendarFromDate(target);
+		calendar.set(Calendar.HOUR_OF_DAY, i);
+		return calendar.getTime();
+	}
+
+	/**
+	 * @param target
+	 * @param i
+	 * @return
+	 */
+	public static Date setMinutesToDate(Date target, int i) {
+		Calendar calendar = DateUtil.getCalendarFromDate(target);
+		calendar.set(Calendar.MINUTE, i);
+		return calendar.getTime();
+	}
+
+	/**
+	 * @param newAppointmentDateTime
+	 * @param m
+	 * @return
+	 */
+	public static Date subtractMinutes(Date date, int m) {
+		Calendar temp = DateUtil.getCalendarFromDate(date);
+		temp.add(Calendar.MINUTE, -1*m);
+		return temp.getTime();
+	}
 }
