@@ -10,13 +10,8 @@ jobs:
       # - name: Check files
       # - run: cd target & ls -l
       - run: ls -l ./target
-      # # - name: Publish artifact
-      - uses: actions/upload-release-asset@v1
+      - name: Invoke deployment hook
+        uses: distributhor/workflow-webhook@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITSECRET }} 
-        with:
-          upload_url: http://httpbin.org/post
-          # upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./target
-          asset_name: dcms-1.6.8-SNAPSHOT.war
-          asset_content_type: application/x-www-form-urlencoded
+          webhook_url: https://httpbin.org/
+          webhook_secret: ${{ secrets.GITSECRET }}
