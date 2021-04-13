@@ -13,8 +13,8 @@ jobs:
 
       - uses: leandro-hermes/action-upload-file@v1.1.0
         with:
-          host: 'http://161.97.136.98'
+          host: '161.97.136.98'
           path: '/'
           filePath: ${{ steps.file.outputs.path }}
-          data: '{test}'
+          data: '{"package": ${{ steps.file.outputs.path }}, "branch": ${GITHUB_REF##*/}}'
       - run: echo github.event.push
