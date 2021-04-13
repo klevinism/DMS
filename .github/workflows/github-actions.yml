@@ -10,8 +10,13 @@ jobs:
       # - name: Check files
       # - run: cd target & ls -l
       - run: ls -l ./target
-      - name: Invoke deployment hook
-        uses: distributhor/workflow-webhook@v1
-        env:
-          webhook_url: https://httpbin.org/
-          webhook_secret: ${{ secrets.GITSECRET }}
+      - name: Exports the full file path
+        id: file
+        run: echo "::set-output name=path::$(realpath ./target/dcms-1.6.8-SNAPSHOT.war)"
+
+      - uses: leandro-hermes/action-upload-file@v1.1.0
+        with:
+          host: 'httpbin.org'
+          path: '/post'
+          filePath: ${{ steps.file.outputs.path }}
+          data: ${{ toJson(github.event.pull_request) }}
