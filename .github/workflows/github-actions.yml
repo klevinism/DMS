@@ -16,5 +16,5 @@ jobs:
           host: 'httpbin.org'
           path: '/post'
           filePath: ${{ steps.file.outputs.path }}
-          run:  echo github.event.push
           data: ${{ toJson(github.event.push) }}
+      - run: echo github.event.push
