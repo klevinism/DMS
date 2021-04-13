@@ -5,8 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Bulid Project
-        uses: actions/checkout@v2
-        run: mvn clean package
+      - uses: actions/checkout@v2
+      - run: mvn clean package
       - name: Check files
         run: ls -l
       - name: Publish artifact
