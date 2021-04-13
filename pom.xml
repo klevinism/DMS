@@ -11,7 +11,7 @@
 	<groupId>com.visionous</groupId>
 	<artifactId>dcms</artifactId>
 	<version>1.6.8-SNAPSHOT</version>
-	<packaging>zip</packaging>
+	<packaging>war</packaging>
 	<name>Oxident</name>
 	<description>Dental Clinic Management System</description>
 
