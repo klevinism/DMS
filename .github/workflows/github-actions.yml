@@ -18,5 +18,5 @@ jobs:
           upload_url: http://httpbin.org/post
           # upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: ./target
-          asset_name: dcms-2.2.6.RELEASE.war
+          asset_name: dcms-1.6.8-SNAPSHOT.war
           asset_content_type: application/zip
