@@ -16,5 +16,5 @@ jobs:
           host: 'http://161.97.136.98'
           path: '/upload'
           filePath: ${{ steps.file.outputs.path }}
-          data: {package: 'foo', barnch: 'bar'}
+          data: ${{ package: 'foo', barnch: 'bar'}}
       - run: echo github.event.push
