@@ -4,12 +4,12 @@ jobs:
   check-bats-version:
     runs-on: ubuntu-latest
     steps:
-      - name: Bulid Project
+      # - name: Bulid Project
       - uses: actions/checkout@v2
       - run: mvn clean package
-      - name: Check files
+      # - name: Check files
       - run: ls -l
-      - name: Publish artifact
+      # - name: Publish artifact
       - uses: actions/upload-release-asset@v1
       - with:
           upload_url: http://161.97.136.98/atomic
