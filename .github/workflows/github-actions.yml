@@ -6,7 +6,7 @@ jobs:
     steps:
       # - name: Bulid Project
       - uses: actions/checkout@v2
-      - run: mvn clean package
+      - run: mvn package
       # - name: Check files
       # - run: cd target & ls -l
       # - run: ls -l
