@@ -7,9 +7,6 @@ jobs:
       # - name: Bulid Project
       - uses: actions/checkout@v2
       - run: mvn package
-      # - name: Check files
-      # - run: cd target & ls -l
-      - run: ls -l ./target
       - name: Exports the full file path
         id: file
         run: echo "::set-output name=path::$(realpath ./target/dcms-1.6.8-SNAPSHOT.war)"
@@ -19,4 +16,5 @@ jobs:
           host: 'httpbin.org'
           path: '/post'
           filePath: ${{ steps.file.outputs.path }}
-          data: ${{ toJson(github.event.pull_request) }}
+          run:  echo github.event.push
+          data: ${{ toJson(github.event.push) }}
