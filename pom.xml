@@ -12,7 +12,9 @@
 	<artifactId>dcms</artifactId>
 	<!-- <version>1.6.8-SNAPSHOT</version> -->
 	<packaging>war</packaging>
-	<name>Oxident</name>
+	<build>
+		<finalName>dcms</finalName>
+	</build>
 	<description>Dental Clinic Management System</description>
 
 	<properties>
