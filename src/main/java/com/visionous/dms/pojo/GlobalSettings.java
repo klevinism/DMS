@@ -138,6 +138,23 @@ public class GlobalSettings implements Serializable{
 	/**
 	 * @return
 	 */
+	public List<Integer> getWorkingBusinessDays(){
+		String[] dayPeriod = getBusinessDays().split(",");
+		List<Integer> workingDays = new ArrayList<>();
+		int dayStartNr = Integer.parseInt(dayPeriod[0]);
+		int dayEndNr = Integer.parseInt(dayPeriod[1]);
+		
+		for(int x=dayStartNr; x<=dayEndNr; x++) {
+			if(dayStartNr < x || x < dayEndNr) {
+				workingDays.add(x);	
+			}
+		}
+		return workingDays;
+	}
+	
+	/**
+	 * @return
+	 */
 	public List<Integer> getNonBusinessDays(){
 		String[] dayPeriod = getBusinessDays().split(",");
 		List<Integer> daysDisabled = new ArrayList<>();

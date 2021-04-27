@@ -6,11 +6,14 @@ package com.visionous.dms.rest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -26,10 +29,13 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.visionous.dms.configuration.helpers.DateUtil;
+import com.visionous.dms.configuration.helpers.DmsCore;
+import com.visionous.dms.event.OnCustomerAppointmentBookEvent;
 import com.visionous.dms.event.OnRegistrationCompleteEvent;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Appointment;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.ServiceType;
 import com.visionous.dms.rest.response.ResponseBody;
@@ -58,19 +64,19 @@ public class AppointmentRestController {
 	private ApplicationEventPublisher eventPublisher;
 	private MessageSource messageSource;
 
-	
+	private GlobalSettings globalSettings;
 	/**
 	 * 
 	 */
 	@Autowired
 	public AppointmentRestController(AppointmentService appointmentService, PersonnelService personnelService, 
 			CustomerService customerService, MessageSource messageSource, 
-			RecordService recordService, AccountService accountService,
+			RecordService recordService, AccountService accountService, GlobalSettings globalSettings,
 			ServiceTypeService serviceTypeService, ApplicationEventPublisher eventPublisher) {
 		
 		this.appointmentService = appointmentService;
 		this.personnelService = personnelService;
-		
+		this.globalSettings = globalSettings;
 		this.serviceTypeService = serviceTypeService;
 		
 		this.customerService = customerService;
@@ -124,7 +130,7 @@ public class AppointmentRestController {
         	if(appointmentEndDate != null) {
         		newAppointment.setAppointmentEndDate(appointmentEndDate);
         	}else {
-        		newAppointment.setAppointmentEndDate(DateUtil.addMinutes(appointmentDate, 30));
+        		newAppointment.setAppointmentEndDate(DateUtil.addMinutes(appointmentDate, globalSettings.getAppointmentTimeSplit()));
         	}
         	
         	Appointment created = appointmentService.create(newAppointment);
@@ -140,6 +146,29 @@ public class AppointmentRestController {
 
         return ResponseEntity.ok(result);
     }
+	
+	/**
+	 * @param appointmentId
+	 * @return
+	 */
+	@GetMapping("/api/appointment/sendVerification")
+	public ResponseEntity<?> sendAppointmentVerification(@RequestParam(name = "id", required = true) Long appointmentId){
+        ResponseBody<Appointment> result = new ResponseBody<>();
+        
+        String error = messageSource.getMessage("alert.error", null, LocaleContextHolder.getLocale());
+        result.setError(error);
+        
+		Optional<Appointment> appointmentFound = appointmentService.findById(appointmentId);
+		appointmentFound.ifPresent(appointment -> {
+			eventPublisher.publishEvent(
+	        		new OnCustomerAppointmentBookEvent(appointment, LocaleContextHolder.getLocale(), DmsCore.appMainPath())
+	    		);
+	        String success = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+	        result.setError(success);
+		});
+		
+		return ResponseEntity.ok(result);
+	}
 	
 	@PostMapping("/api/appointment/edit")
     public ResponseEntity<?> editAppointment(@RequestParam(name = "id", required = true) Long appointmentId,
@@ -245,7 +274,8 @@ public class AppointmentRestController {
     		@RequestParam(name = "endDate", required = true) String endDate){ 
 
         ResponseBody<Map<String,List<Integer>>> result = new ResponseBody<>();
-        
+		String vizits = messageSource.getMessage("Visits", null, LocaleContextHolder.getLocale());
+
         Date start = null;
 		Date end = null;
 		
@@ -282,15 +312,15 @@ public class AppointmentRestController {
 							endingDate = DateUtil.setDayToEndOfYear(start);
 	        			}else{
 							startingDate = DateUtil.setHoursToBegginingOfDay(start);
-							endingDate = DateUtil.setDays(start, daysToAdd);
+							endingDate = DateUtil.addDays(start, daysToAdd);
 						} 
 						
 						Integer records = recordService.countByPersonnelIdAndServicedateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
 
-						start = DateUtil.setDays(start, daysToAdd);
+						start = DateUtil.addDays(start, daysToAdd);
 						recordsForPersonnel.add(records);
 	        		}
-	        		listOfRecords.put(singlePersonnel.get().getAccount().getName(), recordsForPersonnel);
+	        		listOfRecords.put(vizits, recordsForPersonnel);
 	        		
 				}
         	}
@@ -316,7 +346,8 @@ public class AppointmentRestController {
     		@RequestParam(name = "endDate", required = true) String endDate){ 
 
         ResponseBody<Map<String,List<Integer>>> result = new ResponseBody<>();
-        
+		String appointments = messageSource.getMessage("Appointments", null, LocaleContextHolder.getLocale());
+
         Date start = null;
 		Date end = null;
 		
@@ -346,10 +377,10 @@ public class AppointmentRestController {
 						
 						Integer records = appointmentService.countAllByPersonnelIdAndAppointmentDateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
 						
-						start = DateUtil.setDays(start, daysToAdd);
+						start = DateUtil.addDays(start, daysToAdd);
 						recordsForPersonnel.add(records);
 	        		}
-	        		listOfRecords.put(singlePersonnel.get().getAccount().getName(), recordsForPersonnel);
+	        		listOfRecords.put(appointments, recordsForPersonnel);
 				}
         	}
         }
@@ -419,6 +450,120 @@ public class AppointmentRestController {
         return ResponseEntity.ok(result);
 
     }
+	
+	@GetMapping("/api/appointment/automatic")
+    public ResponseEntity<?> getAutomaticAppointment() { 
+        ResponseBody<Appointment> result = new ResponseBody<>();
+        
+        int minSplit = globalSettings.getAppointmentTimeSplit();
+
+        Date today = new Date();
+        Calendar todayCalendar = DateUtil.getCalendarFromDate(today);
+        todayCalendar.set(Calendar.MINUTE, 0);
+        todayCalendar.set(Calendar.SECOND, 0);
+        todayCalendar.set(Calendar.MILLISECOND, 0);
+        
+        List<Personnel> allPersonnel = this.personnelService.findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_Name(true, true, "PERSONNEL");
+
+    	Appointment autoAppointed = null;
+    	boolean found = false;
+    	int count = 10;
+        while(autoAppointed == null) {
+            Date newAppointmentDateTime = nextAvailableBusinessAppointmentTime(todayCalendar.getTime());
+        	Date newAppointmentEndDateTime = DateUtil.addMinutes(newAppointmentDateTime, minSplit);
+
+        	for(int x=0; x<allPersonnel.size(); x++) { 
+    			List<Appointment> foundAppointment = this.appointmentService.findAllByPersonnelIdBetweenDateRange(allPersonnel.get(x).getId(), newAppointmentDateTime, newAppointmentEndDateTime);
+
+    			if(foundAppointment.isEmpty()) {
+    				autoAppointed = new Appointment();
+    				autoAppointed.setAppointmentDate(newAppointmentDateTime);
+    				autoAppointed.setAppointmentEndDate(newAppointmentEndDateTime);
+    				autoAppointed.setPersonnelId(allPersonnel.get(x).getId());
+    				autoAppointed.setPersonnel(allPersonnel.get(x));
+    				found = true;
+    				break;
+    			}
+            }
+        	if(found) {
+        		break;
+        	}else {
+        		todayCalendar.setTime(DateUtil.addMinutes(todayCalendar.getTime(), minSplit));
+        	}
+        	
+        	if(count == 0) {
+        		break;
+        	}
+        	
+        	count--;
+        }
+        
+        if(autoAppointed != null) {
+        	String messageSuccess = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+    		result.setError(messageSuccess);
+    		result.addResult(autoAppointed);	
+        }else {
+			String messageError = messageSource.getMessage("alert.error", null, LocaleContextHolder.getLocale());
+        	result.setError(messageError);
+
+	        String message = messageSource.getMessage("alert.errorOccurred", null, LocaleContextHolder.getLocale());
+			result.setMessage(message);
+        }
+        	
+        return ResponseEntity.ok(result);
+
+    }
+	
+	private Date searchForNewDay(Date date) {
+        int startDay = globalSettings.getBusinessStartDay();
+        int endDay = globalSettings.getBusinessEndDay();
+                
+        Calendar calendar = DateUtil.getCalendarFromDate(date); 
+        int todayDayNr = calendar.get(Calendar.DAY_OF_WEEK)-1;
+        
+        while(todayDayNr < startDay || todayDayNr > endDay) {
+        	calendar.setTime(DateUtil.addDays(calendar.getTime(), 1));        	
+        	todayDayNr = calendar.get(Calendar.DAY_OF_WEEK)-1;
+        }
+    	
+        return calendar.getTime();
+	}
+	
+	private Date nextAvailableBusinessAppointmentTime(Date date) {
+
+        int minSplit = globalSettings.getAppointmentTimeSplit();
+
+        Date today = date;        
+        Date startTime = DateUtil.getStartWorkingHr(globalSettings.getBusinessStartTime(), today);
+        Date endTime = DateUtil.getEndWorkingHr(globalSettings.getBusinessEndTime(), today);
+                
+		while(today.before(startTime) || today.after(endTime)) {
+
+			today = DateUtil.addMinutes(today, minSplit);
+			int tHr  = DateUtil.getCalendarFromDate(today).get(Calendar.HOUR);
+			int tMin  = DateUtil.getCalendarFromDate(today).get(Calendar.MINUTE);
+			int sHr  = DateUtil.getCalendarFromDate(startTime).get(Calendar.HOUR);
+			int sMin  = DateUtil.getCalendarFromDate(startTime).get(Calendar.MINUTE);
+
+			
+			if((tHr == sHr) && (tMin == sMin)) {
+				break;
+			}
+		}
+		
+		Date newDate = searchForNewDay(today);
+		
+		if(DateUtil.getPeriodBetween(today, newDate).getDays() > 0) {
+			int hrs = DateUtil.getCalendarFromDate(startTime).get(Calendar.HOUR_OF_DAY);
+			int mins = DateUtil.getCalendarFromDate(startTime).get(Calendar.MINUTE);
+			
+			newDate = DateUtil.setHoursToDate(newDate, hrs);
+			newDate = DateUtil.setMinutesToDate(newDate, mins);
+			today = newDate;
+		}
+		
+		return today;
+	}
 	
 	@GetMapping("/api/availableAppointmentsByDateRange")
     public ResponseEntity<?> getAvailableAppointments(@RequestParam(name = "personnelId", required = true) Long personnelId,

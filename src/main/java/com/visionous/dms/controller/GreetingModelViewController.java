@@ -4,7 +4,11 @@ package com.visionous.dms.controller;
  *
  */
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.logging.Log;
@@ -24,9 +28,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.LocaleResolver;
 
 import com.visionous.dms.event.OnResetPasswordEvent;
 import com.visionous.dms.pojo.Account;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Reset;
 import com.visionous.dms.pojo.Verification;
 import com.visionous.dms.service.AccountService;
@@ -48,6 +54,16 @@ public class GreetingModelViewController {
 	private ResetService resetService;
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
+	@Autowired
+	private GlobalSettings globalSettings;
+	
+	@Autowired
+	private LocaleResolver localeResolver;
+	@Autowired
+	private HttpServletRequest httpServletRequest;
+	@Autowired
+	private HttpServletResponse httpServletResponse;
+	
 	/**
 	 * @param model
 	 * @return
@@ -152,6 +168,16 @@ public class GreetingModelViewController {
 	public String reset(Model model) {
         
 		return "demo_1/pages/reset_password";
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/appointmentVerification")
+	public String appointmentVerification(Model model) {
+        
+		return "demo_1/partials/emails/appointmentVerification";
 	}
 	
 	/**
@@ -303,6 +329,23 @@ public class GreetingModelViewController {
 	@GetMapping("/icons")
 	public String icons() {
 		return "demo_1/pages/icons/font-awesome";
+	}
+	
+	@GetMapping("/new_appointment")
+	public String new_appointment(Model model, @RequestParam(name = "redirectUri", required = false) String redirectUrl) {
+	    
+		localeResolver.setLocale(httpServletRequest, httpServletResponse, new Locale("al","sq"));
+	    
+		model.addAttribute("disabledDays", this.globalSettings.getNonBusinessDays());
+		model.addAttribute("bookingSplit", this.globalSettings.getAppointmentTimeSplit());
+		model.addAttribute("startTime", this.globalSettings.getBusinessStartTimes()[0]);
+		model.addAttribute("startMinute", this.globalSettings.getBusinessStartTimes()[1]);
+		model.addAttribute("endTime", this.globalSettings.getBusinessEndTimes()[0]);
+		model.addAttribute("endMinute", this.globalSettings.getBusinessEndTimes()[1]);
+		model.addAttribute("businessName", this.globalSettings.getBusinessName());
+		model.addAttribute("redirect", redirectUrl);
+		
+		return "demo_1/pages/new_appointment";
 	}
 	
 	/**

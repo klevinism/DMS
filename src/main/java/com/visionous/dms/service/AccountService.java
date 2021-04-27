@@ -157,8 +157,28 @@ public class AccountService implements IAccountService{
 	 * @param birthday
 	 * @return
 	 */
+	@Override
 	public Optional<Account> findByNameAndSurnameAndBirthday(String name, String surname, Date birthday) {
 		return this.accountRepository.findByNameIgnoreCaseAndSurnameIgnoreCaseAndBirthday(name, surname, birthday);
 	}
 
+	/**
+	 * @param email
+	 * @return
+	 */
+	@Override
+	public Optional<Account> findByEmail(String email) {
+		return this.accountRepository.findByEmail(email);
+	}
+
+	/**
+	 * @param phoneNr
+	 * @return
+	 */
+	@Override
+	public Optional<Account> findByPhoneNr(Long phoneNr) {
+		return this.accountRepository.findAllByPhone(phoneNr);
+	}
+
+	
 }

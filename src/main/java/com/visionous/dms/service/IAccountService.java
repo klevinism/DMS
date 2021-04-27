@@ -94,4 +94,24 @@ public interface IAccountService {
 	Integer countByEnabledAndActiveAndCustomer_RegisterdateBetween(boolean enabled, boolean active, Date beginMonthDate,
 			Date endMonthDate);
 
+	/**
+	 * @param name
+	 * @param surname
+	 * @param birthday
+	 * @return
+	 */
+	Optional<Account> findByNameAndSurnameAndBirthday(String name, String surname, Date birthday);
+
+	/**
+	 * @param email
+	 * @return
+	 */
+	Optional<Account> findByEmail(String email);
+
+	/**
+	 * @param phoneNr
+	 * @return
+	 */
+	Optional<Account> findByPhoneNr(Long phoneNr);
+
 }
