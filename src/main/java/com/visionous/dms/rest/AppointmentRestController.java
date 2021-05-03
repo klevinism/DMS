@@ -3,17 +3,17 @@
  */
 package com.visionous.dms.rest;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -97,7 +97,7 @@ public class AppointmentRestController {
 
         ResponseBody<Appointment> result = new ResponseBody<>();
         
-        List<Appointment> anyAppointment = appointmentService.findByAppointmentDate(appointmentDate);
+        List<Appointment> anyAppointment = appointmentService.findByAppointmentDate(new Timestamp(appointmentDate.getTime()).toLocalDateTime());
         
         String noAppointmentSet = messageSource.getMessage("alert.noAppointmentSet", null, LocaleContextHolder.getLocale());
         String success = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
@@ -117,7 +117,7 @@ public class AppointmentRestController {
         		newAppointment.setCustomer(customer.get());
         	}
         	newAppointment.setAddeddate(new Date());
-        	newAppointment.setAppointmentDate(appointmentDate);
+        	newAppointment.setAppointmentDate(new Timestamp(appointmentDate.getTime()).toLocalDateTime());
         	
         	if(serviceId != null) {
         		Optional<ServiceType> serviceSelected = serviceTypeService.findById(serviceId);
@@ -128,9 +128,12 @@ public class AppointmentRestController {
         	}
         	
         	if(appointmentEndDate != null) {
-        		newAppointment.setAppointmentEndDate(appointmentEndDate);
+        		newAppointment.setAppointmentEndDate(
+        				new Timestamp(appointmentEndDate.getTime()).toLocalDateTime());
         	}else {
-        		newAppointment.setAppointmentEndDate(DateUtil.addMinutes(appointmentDate, globalSettings.getAppointmentTimeSplit()));
+        		Date endingDate = DateUtil.addMinutes(appointmentDate, globalSettings.getAppointmentTimeSplit());
+        		newAppointment.setAppointmentEndDate(
+        				new Timestamp(endingDate.getTime()).toLocalDateTime());
         	}
         	
         	Appointment created = appointmentService.create(newAppointment);
@@ -193,15 +196,16 @@ public class AppointmentRestController {
         }else {
         	Appointment newAppointment = selectedAppointment.get();
         	if(appointmentDate != null) {
-        		newAppointment.setAppointmentDate(appointmentDate);
+        		newAppointment.setAppointmentDate(new Timestamp(appointmentDate.getTime()).toLocalDateTime());
         	}else {
-        		newAppointment.setAppointmentDate(new Date());
+        		newAppointment.setAppointmentDate(LocalDateTime.now());
         	}
         	
         	if(appointmentEndDate != null) {
-        		newAppointment.setAppointmentEndDate(appointmentEndDate);
+        		newAppointment.setAppointmentEndDate(new Timestamp(appointmentEndDate.getTime()).toLocalDateTime());
         	}else {
-        		newAppointment.setAppointmentEndDate(DateUtil.addMinutes(appointmentDate, 30));
+        		Date endingDate = DateUtil.addMinutes(appointmentDate, 30);
+        		newAppointment.setAppointmentEndDate(new Timestamp(endingDate.getTime()).toLocalDateTime());
         	}
         	
         	newAppointment.setServiceType(null);
@@ -315,7 +319,8 @@ public class AppointmentRestController {
 							endingDate = DateUtil.addDays(start, daysToAdd);
 						} 
 						
-						Integer records = recordService.countByPersonnelIdAndServicedateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
+						Integer records = recordService.countByPersonnelIdAndServicedateBetween(singlePersonnel.get().getId(), new Timestamp(startingDate.getTime()).toLocalDateTime(), 
+								new Timestamp(endingDate.getTime()).toLocalDateTime());
 
 						start = DateUtil.addDays(start, daysToAdd);
 						recordsForPersonnel.add(records);
@@ -375,7 +380,7 @@ public class AppointmentRestController {
 						Date startingDate = setDayToBegginingOfPeriod(start, daysToAdd);
 						Date endingDate = setDayToEndingOfPeriod(start, daysToAdd);
 						
-						Integer records = appointmentService.countAllByPersonnelIdAndAppointmentDateBetween(singlePersonnel.get().getId(), startingDate, endingDate);
+						Integer records = appointmentService.countAllByPersonnelIdAndAppointmentDateBetween(singlePersonnel.get().getId(), new Timestamp(startingDate.getTime()).toLocalDateTime(), new Timestamp(endingDate.getTime()).toLocalDateTime());
 						
 						start = DateUtil.addDays(start, daysToAdd);
 						recordsForPersonnel.add(records);
@@ -473,12 +478,12 @@ public class AppointmentRestController {
         	Date newAppointmentEndDateTime = DateUtil.addMinutes(newAppointmentDateTime, minSplit);
 
         	for(int x=0; x<allPersonnel.size(); x++) { 
-    			List<Appointment> foundAppointment = this.appointmentService.findAllByPersonnelIdBetweenDateRange(allPersonnel.get(x).getId(), newAppointmentDateTime, newAppointmentEndDateTime);
+    			List<Appointment> foundAppointment = this.appointmentService.findAllByPersonnelIdBetweenDateRange(allPersonnel.get(x).getId(), new Timestamp(newAppointmentDateTime.getTime()).toLocalDateTime(), new Timestamp(newAppointmentEndDateTime.getTime()).toLocalDateTime());
 
     			if(foundAppointment.isEmpty()) {
     				autoAppointed = new Appointment();
-    				autoAppointed.setAppointmentDate(newAppointmentDateTime);
-    				autoAppointed.setAppointmentEndDate(newAppointmentEndDateTime);
+    				autoAppointed.setAppointmentDate(new Timestamp(newAppointmentDateTime.getTime()).toLocalDateTime());
+    				autoAppointed.setAppointmentEndDate(new Timestamp(newAppointmentEndDateTime.getTime()).toLocalDateTime());
     				autoAppointed.setPersonnelId(allPersonnel.get(x).getId());
     				autoAppointed.setPersonnel(allPersonnel.get(x));
     				found = true;
@@ -571,7 +576,7 @@ public class AppointmentRestController {
     		@RequestParam(name = "end", required = true) Date endRange) {
 		
         ResponseBody<Appointment> result = new ResponseBody<>();
-        List<Appointment> appointments = appointmentService.findAllByPersonnelIdBetweenDateRange(personnelId, startRange, endRange);
+        List<Appointment> appointments = appointmentService.findAllByPersonnelIdBetweenDateRange(personnelId, new Timestamp(startRange.getTime()).toLocalDateTime(), new Timestamp(endRange.getTime()).toLocalDateTime());
 
         if (appointments.isEmpty()) {
 			String messageNoUserFound = messageSource.getMessage("alert.noUpcomingAppointments", null, LocaleContextHolder.getLocale());
@@ -596,7 +601,7 @@ public class AppointmentRestController {
         if(personnelId != null) {
         	return this.getAvailableAppointments(personnelId, startRange, endRange);
         }else {
-        	List<Appointment> appointments = appointmentService.findAllBetweenDateRange(startRange, endRange);
+        	List<Appointment> appointments = appointmentService.findAllBetweenDateRange(new Timestamp(startRange.getTime()).toLocalDateTime(), new Timestamp(endRange.getTime()).toLocalDateTime());
 
             if (appointments.isEmpty()) {
     			String messageNoUserFound = messageSource.getMessage("alert.noUpcomingAppointments", null, LocaleContextHolder.getLocale());
@@ -682,7 +687,9 @@ public class AppointmentRestController {
 				Date start = startDate;
 				Date end = DateUtil.addMinutes(start, 30);
 				
-				List<Appointment> all = appointmentService.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(accountId, start, end);
+				List<Appointment> all = appointmentService.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(accountId, 
+						new Timestamp(start.getTime()).toLocalDateTime(), new Timestamp(end.getTime()).toLocalDateTime());
+				
 				all.stream().forEach(appointment -> appointment.getPersonnel().getAccount().setPassword(""));
 
 				if(all.isEmpty()) {

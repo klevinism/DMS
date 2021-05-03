@@ -31,7 +31,7 @@
 			             <div class="float-left" th:with="textclass = *{payed ? 'badge badge-outline-success':'badge badge-outline-danger'}">
 			                 <h4 class="mb-0">[[#{Receipt}]] #[[*{id}]]</h4>
 			                 <input type="hidden" th:field="*{id}">
-			                 <h5><small>[[#{Date}]]: [[*{#dates.format(record.servicedate, 'dd-MM-yyyy')}]]</small></h5>
+			                 <h5><small>[[#{Date}]]: [[*{#temporals.format(record.servicedate, 'dd-MM-yyyy hh:mm')}]]</small></h5>
 			                 <h5><small>[[#{Status}]]: <span th:class="${textclass}" th:text="*{payed ? '__#{Payed}__' : '__#{NotPayed}__'}"></span></small></h5>
 			             </div>
 			             <div class="float-right" >

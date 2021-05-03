@@ -178,8 +178,8 @@
 	       	<div class="card-header p-3">
 	         <h3 class="card-title">[[#{ThisYear}]] <small>[[#{NewCustomers}]]</small></h3>
 	       	</div>
-	       	<div class="card-body">
-	   				<div class="tbl-overflow" th:if="${lastVisitList != null}">
+	       	<div class="card-body p-1 ">
+	   				<div  th:if="${lastVisitList != null}">
 						<canvas id="lineCustomerChart" style="display: block;" ></canvas>
 	     			</div>
 	   	   	</div>   		    
@@ -193,7 +193,7 @@
        <div class="card-header p-3">
          <h3 class="card-title">[[#{Visits}]] [[#{ThisYear}]] <small>[[#{CustomerBased}]]</small></h3>
        </div>
-       <div class="card-body">
+       <div class="card-body p-1">
 
    				<div class="tbl-overflow" th:if="${lastVisitList != null}">
 					<canvas id="pieCustomerChart"></canvas>

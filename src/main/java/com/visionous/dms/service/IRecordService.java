@@ -3,7 +3,7 @@
  */
 package com.visionous.dms.service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -44,7 +44,7 @@ public interface IRecordService {
 	 * @param endDate
 	 * @return
 	 */
-	Integer countByPersonnelIdAndServicedateBetween(Long personnelId, Date beginDate, Date endDate);
+	Integer countByPersonnelIdAndServicedateBetween(Long personnelId, LocalDateTime beginDate, LocalDateTime endDate);
 
 	/**
 	 * @param personnelId
@@ -52,14 +52,14 @@ public interface IRecordService {
 	 * @param endDate
 	 * @return
 	 */
-	Integer countAllByPersonnelIdAndServicedateBetween(Long personnelId, Date beginDate, Date endDate);
+	Integer countAllByPersonnelIdAndServicedateBetween(Long personnelId, LocalDateTime beginDate, LocalDateTime endDate);
 
 	/**
 	 * @param beginDate
 	 * @param endDate
 	 * @return
 	 */
-	List<Record> findAllByServicedateBetween(Date beginDate, Date endDate);
+	List<Record> findAllByServicedateBetween(LocalDateTime beginDate, LocalDateTime endDate);
 
 	/**
 	 * @param newRecord
@@ -83,12 +83,12 @@ public interface IRecordService {
 	 * @param endDate
 	 * @return
 	 */
-	Integer countByServicedateBetween(Date startDate, Date endDate);
+	Integer countByServicedateBetween(LocalDateTime startDate, LocalDateTime endDate);
 
 	/**
 	 * @param startDate
 	 * @param endDate
 	 * @return
 	 */
-	Integer sumOfReceipts(Date startDate, Date endDate);
+	Integer sumOfReceipts(LocalDateTime startDate, LocalDateTime endDate);
 }

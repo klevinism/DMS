@@ -204,7 +204,6 @@
 				            		  $("#attachmentInput").hide();
 				            	  }
 				              });
-				              
 				              $('#oldVisitDate').datetimepicker({
 				             	    "allowInputToggle": true,
 				             	    "showClose": true,
@@ -221,9 +220,7 @@
 					          	};
 					          	
 					          	getServicePrice(data, function(data, response){
-					          	  console.log(data);
 					          	   if(data.error != "error"){
-					          	       
 					          	       renderServicePrice(data.result[0].price);
 					          	   } 
 					          	});

@@ -3,6 +3,7 @@
  */
 package com.visionous.dms.event.listener;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -86,14 +87,18 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         String rawPass = account.getPassword();
          
         
-        Optional<Verification> verification = verificationService.findByAccount_id(account.getId());
+        Optional<Verification> verification = verificationService.findByAccount_idAndExpirationDateAfter(account.getId(), LocalDateTime.now());
         
         if(verification.isPresent()) {
         	token = verification.get().getToken();
         	template = emailTemplatePath;
         }else {
         	token = UUID.randomUUID().toString();
-        	template = firstEmailTemplatePath;
+        	if(verificationService.findByAccount_id(account.getId()).isEmpty()) {
+        		template = firstEmailTemplatePath;
+        	}else {
+        		template = emailTemplatePath;
+        	}
         	
             verificationService.create(new Verification(account, token));
             account.setPassword(rawPass);
