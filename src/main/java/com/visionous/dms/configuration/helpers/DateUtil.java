@@ -4,6 +4,8 @@
 package com.visionous.dms.configuration.helpers;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.Calendar;
 import java.util.Date;
@@ -334,11 +336,11 @@ public class DateUtil {
      * @param expiryTimeInMinutes
      * @return
      */
-    public static Date calculateExpiryDate(int expiryTimeInMinutes) {
+    public static LocalDateTime calculateExpiryDate(int expiryTimeInMinutes) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Timestamp(cal.getTime().getTime()));
         cal.add(Calendar.MINUTE, expiryTimeInMinutes);
-        return new Date(cal.getTime().getTime());
+        return LocalDateTime.ofInstant(cal.toInstant(), cal.getTimeZone().toZoneId());
     }
 
 	/**

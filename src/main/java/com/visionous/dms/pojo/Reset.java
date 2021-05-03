@@ -3,7 +3,7 @@
  */
 package com.visionous.dms.pojo;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,9 +42,8 @@ public class Reset {
     private Account account;
     
     @Column(name="expiredate")
-	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(iso = ISO.DATE)
-    private Date expiryDate;
+    private LocalDateTime expiryDate;
 
 	/**
 	 * @param account2
@@ -107,14 +106,14 @@ public class Reset {
 	/**
 	 * @return the expiryDate
 	 */
-	public Date getExpiryDate() {
+	public LocalDateTime getExpiryDate() {
 		return expiryDate;
 	}
 
 	/**
 	 * @param expiryDate the expiryDate to set
 	 */
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDate(LocalDateTime expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 }

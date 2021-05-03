@@ -10,6 +10,9 @@ function initCharts(){
          
 		var ctx = document.getElementById('lineCustomerChart').getContext('2d');
 		// For a line chart
+		var tempOpt = lineGraphCardOptions;
+		tempOpt.scales.yAxes[0].display = true;
+		
 		var mylineChart = new Chart(ctx, {
 		    type: 'line',
 	
@@ -25,16 +28,7 @@ function initCharts(){
              },
     
              // Configuration options go here
-             options: {
-             	scales: {
-			        yAxes: [{
-			            ticks: {
-			                beginAtZero: true,
-			                precision:0
-			            }
-			        }]
-			    }
-             }
+             options: tempOpt
 		});
 	}
 

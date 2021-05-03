@@ -3,6 +3,7 @@
  */
 package com.visionous.dms.service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +24,7 @@ public interface IAppointmentService {
 	 * @param appointmentDate
 	 * @return
 	 */
-	List<Appointment> findByAppointmentDate(Date appointmentDate);
+	List<Appointment> findByAppointmentDate(LocalDateTime appointmentDate);
 
 	/**
 	 * @param newAppointment
@@ -43,7 +44,7 @@ public interface IAppointmentService {
 	 * @param endingDate
 	 * @return
 	 */
-	Integer countAllByPersonnelIdAndAppointmentDateBetween(Long id, Date startingDate, Date endingDate);
+	Integer countAllByPersonnelIdAndAppointmentDateBetween(Long id, LocalDateTime startingDate, LocalDateTime endingDate);
 
 	/**
 	 * @param accountId
@@ -51,8 +52,8 @@ public interface IAppointmentService {
 	 * @param end
 	 * @return
 	 */
-	List<Appointment> findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(Long accountId, Date start,
-			Date end);
+	List<Appointment> findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(Long accountId, LocalDateTime start,
+			LocalDateTime end);
 
 	/**
 	 * @param appointmentId
@@ -66,14 +67,14 @@ public interface IAppointmentService {
 	 * @param endRange
 	 * @return
 	 */
-	List<Appointment> findAllByPersonnelIdBetweenDateRange(Long personnelId, Date startRange, Date endRange);
+	List<Appointment> findAllByPersonnelIdBetweenDateRange(Long personnelId, LocalDateTime startRange, LocalDateTime endRange);
 
 	/**
 	 * @param startRange
 	 * @param endRange
 	 * @return
 	 */
-	List<Appointment> findAllBetweenDateRange(Date startRange, Date endRange);
+	List<Appointment> findAllBetweenDateRange(LocalDateTime startRange, LocalDateTime endRange);
 	
 	
 	/**
