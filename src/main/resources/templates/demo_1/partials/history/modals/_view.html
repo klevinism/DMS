@@ -73,7 +73,7 @@
 									th:onmouseover="'hoverRecord(\'__${var}__\')'"
 									th:onclick="'window.location=\'/customer/'+*{id}+'/history/'+*{customerHistory.id}+'/record/'+${record.id}+'\''">
 									
-									<td th:text="${#dates.format(record.servicedate, 'd-M-yyyy')}"></td>
+									<td th:text="${#temporals.format(record.servicedate, 'd-M-yyyy hh:mm')}"></td>
 									<td th:text="${record.serviceType.name}"></td>
 									<td id="tooth" th:text="${#strings.abbreviate(var,19)}" data-toggle="tooltip" data-html="true" th:title="${var}"></td>
 									<td style="white-space:break-spaces;" th:text="${record.servicecomment}" data-toggle="tooltip" data-html="true" th:title="${record.servicecomment}">

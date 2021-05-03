@@ -3,6 +3,7 @@
  */
 package com.visionous.dms.model;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Period;
 import java.util.ArrayList;
@@ -129,7 +130,10 @@ public class HomeModelController extends ModelControllerImpl{
 			currentAccount.ifPresent(account -> {
 
 				Period monthPeriodOfThisYear = DateUtil.getPeriodBetween(DateUtil.getBegginingOfYear(), new Date());
-				List<Appointment> todaysAppointments = appointmentService.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(account.getId(), DateUtil.getStartWorkingHr(), appointmentEndTime);
+				
+				List<Appointment> todaysAppointments = appointmentService.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(account.getId(), 
+						new Timestamp(DateUtil.getStartWorkingHr().getTime()).toLocalDateTime(), new Timestamp(appointmentEndTime.getTime()).toLocalDateTime());
+				
 				List<Record> top10records = recordService.findFirst10ByPersonnelIdOrderByServicedateDesc(account.getId()); 
 				List<Integer> nrOfRecordsForEachMonth = new ArrayList<>();
 				 for(int month=0 ; month <= monthPeriodOfThisYear.getMonths(); month++) {
@@ -137,8 +141,9 @@ public class HomeModelController extends ModelControllerImpl{
 					Date beginMonthDate = DateUtil.getCurrentDateByMonthAndDay(month, 1);
 										
 					Date endMonthDate = DateUtil.getCurrentDateByMonthAndDay(month, DateUtil.getCalendarFromDate(beginMonthDate).getActualMaximum(Calendar.DAY_OF_MONTH));
-
-					Integer countBetweenDates = recordService.countByPersonnelIdAndServicedateBetween(account.getId(), beginMonthDate, endMonthDate);
+					
+					Integer countBetweenDates = recordService.countByPersonnelIdAndServicedateBetween(account.getId(), 
+							new Timestamp(beginMonthDate.getTime()).toLocalDateTime(), new Timestamp(endMonthDate.getTime()).toLocalDateTime());
 					nrOfRecordsForEachMonth.add(countBetweenDates);
 				}
 				
@@ -179,8 +184,10 @@ public class HomeModelController extends ModelControllerImpl{
 							endCalendar.set(Calendar.HOUR_OF_DAY, 23);
 							Calendar startCalendar = DateUtil.getCalendarFromDate(startDate);
 							startCalendar.set(Calendar.HOUR_OF_DAY, 0);
-							Integer records = recordService.countAllByPersonnelIdAndServicedateBetween(selectedPersonnel.getId(), startCalendar.getTime(), endCalendar.getTime());
-							Integer appointments = appointmentService.countAllByPersonnelIdAndAppointmentDateBetween(selectedPersonnel.getId(), startCalendar.getTime(), endCalendar.getTime());
+							Integer records = recordService.countAllByPersonnelIdAndServicedateBetween(selectedPersonnel.getId(), 
+									new Timestamp(startCalendar.getTime().getTime()).toLocalDateTime(), new Timestamp(endCalendar.getTime().getTime()).toLocalDateTime());
+							
+							Integer appointments = appointmentService.countAllByPersonnelIdAndAppointmentDateBetween(selectedPersonnel.getId(), new Timestamp(startCalendar.getTime().getTime()).toLocalDateTime(), new Timestamp(endCalendar.getTime().getTime()).toLocalDateTime());
 							dataForAppointment.add(appointments);
 							dataForRange.add(records);
 							startDate = DateUtil.addDays(startDate, 1);
@@ -193,7 +200,8 @@ public class HomeModelController extends ModelControllerImpl{
 					Date endsDate = new Date();
 					Date startsDate = DateUtil.setDayToBegginingOfYear(endsDate);
 					
-					List<Record> allRecordsThisYear = recordService.findAllByServicedateBetween(startsDate, endsDate);
+					List<Record> allRecordsThisYear = recordService.findAllByServicedateBetween(
+							new Timestamp(startsDate.getTime()).toLocalDateTime(), new Timestamp(endsDate.getTime()).toLocalDateTime());
 					
 					Map<String, Integer> allNewAndOldCustomers = new HashMap<>();
 					Integer allNewCustomers= new Integer(0); 
@@ -248,18 +256,19 @@ public class HomeModelController extends ModelControllerImpl{
 							lastWorkingDates.add(new SimpleDateFormat(" dd MMMM ").format(startDate));
 						}
 						
-						nrOfVisitsForWorkingDays.add(recordService.countByServicedateBetween(startDate, endDate));
+						nrOfVisitsForWorkingDays.add(recordService.countByServicedateBetween(new Timestamp(startDate.getTime()).toLocalDateTime(), new Timestamp(endDate.getTime()).toLocalDateTime()));
 						
-						Integer currentRevenue = recordService.sumOfReceipts(startDate, endDate);
+						Integer currentRevenue = recordService.sumOfReceipts(new Timestamp(startDate.getTime()).toLocalDateTime(), new Timestamp(endDate.getTime()).toLocalDateTime());
 						nrOfRevenueForWorkingDays.add(currentRevenue == null ? 0 : currentRevenue);
 						
 						nrOfNewCustomersForWorkingDays.add(
 									accountService.countByEnabledAndActiveAndCustomer_RegisterdateBetween(true,true, startDate, endDate));
 
-						List<Appointment> allAppointmentsBtwDates = appointmentService.findAllBetweenDateRange(startDate, endDate);
+						List<Appointment> allAppointmentsBtwDates = appointmentService.findAllBetweenDateRange(new Timestamp(startDate.getTime()).toLocalDateTime(), new Timestamp(endDate.getTime()).toLocalDateTime());
 						List<Appointment> noShowAppointmentsForDay = allAppointmentsBtwDates.stream().filter(appointment -> 
-							recordService.findAllByServicedateBetweenAndCustomerId(startDate, endDate, appointment.getCustomerId()).isEmpty()
-						).collect(Collectors.toList());
+							recordService.findAllByServicedateBetweenAndCustomerId(new Timestamp(startDate.getTime()).toLocalDateTime(), 
+									new Timestamp(endDate.getTime()).toLocalDateTime(), appointment.getCustomerId()).isEmpty()
+							).collect(Collectors.toList());
 						
 						nrOfAppointmentsNoShows.add(noShowAppointmentsForDay.size());
 					});

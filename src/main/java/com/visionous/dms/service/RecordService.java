@@ -3,8 +3,8 @@
  */
 package com.visionous.dms.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -97,7 +97,7 @@ public class RecordService implements IRecordService{
 	 * @return record count of personnel serviced between dates
 	 */
 	@Override
-	public Integer countByPersonnelIdAndServicedateBetween(Long personnelId, Date beginDate, Date endDate) {
+	public Integer countByPersonnelIdAndServicedateBetween(Long personnelId, LocalDateTime beginDate, LocalDateTime endDate) {
 		return this.recordRepository.countByPersonnelIdAndServicedateBetween(personnelId, beginDate, endDate);
 	}
 
@@ -108,7 +108,7 @@ public class RecordService implements IRecordService{
 	 * @return all records of personnel serviced between dates
 	 */
 	@Override
-	public Integer countAllByPersonnelIdAndServicedateBetween(Long personnelId, Date beginDate, Date endDate) {
+	public Integer countAllByPersonnelIdAndServicedateBetween(Long personnelId, LocalDateTime beginDate, LocalDateTime endDate) {
 		return this.recordRepository.countByPersonnelIdAndServicedateBetween(personnelId, beginDate, endDate);
 	}
 
@@ -118,7 +118,7 @@ public class RecordService implements IRecordService{
 	 * @return all records between service dates
 	 */
 	@Override
-	public List<Record> findAllByServicedateBetween(Date beginDate, Date endDate) {
+	public List<Record> findAllByServicedateBetween(LocalDateTime beginDate, LocalDateTime endDate) {
 		return this.recordRepository.findAllByServicedateBetween(beginDate, endDate);
 	}
 
@@ -129,7 +129,7 @@ public class RecordService implements IRecordService{
 	@Override
 	public Record create(Record newRecord) {
 		if(newRecord.getServicedate() == null) {
-			newRecord.setServicedate(new Date());
+			newRecord.setServicedate(LocalDateTime.now());
 		}
 		return this.recordRepository.saveAndFlush(newRecord);
 	}
@@ -156,7 +156,7 @@ public class RecordService implements IRecordService{
 	 * @param endDate
 	 */
 	@Override
-	public Integer countByServicedateBetween(Date startDate, Date endDate) {
+	public Integer countByServicedateBetween(LocalDateTime startDate, LocalDateTime endDate) {
 		return this.recordRepository.countByServicedateBetween(startDate, endDate);
 	}
 
@@ -164,7 +164,7 @@ public class RecordService implements IRecordService{
 	 * @return
 	 */
 	@Override
-	public Integer sumOfReceipts(Date startDate, Date endDate) {
+	public Integer sumOfReceipts(LocalDateTime startDate, LocalDateTime endDate) {
 		return this.recordRepository.sumOfAllReceipts(startDate, endDate);
 	}
 
@@ -173,7 +173,7 @@ public class RecordService implements IRecordService{
 	 * @param endDate
 	 * @param customerId
 	 */
-	public List<Record> findAllByServicedateBetweenAndCustomerId(Date startDate, Date endDate, Long customerId) {
+	public List<Record> findAllByServicedateBetweenAndCustomerId(LocalDateTime startDate, LocalDateTime endDate, Long customerId) {
 		return this.recordRepository.findAllByServicedateBetweenAndHistory_customerId(startDate, endDate, customerId);
 	}
 }

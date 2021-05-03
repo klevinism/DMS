@@ -3,8 +3,7 @@
  */
 package com.visionous.dms.repository;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,7 +56,7 @@ public interface RecordRepository extends JpaRepository<Record, Long>{
 	 * @param endDate  
 	 * @return
 	 */
-	Integer countByPersonnelIdAndServicedateBetween(Long personnelId, Date beginDate, Date endDate);
+	Integer countByPersonnelIdAndServicedateBetween(Long personnelId, LocalDateTime beginDate, LocalDateTime endDate);
 
 	/**
 	 * @param id
@@ -65,14 +64,14 @@ public interface RecordRepository extends JpaRepository<Record, Long>{
 	 * @param oneWeekBefore
 	 * @return
 	 */
-	List<Record> findAllByPersonnelIdAndServicedateBetween(Long personnelId, Date startDate, Date endDate);
+	List<Record> findAllByPersonnelIdAndServicedateBetween(Long personnelId, LocalDateTime startDate, LocalDateTime endDate);
 
 	/**
 	 * @param currentDate
 	 * @param endsDate
 	 * @return
 	 */
-	List<Record> findAllByServicedateBetween(Date startDate, Date endDate);
+	List<Record> findAllByServicedateBetween(LocalDateTime startDate, LocalDateTime endDate);
 
 	/**
 	 * @return
@@ -101,13 +100,13 @@ public interface RecordRepository extends JpaRepository<Record, Long>{
 	 * @param endDate
 	 * @return
 	 */
-	Integer countByServicedateBetween(Date startDate, Date endDate);
+	Integer countByServicedateBetween(LocalDateTime startDate, LocalDateTime endDate);
 
 	/**
 	 * @return
 	 */
 	@Query("SELECT sum(e.receipt.total) from Record e WHERE servicedate BETWEEN ?1 AND ?2")
-	Integer sumOfAllReceipts(Date startDate,Date endDate);
+	Integer sumOfAllReceipts(LocalDateTime startDate, LocalDateTime endDate);
 
 	/**
 	 * @param startDate
@@ -115,7 +114,7 @@ public interface RecordRepository extends JpaRepository<Record, Long>{
 	 * @param customerId
 	 * @return
 	 */
-	List<Record> findAllByServicedateBetweenAndHistory_customerId(Date startDate, Date endDate, Long customerId);
+	List<Record> findAllByServicedateBetweenAndHistory_customerId(LocalDateTime startDate, LocalDateTime endDate, Long customerId);
 	
 	
 }

@@ -72,7 +72,7 @@
 		                       		<div class="form-group">
 		                       			<div class="form-group">
 		                       				<label th:for="*{servicedate}" ><h4 class="card-title"> <u>[[#{ServiceDate}]]</u></h4></label>
-		                       				<p class="card-description" th:text="*{#dates.format(servicedate, 'HH:mm, dd-MM-yyyy')}"></p>
+		                       				<p class="card-description" th:text="*{#temporals.format(servicedate, 'HH:mm, dd-MM-yyyy')}"></p>
 										</div>
 		                       			<div class="form-group">
 		                       				<label th:for="*{serviceType}" ><h4 class="card-title"> <u>[[#{DentalService}]]</u></h4></label>

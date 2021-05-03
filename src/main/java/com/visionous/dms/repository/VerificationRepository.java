@@ -3,6 +3,8 @@
  */
 package com.visionous.dms.repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,6 +35,13 @@ public interface VerificationRepository extends JpaRepository<Verification, Long
 	 * @param id
 	 * @return
 	 */
-	Optional<Verification> findByAccount_id(Long id);
+	List<Verification> findByAccount_id(Long id);
+
+	/**
+	 * @param id
+	 * @param now
+	 * @return
+	 */
+	Optional<Verification> findByAccount_idAndExpiryDateAfter(Long id, LocalDateTime now);
 
 }

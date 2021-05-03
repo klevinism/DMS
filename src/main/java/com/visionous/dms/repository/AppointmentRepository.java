@@ -3,6 +3,7 @@
  */
 package com.visionous.dms.repository;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +38,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>{
 	 * @param appointmentDate
 	 * @return
 	 */
-	List<Appointment> findByAppointmentDate(Date appointmentDate);
+	List<Appointment> findByAppointmentDate(LocalDateTime appointmentDate);
 
 	/**
 	 * @param id
@@ -45,8 +46,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>{
 	 * @param endWorkHours
 	 * @return
 	 */
-	List<Appointment> findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateDesc(Long id, Date startWorkHours,
-			Date endWorkHours);
+	List<Appointment> findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateDesc(Long id, LocalDateTime startWorkHours,
+			LocalDateTime endWorkHours);
 
 	/**
 	 * @param id
@@ -54,8 +55,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>{
 	 * @param endWorkHours
 	 * @return
 	 */
-	List<Appointment> findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(Long id, Date startWorkHours,
-			Date endWorkHours);
+	List<Appointment> findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(Long id, LocalDateTime startWorkHours,
+			LocalDateTime endWorkHours);
 
 	/**
 	 * @param id
@@ -63,7 +64,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>{
 	 * @param time2
 	 * @return
 	 */
-	Integer countAllByPersonnelIdAndAppointmentDateBetween(Long personnelId, Date start, Date end);
+	Integer countAllByPersonnelIdAndAppointmentDateBetween(Long personnelId, LocalDateTime start, LocalDateTime end);
 	
 	/**
 	 * @param personnelId
@@ -72,7 +73,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>{
 	 * @return
 	 */
 	List<Appointment> findAllByPersonnelIdAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(
-			Long personnelId, Date startRange, Date endRange);
+			Long personnelId, LocalDateTime startRange, LocalDateTime endRange);
 
 	/**
 	 * @param startRange
@@ -80,7 +81,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>{
 	 * @return
 	 */
 	List<Appointment> findAllByAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateDesc(
-			Date startRange, Date endRange);
+			LocalDateTime startRange, LocalDateTime endRange);
 
 	/**
 	 * @return

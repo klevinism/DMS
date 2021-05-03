@@ -1,4 +1,6 @@
 package com.visionous.dms.controller;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 /**
  * @author delimeta
  *
@@ -147,8 +149,7 @@ public class GreetingModelViewController {
 	    }
 		
 	    Account user = verificationToken.getAccount();
-	    Calendar cal = Calendar.getInstance();
-	    if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+	    if (!verificationToken.getExpiryDate().isAfter(LocalDateTime.now())) {
 	        String message = messages.getMessage("alert.tokenExpired", null, LocaleContextHolder.getLocale());
 	        model.addAttribute("errorMessage", message);
 	        return "demo_1/pages/confirmation";
@@ -220,8 +221,7 @@ public class GreetingModelViewController {
 	        return "demo_1/pages/reset_password";
 	    }
 		
-	    Calendar cal = Calendar.getInstance();
-	    if ((resetToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+	    if (!resetToken.getExpiryDate().isAfter(LocalDateTime.now())) {
 	    	String message = messages.getMessage("alert.tokenExpired", null, LocaleContextHolder.getLocale());
 	        model.addAttribute("errorMessage", message);
 	        return "demo_1/pages/reset_password";
@@ -247,8 +247,7 @@ public class GreetingModelViewController {
 	    }
 		
 	    Account user = resetToken.getAccount();
-	    Calendar cal = Calendar.getInstance();
-	    if ((resetToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+	    if (!resetToken.getExpiryDate().isAfter(LocalDateTime.now())) {
 	    	String message = messages.getMessage("alert.tokenExpired", null, LocaleContextHolder.getLocale());
 	        model.addAttribute("errorMessage", message);
 	        return "demo_1/pages/reset_password";
