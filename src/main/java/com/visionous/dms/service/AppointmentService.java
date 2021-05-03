@@ -3,6 +3,7 @@
  */
 package com.visionous.dms.service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +49,7 @@ public class AppointmentService implements IAppointmentService{
 	 * @return
 	 */
 	@Override
-	public List<Appointment> findByAppointmentDate(Date appointmentDate) {
+	public List<Appointment> findByAppointmentDate(LocalDateTime appointmentDate) {
 		return this.appointmentRepository.findByAppointmentDate(appointmentDate);
 	}
 
@@ -70,7 +71,7 @@ public class AppointmentService implements IAppointmentService{
 	 * @return
 	 */
 	@Override
-	public Integer countAllByPersonnelIdAndAppointmentDateBetween(Long id, Date startingDate, Date endingDate) {
+	public Integer countAllByPersonnelIdAndAppointmentDateBetween(Long id, LocalDateTime startingDate, LocalDateTime endingDate) {
 		return this.appointmentRepository.countAllByPersonnelIdAndAppointmentDateBetween(id, startingDate, endingDate);
 	}
 
@@ -93,7 +94,7 @@ public class AppointmentService implements IAppointmentService{
 	 */
 	@Override
 	public List<Appointment> findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(Long accountId,
-			Date start, Date end) {
+			LocalDateTime start, LocalDateTime end) {
 		return this.appointmentRepository.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateDesc(accountId, start, end);
 	}
 
@@ -114,7 +115,7 @@ public class AppointmentService implements IAppointmentService{
 	 * @return
 	 */
 	@Override
-	public List<Appointment> findAllByPersonnelIdBetweenDateRange(Long personnelId, Date startRange, Date endRange) {
+	public List<Appointment> findAllByPersonnelIdBetweenDateRange(Long personnelId, LocalDateTime startRange, LocalDateTime endRange) {
 		return this.appointmentRepository.
 				findAllByPersonnelIdAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(personnelId, startRange, endRange);
 	}
@@ -126,7 +127,7 @@ public class AppointmentService implements IAppointmentService{
 	 * @return
 	 */
 	@Override
-	public List<Appointment> findAllBetweenDateRange(Date startRange, Date endRange) {
+	public List<Appointment> findAllBetweenDateRange(LocalDateTime startRange, LocalDateTime endRange) {
 		return this.appointmentRepository.
 				findAllByAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateDesc(startRange, endRange);
 	}

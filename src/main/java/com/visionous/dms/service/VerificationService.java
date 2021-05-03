@@ -3,6 +3,8 @@
  */
 package com.visionous.dms.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ public class VerificationService implements IVerificationService{
 	 * @return
 	 */
 	@Override
-	public Optional<Verification> findByAccount_id(Long accountId) {
+	public List<Verification> findByAccount_id(Long accountId) {
 		return this.verificationRepository.findByAccount_id(accountId);
 	}
 
@@ -52,6 +54,16 @@ public class VerificationService implements IVerificationService{
 	@Override
 	public Verification findByToken(String token) {
 		return this.verificationRepository.findByToken(token);
+	}
+
+	/**
+	 * @param id
+	 * @param now
+	 * @return
+	 */
+	@Override
+	public Optional<Verification> findByAccount_idAndExpirationDateAfter(Long id, LocalDateTime now) {
+		return this.verificationRepository.findByAccount_idAndExpiryDateAfter(id, now);
 	}
 	
 	

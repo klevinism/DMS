@@ -39,7 +39,7 @@
 						<tr class="px-2" th:each="record: *{records}" 
 						th:with="visitedTeethTxt = ${#strings.listJoin(record.visitedTeeth.![name],' , ')}"
 						th:onclick="'window.location=\'/customer/'+*{customer.id}+'/history/'+*{id}+'/record/'+${record.id}+'\''">
-							<td  th:text="${#dates.format(record.servicedate, 'd-M-yyyy')}"></td>
+							<td  th:text="${#temporals.format(record.servicedate, 'd-M-yyyy hh:mm')}"></td>
 							<td th:text="*{customer.account.username}"></td>
 							<td th:text="${record.personnel.account.name}"></td>
 							<td th:text="${#strings.abbreviate(visitedTeethTxt,19)}"  data-toggle="tooltip" data-html="true" th:title="${visitedTeethTxt}"></td>
