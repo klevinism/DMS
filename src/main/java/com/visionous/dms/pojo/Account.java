@@ -106,7 +106,7 @@ public class Account implements Serializable{
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER) 
     @JoinTable(name = "authority",
-            joinColumns = @JoinColumn(name = "accountid"),
+            joinColumns = @JoinColumn(name = "accountid", unique = true),
             inverseJoinColumns = @JoinColumn(name = "roleid"))
     private List<Role> roles  = new ArrayList<>();
     
