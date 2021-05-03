@@ -4,6 +4,7 @@
 package com.visionous.dms.pojo;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -20,6 +21,7 @@ import javax.persistence.SequenceGenerator;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
@@ -49,10 +51,14 @@ public class Appointment implements Serializable{
 	private Long serviceTypeId;
 
 	@Column(name="appointmentdate")
-	private Date appointmentDate;
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime appointmentDate;
 	
 	@Column(name="appointmentenddate")
-	private Date appointmentEndDate;
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime appointmentEndDate;
 	
 	@DateTimeFormat (pattern="dd-MM-YYYY")
 	private Date addeddate;
@@ -68,7 +74,7 @@ public class Appointment implements Serializable{
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH )
 	@JoinColumn(name = "servicetypeid")
 	private ServiceType serviceType;
-	
+
 	/**
 	 * @return the id
 	 */
@@ -128,14 +134,14 @@ public class Appointment implements Serializable{
 	/**
 	 * @return the appointmentDate
 	 */
-	public Date getAppointmentDate() {
+	public LocalDateTime getAppointmentDate() {
 		return appointmentDate;
 	}
 
 	/**
 	 * @param appointmentDate the appointmetDate to set
 	 */
-	public void setAppointmentDate(Date appointmetDate) {
+	public void setAppointmentDate(LocalDateTime appointmetDate) {
 		this.appointmentDate = appointmetDate;
 	}
 
@@ -156,14 +162,14 @@ public class Appointment implements Serializable{
 	/**
 	 * @return the appointmentEndDate
 	 */
-	public Date getAppointmentEndDate() {
+	public LocalDateTime getAppointmentEndDate() {
 		return appointmentEndDate;
 	}
 
 	/**
 	 * @param appointmentEndDate the appointmentEndDate to set
 	 */
-	public void setAppointmentEndDate(Date appointmentEndDate) {
+	public void setAppointmentEndDate(LocalDateTime appointmentEndDate) {
 		this.appointmentEndDate = appointmentEndDate;
 	}
 

@@ -1,6 +1,7 @@
 package com.visionous.dms.model;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -240,9 +241,11 @@ public class PersonnelModelController extends ModelControllerImpl{
 		personnels.forEach(personnel->{
 			int cntLastMonth = 0;
 			double perc = 0.0;
-			cntLastMonth = recordService.countByPersonnelIdAndServicedateBetween(personnel.getId(), lastMonthBegin, lastMonthEnd);
+			cntLastMonth = recordService.countByPersonnelIdAndServicedateBetween(personnel.getId(), 
+					new Timestamp(lastMonthBegin.getTime()).toLocalDateTime(), new Timestamp(lastMonthEnd.getTime()).toLocalDateTime());
 			int cntLastLastMonth = 0;
-			cntLastLastMonth = recordService.countByPersonnelIdAndServicedateBetween(personnel.getId(), lastLastMonthBegin, lastLastMonthEnd);
+			cntLastLastMonth = recordService.countByPersonnelIdAndServicedateBetween(personnel.getId(), 
+					new Timestamp(lastLastMonthBegin.getTime()).toLocalDateTime(), new Timestamp(lastLastMonthEnd.getTime()).toLocalDateTime());
 			int diff = cntLastMonth - cntLastLastMonth;
 			try {
 				if(cntLastMonth != 0) {

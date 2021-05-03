@@ -3,6 +3,7 @@
  */
 package com.visionous.dms.rest;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -47,7 +48,9 @@ public class RecordRestController {
 
         
     	if(serviceDate != null) {
-    		List<Record> records = recordService.findAllByServicedateBetween(serviceDate, serviceEndDate);
+    		List<Record> records = recordService.findAllByServicedateBetween(new Timestamp(serviceDate.getTime()).toLocalDateTime(), 
+    				new Timestamp(serviceEndDate.getTime()).toLocalDateTime());
+    		
 	        String message = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
 			result.setError(message);
     		result.setResult(records);

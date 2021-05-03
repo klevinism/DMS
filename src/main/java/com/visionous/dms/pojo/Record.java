@@ -4,8 +4,8 @@
 package com.visionous.dms.pojo;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -21,14 +21,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.visionous.dms.configuration.helpers.DmsCore;
 
@@ -64,9 +63,9 @@ public class Record  implements Serializable{
 	
 	private String attachments;
 
-	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(iso = ISO.DATE)
-	private Date servicedate;
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime servicedate;
 	
 	@Column(name = "historyid", insertable = false, updatable = false)
 	private Long historyId;
@@ -185,14 +184,14 @@ public class Record  implements Serializable{
 	/**
 	 * @return the servicedate
 	 */
-	public Date getServicedate() {
+	public LocalDateTime getServicedate() {
 		return servicedate;
 	}
 
 	/**
 	 * @param servicedate the servicedate to set
 	 */
-	public void setServicedate(Date servicedate) {
+	public void setServicedate(LocalDateTime servicedate) {
 		this.servicedate = servicedate;
 	}
 
