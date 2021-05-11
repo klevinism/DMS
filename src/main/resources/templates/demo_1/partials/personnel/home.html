@@ -34,7 +34,7 @@
 									</thead>
 									<tbody>
 										<tr th:each="appointment : ${appointmentList}">
-											<td>[[${#dates.format(appointment.appointmentDate, 'HH:mm')}]]</td>
+											<td>[[${#temporals.format(appointment.appointmentDate, 'HH:mm')}]]</td>
 											<td>[[${appointment.customer.account.name}]]</td>
 											<td>[[${appointment.customer.account.surname}]]</td>
 											<td th:if="${appointment.customer.customerHistory != null}"><a th:href="'/customer/'+${appointment.customer.id}+'/history/'+${appointment.customer.customerHistory.id}+'/record/create'" class="btn btn-primary btn-sm">[[#{action.visitNow}]]</a></td>
@@ -101,7 +101,7 @@
 						</thead>
 						<tbody>
 							<tr th:each="record : ${lastVisitList}">
-								<td>[[${#dates.format(record.servicedate, 'dd/MM HH:mm')}]]</td>
+								<td>[[${#temporals.format(record.servicedate, 'dd/MM, HH:mm')}]]</td>
 								<td>[[${record.history.customer.account.name}]]</td>
 								<td>[[${record.serviceType.name}]]</td>
 							</tr>
