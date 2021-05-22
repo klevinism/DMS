@@ -160,9 +160,63 @@
 							  </div>
 						    </div>
 					        <hr>
-	        					<div class="col-md-12">
+					        <div class="row">
+	        					<div class="col-md-9">
 		       						<canvas id="horizontalAppointmentsBar"></canvas>
 	        					</div>
+			       				<div class="col-md-3 legend-wrapper d-flex flex-column  justify-content-center " >
+			       					<div class="d-flex flex-column justify-content-center mb-4">
+		                              <div class="d-flex align-items-center" id="">
+		                                <h4 class="mb-0">[[#{Total}]]</h4>
+		                              </div>
+		                            </div>
+		                            <div id="BarsTotal">
+			                            <div class="d-flex flex-column justify-content-center" >
+			                              <div class="d-flex align-items-center" id="visitsBarTotalCount">
+			                                <div class="dot-indicator mt-1 mr-2"></div>
+			                                <h4 class="mb-0">0</h4>
+			                              </div>
+			                              <small class="text-muted ml-3">[[#{Visits}]]</small>
+			                            </div>
+			                            <div class="d-flex flex-column justify-content-center border-top border-bottom py-2  mt-1 mb-1" id="appointmentsBarTotal">
+			                              <div class="d-flex align-items-center" id="appointmentsBarTotalCount">
+			                                <div class="dot-indicator mt-1 mr-2"></div>
+			                                <h4 class="mb-0">1</h4>
+			                              </div>
+			                              <small class="text-muted ml-3">[[#{Appointments}]]</small>
+			                            </div>
+		                            </div>
+	                          	</div>
+	                          </div>
+	        			 </div>
+	        			 <div class="form-group">      
+					       <div class="d-flex flex-column flex-lg-row">
+					       	  <div class="data-wrapper d-flex mt-2 mt-lg-0">
+					    	  	<h3>[[#{Revenue}]]</h3>
+					    	  </div>
+						    </div>
+					        <hr>
+	        				<div class="row">
+	        					<div class="col-md-9">
+		       						<canvas id="RevenueBarGraph"></canvas>
+	        					</div>
+        						<div class="col-md-3 legend-wrapper d-flex flex-column  justify-content-center " >
+			       					<div class="d-flex flex-column justify-content-center mb-4">
+		                              <div class="d-flex align-items-center" id="">
+		                                <h4 class="mb-0">[[#{Total}]]</h4>
+		                              </div>
+		                            </div>
+		                            <div id="RevenueBarsTotal">
+			                            <div class="d-flex flex-column justify-content-center" >
+			                              <div class="d-flex align-items-center" id="revenueBarTotalCount">
+			                                <div class="dot-indicator mt-1 mr-2"></div>
+			                                <h4 class="mb-0">[[#{currency.ALL}]] 0</h4>
+			                              </div>
+			                              <small class="text-muted ml-3">[[#{Revenue}]]</small>
+			                            </div>
+		                            </div>
+		                      </div>
+                          		</div>
 	        			 </div>
 					</div>
      				</div>
@@ -172,37 +226,100 @@
    </div>
    <div class="col-3">
    <div class="row mb-2">
+   <div class="col-12 ">
+	<div class="page-header" style="border:none;">
+		<h5 class="page-title">[[#{ThisYear}]]</h5>
+	</div>
+   </div>
    <div class="col-md-12">
-   
-   		<div class="card">
+     <div class="card">
 	       	<div class="card-header p-3">
-	         <h3 class="card-title">[[#{ThisYear}]] <small>[[#{NewCustomers}]]</small></h3>
+		       	<div class="d-flex flex-column flex-lg-row">
+		         <h3 class="card-title"><i class="mdi mdi-stethoscope fa-lg"></i>  [[#{Visits}]]</h3>
+		         	<div class="ml-auto">[[${sumVisitsThisYear}]]</div>
+		       	</div>
 	       	</div>
-	       	<div class="card-body p-1 ">
-	   				<div  th:if="${lastVisitList != null}">
-						<canvas id="lineCustomerChart" style="display: block;" ></canvas>
-	     			</div>
+	       	<div class="card-body p-1 " >
+				<canvas id="totalVisitsLineGraph" style="display: block;" ></canvas>
 	   	   	</div>   		    
-       	</div>
+      </div>
      </div>
    </div>
    <div class="row mb-2">
-   	<div class="col-md-12">
-
-     <div class="card">
-       <div class="card-header p-3">
-         <h3 class="card-title">[[#{Visits}]] [[#{ThisYear}]] <small>[[#{CustomerBased}]]</small></h3>
-       </div>
-       <div class="card-body p-1">
-
-   				<div class="tbl-overflow" th:if="${lastVisitList != null}">
-					<canvas id="pieCustomerChart"></canvas>
-     			</div>
-   		</div>
-   		    
-       </div>
+    <div class="col-md-12">
+        <div class="card">
+	       	<div class="card-header p-3">
+	       	<div class="d-flex flex-column flex-lg-row">
+	         <h3 class="card-title"><i class="mdi mdi-cash-multiple fa-lg"></i> [[#{Revenue}]] </h3>
+	         	<div class="ml-auto">[[${#numbers.formatDecimal(sumRevenueThisYear, 0,'COMMA', 0,'POINT')}]] [[#{currency.ALL}]]</div>
+	         </div>
+	       	</div>
+	       	<div class="card-body p-1 " >
+				<canvas id="totalRevenueLineGraph" style="display: block;" ></canvas>
+	   	   	</div>   		    
+       	</div>
+   		
      </div>
    </div>
+   <div class="row mb-2">
+    <div class="col-md-12">
+        <div class="card">
+	       	<div class="card-header p-3">
+	       	<div class="d-flex flex-column flex-lg-row">
+	         <h3 class="card-title"><i class="mdi mdi-account-multiple-plus-outline fa-lg"></i> [[#{NewCustomers}]] </h3>
+	         	<div class="ml-auto">[[${sumNewCustomers}]]</div>
+	         </div>
+	       	</div>
+	       	<div class="card-body p-1 " >	
+				<canvas id="lineCustomerChart" style="display: block;" ></canvas>
+	   	   	</div>   		    
+       	</div>
+   		
+     </div>
+    </div>
+    <div class="row mb-2">
+	    <div class="col-md-12">
+	        <div class="card">
+		       	<div class="card-header p-3">
+		       	<div class="d-flex flex-column flex-lg-row">
+		         <h3 class="card-title"><i class="mdi mdi-calendar-remove fa-lg"></i> [[#{NoShows}]] </h3>
+		         	<div class="ml-auto" th:with="variable = ${sumNoShowsThisYear}, 
+		         	controllerVar = ${settings.appointmentTimeSplit}, 
+		         	var = ${variable+controllerVar}">
+		         	
+		         		[[${sumNoShowsThisYear}]]  <small >([[ ${var} ]] [[#{Hours}]] <i class="mdi mdi-alert-octagon " th:title="#{TimeLossNoShowsEstimation}" aria-hidden="true"></i>)</small>
+		         	
+		         	</div>
+		         </div>
+		       	</div>
+		       	<div class="card-body p-1 " >
+					<canvas id="totalNoShowsLineGraph" style="display: block;" ></canvas>	
+		   	   	</div>   		    
+	       	</div>
+	   		
+	     </div>
+     </div>
+     <!-- 
+   <div class="row mb-2">
+   	<div class="col-md-12">
+		<div class="col-12 ">
+			<div class="page-header" style="border:none;">
+				<h5 class="page-title">[[#{Advanced}]]</h5>
+			</div>
+		</div>
+	    <div class="card">
+	       <div class="card-header p-3">
+	         <h3 class="card-title"><i class="mdi mdi-stethoscope fa-lg"></i>  [[#{Visits}]] <small>[[#{CustomerBased}]]: </small></h3>
+	       </div>
+	       <div class="card-body p-1">
+	   				<div class="tbl-overflow" th:if="${lastVisitList != null}">
+						<canvas id="pieCustomerChart"></canvas>
+	     			</div>
+	   		</div>
+	     </div>
+     </div>
+   </div>
+    -->
    </div>
   	 <script>
   	 	$(document).ready(function(){
@@ -232,18 +349,30 @@
 		var visitsName = ""+ /*[[#{Visits}]]*/'';
 		var appointmentsName = ""+ /*[[#{Appointments}]]*/'';
 		
+	 	var noShowName = /*[[#{NoShows}]]*/'';
+	 	var revenueName = /*[[#{Revenue}]]*/'';
+	 	var currencyAll = /*[[#{currency.ALL}]]*/'';
+	 	
 	 	var list =  [[${nrOfVisitsList}]];
 	 	
 	 	var personnelNames = new Array([[${allPersonnel[0].name}+', '+${allPersonnel[0].surname}]]);	 	
 	 	var personnelRecordsList=[[${allRecords}]];
-	 	
 	 	var personnelAppointmentList=[[${allAppointments}]];
-	 	
-	 	var customerLabels = [""+/*[[#{New}]]*/"", ""+/*[[#{Returning}]]*/ ""];
+	 	var personnelRevenue = [[${allRevenues}]];
+
+	 	var customerLabels = [""+/*[[#{VisitsFromNewCustomers}]]*/"", ""+/*[[#{VisitsFromReturningCustomers}]]*/ ""];
 	 	var allCustomer = [[${allCustomers}]];
 	 	
  	 	var thisYearCustomerLabel = /*[[#{New}]]*/ +"";
 	 	var thisYearCustomerValues = [[${allNewCustomers}]];
+	 	
+	 	var thisYearVisitsLabel = visitsName;
+	 	var thisYearVisitsValues = [[${allVisitsThisYear}]];
+	 	
+	 	var thisYearRevenueLabel = revenueName;
+	 	var thisYearRevenueValues = [[${allRevenueThisYear}]];
+	 	
+	 	var thisYearNoShowsValues = [[${allNoShowsThisYear}]];
 	 	
 	 	var nrOfAppointmentsNoShows = [[${nrOfAppointmentsNoShows}]];
 	 	var noShowGrowth = /*[[${noShowGrowth}]]*/;
@@ -260,8 +389,6 @@
 	 	
 	 	var lastWorkingDates = [[${lastWorkingDates}]];
 	 	
-	 	var noShowName = /*[[#{NoShows}]]*/'';
-	 	var revenueName = /*[[#{Revenue}]]*/'';
 	 /*]]>*/
      </script>
      <script>

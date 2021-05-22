@@ -91,4 +91,12 @@ public interface IRecordService {
 	 * @return
 	 */
 	Integer sumOfReceipts(LocalDateTime startDate, LocalDateTime endDate);
+
+	/**
+	 * @param id
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	Integer sumOfPersonnelReceipts(Long id, LocalDateTime startDate, LocalDateTime endDate);
 }

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <div th:replace="demo_1/partials/_header :: header">
+  </div>
+  <body>
+	<section th:replace="demo_1/partials/subscription/modals/_banner :: banner">
+	</section>
+	
+    <div class="container-scroller">
+      <section th:replace="demo_1/partials/_navbar :: navbar">
+  	  </section>
+      <!-- partial:partials/_navbar.html -->
+      
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        
+        <section th:replace="demo_1/partials/_sidebar :: sidebar">
+        <!-- partial:partials/_sidebar.html -->
+        </section>
+        
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <!-- Page Title Header Starts-->
+            <section th:replace="demo_1/partials/_breadcrumb :: breadcrumb">
+			  	<!-- partial:partials/_breadcrumb.html -->
+  			</section>
+            <!-- Page Title Header Ends-->
+            <div class="row">
+              <div class="col-md-12 ">
+              		<div class="mb-3"  th:with="subscriptionUrl = 'demo_1/partials/subscription/modals/_'+${viewType}+' :: '+ ${viewType}">
+		              	
+		              		<section th:replace="__${subscriptionUrl}__">
+							  	<!-- partial:partials/_view.html -->
+				  			</section>
+						
+		  			</div>
+              </div>
+              <div class="col-md-12">
+              	<div class="card">
+              		<div class="card-header">[[#{History}]]</div>
+              		<div class="card-body">
+              		
+              			<div class="table-sorter-wrapper col-lg-12 table-responsive">              			
+              			    <table class="table table-striped">
+              		
+		              		<thead>
+		              			<tr>
+		              				<td>
+		              					#
+		              				</td>
+		              				<td>
+		              					Subscription Name
+		              				</td>
+		              				<td>
+		              					Subscription Start Date
+		              				</td>
+		              				<td>
+		              					Subscription End Date
+		              				</td>
+		              				<td>
+		              					Purchase Date
+		              				</td>
+		              			</tr>
+		              		 </thead>
+		              		 <tbody>
+		              			<tr th:each="historySubscr : ${subscriptionHistory}">
+		              				<td >[[${historySubscr.id}]]</td>
+		              				<td >[[${historySubscr.subscription.name}]]</td>
+		              				<td th:text="${#temporals.format(historySubscr.subscriptionStartDate, 'd-M-yyyy')}"></td>
+		              				<td th:text="${#temporals.format(historySubscr.subscriptionEndDate, 'd-M-yyyy')}"></td>
+		              				<td th:text="${#temporals.format(historySubscr.addeddate, 'd-M-yyyy')}"></td>
+		              			</tr>
+		              		 </tbody>
+		              		 </table>
+		              				
+              			</div>
+              		</div>
+              	</div>
+              </div>
+            </div>
+            
+          </div>
+          <!-- content-wrapper ends -->
+
+          <!-- partial -->
+          
+        </div>
+        <!-- main-panel ends -->
+        
+      </div>
+    
+    <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="/assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="/assets/vendors/js/vendor.bundle.addons.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page-->
+    <script type="text/javascript" src="/assets/vendors/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>    
+    <!-- End plugin js for this page-->
+    <!-- inject:js -->
+    <script src="/assets/js/shared/off-canvas.js"></script>
+    <script src="/assets/js/shared/misc.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    <script src="/assets/js/demo_1/personnel.js"></script>
+    <!-- End custom js for this page-->
+  </body>
+</html>

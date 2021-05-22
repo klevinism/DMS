@@ -28,6 +28,7 @@ import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Role;
+import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.pojo.Teeth;
 import com.visionous.dms.service.CustomerService;
 import com.visionous.dms.service.QuestionnaireResponseService;
@@ -52,12 +53,14 @@ public class CustomerModelController extends ModelControllerImpl{
 	private QuestionnaireResponseService questionnaireResponseService;
 	private RecordService recordService;
 	private CustomerService customerService;
+
+	private Subscription subscription;
 	private static String currentPage = LandingPages.CUSTOMER.value();
 
 	@Autowired
 	public CustomerModelController(RoleService roleService, TeethService teethService,
 			MessageSource messages, GlobalSettings globalSettings,
-			RecordService recordService, CustomerService customerService,
+			RecordService recordService, CustomerService customerService, Subscription subscription,
 			QuestionnaireResponseService questionnaireResponseService) {
 		
 		this.teethService = teethService;
@@ -66,6 +69,7 @@ public class CustomerModelController extends ModelControllerImpl{
 		this.globalSettings = globalSettings;
 		this.customerService = customerService;
 		this.recordService = recordService;
+		this.subscription = subscription;
 		this.questionnaireResponseService = questionnaireResponseService;
 	}
 	
@@ -261,6 +265,9 @@ public class CustomerModelController extends ModelControllerImpl{
 			super.addModelCollectionToView("endMinute", this.globalSettings.getBusinessEndTimes()[1]);
 			super.addModelCollectionToView("logo", this.globalSettings.getBusinessImage());
 		}
+		
+		super.addModelCollectionToView("subscription", subscription);
+
 	}
 	
 	/**

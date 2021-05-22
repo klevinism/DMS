@@ -36,5 +36,12 @@ public interface PersonnelRepository extends JpaRepository<Personnel, Long> {
 	 * @return
 	 */
 	List<Personnel> findAllByAccount_Roles_Name(String roles_name);
+
+	/**
+	 * @param enabled
+	 * @param role_name
+	 * @return
+	 */
+	List<Personnel> findAllByAccount_EnabledAndAccount_Roles_Name(boolean enabled, String role_name);
 	
 }

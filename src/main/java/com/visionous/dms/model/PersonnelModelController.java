@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +27,13 @@ import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.event.OnRegistrationCompleteEvent;
 import com.visionous.dms.exception.EmailExistsException;
+import com.visionous.dms.exception.SubscriptionException;
 import com.visionous.dms.exception.UsernameExistsException;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Role;
+import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.service.PersonnelService;
 import com.visionous.dms.service.RecordService;
 import com.visionous.dms.service.RoleService;
@@ -53,6 +54,8 @@ public class PersonnelModelController extends ModelControllerImpl{
     private PersonnelService personnelService;
     private GlobalSettings globalSettings;
     private MessageSource messages;
+
+	private Subscription subscription;
     
 	private static String currentPage = LandingPages.PERSONNEL.value();
 
@@ -61,7 +64,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 	 */
 	@Autowired
 	public PersonnelModelController(RoleService roleService, ApplicationEventPublisher eventPublisher, 
-			RecordService recordService, MessageSource messages, 
+			RecordService recordService, MessageSource messages, Subscription subscription,
 			GlobalSettings globalSettings, PersonnelService personnelService) {
 	
 		this.roleService = roleService;
@@ -70,6 +73,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 		this.messages = messages;
 		this.globalSettings = globalSettings;
 		this.personnelService = personnelService;
+		this.subscription = subscription;
 	}
 	
 	
@@ -109,6 +113,8 @@ public class PersonnelModelController extends ModelControllerImpl{
 		String messageEmailExists = messages.getMessage("alert.emailExists", null, LocaleContextHolder.getLocale());
         String messageUsernameExists = messages.getMessage("alert.usernameExists", null, LocaleContextHolder.getLocale());
 		
+        String subscriptionReachLimit = messages.getMessage("SubscriptionReachLimit", null, LocaleContextHolder.getLocale());
+        String subscriptionLimitUpgrade = messages.getMessage("SubscriptionLimitUpgrade", null, LocaleContextHolder.getLocale());
 		
 		if(action.equals(Actions.DELETE.getValue())) {
 			personnelService.disableById(newPersonnel.getId());
@@ -126,11 +132,13 @@ public class PersonnelModelController extends ModelControllerImpl{
 						newPersonnel.getAccount().setImage(imageName);
 					}
 
-					Personnel createdPersonnel = personnelService.create(newPersonnel);
-					createdPersonnel.getAccount().setPassword(passPlain);
-					
-					this.publishNewAccountEvent(createdPersonnel.getAccount());
-					
+					if(!reachedSubscriptionLimit()) {
+						Personnel createdPersonnel = personnelService.create(newPersonnel);
+						createdPersonnel.getAccount().setPassword(passPlain);
+						this.publishNewAccountEvent(createdPersonnel.getAccount());
+					}else {
+						throw new SubscriptionException(subscriptionReachLimit + " " + subscriptionLimitUpgrade);
+					}
 				} catch (IOException e) {
 					logger.error(e.getMessage());
 				} catch (EmailExistsException e) {					
@@ -149,10 +157,45 @@ public class PersonnelModelController extends ModelControllerImpl{
 				    super.removeControllerParam("viewType");
 					super.addControllerParam("viewType", Actions.CREATE.getValue());
 					logger.error(messageUsernameExists);
+				} catch (SubscriptionException e) {
+					if(!super.hasResultBindingError()) {
+						super.getBindingResult().addError(
+								new FieldError("subscriptionLimit", "subscription", e.getMessage(), false, null, null, e.getMessage())
+							);
+					}
+					
+					super.addModelCollectionToView("subscriptionLimit", e.getMessage());
+				    super.removeControllerParam("viewType");
+					super.addControllerParam("viewType", Actions.CREATE.getValue());
 				}
 			}
 		}else if(action.equals(Actions.VIEW.getValue())) {
+
 		}		
+
+	}
+	
+	private boolean reachedSubscriptionLimit() {
+		int personnelSize = this.personnelService.findAllByAccount_EnabledAndAccount_Roles_Name(true, "PERSONNEL").size();
+		
+		if(this.subscription.hasRestrictionsByPageName(currentPage)) {
+			int subscriptionRestrictionSize = this.subscription.getSumOfRestrictionsAmountByPageName(currentPage);
+			return personnelSize >= subscriptionRestrictionSize;
+		}else {
+			return false;
+		}
+	}
+	
+	private boolean nearSubscriptionLimitBy(int count) {
+		int personnelSize = this.personnelService.findAllByAccount_EnabledAndAccount_Roles_Name(true, "PERSONNEL").size();
+
+		if(this.subscription.hasRestrictionsByPageName(currentPage)) {
+			int subscriptionRestrictionSize = this.subscription.getSumOfRestrictionsAmountByPageName(currentPage);
+			return (subscriptionRestrictionSize - personnelSize) == count;
+		}else {
+			return false;
+		}
+
 
 	}
 	
@@ -187,11 +230,13 @@ public class PersonnelModelController extends ModelControllerImpl{
 		
 		if(viewType.equals(Actions.CREATE.getValue())) {
 
-			if(!super.hasResultBindingError()) {
+			if(super.getModelCollectionToView("personnel") == null) {
 				Personnel newPersonnel = new Personnel();
 				newPersonnel.setAccount(new Account());
 				super.addModelCollectionToView("personnel", newPersonnel);
 			}
+			
+			
 			
 			Iterable<Role> allRoles = roleService.findAll();
 			super.addModelCollectionToView("allRoles", allRoles);
@@ -213,6 +258,12 @@ public class PersonnelModelController extends ModelControllerImpl{
 
 				Iterable<Role> allRoles = roleService.findAll();
 				super.addModelCollectionToView("allRoles", allRoles);
+			}
+
+			if(!reachedSubscriptionLimit() && nearSubscriptionLimitBy(1)) {
+				super.addModelCollectionToView("subscriptionNearLimit", "1");
+			}else{
+				super.addModelCollectionToView("subscriptionReachLimit", reachedSubscriptionLimit());
 			}
 		}
 	}
@@ -269,6 +320,9 @@ public class PersonnelModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
 		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		
+		super.addModelCollectionToView("subscription", subscription);
+
 	}
 	
 	@Override

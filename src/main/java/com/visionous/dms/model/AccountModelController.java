@@ -29,6 +29,7 @@ import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Role;
+import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.service.AccountService;
 import com.visionous.dms.service.CustomerService;
 import com.visionous.dms.service.PersonnelService;
@@ -49,6 +50,8 @@ public class AccountModelController extends ModelControllerImpl{
 	private CustomerService customerService;
 	private GlobalSettings globalSettings;
 	private MessageSource messageSource;
+
+	private Subscription subscription;
 	
 	private static String currentPage = LandingPages.ACCOUNT.value();
 
@@ -58,7 +61,7 @@ public class AccountModelController extends ModelControllerImpl{
 	 */
 	@Autowired
 	public AccountModelController(AccountService accountService, RoleService roleService, 
-			MessageSource messageSource, PersonnelService personnelService,
+			MessageSource messageSource, PersonnelService personnelService, Subscription subscription,
 			CustomerService customerService, GlobalSettings globalSettings) {
 		
 		this.accountService = accountService;
@@ -67,6 +70,7 @@ public class AccountModelController extends ModelControllerImpl{
 		this.personnelService = personnelService;
 		this.customerService = customerService;
 		this.globalSettings = globalSettings;
+		this.subscription = subscription;
 	}
 	
 	/**
@@ -275,6 +279,9 @@ public class AccountModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
 		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		
+		super.addModelCollectionToView("subscription", subscription);
+
 	}
 	
 	@Override

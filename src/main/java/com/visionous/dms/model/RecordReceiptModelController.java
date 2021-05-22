@@ -20,6 +20,7 @@ import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Record;
 import com.visionous.dms.pojo.RecordReceipt;
 import com.visionous.dms.pojo.RecordReceiptItem;
+import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.service.CustomerService;
 import com.visionous.dms.service.HistoryService;
 import com.visionous.dms.service.QuestionnaireResponseService;
@@ -52,6 +53,8 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 	
 	private QuestionnaireResponseService questionnaireResponseService;
 
+	private Subscription subscription;
+
 	/**
 	 * 
 	 */
@@ -59,7 +62,7 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 	public RecordReceiptModelController(GlobalSettings globalSettings, RecordReceiptService recordReceiptService,
 			RecordReceiptItemService recordReceiptItemService,
 			CustomerService customerService, HistoryService historyService, 
-			QuestionnaireResponseService questionnaireResponseService,
+			QuestionnaireResponseService questionnaireResponseService, Subscription subscription,
 			RecordService recordService) {
 		
 		this.globalSettings = globalSettings;
@@ -69,6 +72,7 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 		this.customerService = customerService;
 		this.historyService = historyService;
 		this.recordService = recordService;
+		this.subscription = subscription;
 	}
 	
 	/**
@@ -187,6 +191,9 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
 		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		
+		super.addModelCollectionToView("subscription", subscription);
+
 	}
 	
 	@Override

@@ -6,34 +6,96 @@ function getBarLabels(){
 	return getDayDateNamesBetween(oneWeekBefore, currentDate);
 }
 
-function buildDataset(labels, datas){
+function buildDataset(labels, datas, color){
 	
 	var dataset = new Array();
 	
 	for(var cnt=0; cnt<labels.length; cnt++){
 		var set =  {
-			"backgroundColor": getRandomColor()+"",
+			"backgroundColor": color+"",
 			"label": labels[cnt],
 			"data": datas
 		};
 		dataset.push(set);
 	}
+	
+	return dataset;
+}
+
+function reloadRevenueDataset(datas){
+	var dataset = new Array();
+		var totalHtml='<div class="d-flex flex-column justify-content-center border-bottom mb-2" > '+
+          '<div class="d-flex align-items-center" id="visitsBarTotalCount">'+
+            '<div class="dot-indicator mt-1 mr-2"></div>'+
+            '<h4 class="mb-0">0</h4>'+
+          '</div>'+
+          '<small class="text-muted ml-3"></small>'+
+        '</div>';	
+	for (var key in datas) {
+
+		var color = getRandomColor();
+		
+		var text = $(totalHtml).clone();
+		$(text).find(".dot-indicator").css("background-color", color);
+		var total = 0;
+		datas[key].forEach(function(n){
+			if(n != null){
+				total+=Number.parseInt(n);
+			}
+		})
+		
+		$(text).find("h4").text(numberWithCommas(total) + " " +currencyAll);
+		$(text).find("small").text(key);
+		
+		$("#RevenueBarsTotal").append($(text).clone());	
+		
+	    if (datas.hasOwnProperty(key)) {
+	    	dataset.push({
+	    		backgroundColor: color+"",
+	    		label: key,
+	    		data: datas[key]
+	    	});
+	    }
+	}
+	
 	return dataset;
 }
 
 
 function reloadDataset(datas){
 	var dataset = new Array();
-	
+		var totalHtml='<div class="d-flex flex-column justify-content-center border-bottom mb-2" > '+
+          '<div class="d-flex align-items-center" id="visitsBarTotalCount">'+
+            '<div class="dot-indicator mt-1 mr-2"></div>'+
+            '<h4 class="mb-0">0</h4>'+
+          '</div>'+
+          '<small class="text-muted ml-3"></small>'+
+        '</div>';	
 	for (var key in datas) {
+
+		var color = getRandomColor();
+		
+		var text = $(totalHtml).clone();
+		$(text).find(".dot-indicator").css("background-color", color);
+		var total = 0;
+		datas[key].forEach(function(n){
+			total+=Number.parseInt(n);
+		})
+		
+		$(text).find("h4").text(total);
+		$(text).find("small").text(key);
+		
+		$("#BarsTotal").append($(text).clone());	
+		
 	    if (datas.hasOwnProperty(key)) {
 	    	dataset.push({
-	    		backgroundColor: getRandomColor()+"",
+	    		backgroundColor: color+"",
 	    		label: key,
 	    		data: datas[key]
 	    	});
 	    }
 	}
+	
 	return dataset;
 }
 
@@ -63,8 +125,12 @@ function fireDateChange(start, end){
 	
 	$("#appointmentPickerSpinner").show();
 	
-	//Visits
 	removeData(horizontalAppointmentBar);
+	$("#BarsTotal").html("");
+	removeData(horizontalRevenueBar);
+	$("#RevenueBarsTotal").html("");
+	
+	//Visits
 	refreshStatistics(dates[0].trim(), dates[1].trim(), personnelAndDateRange["personnelsIds"], function(data){
 		if(data.error != "error"){
 			refreshHorizontalAppointmentBarChart(data.result[0], personnelAndDateRange["date"]);		
@@ -73,12 +139,18 @@ function fireDateChange(start, end){
 	
 	//Appointment
 	refreshAppointmentStatistics(dates[0].trim(), dates[1].trim(), personnelAndDateRange["personnelsIds"], function(data){
-		$("#appointmentPickerSpinner").hide();
 		if(data.error != "error"){
 			refreshHorizontalAppointmentBarChart(data.result[0], personnelAndDateRange["date"]);		
 		}
 	});
 	
+	//Revenue
+	refreshRevenueStatistics(dates[0].trim(), dates[1].trim(), personnelAndDateRange["personnelsIds"][0], function(data){
+		$("#appointmentPickerSpinner").hide();
+		if(data.error != "error"){
+			refreshHorizontalRevenueBarChart(data.result[0], personnelAndDateRange["date"]);		
+		}
+	});
 }
 
 function fireMultiselectChange(element, checked){
@@ -87,9 +159,12 @@ function fireMultiselectChange(element, checked){
 	if(personnelAndDateRange["personnelsIds"] != null && personnelAndDateRange["personnelsIds"].length > 0){
 		$("#appointmentPickerSpinner").show();
 		
-		//Visits
 		removeData(horizontalAppointmentBar);
+		$("#BarsTotal").html("");
+		removeData(horizontalRevenueBar);
+		$("#RevenueBarsTotal").html("");
 		
+		//Visits
 		refreshStatistics(personnelAndDateRange["date"][0], personnelAndDateRange["date"][1], personnelAndDateRange["personnelsIds"], function(data){
 			if(data.error != "error"){
 				refreshHorizontalAppointmentBarChart(data.result[0], personnelAndDateRange["date"]);		
@@ -97,11 +172,17 @@ function fireMultiselectChange(element, checked){
 		});
 		
 		//Appointment
-		refreshAppointmentStatistics(personnelAndDateRange["date"][0], personnelAndDateRange["date"][1], personnelAndDateRange["personnelsIds"], function(data){
-			$("#appointmentPickerSpinner").hide();
-		
+		refreshAppointmentStatistics(personnelAndDateRange["date"][0], personnelAndDateRange["date"][1], personnelAndDateRange["personnelsIds"], function(data){		
 			if(data.error != "error"){
 				refreshHorizontalAppointmentBarChart(data.result[0], personnelAndDateRange["date"]);		
+			}
+		});
+		
+		//Revenue
+		refreshRevenueStatistics(personnelAndDateRange["date"][0], personnelAndDateRange["date"][1], personnelAndDateRange["personnelsIds"][0], function(data){
+			$("#appointmentPickerSpinner").hide();
+			if(data.error != "error"){
+				refreshHorizontalRevenueBarChart(data.result[0], personnelAndDateRange["date"]);		
 			}
 		});
 	}
@@ -123,7 +204,7 @@ function getAllChartLabels(startDate, endDate){
     
 	var lblNames = "";			
 	var datePeriod = getPeriod(startDate, endDate);
-	console.log(datePeriod);
+
 	if(datePeriod<=7){
 		lblNames = getDayDateNamesBetween(start, end);
 	}else if(datePeriod>7 && datePeriod<=31){
@@ -134,6 +215,10 @@ function getAllChartLabels(startDate, endDate){
 		lblNames = getYearDateNamesBetween(start, end);
 	}
 	return lblNames;
+}
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 $(document).ready(function(){
