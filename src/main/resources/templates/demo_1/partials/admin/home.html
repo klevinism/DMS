@@ -239,7 +239,7 @@
 		         	<div class="ml-auto">[[${sumVisitsThisYear}]]</div>
 		       	</div>
 	       	</div>
-	       	<div class="card-body p-1 " th:if="${lastVisitList != null}">
+	       	<div class="card-body p-1 " >
 				<canvas id="totalVisitsLineGraph" style="display: block;" ></canvas>
 	   	   	</div>   		    
       </div>
@@ -254,7 +254,7 @@
 	         	<div class="ml-auto">[[${#numbers.formatDecimal(sumRevenueThisYear, 0,'COMMA', 0,'POINT')}]] [[#{currency.ALL}]]</div>
 	         </div>
 	       	</div>
-	       	<div class="card-body p-1 " th:if="${lastVisitList != null}">
+	       	<div class="card-body p-1 " >
 				<canvas id="totalRevenueLineGraph" style="display: block;" ></canvas>
 	   	   	</div>   		    
        	</div>
@@ -270,7 +270,7 @@
 	         	<div class="ml-auto">[[${sumNewCustomers}]]</div>
 	         </div>
 	       	</div>
-	       	<div class="card-body p-1 " th:if="${lastVisitList != null}">	
+	       	<div class="card-body p-1 " >	
 				<canvas id="lineCustomerChart" style="display: block;" ></canvas>
 	   	   	</div>   		    
        	</div>
@@ -292,7 +292,7 @@
 		         	</div>
 		         </div>
 		       	</div>
-		       	<div class="card-body p-1 " th:if="${lastVisitList != null}">
+		       	<div class="card-body p-1 " >
 					<canvas id="totalNoShowsLineGraph" style="display: block;" ></canvas>	
 		   	   	</div>   		    
 	       	</div>
