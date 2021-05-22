@@ -8,6 +8,9 @@
       <img th:src="${imgUrlMini}" alt="logo" /> </a>
   </div>
   <div class="navbar-menu-wrapper d-flex align-items-center">
+    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+		<span class="mdi mdi-menu"></span>
+  	</button>
     <ul class="navbar-nav">
       <li class="nav-item font-weight-semibold d-none d-lg-block">[[#{Help}]] : +355 0696433538</li>
       <li class="nav-item dropdown language-dropdown" id="LanguageDropdown">
@@ -197,6 +200,23 @@
 	    setInterval(function() {
 	    	getNotifications();
 	    }, 900000);
+	    
+	    
+	    $("[data-toggle=minimize]").on("click",function(e){
+	        var footer = $("footer");
+	        
+	        if($("body").hasClass("sidebar-icon-only")){
+	            $("body").removeClass("sidebar-icon-only");
+	            $(footer).removeClass("dropdown-item");
+	            $(".sidebar").append(footer);
+	        }else{
+	            
+	            $("body").addClass("sidebar-icon-only");
+	            $(footer).addClass("dropdown-item");
+	            $("[aria-labelledby='UserDropdown']").append(footer);
+	            //close
+	        }
+	    });
 	    
 	});
 	

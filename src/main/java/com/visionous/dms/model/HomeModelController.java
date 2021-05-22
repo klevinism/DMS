@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -179,6 +178,7 @@ public class HomeModelController extends ModelControllerImpl{
 						
 						List<Integer> dataForRange = new ArrayList<>();
 						List<Integer> dataForAppointment = new ArrayList<>();
+						List<Integer> dataForRevenue = new ArrayList<>();
 						super.addModelCollectionToView("dateRangeInit", new SimpleDateFormat("dd/MM/yyyy").format(startDate.getTime()) + " - " + new SimpleDateFormat("dd/MM/yyyy").format(currentDate.getTime()));
 
 						while (startDate.before(currentDate)) { 
@@ -187,17 +187,27 @@ public class HomeModelController extends ModelControllerImpl{
 							endCalendar.set(Calendar.HOUR_OF_DAY, 23);
 							Calendar startCalendar = DateUtil.getCalendarFromDate(startDate);
 							startCalendar.set(Calendar.HOUR_OF_DAY, 0);
+							
 							Integer records = recordService.countAllByPersonnelIdAndServicedateBetween(selectedPersonnel.getId(), 
 									new Timestamp(startCalendar.getTime().getTime()).toLocalDateTime(), new Timestamp(endCalendar.getTime().getTime()).toLocalDateTime());
 							
-							Integer appointments = appointmentService.countAllByPersonnelIdAndAppointmentDateBetween(selectedPersonnel.getId(), new Timestamp(startCalendar.getTime().getTime()).toLocalDateTime(), new Timestamp(endCalendar.getTime().getTime()).toLocalDateTime());
-							dataForAppointment.add(appointments);
-							dataForRange.add(records);
+							Integer appointments = appointmentService.countAllByPersonnelIdAndAppointmentDateBetween(selectedPersonnel.getId(), 
+									new Timestamp(startCalendar.getTime().getTime()).toLocalDateTime(), new Timestamp(endCalendar.getTime().getTime()).toLocalDateTime());
+							
+							Integer singlePersonnelRevenue = recordService.sumOfPersonnelReceipts(selectedPersonnel.getId(),
+									new Timestamp(startCalendar.getTime().getTime()).toLocalDateTime(), new Timestamp(endCalendar.getTime().getTime()).toLocalDateTime());
+							
+							dataForAppointment.add(appointments != null ? appointments : 0);
+							dataForRange.add(records != null ? records : 0);
+							dataForRevenue.add(singlePersonnelRevenue != null ? singlePersonnelRevenue : 0);
+							
 							startDate = DateUtil.addDays(startDate, 1);
 						}
 						
 						super.addModelCollectionToView("allRecords", dataForRange);
 						super.addModelCollectionToView("allAppointments", dataForAppointment);
+						super.addModelCollectionToView("allRevenues", dataForRevenue);
+
 					}
 					
 					Date endsDate = new Date();
@@ -354,6 +364,14 @@ public class HomeModelController extends ModelControllerImpl{
 
 				Period periodOfThisYear = DateUtil.getPeriodBetween(DateUtil.getBegginingOfYear(), new Date());
 				
+				Integer sumNewCustomersForEachMonth = 0;
+				Integer sumVisitsForEachMonth = 0;
+				Integer sumRevenueForEachMonth = 0;
+				Integer sumNoShowsForEachMonth = 0;
+
+				List<Integer> allVisitsForEachMonth = new ArrayList<>();
+				List<Integer> allRevenueForEachMonth = new ArrayList<>();
+				List<Integer> allNoShowsForEachMonth = new ArrayList<>();
 				List<Integer> allNewCustomersForEachMonth = new ArrayList<>();
 				for(int month=0 ; month <= periodOfThisYear.getMonths(); month++) {
 					
@@ -362,15 +380,58 @@ public class HomeModelController extends ModelControllerImpl{
 					Date endMonthDate = DateUtil.getCurrentDateByMonthAndDay(month, 
 							DateUtil.getCalendarFromDate(beginMonthDate).getActualMaximum(Calendar.DAY_OF_MONTH));
 					
-					Integer countBetweenDates = 0;
-					countBetweenDates = accountService.countByEnabledAndActiveAndCustomer_RegisterdateBetween(true,true, beginMonthDate, endMonthDate);
+					Integer countBetweenDates = accountService.countByEnabledAndActiveAndCustomer_RegisterdateBetween(true,true, beginMonthDate, endMonthDate);
+					
+					Integer totalVisitBtwDates = recordService.countByServicedateBetween(
+							new Timestamp(beginMonthDate.getTime()).toLocalDateTime(), new Timestamp(endMonthDate.getTime()).toLocalDateTime());
+					
+					Integer totalRevenueBtwDates = recordService.sumOfReceipts(
+							new Timestamp(beginMonthDate.getTime()).toLocalDateTime(), new Timestamp(endMonthDate.getTime()).toLocalDateTime());				
+					
+					List<Appointment> allAppointments= appointmentService.findAllBetweenDateRange(
+							new Timestamp(beginMonthDate.getTime()).toLocalDateTime(), new Timestamp(endMonthDate.getTime()).toLocalDateTime());
+					
+					List<Appointment> noShowAppointmentsBtwDates = allAppointments.stream().filter(appointment -> 
+						recordService.findAllByServicedateBetweenAndCustomerId(new Timestamp(beginMonthDate.getTime()).toLocalDateTime(), 
+								new Timestamp(endMonthDate.getTime()).toLocalDateTime(), appointment.getCustomerId()).isEmpty()
+						).collect(Collectors.toList());
+					
+					
+					Integer totalNoShowsBtwDates = 0;
+					if(!noShowAppointmentsBtwDates.isEmpty()) {
+						totalNoShowsBtwDates = noShowAppointmentsBtwDates.size();
+					}
+					
 					allNewCustomersForEachMonth.add(countBetweenDates);
+					allVisitsForEachMonth.add(totalVisitBtwDates);
+					allRevenueForEachMonth.add(totalRevenueBtwDates != null ? totalRevenueBtwDates : 0);
+					allNoShowsForEachMonth.add(totalNoShowsBtwDates != null ? totalNoShowsBtwDates : 0);
+					
+					sumNewCustomersForEachMonth += countBetweenDates;
+					sumVisitsForEachMonth += totalVisitBtwDates;
+					sumRevenueForEachMonth += totalRevenueBtwDates != null ? totalRevenueBtwDates : 0;
+					sumNoShowsForEachMonth += totalNoShowsBtwDates != null ? totalNoShowsBtwDates : 0;
 				}
 				
 				if(!allNewCustomersForEachMonth.isEmpty()) {
 					super.addModelCollectionToView("allNewCustomers", allNewCustomersForEachMonth);
+					super.addModelCollectionToView("sumNewCustomers", sumNewCustomersForEachMonth);
+				}
+
+				if(!allVisitsForEachMonth.isEmpty()) {
+					super.addModelCollectionToView("allVisitsThisYear", allVisitsForEachMonth);
+					super.addModelCollectionToView("sumVisitsThisYear", sumVisitsForEachMonth);
 				}
 				
+				if(!allRevenueForEachMonth.isEmpty()) {
+					super.addModelCollectionToView("allRevenueThisYear", allRevenueForEachMonth);
+					super.addModelCollectionToView("sumRevenueThisYear", sumRevenueForEachMonth);
+				}
+				
+				if(!allNoShowsForEachMonth.isEmpty()) {
+					super.addModelCollectionToView("allNoShowsThisYear", allNoShowsForEachMonth);
+					super.addModelCollectionToView("sumNoShowsThisYear", sumNoShowsForEachMonth);
+				}
 				
 				super.addModelCollectionToView("isMorning", DateUtil.getCalendarFromDate(new Date()).get(Calendar.HOUR_OF_DAY) <= 10 ? true : false);
 				
@@ -394,7 +455,8 @@ public class HomeModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
 		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
-
+		super.addModelCollectionToView("settings", globalSettings);
+		
 		super.addModelCollectionToView("subscription", subscription);
 	}
 	
