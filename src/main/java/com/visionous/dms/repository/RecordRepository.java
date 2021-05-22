@@ -115,6 +115,15 @@ public interface RecordRepository extends JpaRepository<Record, Long>{
 	 * @return
 	 */
 	List<Record> findAllByServicedateBetweenAndHistory_customerId(LocalDateTime startDate, LocalDateTime endDate, Long customerId);
+
+	/**
+	 * @param id
+	 * @param startDate
+	 * @param endDate
+	 * @return sum of all receipts by personnel id and between dates 
+	 */
+	@Query("SELECT sum(e.receipt.total) from Record e WHERE e.personnelId = ?1 AND servicedate BETWEEN ?2 AND ?3")
+	Integer findSumOfAllReceiptsByPersonnelId(Long id, LocalDateTime startDate, LocalDateTime endDate);
 	
 	
 }

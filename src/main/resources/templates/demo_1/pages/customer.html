@@ -3,6 +3,10 @@
   <div th:replace="demo_1/partials/_header :: header">
   </div>
   <body>
+  
+	<section th:replace="demo_1/partials/subscription/modals/_banner :: banner">
+	</section>
+	
     <div class="container-scroller">
       <section th:replace="demo_1/partials/_navbar :: navbar">
   	  </section>
@@ -24,12 +28,20 @@
   			</section>
             <!-- Page Title Header Ends-->
             <div class="row">
+              <div class="col-12 ">
+       			<div class="d-flex flex-column flex-md-row float-left mb-2">
+	              	<div class="wrapper">
+	                	<a class="btn btn-primary btn-lg" th:data-subscription="${subscription.id == null ? 'expired' : 'active'}" th:href="${currentPage}+'/create'"> 
+	                		<i class="fa fa-plus"></i>
+		              		<i class="mdi mdi-account-multiple-outline mdi-18px"></i>
+	                	</a>
+	                </div>
+                </div>
+              </div>
               <div class="col grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body ">
-                  
-                    <a class="btn btn-primary" th:href="${currentPage}+'/create'"> [[#{action.add}]] [[#{Customer}]]</a>
-                    <hr />
+
                     <div class="row">
                       <div class="col  tbl-overflow">
                         <table id="patientTable" class="table table-hover wrap">
@@ -72,7 +84,7 @@
 	                          </td>
 	                          
 							  <td >
-							  	<h5 th:text="${#dates.format(customer.registerdate, 'd-M-yyyy hh:mm')}"></h5>
+							  	<h5 th:text="${#dates.format(customer.registerdate, 'd-M-yyyy')}"></h5>
 							  </td>
 							  
 	                          <td >
@@ -107,7 +119,7 @@
 			                          <h6 class="dropdown-header">[[#{Account}]]</h6>
 			                          <a class="dropdown-item" th:href="${currentPage}+'/view/' + ${user.id} "><i class="mdi mdi-eye-outline"></i> [[#{View}]]</a>
 			                          <a class="dropdown-item" th:href="'/account' + '/edit/' + ${user.id}"><i class="fa fa-edit"></i> [[#{Edit}]]</a>
-			                          <a class="dropdown-item"  th:href="${currentPage}+'/' + ${user.id} + '/?modal=true&view=' + ${T(com.visionous.dms.configuration.helpers.Actions).DELETE} +'' "><i class="fa fa-trash-o"></i> [[#{Delete}]]</a>
+			                          <a class="dropdown-item" th:if="${customer.customerHistory == null && customer.questionnaire == null}"  th:href="${currentPage}+'/' + ${user.id} + '/?modal=true&view=' + ${T(com.visionous.dms.configuration.helpers.Actions).DELETE} +'' "><i class="fa fa-trash-o"></i> [[#{Delete}]]</a>
 			                        </div>
 			                        
 			                      </div>
@@ -131,23 +143,22 @@
 				var tableSearch = ""+ /*[[#{table.search}]]*/ '';
 			 /*]]>*/
 		    </script>
-	        <script>
-		        $(document).ready(function() {
-	                $.fn.dataTable.moment( 'D-M-YYYY HH:mm' );
-		            var table = $('#patientTable').DataTable({
-		            	"oLanguage": {
-		            		  "sLengthMenu": tableLengthMenu,
-		            		  "sZeroRecords": tableZeroRecord,
-		            		  "sInfo": tableInfo,
-		            		  "sInfoEmpty": tableInfoEmpty,
-		            		  "sInfoFiltered": tableInfoFiltered,
-		            		  "sSearch": tableSearch
-		            		},
-	            		order:[3, "desc"],
+	        <script>	        
+	        $(document).ready(function() {
+                $.fn.dataTable.moment( 'D-M-YYYY HH:mm' );
+	            var table = $('#patientTable').DataTable({
+	            	"oLanguage": {
+	            		  "sLengthMenu": tableLengthMenu,
+	            		  "sZeroRecords": tableZeroRecord,
+	            		  "sInfo": tableInfo,
+	            		  "sInfoEmpty": tableInfoEmpty,
+	            		  "sInfoFiltered": tableInfoFiltered,
+	            		  "sSearch": tableSearch
+	            		},
+            		order:[3, "desc"],
 
-		            });
-		            
-		        });
+	            });
+	        });
 	        </script>
           </div>
           <!-- content-wrapper ends -->

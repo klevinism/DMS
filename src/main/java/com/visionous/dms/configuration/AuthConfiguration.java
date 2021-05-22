@@ -71,8 +71,7 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
                 .invalidateHttpSession(true)        // set invalidation state when logout
                 .deleteCookies("remember-me","JSESSIONID")
                 .and()
-                .rememberMe().key("uniqueAndSecret").tokenValiditySeconds(86400)
-				;
+                .rememberMe().key("uniqueAndSecret").tokenValiditySeconds(86400);
 				
 	}
 	

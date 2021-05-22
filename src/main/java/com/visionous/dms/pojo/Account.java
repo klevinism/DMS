@@ -114,12 +114,13 @@ public class Account implements Serializable{
     
     private boolean active;
     
+    @JsonIgnore
     @OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn
     @Nullable
 	private Verification verification;
     
-    
+    @JsonIgnore
     @OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn
     @Nullable

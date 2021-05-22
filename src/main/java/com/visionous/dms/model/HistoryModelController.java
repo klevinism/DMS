@@ -18,6 +18,7 @@ import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.History;
+import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.service.CustomerService;
 import com.visionous.dms.service.HistoryService;
 import com.visionous.dms.service.RecordService;
@@ -38,10 +39,12 @@ public class HistoryModelController extends ModelControllerImpl{
 	private RecordService recordService;
 	private CustomerService customerService;
 	private GlobalSettings globalSettings;
+	private Subscription subscription;
+	
 	
 	@Autowired
 	private HistoryModelController(TeethService teethService, CustomerService customerService, 
-			HistoryService historyService, RecordService recordService, 
+			HistoryService historyService, RecordService recordService, Subscription subscription,
 			GlobalSettings globalSettings) {
 	
 		this.teethService = teethService;
@@ -50,6 +53,7 @@ public class HistoryModelController extends ModelControllerImpl{
 		this.recordService = recordService;
 		this.customerService = customerService;
 		this.globalSettings = globalSettings;
+		this.subscription = subscription;
 	}
 	
 	/**
@@ -152,7 +156,10 @@ public class HistoryModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());		
+		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		
+		super.addModelCollectionToView("subscription", subscription);
+
 	}
 	
 	

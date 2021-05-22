@@ -97,7 +97,6 @@ public class PersonnelService implements IPersonnelService{
 	 */
 	@Override
 	public Personnel disable(Personnel personnel) {
-		personnel.getAccount().setActive(false);
 		personnel.getAccount().setEnabled(false);
 		return this.personnelRepository.saveAndFlush(personnel);
 	}
@@ -124,5 +123,15 @@ public class PersonnelService implements IPersonnelService{
 	public List<Personnel> findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_Name(boolean enabled, boolean active,
 			String role_name) {
 		return this.personnelRepository.findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_Name(enabled, active, role_name);
+	}
+
+	/**
+	 * @param b
+	 * @param string
+	 * @return
+	 */
+	@Override
+	public List<Personnel> findAllByAccount_EnabledAndAccount_Roles_Name(boolean enabled, String role_name) {
+		return this.personnelRepository.findAllByAccount_EnabledAndAccount_Roles_Name(enabled, role_name);
 	}
 }

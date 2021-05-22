@@ -1,0 +1,51 @@
+<div th:fragment="banner" th:if="${subscription == null || subscription.id == null}">
+	<div class="item-purchase-banner" th:if="${not loggedInAccount.roles.?[name == 'ADMIN'].isEmpty()}">
+		<p class="banner-text">[[#{SubscriptionExpired}]] [[#{SubscriptionExpiredAdmin}]]</p>              
+		<a href="/admin/subscription"  class="banner-button btn btn-primary btn-icon">                
+			<i class="fa fa-handshake-o"></i> [[#{Subscription}]]
+		</a>              
+			<span class="toggler-close"></span>          
+	</div>
+	<div class="item-purchase-banner" th:if="${not loggedInAccount.roles.?[name == 'PERSONNEL'].isEmpty()}">
+		<p class="banner-text">[[#{SubscriptionExpired}]] [[#{SubscriptionExpiredPersonnel}]] </p>
+		<span class="toggler-close"></span>
+	</div>
+	
+	<script th:inline="javascript">
+	/*<![CDATA[*/ 
+		var subscriptionExpired = /*[[#{SubscriptionExpired}]]*/'';
+		var subscriptionExpiredAdmin= /*[[#{SubscriptionExpiredAdmin}]]*/'';
+		var subscriptions = /*[[#{Subscription}]]*/'';
+   	/*]]>*/
+    </script>
+	<script>
+		$("body").addClass("purchase-banner-active");
+		
+		$(document).ready(function(){
+		    $('[data-subscription]').click(function(e){
+		        if($(this).data('subscription') == 'expired'){
+		            e.preventDefault();
+		            subscriptionExpiredToastBanner();
+		        }
+		    });
+		});
+		
+		
+		function subscriptionExpiredToastBanner(){
+		    $.toast({
+		        heading: subscriptionExpired,
+		        text: subscriptionExpiredAdmin + '<br /><a href="/admin/subscription" class="btn btn-primary btn-icon mt-2">'
+		        	+'<i class="fa fa-handshake-o"></i>'+subscriptions+'</a>',
+		        hideAfter: false,
+		        hideAfter: 3000,
+		        showHideTransition: 'plain',
+		        stack: false,
+		        position: "bottom-right",
+		        icon: 'error',
+		        bgColor: '#bf0703',
+		        loaderBg: '#5f7df9',
+		        textColor: 'white'
+		    })
+		}
+	</script>
+</div>

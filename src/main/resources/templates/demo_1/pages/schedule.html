@@ -3,6 +3,10 @@
   <section th:replace="demo_1/partials/_header :: header">
   </section>
   <body>
+  
+	<section th:replace="demo_1/partials/subscription/modals/_banner :: banner">
+	</section>
+	
     <div class="container-scroller">
       <section th:replace="demo_1/partials/_navbar :: navbar">
   	  </section>
@@ -39,7 +43,7 @@
 			                        </button>
 			                        <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
 			                          <h6 class="dropdown-header">[[#{MostUsed}]]</h6>
-			                          <button class="dropdown-item btn-block" th:each="obj ,i : ${top5ServiceTypes}" th:if="${i.index}<5" th:data-id="${obj.id}" >
+			                          <button class="dropdown-item btn-block" th:data-subscription="${subscription.id == null ? 'expired' : 'active'}" th:each="obj ,i : ${top5ServiceTypes}" th:if="${i.index}<5" th:data-id="${obj.id}" >
 			                          <i class="mdi mdi-tooth-outline fa-sm"> </i> [[${obj.name}]]
 			                          </button>
 			                        </div>
@@ -145,17 +149,16 @@
 			                      
 			                      <div class="btn-group ml-lg-auto ml-2 text-primary" role="group" aria-label="Basic example">
 		                            <button type="button" data-type='viewType' data-action='day' class="btn btn-light text-primary " role="toggle">
-		                               Day
+		                              [[#{Day}]]
 		                            </button>
 		                            <button type="button" data-type='viewType' data-action='week' class="btn btn-light active text-primary " role="toggle">
-		                              Week
+		                              [[#{Week}]]
 		                            </button>
 		                            <button type="button" data-type='viewType' data-action='month' class="btn btn-light text-primary " role="toggle">
-		                              Month
+		                              [[#{Month}]]
 		                            </button>
-		                            
-
 		                          </div>
+		                          
 								  <div class="btn-group ml-1 " role="group" aria-label="Basic example">
 									  	<div class="dropdown ">
 					                      <button class="btn btn-light text-primary" type="button" id="dropdownexport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

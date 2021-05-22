@@ -22,6 +22,7 @@ import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.ServiceTypes;
+import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.service.GlobalSettingsService;
 import com.visionous.dms.service.ServiceTypeService;
 
@@ -42,6 +43,7 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 	
 	// Bean
 	private GlobalSettings globalSettings;
+	private Subscription subscription;
 	private ApplicationContext ctx;
 	
 	/**
@@ -51,12 +53,13 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 	public GlobalSettingsModelController(
 			GlobalSettingsService globalSettingsService,
 			ServiceTypeService serviceTypeService,
-			GlobalSettings globalSettings, 
+			GlobalSettings globalSettings, Subscription subscription,
 			ApplicationContext ctx) {
 				
 		this.globalSettingsService = globalSettingsService;
 		this.serviceTypeService = serviceTypeService;
 		this.globalSettings = globalSettings;
+		this.subscription = subscription;
 		this.ctx = ctx;
 	}
 	
@@ -166,6 +169,9 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
 		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		
+		super.addModelCollectionToView("subscription", subscription);
+
 	}
 	
 	/**

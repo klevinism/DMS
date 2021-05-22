@@ -1,0 +1,18 @@
+
+<div class="card-deck text-center" th:fragment="view">
+        <div class="card box-shadow" th:each="subscr,indx : ${subscriptionList}" th:if="${indx.index} < 3">
+	        <div class="card-header">
+	          <h4 class="my-0 font-weight-normal">[[${subscr.name}]]</h4>
+	        </div>
+	        <div class="card-body">
+	            <h1 class="card-title pricing-card-title">&euro; [[${subscr.price}]] <small class="text-muted">/ [[#{Month}]] </small> <span class="text-muted">/ [[#{Account}]] [[#{personnel}]]</span></h1>
+	            <div class="" >
+		            <ul class="list-unstyled mt-4 mb-4" >
+		           	 	<li th:remove="tag" th:utext="${subscr.description}"></li>
+		            </ul>
+	           		<button th:if="${currentSubscription != null && currentSubscription.subscription.id == subscr.id}" type="button" th:disabled="${!subscr.active || currentSubscription != null}" class="btn btn-lg btn-block btn-outline-primary mt-auto">[[#{Active}]]</button>
+	           		<button th:if="${currentSubscription == null || currentSubscription.subscription.id != subscr.id}" type="button" th:disabled="${!subscr.active || currentSubscription != null}" class="btn btn-lg btn-block btn-primary"><i class="mdi mdi-cart"></i> Contact us</button>
+	           	</div>
+	        </div>
+        </div>
+</div>
