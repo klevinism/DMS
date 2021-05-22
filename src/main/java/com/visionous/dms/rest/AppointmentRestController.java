@@ -717,6 +717,16 @@ public class AppointmentRestController {
         return ResponseEntity.ok(result);
 	}
 	
+	@PostMapping("/api/subscription")
+    public ResponseEntity<?> subscription(@RequestParam(name = "status", required = false) String status) {
+		ResponseBody<String> result = new ResponseBody<>();
+		if(status != null && status.equals("expired")) {
+			result.setError("error"); 
+			result.setMessage("Subscription expired! from Mapping");
+		}
+		return ResponseEntity.ok(result);
+	}
+	
 	@PostMapping("/api/personnel/sendConfirmation")
     public ResponseEntity<?> sendConfirmation(@RequestParam(name = "id", required = true) Long personnelId) {
 		ResponseBody<Personnel> result = new ResponseBody<>();

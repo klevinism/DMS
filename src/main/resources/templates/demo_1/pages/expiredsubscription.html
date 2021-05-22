@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <div th:replace="demo_1/partials/_header :: header">
+  </div>
+  <body>
+  
+	<section th:replace="demo_1/partials/subscription/modals/_banner :: banner">
+	</section>
+	
+    <div class="container-scroller">
+      <section th:replace="demo_1/partials/_navbar :: navbar">
+  	  </section>
+      <!-- partial:partials/_navbar.html -->
+      
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        
+        <section th:replace="demo_1/partials/_sidebar :: sidebar">
+        <!-- partial:partials/_sidebar.html -->
+        </section>
+        
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <!-- Page Title Header Starts-->
+            <section th:replace="demo_1/partials/_breadcrumb :: breadcrumb">
+			  	<!-- partial:partials/_breadcrumb.html -->
+  			</section>
+            <!-- Page Title Header Ends-->
+            <div class="row">
+              <div class="col grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+					<div class="alert alert-danger" role="alert" th:if="${not loggedInAccount.roles.?[name == 'PERSONNEL'].isEmpty()}">
+					  <h4 class="alert-heading">[[#{SubscriptionExpired}]]</h4>
+					  <p>[[#{FeatureNotAllowedSubscriptionExpired}]]</p>
+					  <hr>
+					  <p class="mb-0">[[#{SubscriptionExpiredPersonnel}]]</p>
+					</div>
+					<button class="btn btn-primary" >[[#{Back}]]</button>
+					
+					<script>
+					
+					$("button").on("click", function(e){
+						var path = window.location.pathname;
+						if(path.includes("create")){
+						    window.location = path.substr(0, path.lastIndexOf("/")); //redirect where it came from according to client, not app spring Interseptors
+						}
+					});
+					
+					</script>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- content-wrapper ends -->
+
+          <!-- partial -->
+          
+        </div>
+        <!-- main-panel ends -->
+        
+      </div>
+    
+    <div th:if="${viewType != null and selected != null}" >
+	    <section th:replace="demo_1/partials/_genericModals :: modals">
+		 	<!-- Personnel Page Modals -->
+		</section>
+    </div>
+		
+    <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="/assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="/assets/vendors/js/vendor.bundle.addons.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page-->
+        <script type="text/javascript" src="/assets/vendors/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>    
+    <!-- End plugin js for this page-->
+    <!-- inject:js -->
+    <script src="/assets/js/shared/off-canvas.js"></script>
+    <script src="/assets/js/shared/misc.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    <script src="/assets/js/demo_1/personnel.js"></script>
+    <!-- End custom js for this page-->
+  </body>
+</html>

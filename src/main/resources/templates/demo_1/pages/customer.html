@@ -3,6 +3,10 @@
   <div th:replace="demo_1/partials/_header :: header">
   </div>
   <body>
+  
+	<section th:replace="demo_1/partials/subscription/modals/_banner :: banner">
+	</section>
+	
     <div class="container-scroller">
       <section th:replace="demo_1/partials/_navbar :: navbar">
   	  </section>
@@ -24,12 +28,20 @@
   			</section>
             <!-- Page Title Header Ends-->
             <div class="row">
+              <div class="col-12 ">
+       			<div class="d-flex flex-column flex-md-row float-left mb-2">
+	              	<div class="wrapper">
+	                	<a class="btn btn-primary btn-lg" th:data-subscription="${subscription.id == null ? 'expired' : 'active'}" th:href="${currentPage}+'/create'"> 
+	                		<i class="fa fa-plus"></i>
+		              		<i class="mdi mdi-account-multiple-outline mdi-18px"></i>
+	                	</a>
+	                </div>
+                </div>
+              </div>
               <div class="col grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body ">
-                  
-                    <a class="btn btn-primary" th:href="${currentPage}+'/create'"> [[#{action.add}]] [[#{Customer}]]</a>
-                    <hr />
+
                     <div class="row">
                       <div class="col  tbl-overflow">
                         <table id="patientTable" class="table table-hover wrap">

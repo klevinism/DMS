@@ -13,12 +13,12 @@
                 </div>
         	</div>
         	<div class="col-md-12 grid-margin">
-        		<a th:href="'/customer/'+${currentCustomer.id}+'/questionnaire/create'" class="btn btn-primary btn-sm">[[#{action.newVisit}]]</a>
+        		<a th:href="'/customer/'+${currentCustomer.id}+'/questionnaire/create'" th:data-subscription="${subscription.id == null ? 'expired' : 'active'}" class="btn btn-primary btn-sm">[[#{action.newVisit}]]</a>
         	</div>
         </div>
         <div class="row" th:if="*{records != null}">
         	<div class="col-md-12 grid-margin">
-        		<a th:href="'/customer/__${currentCustomer.id}__/history/'+*{id}+'/record/create'" class="btn btn-primary btn-sm">[[#{action.newVisit}]]</a>
+        		<a th:href="'/customer/__${currentCustomer.id}__/history/'+*{id}+'/record/create'" th:data-subscription="${subscription.id == null ? 'expired' : 'active'}" class="btn btn-primary btn-sm">[[#{action.newVisit}]]</a>
         	</div>
         	<div class="col-md-12 grid-margin tbl-overflow">
         		<table id="historyRecords" class="table table-hover" >

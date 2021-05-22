@@ -36,6 +36,7 @@ import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Record;
 import com.visionous.dms.pojo.Role;
+import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.service.AccountService;
 import com.visionous.dms.service.AppointmentService;
 import com.visionous.dms.service.RecordService;
@@ -54,6 +55,7 @@ public class HomeModelController extends ModelControllerImpl{
 	private RecordService recordService;
 	private AppointmentService appointmentService;
 	private GlobalSettings globalSettings;
+	private Subscription subscription;
     private MessageSource messages;
 
     private RoleService roleService;
@@ -67,13 +69,14 @@ public class HomeModelController extends ModelControllerImpl{
 	@Autowired
 	public HomeModelController(AccountService accountService, RecordService recordService, 
 			AppointmentService appointmentService, RoleService roleService, MessageSource messages,
-			GlobalSettings globalSettings){
+			GlobalSettings globalSettings, Subscription subscription){
 		this.accountService = accountService;
 		this.recordService = recordService;
 		this.appointmentService = appointmentService;
 		this.roleService = roleService;
 		this.globalSettings = globalSettings;
 		this.messages = messages;
+		this.subscription = subscription;
 	}
 	
 	/**
@@ -392,6 +395,7 @@ public class HomeModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
 
+		super.addModelCollectionToView("subscription", subscription);
 	}
 	
 	/**
