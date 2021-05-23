@@ -282,12 +282,12 @@
 	        <div class="card">
 		       	<div class="card-header p-3">
 		       	<div class="d-flex flex-column flex-lg-row">
-		         <h3 class="card-title"><i class="mdi mdi-calendar-remove fa-lg"></i> [[#{NoShows}]] </h3>
+		         <h3 class="card-title"><i class="mdi mdi-calendar-remove fa-lg"></i> [[#{NoShows}]] [[${sumNoShowsThisYear}]] [[${settings.appointmentTimeSplit}]]</h3>
 		         	<div class="ml-auto" th:with="variable = ${sumNoShowsThisYear}, 
 		         	controllerVar = ${settings.appointmentTimeSplit}, 
-		         	var = ${variable+controllerVar}">
+		         	var = ${variable*controllerVar}">
 		         	
-		         		[[${sumNoShowsThisYear}]]  <small >([[ ${var} ]] [[#{Hours}]] <i class="mdi mdi-alert-octagon " th:title="#{TimeLossNoShowsEstimation}" aria-hidden="true"></i>)</small>
+		         		[[${sumNoShowsThisYear}]]  <small >([[ ${var} ]] [[#{Minutes}]] <i class="mdi mdi-alert-octagon " th:title="#{TimeLossNoShowsEstimation}" aria-hidden="true"></i>)</small>
 		         	
 		         	</div>
 		         </div>
