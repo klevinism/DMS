@@ -6,13 +6,11 @@ package com.visionous.dms.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -25,6 +23,7 @@ import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Questionnaire;
 import com.visionous.dms.pojo.QuestionnaireForm;
 import com.visionous.dms.pojo.QuestionnaireResponse;
+import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.repository.QuestionnaireFormRepository;
 import com.visionous.dms.service.CustomerService;
 import com.visionous.dms.service.QuestionnaireService;
@@ -42,6 +41,8 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 	private GlobalSettings globalSettings;
 	private CustomerService customerService;
 	private QuestionnaireService questionnaireService;
+
+	private Subscription subscription;
 	
 	private static String currentPage = LandingPages.QUESTIONNAIRE.value();
 
@@ -50,7 +51,7 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 	 */
 	@Autowired
 	public QuestionnaireModelController(QuestionnaireFormRepository questionnaireFormRepository,
-			
+			Subscription subscription,
 			QuestionnaireService questionnaireService,
 			CustomerService customerService,
 			GlobalSettings globalSettings) {
@@ -60,6 +61,7 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 		this.customerService = customerService;
 		this.questionnaireService = questionnaireService;
 		this.globalSettings = globalSettings;
+		this.subscription = subscription;
 	}
 	
 	
@@ -181,6 +183,9 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
 		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		
+		super.addModelCollectionToView("subscription", subscription);
+
 	}
 	
 	/**

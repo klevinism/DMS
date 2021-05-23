@@ -1,6 +1,8 @@
   <div th:fragment="create">
     <h4 class="card-title">[[#{CreateAccount}]]</h4>
+    
     <hr/>
+    <div class="alert alert-danger" role="alert" th:if="${subscriptionLimit != null}"> [[#{SubscriptionReachLimit}]] [[#{SubscriptionLimitUpgrade}]]</div>
 
     <div class="row pt-0">
 	<div class="form-group col-sm-6 " id="attachmentInput">

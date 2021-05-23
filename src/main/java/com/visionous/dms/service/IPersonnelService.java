@@ -57,4 +57,11 @@ public interface IPersonnelService {
 	 */
 	List<Personnel> findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_Name(boolean enabled, boolean active,
 			String role_name);
+
+	/**
+	 * @param enabled
+	 * @param role_name
+	 * @return
+	 */
+	List<Personnel> findAllByAccount_EnabledAndAccount_Roles_Name(boolean enabled, String role_name);
 }
