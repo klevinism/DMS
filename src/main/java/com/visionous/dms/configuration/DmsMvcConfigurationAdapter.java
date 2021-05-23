@@ -5,6 +5,7 @@ package com.visionous.dms.configuration;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -20,15 +21,12 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
-import org.thymeleaf.spring5.ISpringTemplateEngine;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring5.view.ThymeleafViewResolver;
-import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import com.visionous.dms.pojo.GlobalSettings;
+import com.visionous.dms.pojo.Subscription;
+import com.visionous.dms.pojo.SubscriptionHistory;
 import com.visionous.dms.service.GlobalSettingsService;
+import com.visionous.dms.service.SubscriptionHistoryService;
 
 /**
  * @author delimeta
@@ -38,13 +36,18 @@ import com.visionous.dms.service.GlobalSettingsService;
 @EnableWebMvc
 public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
 	private GlobalSettingsService globalSettingService;
+	private SubscriptionHistoryService subscriptionHistoryService;
+	private SubscriptionInterceptor subscriptionInterceptor;
 	
 	/**
 	 * 
 	 */
 	@Autowired
-	public DmsMvcConfigurationAdapter(GlobalSettingsService globalSettingService) {
+	public DmsMvcConfigurationAdapter(GlobalSettingsService globalSettingService, SubscriptionHistoryService subscriptionHistoryService,
+			SubscriptionInterceptor subscriptionInterceptor) {
 		this.globalSettingService = globalSettingService;
+		this.subscriptionHistoryService = subscriptionHistoryService;
+		this.subscriptionInterceptor = subscriptionInterceptor;
 	}
 
 	@Bean
@@ -59,7 +62,6 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
 	public LocalValidatorFactoryBean validator() {
 	     LocalValidatorFactoryBean validatorFactoryBean = new LocalValidatorFactoryBean();
 	     validatorFactoryBean.setValidationMessageSource(messageSource());
-
 	     return validatorFactoryBean;
 	}
 
@@ -75,6 +77,15 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
         	return allSettings.get(0);
         }
         return null;
+    }
+	
+	@Bean
+    public Subscription subscription() {
+		Optional<SubscriptionHistory> activeSubscription = subscriptionHistoryService.findActiveSubscription();
+        if(activeSubscription.isPresent()) {
+        	return activeSubscription.get().getSubscription();
+        }
+        return new Subscription();
     }
 	
 	@Override
@@ -101,9 +112,11 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
         return lci;
     }
     
+    
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor());
+        registry.addInterceptor(subscriptionInterceptor);
     }
 
 }

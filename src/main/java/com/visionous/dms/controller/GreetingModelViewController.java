@@ -1,11 +1,9 @@
 package com.visionous.dms.controller;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 /**
  * @author delimeta
  *
  */
-import java.util.Calendar;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -32,10 +30,14 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.LocaleResolver;
 
+import com.visionous.dms.configuration.helpers.AccountUtil;
+import com.visionous.dms.configuration.helpers.DmsCore;
+import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.event.OnResetPasswordEvent;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Reset;
+import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.pojo.Verification;
 import com.visionous.dms.service.AccountService;
 import com.visionous.dms.service.ResetService;
@@ -58,6 +60,8 @@ public class GreetingModelViewController {
 	private ApplicationEventPublisher eventPublisher;
 	@Autowired
 	private GlobalSettings globalSettings;
+	@Autowired
+	private Subscription subscription;
 	
 	@Autowired
 	private LocaleResolver localeResolver;
@@ -109,8 +113,6 @@ public class GreetingModelViewController {
 	
 	@GetMapping("/index")
 	public String indexx(Model model) {
-		
-		
 		return "index";
 	}
 	
@@ -169,6 +171,27 @@ public class GreetingModelViewController {
 	public String reset(Model model) {
         
 		return "demo_1/pages/reset_password";
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/subscription")
+	public String expiredSubscriptionDefaultView(Model model, @RequestParam(name = "status", required = false) String status) {
+		model.addAttribute("status", status);
+		model.addAttribute("currentPage", LandingPages.SUBSCRIPTION.value());
+		
+		model.addAttribute("currentRoles", AccountUtil.currentLoggedInUser().getAccount().getRoles());
+		model.addAttribute("loggedInAccount", AccountUtil.currentLoggedInUser().getAccount());
+		
+		model.addAttribute("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
+		
+		model.addAttribute("logo", globalSettings.getBusinessImage());
+		model.addAttribute("settings", globalSettings);
+		model.addAttribute("subscription", subscription);
+		
+		return "demo_1/pages/expiredsubscription";
 	}
 	
 	/**

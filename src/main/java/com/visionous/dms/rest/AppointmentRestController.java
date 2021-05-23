@@ -345,6 +345,70 @@ public class AppointmentRestController {
         return ResponseEntity.ok(result);
     }
 	
+	@PostMapping("/api/personnel/statistics/revenue")
+    public ResponseEntity<?> personnelStatisticsRevenue(@RequestParam(name = "personnelId", required = true) Long personnelId,
+    		@RequestParam(name = "startDate", required = true) String startDate,
+    		@RequestParam(name = "endDate", required = true) String endDate){ 
+
+        ResponseBody<Map<String,List<Integer>>> result = new ResponseBody<>();
+		String revenue = messageSource.getMessage("Revenue", null, LocaleContextHolder.getLocale());
+
+		Date start = null;
+		Date end = null;
+		
+        Map<String,List<Integer>> listOfRevenue = new HashMap<>();
+        		
+		try {
+			start = new SimpleDateFormat("dd/MM/yyyy").parse(startDate);
+			end = new SimpleDateFormat("dd/MM/yyyy").parse(endDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		if(start != null) {
+			        		        		
+    		int daysToAdd = DateUtil.calculateDaysToAddFromPeriod(start, end);
+
+    		// getRecords for period startDate ~ endDate > add by daysToAdd
+    		List<Integer> revenueForPersonnel = new ArrayList<>();
+    		while (start.before(end)) {
+				Date startingDate = new Date();
+				Date endingDate = new Date();
+				if(daysToAdd > 29 && daysToAdd<365) {
+					startingDate = DateUtil.setDayToBegginingOfMonth(start);
+					endingDate = DateUtil.setDayToEndOfMonth(start);
+				}else if(daysToAdd >= 365) {
+					startingDate = DateUtil.setDayToBegginingOfYear(start);
+					endingDate = DateUtil.setDayToEndOfYear(start);
+    			}else{
+					startingDate = DateUtil.setHoursToBegginingOfDay(start);
+					endingDate = DateUtil.addDays(start, daysToAdd);
+				} 
+				
+				Integer revenueForPeriod = recordService.sumOfPersonnelReceipts(personnelId, new Timestamp(startingDate.getTime()).toLocalDateTime(), 
+						new Timestamp(endingDate.getTime()).toLocalDateTime());
+				
+				revenueForPersonnel.add(revenueForPeriod != null ? revenueForPeriod : 0);
+
+				start = DateUtil.addDays(start, daysToAdd);
+    		}
+    		listOfRevenue.put(revenue, revenueForPersonnel);
+        }
+                		
+        if(listOfRevenue.isEmpty()) {
+
+			String messageError = messageSource.getMessage("alert.error", null, LocaleContextHolder.getLocale());
+    		result.setError(messageError);
+        }else {
+    		result.addResult(listOfRevenue);
+			String messageSuccess = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+    		result.setError(messageSuccess);
+    		result.setMessage(messageSuccess);
+        }
+
+        return ResponseEntity.ok(result);
+    }
+	
 	@PostMapping("/api/personnel/appointment/statistics")
     public ResponseEntity<?> personnelAppointmentStatistics(@RequestParam(name = "personnelIds[]", required = false) Long[] personnelIds,
     		@RequestParam(name = "startDate", required = true) String startDate,
@@ -674,7 +738,7 @@ public class AppointmentRestController {
 	}
 	
 	@PostMapping("/api/notifications/nextAppointments")
-    public ResponseEntity<?> changePassword(@RequestParam(name = "accountId", required = true) Long accountId, 
+    public ResponseEntity<?> nextAppointments(@RequestParam(name = "accountId", required = true) Long accountId, 
     		@RequestParam(name = "startDate", required = true) Date startDate) {
 		
 		ResponseBody<Appointment> result = new ResponseBody<>();
@@ -715,6 +779,16 @@ public class AppointmentRestController {
 		});
 		
         return ResponseEntity.ok(result);
+	}
+	
+	@PostMapping("/api/subscription")
+    public ResponseEntity<?> subscription(@RequestParam(name = "status", required = false) String status) {
+		ResponseBody<String> result = new ResponseBody<>();
+		if(status != null && status.equals("expired")) {
+			result.setError("error"); 
+			result.setMessage("Subscription expired! from Mapping");
+		}
+		return ResponseEntity.ok(result);
 	}
 	
 	@PostMapping("/api/personnel/sendConfirmation")

@@ -1,4 +1,4 @@
-<nav class="sidebar sidebar-offcanvas dynamic-active-class-disabled" id="sidebar" th:fragment="sidebar">
+<nav class="sidebar sidebar-offcanvas dynamic-active-class-enabled" id="sidebar" th:fragment="sidebar">
   <ul class="nav" style="width: inherit;" th:with="currentPage = ${#strings.capitalize(#strings.substring(currentPage, 1, #strings.length(currentPage)))}">
     <li class="nav-item nav-profile">
       <a href="#" class="nav-link">
@@ -40,6 +40,12 @@
       <a class="nav-link" href="/schedule" >
         <i class="menu-icon mdi mdi-calendar-outline" ></i>
         <span class="menu-title">[[#{Schedule}]]</span>
+      </a>
+    </li>
+    <li th:class="'nav-item'+${currentPage == 'Subscription' ? ' active' : ''}" th:if="${currentRoles != null}">
+      <a class="nav-link" href="/admin/subscription" th:if="${currentRoles[0].name == 'ADMIN'}">
+        <i class="menu-icon fa fa-handshake-o fa-sm" style="font-size:20px" > </i>
+        <span class="menu-title">[[#{Subscription}]]</span>
       </a>
     </li>
     <li th:class="'nav-item'+${currentPage == 'Global' ? ' active' : ''}" th:if="${currentRoles != null}">

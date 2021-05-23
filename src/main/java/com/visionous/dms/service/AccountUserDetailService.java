@@ -1,5 +1,6 @@
 package com.visionous.dms.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +8,7 @@ import java.util.Optional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 import com.visionous.dms.configuration.AccountUserDetail;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Role;
+import com.visionous.dms.pojo.Subscription;
+import com.visionous.dms.pojo.SubscriptionHistory;
 
 
 /**
@@ -29,9 +33,15 @@ public class AccountUserDetailService implements UserDetailsService{
 	
 	private AccountService accountService;
 	
+	private ApplicationContext context;
+	
+	private SubscriptionHistoryService subscriptionHistoryService;
+	
 	@Autowired
-	private AccountUserDetailService(AccountService accountService) {
+	private AccountUserDetailService(AccountService accountService, ApplicationContext context, SubscriptionHistoryService subscriptionHistoryService) {
 		this.accountService = accountService;
+		this.context = context;
+		this.subscriptionHistoryService = subscriptionHistoryService;
 	}
 	
 	/**
@@ -46,9 +56,29 @@ public class AccountUserDetailService implements UserDetailsService{
 		if(acc.isPresent()) {
 			authorities.addAll(buildUserAuthority(acc.get().getRoles()));
 			accountUserDetail = buildUserForAuthentication(acc.get(), authorities);
+			
+			// Update Subscription() bean after subscription expiration checks.
+			updateBeanSubscription(); 
 		}
 		
 		return accountUserDetail;
+	}
+	
+	
+	public void updateBeanSubscription() {
+    	Optional<SubscriptionHistory> activeSubscription = this.subscriptionHistoryService.findActiveSubscription();
+		if(activeSubscription.isPresent()) {
+			if(activeSubscription.get().getSubscriptionEndDate().isBefore(LocalDateTime.now())) {
+				activeSubscription.get().setActive(false);
+				this.subscriptionHistoryService.update(activeSubscription.get());
+				
+				context.getBean(Subscription.class).setSubscription(new Subscription());
+			}else {
+				context.getBean(Subscription.class).setSubscription(activeSubscription.get().getSubscription());
+			}
+		}else {
+			context.getBean(Subscription.class).setSubscription(new Subscription());
+		}
 	}
 	
     /** 
@@ -67,7 +97,7 @@ public class AccountUserDetailService implements UserDetailsService{
      * @return Set of {@link GrantedAuthority}
      */
     private List<GrantedAuthority> buildUserAuthority(List<Role> list) {
-
+    		
         List<GrantedAuthority> setAuths = new ArrayList<>();
         for (Role userRole : list) {
             setAuths.add(new SimpleGrantedAuthority(userRole.getName()));
@@ -75,6 +105,4 @@ public class AccountUserDetailService implements UserDetailsService{
 
         return setAuths;
     }
-
-
 }

@@ -3,6 +3,11 @@
   <div th:replace="demo_1/partials/_header :: header">
   </div>
   <body>
+  
+  
+	<section th:replace="demo_1/partials/subscription/modals/_banner :: banner">
+	</section>
+	
     <div class="container-scroller">
       <section th:replace="demo_1/partials/_navbar :: navbar">
   	  </section>
@@ -24,21 +29,28 @@
   			</section>
             <!-- Page Title Header Ends-->
             <div class="row">
+              <div class="col-12">
+       			<div class="d-flex flex-column flex-md-row float-left mb-2">
+	              	<div class="wrapper">
+	              		<a class="btn btn-lg btn-primary" th:data-subscription="${subscription.id == null ? 'expired' : 'active'}" th:href="'/admin'+${currentPage}+'/create'"> 
+	              			<i class="fa fa-plus"></i>
+	              			<i class="mdi mdi-doctor mdi-18px"></i> 
+	              		</a>
+	              	</div>
+	              	<div class="alert alert-warning ml-2 my-0" role="alert" th:if="${subscriptionNearLimit != null}">[[#{SubscriptionNearLimit}]] [[#{SubscriptionLimit}]] [[${subscriptionNearLimit}]] [[#{MoreAccount}]]</div>
+	              	<div class="alert alert-danger ml-2 my-0" role="alert" th:if="${subscriptionReachLimit != null && subscriptionReachLimit}">[[#{SubscriptionReachLimit}]] [[#{SubscriptionLimitUpgrade}]]</div>
+             	</div>
+              </div>
               <div class="col grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <a class="btn btn-primary" th:href="'/admin'+${currentPage}+'/create'"> [[#{action.add}]] [[#{Personnel}]]</a>
-                    <hr/>
-                    <div class="row ">
-                      <div class="col ">
-                        <div class="col-md-12 grid-margin">
-				           	<div class="alert show alert-danger" role="alert" id="error" style="display:none">
-							    Alert warning
-							</div>
-							<div class="alert show alert-success" role="alert" id="success" style="display:none">
-							    Success
-							</div>
-			        	</div>
+
+			           	<div class="alert show alert-danger" role="alert" id="error" style="display:none">
+						    Alert warning
+						</div>
+						<div class="alert show alert-success" role="alert" id="success" style="display:none">
+						    Success
+						</div>
                         <table class="table table-hover ">
 	                      <thead>
 	                        <tr>
@@ -106,8 +118,6 @@
 	                        </tr>
 	                      </tbody>
 	                    </table>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>

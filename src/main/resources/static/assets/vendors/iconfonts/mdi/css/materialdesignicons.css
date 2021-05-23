@@ -7333,6 +7333,10 @@
   content: "\FA4E";
 }
 
+.mdi-handshake:before{
+content: url('https://api.iconify.design/mdi-handshake.svg?height=24');
+vertical-align: -0.125em;}
+
 .mdi-hand-okay:before {
   content: "\FA4F";
 }

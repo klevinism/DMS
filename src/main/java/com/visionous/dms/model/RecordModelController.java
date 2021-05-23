@@ -6,7 +6,6 @@ package com.visionous.dms.model;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,7 +13,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -29,9 +27,8 @@ import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.History;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Record;
-import com.visionous.dms.pojo.RecordReceipt;
-import com.visionous.dms.pojo.RecordReceiptItem;
 import com.visionous.dms.pojo.ServiceType;
+import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.pojo.Teeth;
 import com.visionous.dms.service.QuestionnaireResponseService;
 import com.visionous.dms.service.RecordReceiptItemService;
@@ -65,13 +62,15 @@ public class RecordModelController extends ModelControllerImpl {
 
 	private TeethService teethService;
 
+	private Subscription subscription;
+
 	/**
 	 * 
 	 */
 	@Autowired
 	public RecordModelController(QuestionnaireResponseService questionnaireResponseService, 
 			ServiceTypeService serviceTypeService, PersonnelService personnelService,
-			CustomerService customerService, HistoryService historyService,
+			CustomerService customerService, HistoryService historyService, Subscription subscription,
 			GlobalSettings globalSettings, RecordService recordService, TeethService teethService,
 			RecordReceiptService recordReceiptService, RecordReceiptItemService recordReceiptItemService) {
 		
@@ -85,6 +84,7 @@ public class RecordModelController extends ModelControllerImpl {
 		this.recordReceiptItemService = recordReceiptItemService;
 		this.recordReceiptService = recordReceiptService;
 		this.teethService = teethService;
+		this.subscription = subscription;
 	}
 	
 	/**
@@ -255,6 +255,9 @@ public class RecordModelController extends ModelControllerImpl {
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
 		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		
+		super.addModelCollectionToView("subscription", subscription);
+
 	}
 	
 	@Override
