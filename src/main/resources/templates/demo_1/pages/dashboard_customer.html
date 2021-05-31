@@ -37,7 +37,7 @@
 		              		<section th:replace="__${historyUrl}__">
 							  	<!-- partial:partials/_historyUrl.html -->
 				  			</section>
-						  									  			
+						
 						</form>
 		  			</div>
 		  		</div>
@@ -48,11 +48,11 @@
 						<div class="card"> 
 	              			<div class="card-body" th:with="accountUrl = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType}">
 	              				<form th:action="@{/customer}" th:object="${selected}" method="post" >
-		              	
+		              			
 				              		<section th:replace="__${accountUrl}__">
 									  	<!-- partial:partials/_accountUrl.html -->
 						  			</section>
-						  									  			
+						  		
 						  		</form>
 	              			</div>
 	              		</div>

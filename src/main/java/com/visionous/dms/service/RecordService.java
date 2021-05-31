@@ -176,7 +176,7 @@ public class RecordService implements IRecordService{
 	public List<Record> findAllByServicedateBetweenAndCustomerId(LocalDateTime startDate, LocalDateTime endDate, Long customerId) {
 		return this.recordRepository.findAllByServicedateBetweenAndHistory_customerId(startDate, endDate, customerId);
 	}
-
+    
 	/**
 	 * @param id
 	 * @param localDateTime
@@ -186,5 +186,12 @@ public class RecordService implements IRecordService{
 	@Override
 	public Integer sumOfPersonnelReceipts(Long id, LocalDateTime startDate, LocalDateTime endDate) {
 		return this.recordRepository.findSumOfAllReceiptsByPersonnelId(id, startDate, endDate);
+	}
+
+	/**
+	 * @return
+	 */
+	public List<Record> findAll() {
+		return this.recordRepository.findAll();
 	}
 }

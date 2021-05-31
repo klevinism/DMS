@@ -84,11 +84,11 @@
 	                          </td>
 	                          
 							  <td >
-							  	<h5 th:text="${#dates.format(customer.registerdate, 'd-M-yyyy')}"></h5>
+							  	<h5 th:text="${#dates.format(customer.registerdate, 'dd-MM-YYYY')}"></h5>
 							  </td>
 							  
 	                          <td >
-							  	<h5 th:text="${lastVisitRecord != null ? #temporals.format(lastVisitRecord.servicedate, 'd-M-yyyy HH:mm') : ''}"></h5>							  	
+							  	<h5 th:text="${lastVisitRecord != null ? #temporals.format(lastVisitRecord.servicedate, 'dd-MM-YYYY HH:mm') : ''}"></h5>							  	
 							  </td>
 
 							  <td >
@@ -145,7 +145,6 @@
 		    </script>
 	        <script>	        
 	        $(document).ready(function() {
-                $.fn.dataTable.moment( 'D-M-YYYY HH:mm' );
 	            var table = $('#patientTable').DataTable({
 	            	"oLanguage": {
 	            		  "sLengthMenu": tableLengthMenu,
@@ -155,7 +154,17 @@
 	            		  "sInfoFiltered": tableInfoFiltered,
 	            		  "sSearch": tableSearch
 	            		},
-            		order:[3, "desc"],
+            		"columnDefs": [
+                        {
+                            "targets": [3],
+                            "render": $.fn.dataTable.moment('DD-MM-YYYY')
+                        },
+                        {
+                            "targets": [4],
+                            "render": $.fn.dataTable.moment( 'DD-MM-YYYY HH:mm' )
+                        }
+                    ],
+            		order:[4, "desc"],
 
 	            });
 	        });

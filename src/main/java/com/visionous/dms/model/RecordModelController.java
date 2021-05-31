@@ -247,7 +247,7 @@ public class RecordModelController extends ModelControllerImpl {
 				((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest())
 		);
 		super.addModelCollectionToView("currentPage", currentPage);
-		super.addModelCollectionToView("recordList", recordService.findAllOrderByServicedateDesc());
+		super.addModelCollectionToView("recordList", recordService.findAll());
 
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getAccount().getRoles());
 		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser().getAccount());
