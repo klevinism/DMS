@@ -5,7 +5,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -110,6 +112,11 @@ public class Account implements Serializable{
             inverseJoinColumns = @JoinColumn(name = "roleid"))
     private List<Role> roles  = new ArrayList<>();
     
+    @JsonIgnore
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(mappedBy = "accounts", cascade = CascadeType.REFRESH)
+    private Set<Business> businesses = new HashSet<Business>();
+    
     private boolean enabled;
     
     private boolean active;
@@ -139,6 +146,7 @@ public class Account implements Serializable{
     @PrimaryKeyJoinColumn
     @Nullable
 	private Customer customer;
+	
 
 	/**
 	 * @param username
@@ -178,6 +186,7 @@ public class Account implements Serializable{
 		this.phone = account.phone;
 		this.reset = account.reset;
 		this.verification = account.verification;
+		this.businesses = account.businesses;
 		this.enabled = account.enabled;
 		this.active = account.active;
 	}
@@ -348,6 +357,20 @@ public class Account implements Serializable{
 	public void setPersonnel(Personnel personnel) {
 		this.personnel = personnel;
 	}
+	
+	/**
+	 * @return
+	 */
+	public Set<Business> getBusinesses() {
+		return businesses;
+	}
+
+	/**
+	 * @param businesses
+	 */
+	public void setBusinesses(Set<Business> businesses) {
+		this.businesses = businesses;
+	}
 
 	/**
 	 * @return
@@ -507,6 +530,11 @@ public class Account implements Serializable{
 				+ ", email=" + email + ", phone=" + phone + ", username=" + username + ", password=" + password
 				+ ", birthday=" + birthday + ", image=" + image + ", address=" + address + ", city=" + city
 				+ ", country=" + country + ", enabled=" + enabled + ", active=" + active + "]";
+	}
+
+	public void addBusiness(Business currentLoggedInBusiness) {
+		this.businesses.add(currentLoggedInBusiness);
+		currentLoggedInBusiness.getAccounts().add(this);
 	}
 
 }

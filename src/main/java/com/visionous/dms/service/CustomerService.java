@@ -58,7 +58,7 @@ public class CustomerService implements ICustomerService{
 		
 		newCustomer.getAccount().setActive(true);
 		newCustomer.getAccount().setEnabled(true);
-		
+
 		Account newAccount = accountService.create(newCustomer.getAccount());
 		
 		newCustomer.setAccount(newAccount);
@@ -161,6 +161,34 @@ public class CustomerService implements ICustomerService{
 	public void deleteById(Long id) {
 		Optional<Customer> customer = findById(id);
 		customer.ifPresent(selected -> delete(selected));
+	}
+
+	/**
+	 * @param id
+	 * @return
+	 */
+	@Override
+	public List<Customer> findAllByAccount_Businesses_Id(Long id) {
+		return this.customerRepository.findAllByAccount_Businesses_Id(id);
+	}
+
+	/**
+	 * @param customerId
+	 * @param currentBusinessId
+	 * @return
+	 */
+	@Override
+	public Optional<Customer> findByIdAndAccount_Businesses_Id(Long customerId, Long currentBusinessId) {
+		return this.customerRepository.findByIdAndAccount_Businesses_Id(customerId, currentBusinessId);
+	}
+
+	/**
+	 * @param id
+	 * @param currentBusinessId
+	 */
+	@Override
+	public void deleteByIdAndAccount_Businesses_Id(Long id, long currentBusinessId) {
+		this.customerRepository.deleteByIdAndAccount_Businesses_Id(id, currentBusinessId);
 	}
 
 }

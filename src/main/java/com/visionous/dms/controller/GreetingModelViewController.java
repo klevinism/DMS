@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Optional;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -58,10 +60,6 @@ public class GreetingModelViewController {
 	private ResetService resetService;
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
-	@Autowired
-	private GlobalSettings globalSettings;
-	@Autowired
-	private Subscription subscription;
 	
 	@Autowired
 	private LocaleResolver localeResolver;
@@ -69,15 +67,6 @@ public class GreetingModelViewController {
 	private HttpServletRequest httpServletRequest;
 	@Autowired
 	private HttpServletResponse httpServletResponse;
-	
-	/**
-	 * @param model
-	 * @return
-	 */
-	@GetMapping("/error")
-	public String error(Model model) {
-		return "demo_1/pages/samples/error-404";
-	}
 	
 	/**
 	 * @param model
@@ -187,9 +176,9 @@ public class GreetingModelViewController {
 		
 		model.addAttribute("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		model.addAttribute("logo", globalSettings.getBusinessImage());
-		model.addAttribute("settings", globalSettings);
-		model.addAttribute("subscription", subscription);
+		model.addAttribute("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
+		model.addAttribute("settings", AccountUtil.currentLoggedInBussines().getGlobalSettings());
+		model.addAttribute("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription());
 		
 		return "demo_1/pages/expiredsubscription";
 	}
@@ -353,18 +342,38 @@ public class GreetingModelViewController {
 		return "demo_1/pages/icons/font-awesome";
 	}
 	
+	
+	@GetMapping("/error")
+	public String handleError(HttpServletRequest request) {
+	    Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+	    
+	    if (status != null) {
+	        Integer statusCode = Integer.valueOf(status.toString());
+	    
+	        if(statusCode == HttpStatus.NOT_FOUND.value()) {
+	            return "demo_1/pages/samples/error-404";
+	        }else if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+	            return "demo_1/pages/samples/error-500";
+	        }else if(statusCode == HttpStatus.FORBIDDEN.value()) {
+	            return "demo_1/pages/samples/error-500";
+	        }
+	        
+	    }
+	    return "demo_1/pages/samples/error-500";
+	}
+	
 	@GetMapping("/new_appointment")
 	public String new_appointment(Model model, @RequestParam(name = "redirectUri", required = false) String redirectUrl) {
 	    
 		localeResolver.setLocale(httpServletRequest, httpServletResponse, new Locale("al","sq"));
-	    
-		model.addAttribute("disabledDays", this.globalSettings.getNonBusinessDays());
-		model.addAttribute("bookingSplit", this.globalSettings.getAppointmentTimeSplit());
-		model.addAttribute("startTime", this.globalSettings.getBusinessStartTimes()[0]);
-		model.addAttribute("startMinute", this.globalSettings.getBusinessStartTimes()[1]);
-		model.addAttribute("endTime", this.globalSettings.getBusinessEndTimes()[0]);
-		model.addAttribute("endMinute", this.globalSettings.getBusinessEndTimes()[1]);
-		model.addAttribute("businessName", this.globalSettings.getBusinessName());
+		
+		model.addAttribute("disabledDays", AccountUtil.currentLoggedInBussines().getGlobalSettings().getNonBusinessDays());
+		model.addAttribute("bookingSplit", AccountUtil.currentLoggedInBussines().getGlobalSettings().getAppointmentTimeSplit());
+		model.addAttribute("startTime", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessStartTimes()[0]);
+		model.addAttribute("startMinute", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessStartTimes()[1]);
+		model.addAttribute("endTime", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEndTimes()[0]);
+		model.addAttribute("endMinute", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEndTimes()[1]);
+		model.addAttribute("businessName", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessName());
 		model.addAttribute("redirect", redirectUrl);
 		
 		return "demo_1/pages/new_appointment";

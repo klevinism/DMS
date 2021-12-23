@@ -6,6 +6,7 @@ package com.visionous.dms.pojo;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -15,7 +16,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -67,11 +70,21 @@ public class GlobalSettings implements Serializable{
 	@Column(name = "appointmentsTimesSplit")
 	private Integer appointmentTimeSplit;
 	
+	@Column(name = "business_id", updatable = false, insertable = false)
+	private Long businessId;
+	
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH )
+	@JoinColumn(name = "business_id")
+	private Business business;
+	
 	@JsonIgnore
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "globalSettingsId", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@PrimaryKeyJoinColumn
 	private Set<SubscriptionHistory> subscriptions;
 	
+    @OneToMany(mappedBy = "globalSettingsId", fetch = FetchType.EAGER)
+    private Set<ServiceType> serviceType;
+    
 	/**
 	 * 
 	 */
@@ -290,6 +303,34 @@ public class GlobalSettings implements Serializable{
 	}
 
 	/**
+	 * @return businessId Long
+	 */
+	public Long getBusinessId() {
+		return businessId;
+	}
+
+	/**
+	 * @param businessId Long
+	 */
+	public void setBusinessId(Long businessId) {
+		this.businessId = businessId;
+	}
+
+	/**
+	 * @return business Business
+	 */
+	public Business getBusiness() {
+		return business;
+	}
+
+	/**
+	 * @param business Business
+	 */
+	public void setBusiness(Business business) {
+		this.business = business;
+	}
+
+	/**
 	 * @return the subscriptions
 	 */
 	public Set<SubscriptionHistory> getSubscriptions() {
@@ -303,5 +344,18 @@ public class GlobalSettings implements Serializable{
 		this.subscriptions = subscriptions;
 	}
 
-	
+	/**
+	 * @return
+	 */
+	public Set<ServiceType> getServiceType() {
+		return serviceType;
+	}
+
+	/**
+	 * @param serviceType
+	 */
+	public void setServiceType(Set<ServiceType> serviceType) {
+		this.serviceType = serviceType;
+	}
+
 }

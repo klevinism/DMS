@@ -48,7 +48,7 @@ public class RecordRestController {
 
         
     	if(serviceDate != null) {
-    		List<Record> records = recordService.findAllByServicedateBetween(new Timestamp(serviceDate.getTime()).toLocalDateTime(), 
+    		List<Record> records = recordService.findAllByPersonnelIdAndServicedateBetween(personnelId, new Timestamp(serviceDate.getTime()).toLocalDateTime(), 
     				new Timestamp(serviceEndDate.getTime()).toLocalDateTime());
     		
 	        String message = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());

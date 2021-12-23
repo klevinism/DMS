@@ -4,6 +4,7 @@
 package com.visionous.dms.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,15 @@ public class GlobalSettingsService implements IGlobalSettingsService{
 	@Override
 	public GlobalSettings update(GlobalSettings globalSettings) {
 		return this.globalSettingsRepository.saveAndFlush(globalSettings);
+	}
+
+
+	public Optional<GlobalSettings> findById(Long id) {
+		return this.globalSettingsRepository.findById(id);
+	}
+
+	public Optional<GlobalSettings> findByBusinessId(Long id) {
+		return this.globalSettingsRepository.findByBusinessId(id);
 	}
 	
 	

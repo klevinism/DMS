@@ -4,6 +4,7 @@
 package com.visionous.dms.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -43,5 +44,42 @@ public interface PersonnelRepository extends JpaRepository<Personnel, Long> {
 	 * @return
 	 */
 	List<Personnel> findAllByAccount_EnabledAndAccount_Roles_Name(boolean enabled, String role_name);
+
+	
+	/**
+	 * @param roleName
+	 * @param businessId
+	 * @return
+	 */
+	List<Personnel> findAllByAccount_Roles_NameAndAccount_Businesses_Id(String roleName, long businessId);
+
+	/**
+	 * @param enabled
+	 * @param active
+	 * @param roleName
+	 * @param businessId
+	 * @return
+	 */
+	List<Personnel> findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_NameAndAccount_Businesses_Id(
+			boolean enabled, boolean active, String roleName, long businessId);
+
+	/**
+	 * @param personnelId
+	 * @param businessId
+	 * @return
+	 */
+	Optional<Personnel> findByIdAndAccount_Businesses_Id(Long personnelId, Long businessId);
+
+	/**
+	 * @param enabled
+	 * @param roleName
+	 * @param businessId
+	 * @return
+	 */
+	List<Personnel> findAllByAccount_EnabledAndAccount_Roles_NameAndAccount_Businesses_Id(boolean enabled,
+			String roleName, long businessId);
+
+	List<Personnel> findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_NameInAndAccount_Businesses_Id(boolean b,
+			boolean c, List<String> roles, Long id);
 	
 }

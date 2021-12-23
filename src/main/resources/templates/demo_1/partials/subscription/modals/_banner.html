@@ -1,31 +1,42 @@
-<div th:fragment="banner" th:if="${subscription == null || subscription.id == null}">
-	<div class="item-purchase-banner" th:if="${not loggedInAccount.roles.?[name == 'ADMIN'].isEmpty()}">
-		<p class="banner-text">[[#{SubscriptionExpired}]] [[#{SubscriptionExpiredAdmin}]]</p>              
-		<a href="/admin/subscription"  class="banner-button btn btn-primary btn-icon">                
-			<i class="fa fa-handshake-o"></i> [[#{Subscription}]]
-		</a>              
-			<span class="toggler-close"></span>          
-	</div>
-	<div class="item-purchase-banner" th:if="${not loggedInAccount.roles.?[name == 'PERSONNEL'].isEmpty()}">
-		<p class="banner-text">[[#{SubscriptionExpired}]] [[#{SubscriptionExpiredPersonnel}]] </p>
-		<span class="toggler-close"></span>
-	</div>
-	
+<div th:fragment="banner" th:remove="tag">
+	<span th:if="${subscription == null || subscription.id == null}" 	>
+		<div class="item-purchase-banner" th:if="${not loggedInAccount.roles.?[name == 'ADMIN'].isEmpty()}">
+			<p class="banner-text">[[#{SubscriptionExpired}]] [[#{SubscriptionExpiredAdmin}]]</p>              
+			<a href="/admin/subscription"  class="banner-button btn btn-primary btn-icon">                
+				<i class="fa fa-handshake-o"></i> [[#{Subscription}]]
+			</a>              
+				<span class="toggler-close"></span>          
+		</div>
+		<div class="item-purchase-banner" th:if="${not loggedInAccount.roles.?[name == 'PERSONNEL'].isEmpty()}">
+			<p class="banner-text">[[#{SubscriptionExpired}]] [[#{SubscriptionExpiredPersonnel}]] </p>
+			<span class="toggler-close"></span>
+		</div>
+	</span>
 	<script th:inline="javascript">
 	/*<![CDATA[*/ 
 		var subscriptionExpired = /*[[#{SubscriptionExpired}]]*/'';
 		var subscriptionExpiredAdmin= /*[[#{SubscriptionExpiredAdmin}]]*/'';
 		var subscriptions = /*[[#{Subscription}]]*/'';
+		
+		var subscriptionReachLimit = /*[[#{SubscriptionReachLimit}]]*/'';
+		var subscriptionLimitUpgrade = /*[[#{SubscriptionLimitUpgrade}]]*/'';
    	/*]]>*/
     </script>
+    <script th:if="${subscription == null || subscription.id == null}">
+    	$("body").addClass("purchase-banner-active");
+    </script>
 	<script>
-		$("body").addClass("purchase-banner-active");
 		
 		$(document).ready(function(){
 		    $('[data-subscription]').click(function(e){
 		        if($(this).data('subscription') == 'expired'){
 		            e.preventDefault();
 		            subscriptionExpiredToastBanner();
+		        }
+		        
+		        if($(this).data('subscription') == 'reachLimit'){
+		            e.preventDefault();
+		            subscriptionNearLimitToastBanner();
 		        }
 		    });
 		});
@@ -36,7 +47,6 @@
 		        heading: subscriptionExpired,
 		        text: subscriptionExpiredAdmin + '<br /><a href="/admin/subscription" class="btn btn-primary btn-icon mt-2">'
 		        	+'<i class="fa fa-handshake-o"></i>'+subscriptions+'</a>',
-		        hideAfter: false,
 		        hideAfter: 3000,
 		        showHideTransition: 'plain',
 		        stack: false,
@@ -45,6 +55,22 @@
 		        bgColor: '#bf0703',
 		        loaderBg: '#5f7df9',
 		        textColor: 'white'
+		    })
+		}
+		
+		function subscriptionNearLimitToastBanner(){
+		    $.toast({
+		        heading: subscriptionReachLimit,
+		        text:  subscriptionLimitUpgrade + '<br /><a href="/admin/subscription" class="btn btn-primary btn-icon mt-2">'
+		        	+'<i class="fa fa-handshake-o"></i>'+subscriptions+'</a>',
+		        hideAfter: 3000,
+		        showHideTransition: 'plain',
+		        stack: false,
+		        position: "bottom-right",
+		        icon: 'warning',
+		        bgColor: '#fae8c1',
+		        loaderBg: '#ffaf00',
+		        textColor: '#855b00'
 		    })
 		}
 	</script>

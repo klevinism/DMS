@@ -134,8 +134,8 @@ public class AccountService implements IAccountService{
 	 * @return
 	 */
 	@Override
-	public List<Account> findAllByActiveAndEnabledAndRoles_Name(boolean enabled, boolean active, String role_name) {
-		return this.accountRepository.findAllByActiveAndEnabledAndRoles_Name(enabled, active, role_name);
+	public List<Account> findAllByActiveAndEnabledAndRoles_Name(boolean active, boolean enabled, String role_name) {
+		return this.accountRepository.findAllByActiveAndEnabledAndRoles_Name(active, enabled, role_name);
 	}
 
 	/**
@@ -180,5 +180,52 @@ public class AccountService implements IAccountService{
 		return this.accountRepository.findAllByPhone(phoneNr);
 	}
 
+	/**
+	 * @param id
+	 * @param currentBusinessId
+	 * @return
+	 */
+	@Override
+	public Optional<Account> findByIdAndBusinesses_Id(Long id, long currentBusinessId) {
+		return this.accountRepository.findByIdAndBusinesses_Id(id, currentBusinessId);
+	}
+
+	/**
+	 * @param currentBusinessId
+	 * @param active
+	 * @param enabled
+	 * @param name
+	 * @return
+	 */
+	@Override
+	public List<Account> findAllByAccountBusinessIdAndActiveAndEnabledAndRoles_Name(Long currentBusinessId, boolean active,
+			boolean enabled, String name) {
+		return this.accountRepository.findAllByBusinesses_IdAndActiveAndEnabledAndRoles_Name(currentBusinessId, active, enabled, name);
+	}
+
+	/**
+	 * @param currentBusinessId
+	 * @param enabled
+	 * @param active
+	 * @param beginMonthDate
+	 * @param endMonthDate
+	 * @return
+	 */
+	public Integer countByBusinesses_IdAndEnabledAndActiveAndCustomer_RegisterdateBetween(Long currentBusinessId, boolean enabled, boolean active,
+			Date beginMonthDate, Date endMonthDate) {
+		return this.accountRepository.countByBusinesses_IdAndEnabledAndActiveAndCustomer_RegisterdateBetween(currentBusinessId, enabled, active, beginMonthDate, endMonthDate);
+	}
+
+	/**
+	 * @param id
+	 * @param b
+	 * @param c
+	 * @param roles
+	 * @return
+	 */
+	public List<Account> findAllByAccountBusinessIdAndActiveAndEnabledAndRoles_NameIn(Long id, boolean b, boolean c,
+			List<String> roles) {
+		return this.accountRepository.findAllByBusinesses_IdAndActiveAndEnabledAndRoles_NameIn(id, b, c, roles);
+	}
 	
 }

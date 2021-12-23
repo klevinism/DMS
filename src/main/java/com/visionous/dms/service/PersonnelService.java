@@ -4,6 +4,7 @@
 package com.visionous.dms.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,11 @@ public class PersonnelService implements IPersonnelService{
 	@Override
 	public List<Personnel> findAllByRoleName(String roleName){
 		return this.personnelRepository.findAllByAccount_Roles_Name(roleName);
+	}
+	
+	@Override
+	public List<Personnel> findAllByRoleNameAndAccount_Business_Id(String roleName,long businessId){
+		return this.personnelRepository.findAllByAccount_Roles_NameAndAccount_Businesses_Id(roleName,businessId);
 	}
 
 	/**
@@ -134,4 +140,42 @@ public class PersonnelService implements IPersonnelService{
 	public List<Personnel> findAllByAccount_EnabledAndAccount_Roles_Name(boolean enabled, String role_name) {
 		return this.personnelRepository.findAllByAccount_EnabledAndAccount_Roles_Name(enabled, role_name);
 	}
+
+	/**
+	 *
+	 */
+	@Override
+	public List<Personnel> findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_NameAndAccount_Businesses_Id(
+			boolean enabled, boolean active, String roleName, long businessId) {
+		return this.personnelRepository.findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_NameAndAccount_Businesses_Id(enabled, active, roleName, businessId);
+	}
+
+	/**
+	 * @param personnelId
+	 * @param currentBusinessId
+	 * @return
+	 */
+	@Override
+	public Optional<Personnel> findByIdAndAccount_Businesses_Id(Long personnelId, Long currentBusinessId) {
+		return this.personnelRepository.findByIdAndAccount_Businesses_Id(personnelId, currentBusinessId);
+	}
+
+	/**
+	 * @param enabled
+	 * @param roleName
+	 * @param businessId
+	 * @return
+	 */
+	@Override
+	public List<Personnel> findAllByAccount_EnabledAndAccount_Roles_NameAndAccount_Businesses_Id(boolean enabled,
+			String roleName, long businessId) {
+		return this.personnelRepository.findAllByAccount_EnabledAndAccount_Roles_NameAndAccount_Businesses_Id(enabled, roleName, businessId);
+	}
+
+	public List<Personnel> findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_NameInAndAccount_Businesses_Id(
+			boolean b, boolean c, List<String> roles, Long id) {
+		return this.personnelRepository.findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_NameInAndAccount_Businesses_Id(b, c, roles, id);
+	}
+	
+	
 }

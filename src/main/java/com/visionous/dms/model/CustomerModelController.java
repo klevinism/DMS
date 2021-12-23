@@ -4,6 +4,7 @@
 package com.visionous.dms.model;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,11 +26,13 @@ import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.exception.EmailExistsException;
 import com.visionous.dms.exception.UsernameExistsException;
 import com.visionous.dms.pojo.Account;
+import com.visionous.dms.pojo.Business;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Role;
 import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.pojo.Teeth;
+import com.visionous.dms.service.BusinessService;
 import com.visionous.dms.service.CustomerService;
 import com.visionous.dms.service.QuestionnaireResponseService;
 import com.visionous.dms.service.RecordService;
@@ -48,28 +51,27 @@ public class CustomerModelController extends ModelControllerImpl{
 	private RoleService roleService;
     private MessageSource messages;
 	private TeethService teethService;
-	private GlobalSettings globalSettings;
 	
 	private QuestionnaireResponseService questionnaireResponseService;
 	private RecordService recordService;
 	private CustomerService customerService;
-
-	private Subscription subscription;
+	private BusinessService businessService;
+	
 	private static String currentPage = LandingPages.CUSTOMER.value();
 
 	@Autowired
 	public CustomerModelController(RoleService roleService, TeethService teethService,
-			MessageSource messages, GlobalSettings globalSettings,
-			RecordService recordService, CustomerService customerService, Subscription subscription,
+			MessageSource messages,
+			RecordService recordService, CustomerService customerService,
+			BusinessService businessService,
 			QuestionnaireResponseService questionnaireResponseService) {
 		
 		this.teethService = teethService;
 		this.roleService = roleService;
 		this.messages=messages;
-		this.globalSettings = globalSettings;
 		this.customerService = customerService;
 		this.recordService = recordService;
-		this.subscription = subscription;
+		this.businessService = businessService;
 		this.questionnaireResponseService = questionnaireResponseService;
 	}
 	
@@ -110,9 +112,9 @@ public class CustomerModelController extends ModelControllerImpl{
         String messageUsernameExists = messages.getMessage("alert.usernameExists", null, LocaleContextHolder.getLocale());
 		
 		if(action.equals(Actions.DELETE.getValue())) {
-			customerService.deleteById(newCustomer.getId());
+			customerService.deleteByIdAndAccount_Businesses_Id(newCustomer.getId(),AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
 		}else if(action.equals(Actions.EDIT.getValue()) ) {
-			Optional<Customer> selectedCustomer = customerService.findById(newCustomer.getId());
+			Optional<Customer> selectedCustomer = customerService.findByIdAndAccount_Businesses_Id(newCustomer.getId(), AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
 
 			selectedCustomer.ifPresent(oldCustomer -> {		
 				logger.debug(" Editing new Customer with username = " + oldCustomer.getAccount().getUsername());
@@ -156,22 +158,29 @@ public class CustomerModelController extends ModelControllerImpl{
 				}
 				
 				
-					try {
-						String imageName = null;
-						if((imageName = uploadProfileImage()) != null) {
-							newCustomer.getAccount().setImage(imageName);
-						}
-						customerService.create(newCustomer);
-						
-					} catch (IOException e) {
-						logger.error(e.getMessage());
-					} catch (EmailExistsException | UsernameExistsException e) {
-						super.getBindingResult().addError(new FieldError("account", "account.email", newCustomer.getAccount().getEmail(), false, null, null, messageEmailExists));
-						logger.error(messageEmailExists);
-						
-				        super.removeControllerParam("viewType");
-						super.addControllerParam("viewType", Actions.CREATE.getValue());
+				try {
+					String imageName = null;
+					if((imageName = uploadProfileImage()) != null) {
+						newCustomer.getAccount().setImage(imageName);
 					}
+					
+					Business loggedInBusiness = AccountUtil.currentLoggedInBussines();
+					loggedInBusiness.getAccounts().add(newCustomer.getAccount());
+					newCustomer.getAccount().addBusiness(loggedInBusiness);
+					
+					
+					Customer createdCustomer = customerService.create(newCustomer);
+					Business updatedBusiness = businessService.update(loggedInBusiness);
+					
+				} catch (IOException e) {
+					logger.error(e.getMessage());
+				} catch (EmailExistsException | UsernameExistsException e) {
+					super.getBindingResult().addError(new FieldError("account", "account.email", newCustomer.getAccount().getEmail(), false, null, null, messageEmailExists));
+					logger.error(messageEmailExists);
+					
+			        super.removeControllerParam("viewType");
+					super.addControllerParam("viewType", Actions.CREATE.getValue());
+				}
 			}
 		}else if(action.equals(Actions.VIEW.getValue())) {}	
 	}
@@ -189,7 +198,9 @@ public class CustomerModelController extends ModelControllerImpl{
 		if(viewType.equals(Actions.CREATE.getValue())) {
 			if(!super.hasResultBindingError()) {
 				Customer newCustomer = new Customer();
-				newCustomer.setAccount(new Account());
+				Account newAccount = new Account();
+
+				newCustomer.setAccount(newAccount);
 				super.addModelCollectionToView("customer", newCustomer);
 			}
 			
@@ -198,7 +209,7 @@ public class CustomerModelController extends ModelControllerImpl{
 			super.addModelCollectionToView("isCustomerCreation", true);
 		}else if(viewType.equals(Actions.DELETE.getValue())) {
 			String customerId = super.getAllControllerParams().get("id").toString();
-			Optional<Customer> customer = customerService.findById(Long.valueOf(customerId));
+			Optional<Customer> customer = customerService.findByIdAndAccount_Businesses_Id(Long.valueOf(customerId),AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
 			customer.ifPresent(x -> super.addModelCollectionToView("selected", customer.get()));
 			
 			Iterable<Role> allRoles = roleService.findAll();
@@ -207,7 +218,7 @@ public class CustomerModelController extends ModelControllerImpl{
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
 			if(super.getAllControllerParams().get("id") != null) {
 				Long customerId = Long.valueOf(super.getAllControllerParams().get("id").toString());
-				Optional<Customer> customer = customerService.findById(customerId);
+				Optional<Customer> customer = customerService.findByIdAndAccount_Businesses_Id(customerId, AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
 				
 				customer.ifPresent(singleCustomer -> {
 					super.addModelCollectionToView("selected", singleCustomer);
@@ -235,7 +246,7 @@ public class CustomerModelController extends ModelControllerImpl{
 			
 		}
 		super.addModelCollectionToView("lastCustomerRecord", 
-				recordService.findLastRecordForAllCustomers(customerService.findAll())
+				recordService.findLastRecordForAllCustomers(customerService.findAllByAccount_Businesses_Id(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId()))
 				);
 	}
 	
@@ -252,21 +263,22 @@ public class CustomerModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getAccount().getRoles());
 		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser().getAccount());
 		
-		super.addModelCollectionToView("customerList", customerService.findAll());
+		super.addModelCollectionToView("customerList", customerService.findAllByAccount_Businesses_Id(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId()));
 
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		if(this.globalSettings != null) {
-			super.addModelCollectionToView("disabledDays", this.globalSettings.getNonBusinessDays());
-			super.addModelCollectionToView("bookingSplit", this.globalSettings.getAppointmentTimeSplit());
-			super.addModelCollectionToView("startTime", this.globalSettings.getBusinessStartTimes()[0]);
-			super.addModelCollectionToView("startMinute", this.globalSettings.getBusinessStartTimes()[1]);
-			super.addModelCollectionToView("endTime", this.globalSettings.getBusinessEndTimes()[0]);
-			super.addModelCollectionToView("endMinute", this.globalSettings.getBusinessEndTimes()[1]);
-			super.addModelCollectionToView("logo", this.globalSettings.getBusinessImage());
+		if(AccountUtil.currentLoggedInBussines().getGlobalSettings() != null) {
+			System.out.println(AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessStartTimes());
+			super.addModelCollectionToView("disabledDays", AccountUtil.currentLoggedInBussines().getGlobalSettings().getNonBusinessDays());
+			super.addModelCollectionToView("bookingSplit", AccountUtil.currentLoggedInBussines().getGlobalSettings().getAppointmentTimeSplit());
+			super.addModelCollectionToView("startTime", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessStartTimes()[0]);
+			super.addModelCollectionToView("startMinute", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessStartTimes()[1]);
+			super.addModelCollectionToView("endTime", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEndTimes()[0]);
+			super.addModelCollectionToView("endMinute", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEndTimes()[1]);
+			super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
 		}
 		
-		super.addModelCollectionToView("subscription", subscription);
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription());
 
 	}
 	

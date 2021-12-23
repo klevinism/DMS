@@ -20,6 +20,7 @@ import javax.persistence.SequenceGenerator;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
@@ -45,6 +46,9 @@ public class SubscriptionHistory implements Serializable{
 	@Column(name = "global_settings_id", updatable = false, insertable = false)
 	private Long globalSettingsId;
 	
+	@Column(name = "business_id", updatable = false, insertable = false)
+	private Long businessId;
+	
 	@Column(name = "subscription_start_date")
 	private LocalDateTime subscriptionStartDate;
 	
@@ -63,6 +67,11 @@ public class SubscriptionHistory implements Serializable{
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH )
 	@JoinColumn(name = "subscription_id")
 	private Subscription subscription;
+	
+	@JsonIgnore
+	@ManyToOne(cascade = CascadeType.REFRESH )
+	@JoinColumn(name = "business_id")
+	private Business business;
 
 	/**
 	 * @return the id
@@ -161,4 +170,19 @@ public class SubscriptionHistory implements Serializable{
 	public void setSubscription(Subscription subscription) {
 		this.subscription = subscription;
 	}
+
+	/**
+	 * @return
+	 */
+	public Business getBusiness() {
+		return business;
+	}
+
+	/**
+	 * @param business
+	 */
+	public void setBusiness(Business business) {
+		this.business = business;
+	}
+	
 }

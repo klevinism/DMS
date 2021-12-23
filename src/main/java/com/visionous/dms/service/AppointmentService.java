@@ -4,7 +4,6 @@
 package com.visionous.dms.service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.visionous.dms.pojo.Appointment;
-import com.visionous.dms.pojo.ServiceType;
 import com.visionous.dms.repository.AppointmentRepository;
 
 /**
@@ -132,9 +130,48 @@ public class AppointmentService implements IAppointmentService{
 				findAllByAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateDesc(startRange, endRange);
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	public List<Object[]> findTopAppointmentsByMostUsedServiceType() {
 		return this.appointmentRepository.topAppointmentsByMostUsedServiceType();
+	}
+
+
+	/**
+	 * @param currentBusinessId
+	 * @param localDateTime
+	 * @param localDateTime2
+	 * @return
+	 */
+	@Override
+	public List<Appointment> findAllByBusinessIdAndBetweenDateRange(Long currentBusinessId, LocalDateTime localDateTime,
+			LocalDateTime localDateTime2) {
+		return this.appointmentRepository.findAllByCustomer_Account_Businesses_IdAndAppointmentDateBetweenOrderByAppointmentDateAsc(currentBusinessId, localDateTime, localDateTime2);
+	}
+
+
+	/**
+	 * @param personnelId
+	 * @return
+	 */
+	public List<Appointment> findByBusinessIdAndPersonnelId(Long currentBusinessId, Long personnelId) {
+		return this.appointmentRepository.findAllByPersonnel_Account_Businesses_IdAndPersonnelId(currentBusinessId, personnelId);
+	}
+
+
+	/**
+	 * @param id
+	 * @param personnelId
+	 * @param localDateTime
+	 * @param localDateTime2
+	 * @return
+	 */
+	public List<Appointment> findAllByCustomerBusinessIdAndPersonnelIdAndBetweenDateRange(Long currentBusienssId, Long personnelId,
+			LocalDateTime localDateTime, LocalDateTime localDateTime2) {
+		return this.appointmentRepository
+				.findAllByCustomer_Account_Businesses_IdAndPersonnelIdAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(currentBusienssId, personnelId, localDateTime, localDateTime2);
 	}
 
 }

@@ -5,6 +5,7 @@ package com.visionous.dms.model;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +22,7 @@ import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.GlobalSettings;
+import com.visionous.dms.pojo.ServiceType;
 import com.visionous.dms.pojo.ServiceTypes;
 import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.service.GlobalSettingsService;
@@ -42,8 +44,6 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 	private ServiceTypeService serviceTypeService;
 	
 	// Bean
-	private GlobalSettings globalSettings;
-	private Subscription subscription;
 	private ApplicationContext ctx;
 	
 	/**
@@ -53,13 +53,10 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 	public GlobalSettingsModelController(
 			GlobalSettingsService globalSettingsService,
 			ServiceTypeService serviceTypeService,
-			GlobalSettings globalSettings, Subscription subscription,
 			ApplicationContext ctx) {
 				
 		this.globalSettingsService = globalSettingsService;
 		this.serviceTypeService = serviceTypeService;
-		this.globalSettings = globalSettings;
-		this.subscription = subscription;
 		this.ctx = ctx;
 	}
 	
@@ -104,18 +101,14 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 						if((imageName = uploadBusinessImage()) != null) {
 							globalSetting.setBusinessImage(imageName);
 						}else {
-							globalSetting.setBusinessImage(globalSettings.getBusinessImage());
+							globalSetting.setBusinessImage(AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
 						}
 					} catch (IOException e) {
 							e.printStackTrace();
 					}						
 				}
 
-				GlobalSettings newSetting = globalSettingsService.update(globalSetting);			
-				ctx.getBean(GlobalSettings.class).setCurrentSetting(newSetting);
-				 
-				ctx.getBean(JavaMailSenderImpl.class).setUsername(newSetting.getBusinessEmail());
-				ctx.getBean(JavaMailSenderImpl.class).setPassword(newSetting.getBusinessPassword());
+				GlobalSettings newSetting = globalSettingsService.update(globalSetting);
 			}
 			
 		}else if(action.equals(Actions.CREATE.getValue())) {
@@ -140,14 +133,18 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 			
 		}else if (viewType.equals(Actions.EDIT.getValue())) {
 			if(!super.hasResultBindingError()) {
-				List<GlobalSettings> globalSetting = globalSettingsService.findAll();
-				super.addModelCollectionToView("globalSettings", globalSetting.get(0));
+				Optional<GlobalSettings> globalSettings = globalSettingsService.findByBusinessId(AccountUtil.currentLoggedInBussines().getId());
+				
+				globalSettings.ifPresent(setting -> {
+					super.addModelCollectionToView("globalSettings", setting);
+					List<ServiceType> serviceTypes = serviceTypeService.findAllByGlobalSettingsId(setting.getId());
+					if(!serviceTypes.isEmpty()) {
+						super.addModelCollectionToView("services", serviceTypes);
+					}
+				});
 			}
 			
-			ServiceTypes serviceTypes = new ServiceTypes(serviceTypeService.findAll());
-			if(!serviceTypes.getServices().isEmpty()) {
-				super.addModelCollectionToView("services", serviceTypes);
-			}
+			
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
 			
 		}
@@ -168,9 +165,9 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", subscription);
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription());
 
 	}
 	

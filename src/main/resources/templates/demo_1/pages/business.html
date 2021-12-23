@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <div th:replace="demo_1/partials/_header :: header">
+  </div>
+  
+<body>
+    <div class="container-scroller">
+      <div class="container-fluid page-body-wrapper full-page-wrapper">
+        <div class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
+          <div class="row w-100">
+            <div class="col-lg-4 mx-auto">
+              <div class="auto-form-wrapper mb-4">
+              	<div class="row">
+              	<h2 class="text-center ">[[#{DentalPractice}]]</h2>
+              	<p class="muted text-center mb-4">[[#{SelectYourPractice}]]</p>
+              	</div>
+                  <div class="row" th:each="business: ${businesses}">
+						<div class="col-12 card mb-2" style="width: 18rem;" >
+						  <img class="card-img-top" th:src="@{/resources/business/img/logo/__${business.globalSettings.businessImage}__}" th:alt="${business.name}">
+						  <div class="card-body">
+						    <h5 class="card-title">[[${business.name}]]</h5>
+						    <p class="card-text">Some quick example text.</p>
+						    <a type="button" th:href="'/business/'+ ${business.id}" class="btn-lg btn-primary mb-2 ">[[#{Enter}]]</a>
+						  </div>
+						</div>
+						
+						
+                  </div>
+              </div>
+            <div th:replace="demo_1/partials/_footer :: footer">
+			</div>
+            </div>
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="../../../assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="../../../assets/vendors/js/vendor.bundle.addons.js"></script>
+    <!-- endinject -->
+    <!-- inject:js -->
+    <script src="../../../assets/js/shared/off-canvas.js"></script>
+    <script src="../../../assets/js/shared/misc.js"></script>
+    <!-- endinject -->
+  </body>
+</html>

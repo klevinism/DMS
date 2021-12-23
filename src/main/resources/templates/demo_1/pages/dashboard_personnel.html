@@ -29,7 +29,7 @@
   			</section>
             
             <!-- Page Title Header Ends-->
-            <div class="row">
+            <div class="row" th:if="${selected}">
               <div class="col-md-4 grid-margin stretch-card"  th:with="accountUrl = 'demo_1/partials/account/modals/_'+${viewType}+' :: '+ ${viewType},
               														bodyUrl = 'demo_1/partials'+${currentPage}+'/modals/_'+${viewType}+' :: '+ ${viewType}" >
               	<div class="card"> 

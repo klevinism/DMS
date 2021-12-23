@@ -30,10 +30,10 @@ import com.visionous.dms.exception.EmailExistsException;
 import com.visionous.dms.exception.SubscriptionException;
 import com.visionous.dms.exception.UsernameExistsException;
 import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.GlobalSettings;
+import com.visionous.dms.pojo.Business;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.Role;
-import com.visionous.dms.pojo.Subscription;
+import com.visionous.dms.service.BusinessService;
 import com.visionous.dms.service.PersonnelService;
 import com.visionous.dms.service.RecordService;
 import com.visionous.dms.service.RoleService;
@@ -52,10 +52,9 @@ public class PersonnelModelController extends ModelControllerImpl{
     
     private ApplicationEventPublisher eventPublisher;
     private PersonnelService personnelService;
-    private GlobalSettings globalSettings;
     private MessageSource messages;
 
-	private Subscription subscription;
+	private BusinessService businessService;
     
 	private static String currentPage = LandingPages.PERSONNEL.value();
 
@@ -64,16 +63,14 @@ public class PersonnelModelController extends ModelControllerImpl{
 	 */
 	@Autowired
 	public PersonnelModelController(RoleService roleService, ApplicationEventPublisher eventPublisher, 
-			RecordService recordService, MessageSource messages, Subscription subscription,
-			GlobalSettings globalSettings, PersonnelService personnelService) {
+			RecordService recordService, MessageSource messages, PersonnelService personnelService, BusinessService businessService) {
 	
 		this.roleService = roleService;
 		this.eventPublisher = eventPublisher;
 		this.recordService = recordService;
 		this.messages = messages;
-		this.globalSettings = globalSettings;
 		this.personnelService = personnelService;
-		this.subscription = subscription;
+		this.businessService = businessService;
 	}
 	
 	
@@ -133,7 +130,13 @@ public class PersonnelModelController extends ModelControllerImpl{
 					}
 
 					if(!reachedSubscriptionLimit()) {
+						Business loggedInBusiness = AccountUtil.currentLoggedInBussines();
+						loggedInBusiness.getAccounts().add(newPersonnel.getAccount());
+						newPersonnel.getAccount().addBusiness(loggedInBusiness);
+						
 						Personnel createdPersonnel = personnelService.create(newPersonnel);
+						Business updatedBusiness = businessService.update(loggedInBusiness);
+						
 						createdPersonnel.getAccount().setPassword(passPlain);
 						this.publishNewAccountEvent(createdPersonnel.getAccount());
 					}else {
@@ -176,10 +179,10 @@ public class PersonnelModelController extends ModelControllerImpl{
 	}
 	
 	private boolean reachedSubscriptionLimit() {
-		int personnelSize = this.personnelService.findAllByAccount_EnabledAndAccount_Roles_Name(true, "PERSONNEL").size();
+		int personnelSize = this.personnelService.findAllByAccount_EnabledAndAccount_Roles_NameAndAccount_Businesses_Id(true, "PERSONNEL", AccountUtil.currentLoggedInUser().getCurrentBusiness().getId()).size();
 		
-		if(this.subscription.hasRestrictionsByPageName(currentPage)) {
-			int subscriptionRestrictionSize = this.subscription.getSumOfRestrictionsAmountByPageName(currentPage);
+		if(AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription().hasRestrictionsByPageName(currentPage)) {
+			int subscriptionRestrictionSize = AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription().getSumOfRestrictionsAmountByPageName(currentPage);
 			return personnelSize >= subscriptionRestrictionSize;
 		}else {
 			return false;
@@ -187,10 +190,10 @@ public class PersonnelModelController extends ModelControllerImpl{
 	}
 	
 	private boolean nearSubscriptionLimitBy(int count) {
-		int personnelSize = this.personnelService.findAllByAccount_EnabledAndAccount_Roles_Name(true, "PERSONNEL").size();
+		int personnelSize = this.personnelService.findAllByAccount_EnabledAndAccount_Roles_NameAndAccount_Businesses_Id(true, "PERSONNEL", AccountUtil.currentLoggedInUser().getCurrentBusiness().getId()).size();
 
-		if(this.subscription.hasRestrictionsByPageName(currentPage)) {
-			int subscriptionRestrictionSize = this.subscription.getSumOfRestrictionsAmountByPageName(currentPage);
+		if(AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription().hasRestrictionsByPageName(currentPage)) {
+			int subscriptionRestrictionSize = AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription().getSumOfRestrictionsAmountByPageName(currentPage);
 			return (subscriptionRestrictionSize - personnelSize) == count;
 		}else {
 			return false;
@@ -235,16 +238,14 @@ public class PersonnelModelController extends ModelControllerImpl{
 				newPersonnel.setAccount(new Account());
 				super.addModelCollectionToView("personnel", newPersonnel);
 			}
-			
-			
-			
+						
 			Iterable<Role> allRoles = roleService.findAll();
 			super.addModelCollectionToView("allRoles", allRoles);
 			super.addModelCollectionToView("isPersonnelCreation", true);
 			
 		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
 			String personnelId = super.getAllControllerParams().get("id").toString();
-			Optional<Personnel> personnel = personnelService.findById(Long.valueOf(personnelId));
+			Optional<Personnel> personnel = personnelService.findByIdAndAccount_Businesses_Id(Long.valueOf(personnelId), AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
 			personnel.ifPresent(x -> super.addModelCollectionToView("selected", personnel.get()));
 
 			Iterable<Role> allRoles = roleService.findAll();
@@ -253,7 +254,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
 			if(super.getAllControllerParams().get("id") != null) {
 				String personnelId = super.getAllControllerParams().get("id").toString();
-				Optional<Personnel> personnel = personnelService.findById(Long.valueOf(personnelId));
+				Optional<Personnel> personnel = personnelService.findByIdAndAccount_Businesses_Id(Long.valueOf(personnelId), AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
 				personnel.ifPresent(x -> super.addModelCollectionToView("selected", personnel.get()));
 
 				Iterable<Role> allRoles = roleService.findAll();
@@ -261,7 +262,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 			}
 
 			if(!reachedSubscriptionLimit() && nearSubscriptionLimitBy(1)) {
-				super.addModelCollectionToView("subscriptionNearLimit", "1");
+				super.addModelCollectionToView("subscriptionNearLimit", nearSubscriptionLimitBy(1));
 			}else{
 				super.addModelCollectionToView("subscriptionReachLimit", reachedSubscriptionLimit());
 			}
@@ -278,7 +279,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("currentPage", currentPage);
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
 		
-		Iterable<Personnel> personnels = personnelService.findAllByRoleName("PERSONNEL");
+		Iterable<Personnel> personnels = personnelService.findAllByRoleNameAndAccount_Business_Id("PERSONNEL", AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
 		super.addModelCollectionToView("personnelList", personnels);
 		
 
@@ -319,9 +320,11 @@ public class PersonnelModelController extends ModelControllerImpl{
 	
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", subscription);
+		super.addModelCollectionToView("settings", AccountUtil.currentLoggedInBussines().getGlobalSettings());
+
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription());
 
 	}
 	

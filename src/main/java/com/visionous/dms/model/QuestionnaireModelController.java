@@ -38,11 +38,9 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 		
 	private QuestionnaireFormRepository questionnaireFormRepository;
     
-	private GlobalSettings globalSettings;
 	private CustomerService customerService;
 	private QuestionnaireService questionnaireService;
 
-	private Subscription subscription;
 	
 	private static String currentPage = LandingPages.QUESTIONNAIRE.value();
 
@@ -51,17 +49,13 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 	 */
 	@Autowired
 	public QuestionnaireModelController(QuestionnaireFormRepository questionnaireFormRepository,
-			Subscription subscription,
 			QuestionnaireService questionnaireService,
-			CustomerService customerService,
-			GlobalSettings globalSettings) {
+			CustomerService customerService) {
 		
 		this.questionnaireFormRepository = questionnaireFormRepository;
 		
 		this.customerService = customerService;
 		this.questionnaireService = questionnaireService;
-		this.globalSettings = globalSettings;
-		this.subscription = subscription;
 	}
 	
 	
@@ -182,9 +176,9 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 	
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", subscription);
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription());
 
 	}
 	

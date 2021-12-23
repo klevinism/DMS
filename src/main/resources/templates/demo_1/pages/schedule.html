@@ -69,15 +69,7 @@
 			                        </div>
 		                          </div>
 		                          <div class="calendar-aside collapse show overflow-auto" id="calendarFilters" style="max-height:160px;">
-		                          	<div class="list p-1" th:if="${currentRoles[0].name == 'ADMIN'}">
-		                          		<label th:for="${loggedInAccount.id}" class="d-flex justify-content-end mr-auto">
-		                          			<img class="img-xs rounded-circle" th:src="'/resources/personnel/img/profile/'+${loggedInAccount.image}" style="float:left">
-		                          				<div class="user-text ml-1">[[#{Me}]] </div>
-		                          		</label>
-		                          		<div class="mb-1">
-		                          			<input tabindex="-1" type="checkbox" class="icheck-flat " th:id="${loggedInAccount.id}" th:value="${loggedInAccount.name} + ' ' + ${loggedInAccount.surname}" checked>
-		                          		</div>
-		                          	</div>
+
 		                          	
 		                          </div>
 		                          

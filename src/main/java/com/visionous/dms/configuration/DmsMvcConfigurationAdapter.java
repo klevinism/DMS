@@ -22,6 +22,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
+import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.pojo.SubscriptionHistory;
@@ -69,24 +70,6 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
 	public Validator getValidator() {
 	     return validator();
 	}
-	
-	@Bean
-    public GlobalSettings globalSettings() {
-        List<GlobalSettings> allSettings = globalSettingService.findAll();
-        if(!allSettings.isEmpty()) {
-        	return allSettings.get(0);
-        }
-        return null;
-    }
-	
-	@Bean
-    public Subscription subscription() {
-		Optional<SubscriptionHistory> activeSubscription = subscriptionHistoryService.findActiveSubscription();
-        if(activeSubscription.isPresent()) {
-        	return activeSubscription.get().getSubscription();
-        }
-        return new Subscription();
-    }
 	
 	@Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

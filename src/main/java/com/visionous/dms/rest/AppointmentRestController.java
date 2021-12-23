@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.DateUtil;
 import com.visionous.dms.configuration.helpers.DmsCore;
 import com.visionous.dms.event.OnCustomerAppointmentBookEvent;
@@ -37,6 +38,7 @@ import com.visionous.dms.pojo.Appointment;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Personnel;
+import com.visionous.dms.pojo.Record;
 import com.visionous.dms.pojo.ServiceType;
 import com.visionous.dms.rest.response.ResponseBody;
 import com.visionous.dms.service.AccountService;
@@ -64,19 +66,17 @@ public class AppointmentRestController {
 	private ApplicationEventPublisher eventPublisher;
 	private MessageSource messageSource;
 
-	private GlobalSettings globalSettings;
 	/**
 	 * 
 	 */
 	@Autowired
 	public AppointmentRestController(AppointmentService appointmentService, PersonnelService personnelService, 
 			CustomerService customerService, MessageSource messageSource, 
-			RecordService recordService, AccountService accountService, GlobalSettings globalSettings,
+			RecordService recordService, AccountService accountService,
 			ServiceTypeService serviceTypeService, ApplicationEventPublisher eventPublisher) {
 		
 		this.appointmentService = appointmentService;
 		this.personnelService = personnelService;
-		this.globalSettings = globalSettings;
 		this.serviceTypeService = serviceTypeService;
 		
 		this.customerService = customerService;
@@ -131,7 +131,7 @@ public class AppointmentRestController {
         		newAppointment.setAppointmentEndDate(
         				new Timestamp(appointmentEndDate.getTime()).toLocalDateTime());
         	}else {
-        		Date endingDate = DateUtil.addMinutes(appointmentDate, globalSettings.getAppointmentTimeSplit());
+        		Date endingDate = DateUtil.addMinutes(appointmentDate, AccountUtil.currentLoggedInBussines().getGlobalSettings().getAppointmentTimeSplit());
         		newAppointment.setAppointmentEndDate(
         				new Timestamp(endingDate.getTime()).toLocalDateTime());
         	}
@@ -319,7 +319,7 @@ public class AppointmentRestController {
 							endingDate = DateUtil.addDays(start, daysToAdd);
 						} 
 						
-						Integer records = recordService.countByPersonnelIdAndServicedateBetween(singlePersonnel.get().getId(), new Timestamp(startingDate.getTime()).toLocalDateTime(), 
+						Integer records = recordService.countAllByBusinessIdAndPersonnelIdAndServicedateBetween(AccountUtil.currentLoggedInBussines().getId(), singlePersonnel.get().getId(), new Timestamp(startingDate.getTime()).toLocalDateTime(), 
 								new Timestamp(endingDate.getTime()).toLocalDateTime());
 
 						start = DateUtil.addDays(start, daysToAdd);
@@ -385,8 +385,8 @@ public class AppointmentRestController {
 					endingDate = DateUtil.addDays(start, daysToAdd);
 				} 
 				
-				Integer revenueForPeriod = recordService.sumOfPersonnelReceipts(personnelId, new Timestamp(startingDate.getTime()).toLocalDateTime(), 
-						new Timestamp(endingDate.getTime()).toLocalDateTime());
+				Integer revenueForPeriod = recordService.sumOfPersonnelReceiptsAndBusinessId(personnelId, new Timestamp(startingDate.getTime()).toLocalDateTime(), 
+						new Timestamp(endingDate.getTime()).toLocalDateTime(), AccountUtil.currentLoggedInBussines().getId());
 				
 				revenueForPersonnel.add(revenueForPeriod != null ? revenueForPeriod : 0);
 
@@ -444,10 +444,10 @@ public class AppointmentRestController {
 						Date startingDate = setDayToBegginingOfPeriod(start, daysToAdd);
 						Date endingDate = setDayToEndingOfPeriod(start, daysToAdd);
 						
-						Integer records = appointmentService.countAllByPersonnelIdAndAppointmentDateBetween(singlePersonnel.get().getId(), new Timestamp(startingDate.getTime()).toLocalDateTime(), new Timestamp(endingDate.getTime()).toLocalDateTime());
+						List<Appointment> appointmentsList = appointmentService.findAllByCustomerBusinessIdAndPersonnelIdAndBetweenDateRange(AccountUtil.currentLoggedInBussines().getId(), singlePersonnel.get().getId(), new Timestamp(startingDate.getTime()).toLocalDateTime(), new Timestamp(endingDate.getTime()).toLocalDateTime());
 						
 						start = DateUtil.addDays(start, daysToAdd);
-						recordsForPersonnel.add(records);
+						recordsForPersonnel.add(appointmentsList.size());
 	        		}
 	        		listOfRecords.put(appointments, recordsForPersonnel);
 				}
@@ -496,7 +496,7 @@ public class AppointmentRestController {
 		}else if(daysToAdd >= 365) {
 			date = DateUtil.setDayToEndOfYear(start);
 		}else{
-			date = DateUtil.setDays(start, daysToAdd);
+			date = DateUtil.addDays(start, daysToAdd);
 		} 
 		return date;
 	}
@@ -505,7 +505,7 @@ public class AppointmentRestController {
     public ResponseEntity<?> getSearchResultViaAjax(@RequestParam(name = "personnelId", required = true) Long personnelId) { 
         ResponseBody<Appointment> result = new ResponseBody<>();
         
-        List<Appointment> appointments = appointmentService.findByPersonnelId(personnelId);
+        List<Appointment> appointments = appointmentService.findByBusinessIdAndPersonnelId(AccountUtil.currentLoggedInBussines().getId(), personnelId);
         
         if (appointments.isEmpty()) {
 			String messageNoUserFound = messageSource.getMessage("alert.noUserFound", null, LocaleContextHolder.getLocale());
@@ -524,7 +524,7 @@ public class AppointmentRestController {
     public ResponseEntity<?> getAutomaticAppointment() { 
         ResponseBody<Appointment> result = new ResponseBody<>();
         
-        int minSplit = globalSettings.getAppointmentTimeSplit();
+        int minSplit = AccountUtil.currentLoggedInBussines().getGlobalSettings().getAppointmentTimeSplit();
 
         Date today = new Date();
         Calendar todayCalendar = DateUtil.getCalendarFromDate(today);
@@ -584,8 +584,8 @@ public class AppointmentRestController {
     }
 	
 	private Date searchForNewDay(Date date) {
-        int startDay = globalSettings.getBusinessStartDay();
-        int endDay = globalSettings.getBusinessEndDay();
+        int startDay = AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessStartDay();
+        int endDay = AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEndDay();
                 
         Calendar calendar = DateUtil.getCalendarFromDate(date); 
         int todayDayNr = calendar.get(Calendar.DAY_OF_WEEK)-1;
@@ -600,11 +600,11 @@ public class AppointmentRestController {
 	
 	private Date nextAvailableBusinessAppointmentTime(Date date) {
 
-        int minSplit = globalSettings.getAppointmentTimeSplit();
+        int minSplit = AccountUtil.currentLoggedInBussines().getGlobalSettings().getAppointmentTimeSplit();
 
         Date today = date;        
-        Date startTime = DateUtil.getStartWorkingHr(globalSettings.getBusinessStartTime(), today);
-        Date endTime = DateUtil.getEndWorkingHr(globalSettings.getBusinessEndTime(), today);
+        Date startTime = DateUtil.getStartWorkingHr(AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessStartTime(), today);
+        Date endTime = DateUtil.getEndWorkingHr(AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEndTime(), today);
                 
 		while(today.before(startTime) || today.after(endTime)) {
 
@@ -640,7 +640,7 @@ public class AppointmentRestController {
     		@RequestParam(name = "end", required = true) Date endRange) {
 		
         ResponseBody<Appointment> result = new ResponseBody<>();
-        List<Appointment> appointments = appointmentService.findAllByPersonnelIdBetweenDateRange(personnelId, new Timestamp(startRange.getTime()).toLocalDateTime(), new Timestamp(endRange.getTime()).toLocalDateTime());
+        List<Appointment> appointments = appointmentService.findAllByCustomerBusinessIdAndPersonnelIdAndBetweenDateRange(AccountUtil.currentLoggedInBussines().getId(), personnelId, new Timestamp(startRange.getTime()).toLocalDateTime(), new Timestamp(endRange.getTime()).toLocalDateTime());
 
         if (appointments.isEmpty()) {
 			String messageNoUserFound = messageSource.getMessage("alert.noUpcomingAppointments", null, LocaleContextHolder.getLocale());
@@ -665,7 +665,7 @@ public class AppointmentRestController {
         if(personnelId != null) {
         	return this.getAvailableAppointments(personnelId, startRange, endRange);
         }else {
-        	List<Appointment> appointments = appointmentService.findAllBetweenDateRange(new Timestamp(startRange.getTime()).toLocalDateTime(), new Timestamp(endRange.getTime()).toLocalDateTime());
+        	List<Appointment> appointments = appointmentService.findAllByBusinessIdAndBetweenDateRange(AccountUtil.currentLoggedInBussines().getId(), new Timestamp(startRange.getTime()).toLocalDateTime(), new Timestamp(endRange.getTime()).toLocalDateTime());
 
             if (appointments.isEmpty()) {
     			String messageNoUserFound = messageSource.getMessage("alert.noUpcomingAppointments", null, LocaleContextHolder.getLocale());
@@ -685,8 +685,10 @@ public class AppointmentRestController {
     public ResponseEntity<?> getAvailablePersonnel() {
 		
         ResponseBody<Personnel> result = new ResponseBody<>();
-
-        List<Personnel> personnel = personnelService.findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_Name(true, true, "PERSONNEL");
+        List<String> roles = new ArrayList<>();
+        roles.add("PERSONNEL");
+        roles.add("ADMIN");
+        List<Personnel> personnel = personnelService.findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_NameInAndAccount_Businesses_Id(true, true, roles, AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
         if(personnel.size() != 0) {
         	result.setResult(personnel);
         }
@@ -699,7 +701,7 @@ public class AppointmentRestController {
 		
         ResponseBody<Customer> result = new ResponseBody<>();
 
-        List<Customer> customer = customerService.findAll();
+        List<Customer> customer = customerService.findAllByAccount_Businesses_Id(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
         if(customer.size() != 0) {
         	result.setResult(customer);
         }

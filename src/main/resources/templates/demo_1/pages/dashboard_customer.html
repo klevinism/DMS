@@ -27,12 +27,12 @@
 			  	<!-- partial:partials/_breadcrumb.html -->
   			</section>
             <!-- Page Title Header Ends-->
-            <div class="row">
+            <div class="row" th:if="${selected != null}">
                      
-              <div class="col-md-8 ">
+              <div class="col-md-8 " >
               	<div class="card"> 
               		<div class="card-body"  th:with="historyUrl = 'demo_1/partials/history/modals/_'+${viewType}+' :: '+ ${viewType}">
-		              	<form th:action="@{/admin/history}" th:object="${selected}" method="post" >
+		              	<form th:action="@{/admin/history}" th:object="${selected}"  method="post" >
 		              	
 		              		<section th:replace="__${historyUrl}__">
 							  	<!-- partial:partials/_historyUrl.html -->

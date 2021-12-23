@@ -48,10 +48,7 @@ public class AccountModelController extends ModelControllerImpl{
 	private RoleService roleService;
 	private PersonnelService personnelService;
 	private CustomerService customerService;
-	private GlobalSettings globalSettings;
 	private MessageSource messageSource;
-
-	private Subscription subscription;
 	
 	private static String currentPage = LandingPages.ACCOUNT.value();
 
@@ -61,16 +58,14 @@ public class AccountModelController extends ModelControllerImpl{
 	 */
 	@Autowired
 	public AccountModelController(AccountService accountService, RoleService roleService, 
-			MessageSource messageSource, PersonnelService personnelService, Subscription subscription,
-			CustomerService customerService, GlobalSettings globalSettings) {
+			MessageSource messageSource, PersonnelService personnelService, 
+			CustomerService customerService) {
 		
 		this.accountService = accountService;
 		this.roleService = roleService;
 		this.messageSource = messageSource;
 		this.personnelService = personnelService;
 		this.customerService = customerService;
-		this.globalSettings = globalSettings;
-		this.subscription = subscription;
 	}
 	
 	/**
@@ -113,7 +108,7 @@ public class AccountModelController extends ModelControllerImpl{
 		if(action.equals(Actions.DELETE.getValue())) {
 			
 		}else if(action.equals(Actions.EDIT.getValue()) ) {
-			Optional<Account> oldAccount = accountService.findById(newAccount.getId());
+			Optional<Account> oldAccount = accountService.findByIdAndBusinesses_Id(newAccount.getId(), AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
 			
 			if(!newAccount.getRoles().isEmpty()) {
 				Optional<Role> role = roleService.findByName(newAccount.getRoles().get(0).getName());
@@ -206,7 +201,7 @@ public class AccountModelController extends ModelControllerImpl{
 			if(super.getAllControllerParams().get("id") != null) {
 				
 				Long accountId = Long.valueOf(super.getAllControllerParams().get("id").toString());
-				Optional<Account> oldAccount = accountService.findById(accountId);
+				Optional<Account> oldAccount = accountService.findByIdAndBusinesses_Id(accountId, AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
 
 				Role[] loggedInRoles = AccountUtil.currentLoggedInUser().getRoles().stream().toArray(Role[]::new);					
 				
@@ -246,9 +241,9 @@ public class AccountModelController extends ModelControllerImpl{
 				Long accountId = Long.valueOf(super.getAllControllerParams().get("id").toString());
 				
 				//Either personnel or customer. not both
-				Optional<Personnel> selectedPersonnel = personnelService.findById(accountId);
+				Optional<Personnel> selectedPersonnel = personnelService.findByIdAndAccount_Businesses_Id(accountId, AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
 				selectedPersonnel.ifPresent(personnel -> super.addModelCollectionToView("selected", personnel));
-				Optional<Customer> selectedCustomer = customerService.findById(accountId);
+				Optional<Customer> selectedCustomer = customerService.findByIdAndAccount_Businesses_Id(accountId, AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
 				selectedCustomer.ifPresent(customer -> super.addModelCollectionToView("selected", customer));
 			}else {
 				if(AccountUtil.currentLoggedInUser().getAccount().getPersonnel() != null) {
@@ -278,9 +273,9 @@ public class AccountModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", subscription);
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription());
 
 	}
 	

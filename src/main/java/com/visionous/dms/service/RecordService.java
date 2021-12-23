@@ -12,6 +12,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.Record;
 import com.visionous.dms.repository.RecordRepository;
@@ -111,6 +112,17 @@ public class RecordService implements IRecordService{
 	public Integer countAllByPersonnelIdAndServicedateBetween(Long personnelId, LocalDateTime beginDate, LocalDateTime endDate) {
 		return this.recordRepository.countByPersonnelIdAndServicedateBetween(personnelId, beginDate, endDate);
 	}
+	
+	/**
+	 * @param personnelId
+	 * @param beginDate
+	 * @param endDate
+	 * @return all records of personnel serviced between dates
+	 */
+	@Override
+	public List<Record> findAllByPersonnelIdAndServicedateBetween(Long personnelId, LocalDateTime beginDate, LocalDateTime endDate) {
+		return this.recordRepository.findAllByPersonnelIdAndServicedateBetween(personnelId, beginDate, endDate);
+	}
 
 	/**
 	 * @param beginDate
@@ -194,4 +206,68 @@ public class RecordService implements IRecordService{
 	public List<Record> findAll() {
 		return this.recordRepository.findAll();
 	}
+
+	/**
+	 * @param currentBusinessId
+	 * @param localDateTime
+	 * @param localDateTime2
+	 * @return
+	 */
+	@Override
+	public Integer countByBusinessIdAndServicedateBetween(Long currentBusinessId, LocalDateTime localDateTime,
+			LocalDateTime localDateTime2) {
+		return this.recordRepository.countByHistory_Customer_Account_BusinessesIdAndServicedateBetween(AccountUtil.currentLoggedInBussines().getId(), localDateTime, localDateTime2);
+	}
+
+	/**
+	 * @param id
+	 * @param localDateTime
+	 * @param localDateTime2
+	 * @return
+	 */
+	public Integer sumOfReceiptsByBusinessIdAndServiceDate(Long id, LocalDateTime localDateTime, LocalDateTime localDateTime2) {
+		return this.recordRepository.sumOfAllReceiptsByBusinessId(id, localDateTime, localDateTime2);
+	}
+
+	/**
+	 * @param id
+	 * @param localDateTime
+	 * @param localDateTime2
+	 * @param customerId
+	 * @return
+	 */
+	public List<Record> findAllByBusinessIdAndServicedateBetweenAndCustomerId(Long id, LocalDateTime localDateTime,
+			LocalDateTime localDateTime2, Long customerId) {
+		return this.recordRepository.findAllByHistory_Customer_Account_BusinessesIdAndServicedateBetweenAndHistory_customerId(id, localDateTime, localDateTime2, customerId);
+	}
+
+	/**
+	 * @param id
+	 * @param localDateTime
+	 * @param localDateTime2
+	 * @return
+	 */
+	public List<Record> findAllByBusinessIdAndServicedateBetween(Long id, LocalDateTime localDateTime,
+			LocalDateTime localDateTime2) {
+		return this.recordRepository.findAllByHistory_Customer_Account_BusinessesIdAndServicedateBetween(id, localDateTime, localDateTime2);
+	}
+
+	/**
+	 * @param businessId
+	 * @param personnelId
+	 * @param localDateTime
+	 * @param localDateTime2
+	 * @return
+	 */
+	public Integer countAllByBusinessIdAndPersonnelIdAndServicedateBetween(Long businessId, Long personnelId,
+			LocalDateTime localDateTime, LocalDateTime localDateTime2) {
+		return this.recordRepository.countByHistory_Customer_Account_Businesses_IdAndPersonnelIdAndServicedateBetween(AccountUtil.currentLoggedInBussines().getId(), personnelId, localDateTime, localDateTime2);
+	}
+
+	public Integer sumOfPersonnelReceiptsAndBusinessId(Long id, LocalDateTime localDateTime,
+			LocalDateTime localDateTime2, Long customerBusinessId) {
+		// TODO Auto-generated method stub
+		return this.recordRepository.findSumOfAllReceiptsByPersonnelIdAndBusinessIdAndPayed(id, localDateTime, localDateTime2, customerBusinessId, true);
+	}
+
 }

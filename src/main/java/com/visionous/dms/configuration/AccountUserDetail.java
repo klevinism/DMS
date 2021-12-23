@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.visionous.dms.configuration.helpers.DmsCore;
 import com.visionous.dms.pojo.Account;
+import com.visionous.dms.pojo.Business;
 
 /**
  * @author delimeta
@@ -26,6 +27,8 @@ public class AccountUserDetail extends Account implements UserDetails{
 	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 	
 	private Account account;
+	
+	private Business currentBusinessId;
 	
 	private boolean accountNonExpired;
 	private boolean credentialsNonExpired;
@@ -68,6 +71,22 @@ public class AccountUserDetail extends Account implements UserDetails{
 	public void setAccount(Account account) {
 		this.account = account;
 	}
+	
+	
+
+	/**
+	 * @return
+	 */
+	public Business getCurrentBusiness() {
+		return currentBusinessId;
+	}
+
+	/**
+	 * @param currentBusinessId
+	 */
+	public void setCurrentBusiness(Business currentBusinessId) {
+		this.currentBusinessId = currentBusinessId;
+	}
 
 	/**
 	 * @return authorities Collection<? extends GrantedAuthority>
@@ -101,10 +120,16 @@ public class AccountUserDetail extends Account implements UserDetails{
 		return this.credentialsNonExpired;
 	}
 	
+	/**
+	 * @return
+	 */
 	public boolean isPersonnel() {
 		return this.account.getPersonnel() != null;
 	}
 
+	/**
+	 * @return
+	 */
 	public boolean isCustomer() {
 		return this.account.getCustomer() != null;
 	}

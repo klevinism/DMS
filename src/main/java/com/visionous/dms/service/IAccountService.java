@@ -114,4 +114,22 @@ public interface IAccountService {
 	 */
 	Optional<Account> findByPhoneNr(Long phoneNr);
 
+	/**
+	 * @param id
+	 * @param currentBusinessId
+	 * @return
+	 */
+	Optional<Account> findByIdAndBusinesses_Id(Long id, long currentBusinessId);
+
+
+	/**
+	 * @param currentBusinessId
+	 * @param active
+	 * @param enabled
+	 * @param name
+	 * @return
+	 */
+	List<Account> findAllByAccountBusinessIdAndActiveAndEnabledAndRoles_Name(Long currentBusinessId, boolean active,
+			boolean enabled, String name);
+
 }

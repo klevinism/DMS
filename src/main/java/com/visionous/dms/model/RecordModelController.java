@@ -55,14 +55,12 @@ public class RecordModelController extends ModelControllerImpl {
 	private PersonnelService personnelService;
 	private CustomerService customerService;
 	private HistoryService historyService;
-	private GlobalSettings globalSettings;
 	private RecordService recordService;
 	private RecordReceiptService recordReceiptService;
 	private RecordReceiptItemService recordReceiptItemService;
 
 	private TeethService teethService;
 
-	private Subscription subscription;
 
 	/**
 	 * 
@@ -70,8 +68,7 @@ public class RecordModelController extends ModelControllerImpl {
 	@Autowired
 	public RecordModelController(QuestionnaireResponseService questionnaireResponseService, 
 			ServiceTypeService serviceTypeService, PersonnelService personnelService,
-			CustomerService customerService, HistoryService historyService, Subscription subscription,
-			GlobalSettings globalSettings, RecordService recordService, TeethService teethService,
+			CustomerService customerService, HistoryService historyService, RecordService recordService, TeethService teethService,
 			RecordReceiptService recordReceiptService, RecordReceiptItemService recordReceiptItemService) {
 		
 		this.questionnaireResponseService = questionnaireResponseService;
@@ -79,12 +76,10 @@ public class RecordModelController extends ModelControllerImpl {
 		this.personnelService = personnelService;
 		this.customerService = customerService;
 		this.historyService = historyService;
-		this.globalSettings = globalSettings;
 		this.recordService = recordService;
 		this.recordReceiptItemService = recordReceiptItemService;
 		this.recordReceiptService = recordReceiptService;
 		this.teethService = teethService;
-		this.subscription = subscription;
 	}
 	
 	/**
@@ -197,7 +192,7 @@ public class RecordModelController extends ModelControllerImpl {
 						super.addModelCollectionToView("selected", record);
 					});
 					
-					super.addModelCollectionToView("services", serviceTypeService.findAll());
+					super.addModelCollectionToView("services", serviceTypeService.findAllByGlobalSettingsId(AccountUtil.currentLoggedInBussines().getGlobalSettings().getId()));
 				});
 			}
 			
@@ -254,9 +249,9 @@ public class RecordModelController extends ModelControllerImpl {
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", subscription);
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription());
 
 	}
 	
