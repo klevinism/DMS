@@ -1,6 +1,6 @@
 
 <div class="card-deck text-center" th:fragment="view">
-        <div class="card box-shadow" th:each="subscr,indx : ${subscriptionList}" th:if="${indx.index} < 3">
+        <div class="card box-shadow" th:each="subscr,indx : ${subscriptionList}" th:if="${subscr.active}">
 	        <div class="card-header">
 	          <h4 class="my-0 font-weight-normal">[[${subscr.name}]]</h4>
 	        </div>
