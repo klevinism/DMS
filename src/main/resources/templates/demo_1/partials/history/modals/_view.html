@@ -73,7 +73,7 @@
 									th:onmouseover="'hoverRecord(\'__${var}__\')'"
 									th:onclick="'window.location=\'/customer/'+*{id}+'/history/'+*{customerHistory.id}+'/record/'+${record.id}+'\''">
 									
-									<td th:text="${#temporals.format(record.servicedate, 'd-M-yyyy hh:mm')}"></td>
+									<td th:text="${#temporals.format(record.servicedate, 'dd-MM-YYYY HH:mm')}"></td>
 									<td th:text="${record.serviceType.name}"></td>
 									<td id="tooth" th:text="${#strings.abbreviate(var,19)}" data-toggle="tooltip" data-html="true" th:title="${var}"></td>
 									<td style="white-space:break-spaces;" th:text="${record.servicecomment}" data-toggle="tooltip" data-html="true" th:title="${record.servicecomment}">
@@ -113,13 +113,17 @@
 		
         $(document).ready(function() {
         	if($('#allRecords').html() != undefined){
-		        $.fn.dataTable.moment( 'D-M-YYYY' );
-	            $('#allRecords').DataTable({
-	                
+	            var table = $('#allRecords').DataTable({
 	            	"bPaginate": false,
 	                "bLengthChange": false,
 	                "bFilter": false,
 	                "bInfo": false,
+	                "columnDefs": [
+                        {
+                            "targets": [0],
+                            "render": $.fn.dataTable.moment('DD-MM-YYYY HH:mm')
+                        }
+                    ],
 	                order: [0,"desc"]
 	            });
         	}

@@ -4,12 +4,10 @@
 package com.visionous.dms.service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import com.visionous.dms.pojo.Appointment;
-import com.visionous.dms.pojo.ServiceType;
 
 /**
  * @author delimeta
@@ -81,4 +79,15 @@ public interface IAppointmentService {
 	 * @return
 	 */
 	List<Object[]> findTopAppointmentsByMostUsedServiceType();
+
+	/**
+	 * @param id
+	 * @param localDateTime
+	 * @param localDateTime2
+	 * @return
+	 */
+	List<Appointment> findAllByBusinessIdAndBetweenDateRange(Long id, LocalDateTime localDateTime,
+			LocalDateTime localDateTime2);
+
+
 }

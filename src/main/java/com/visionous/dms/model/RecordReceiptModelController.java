@@ -39,7 +39,6 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 	
 	private static String currentPage = LandingPages.RECORDRECEIPT.value();
 	
-	private GlobalSettings globalSettings;
 	
 	private RecordReceiptService recordReceiptService;
 	
@@ -53,26 +52,23 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 	
 	private QuestionnaireResponseService questionnaireResponseService;
 
-	private Subscription subscription;
 
 	/**
 	 * 
 	 */
 	@Autowired
-	public RecordReceiptModelController(GlobalSettings globalSettings, RecordReceiptService recordReceiptService,
+	public RecordReceiptModelController(RecordReceiptService recordReceiptService,
 			RecordReceiptItemService recordReceiptItemService,
 			CustomerService customerService, HistoryService historyService, 
-			QuestionnaireResponseService questionnaireResponseService, Subscription subscription,
+			QuestionnaireResponseService questionnaireResponseService,
 			RecordService recordService) {
 		
-		this.globalSettings = globalSettings;
 		this.questionnaireResponseService = questionnaireResponseService;
 		this.recordReceiptItemService = recordReceiptItemService;
 		this.recordReceiptService = recordReceiptService;
 		this.customerService = customerService;
 		this.historyService = historyService;
 		this.recordService = recordService;
-		this.subscription = subscription;
 	}
 	
 	/**
@@ -173,7 +169,7 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 			}
 		});
 		
-		super.addModelCollectionToView("global", globalSettings);
+		super.addModelCollectionToView("global", AccountUtil.currentLoggedInBussines().getGlobalSettings());
 	}
 	
 	/**
@@ -190,9 +186,9 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", subscription);
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription());
 
 	}
 	

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.pojo.ServiceType;
 import com.visionous.dms.rest.response.ResponseBody;
 import com.visionous.dms.service.ServiceTypeService;
@@ -45,6 +46,7 @@ public class ServiceTypeRestController {
 
         ResponseBody<ServiceType> result = new ResponseBody<>();
         ServiceType service = new ServiceType(serviceTypeName);
+        service.setGlobalSettings(AccountUtil.currentLoggedInBussines().getGlobalSettings());
         service.setPrice(serviceTypePrice);
         
         ServiceType savedService = serviceTypeService.create(service);

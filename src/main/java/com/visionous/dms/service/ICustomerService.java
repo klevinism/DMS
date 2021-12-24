@@ -16,12 +16,32 @@ import com.visionous.dms.pojo.History;
  *
  */
 public interface ICustomerService {
+	/**
+	 * @param customer
+	 * @return
+	 * @throws EmailExistsException
+	 * @throws UsernameExistsException
+	 */
 	Customer create(Customer customer) throws EmailExistsException, UsernameExistsException;
 	
+	/**
+	 * @param id
+	 * @return
+	 */
 	Optional<Customer> findById(Long id);
 	
+	/**
+	 * @return
+	 */
 	List<Customer> findAll();
 	
+	/**
+	 * @param oldCustomer
+	 * @param newCustomer
+	 * @return
+	 * @throws EmailExistsException
+	 * @throws UsernameExistsException
+	 */
 	Customer update(Customer oldCustomer, Customer newCustomer) throws EmailExistsException, UsernameExistsException;
 
 	/**
@@ -53,4 +73,24 @@ public interface ICustomerService {
 	 * @return
 	 */
 	Customer update(Customer customer);
+
+	/**
+	 * @param id
+	 * @return
+	 */
+	Object findAllByAccount_Businesses_Id(Long id);
+
+	/**
+	 * @param customerId
+	 * @param currentBusinessId
+	 * @return
+	 */
+	Optional<Customer> findByIdAndAccount_Businesses_Id(Long customerId, Long currentBusinessId);
+
+	/**
+	 * @param id
+	 * @param currentBusinessId
+	 */
+	void deleteByIdAndAccount_Businesses_Id(Long id, long currentBusinessId);
+
 }

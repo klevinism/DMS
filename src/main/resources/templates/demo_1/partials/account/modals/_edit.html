@@ -12,7 +12,8 @@
 	  <input type="hidden" th:if="*{customer != null && customer.id != null}" th:field="*{customer.registerdate}">
 	  <input type="hidden" th:if="*{personnel != null && personnel.id != null}" th:field="*{personnel.id}">  
 	  <input type="hidden" th:if="*{personnel != null && personnel.id != null}" th:field="*{personnel.type}">  
-	  <input type="hidden" th:field="*{password}">  
+	  <input type="hidden" th:field="*{password}">
+	  <input type="hidden" th:field="*{businesses}">  
 	  
 	  <div class="form-group" id="attachmentInput">
 		<div class="col-md-6 grid-margin" th:with="imgsuburl = *{roles[0].name == 'ADMIN' || roles[0].name == 'PERSONNEL' ? 'personnel' : 'customer'}">

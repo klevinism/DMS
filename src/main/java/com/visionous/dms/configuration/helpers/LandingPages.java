@@ -16,6 +16,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public enum LandingPages {
 	DEFAULT("/"),
     LOGIN("/login"),
+    BUSINESS("/business"),
     LOGOUT("/logout"), 
     INDEX("/index"),
     HOME("/home"),
@@ -31,6 +32,7 @@ public enum LandingPages {
     QUESTIONNAIRE("/questionnaire"), 
     GLOBALSETTINGS("/global"),
     SUBSCRIPTION("/subscription"),
+    NEW_APPOINTMENT("/new_appointment"),
     AGENDA("/schedule");
     
     private final String landingPage;

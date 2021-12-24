@@ -38,6 +38,9 @@
 						</ul>
 						 <form th:action="@{/admin/global}" th:object="${globalSettings}" method="POST" enctype="multipart/form-data">
 						 <input type="hidden" th:field="*{id}">
+						 <input type="hidden" th:field="*{business.id}">
+						 <input type="hidden" th:field="*{business.name}">
+						 <input type="hidden" th:field="*{business.businessUrl}">
 						 <input type="hidden" name="action" th:value="${viewType}">
 							<div class="tab-content">
 							  <div class="tab-pane active" aria-labelledby="home-tab" role="tabpanel"  id="global">
@@ -289,9 +292,9 @@
 						                    <div class="card-header bg-light">
 						                    	<div class="data-wrapper d-flex mt-5 mt-lg-0">
 						                    		[[#{Services}]]
-						                    		<div class="ml-sm-auto">
+						                    		<div class="ml-sm-auto" th:with="listSize = ${services != null ? #lists.size(services)+1 : 0}">
 								                    	<button type="button" id="addService" class="btn btn-icons btn-inverse-primary" 
-								                    	th:onclick="'add(this, '+${#lists.size(services.services)+1}+')'" th:title="#{action.add}">
+								                    	th:onclick="'add(this, '+${listSize}+')'" th:title="#{action.add}">
 								                            <i class="fa fa-plus" ></i>
 								                        </button>
 						                        	</div>
@@ -325,12 +328,12 @@
 													</div>
 												</div>
 						                    	<div class="form-group" id="serviceTypeInputs">
-							                    	<div class="input-group" th:each="service, itr: ${services.services}" th:with="id = *{services[__${itr.index}__].id}" th:id="${id}">
-														<input type="hidden" th:field="*{services[__${itr.index}__].id}">
-														<input class="form-control form-control-lg" type="text" th:field="*{services[__${itr.index}__].name}">
+							                    	<div class="input-group" th:each="item, itr: ${services}" th:with="id = ${item.id}" th:id="${id}">
+														<input type="hidden" th:name="${item.id}" th:value="${item.id}" th:id="${item.id}">
+														<input class="form-control form-control-lg" type="text" th:value="${item.name}" th:name="${item.name}" th:id="${item.name}">
 														
-														<input class="form-control form-control-lg ml-2" style="max-width: 22%;" type="number" th:field="*{services[__${itr.index}__].price}">
-														<input type="hidden" th:field="*{services[__${itr.index}__].addeddate}">
+														<input class="form-control form-control-lg ml-2" style="max-width: 22%;" type="number" th:name="${item.price}" th:value="${item.price}" th:id="${item.price}">
+														<input type="hidden" th:name="${item.addeddate}" th:value="${item.addeddate}" th:id="${item.addeddate}">
 														<div class="form-group ml-1" id="editDeleteButtonGroup">
 															<button type="button" class="btn btn-icons btn-inverse-success" th:id="'updateBtn'+${id}" th:onclick="'update('+${id}+','+__${itr.index}__+')'">
 									                            <i class="fa fa-check"></i>
@@ -480,6 +483,7 @@
             		//call create method
             		var name = document.getElementById("services"+id+".name").value;
             		var price = document.getElementById("services"+id+".price").value;
+            		
             		var data = {
             		    "name" : name,
             		    "price": parseInt(price)

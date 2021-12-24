@@ -4,7 +4,6 @@
 package com.visionous.dms.repository;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -13,7 +12,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.visionous.dms.pojo.Appointment;
-import com.visionous.dms.pojo.ServiceType;
 
 /**
  * @author delimeta
@@ -88,5 +86,35 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>{
 	 */
 	@Query("select t.serviceType.id, t.serviceType.name from Appointment t group by t.serviceType.id, t.serviceType.name order by count(t.serviceType.id) desc")
 	List<Object[]> topAppointmentsByMostUsedServiceType();
-	
+
+
+	/**
+	 * @param id
+	 * @param localDateTime
+	 * @param localDateTime2
+	 * @return
+	 */
+	List<Appointment> findAllByCustomer_Account_Businesses_IdAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(
+			Long id, LocalDateTime localDateTime, LocalDateTime localDateTime2);
+
+	/**
+	 * @param currentBusinessId
+	 * @param personnelId
+	 * @return
+	 */
+	List<Appointment> findAllByPersonnel_Account_Businesses_IdAndPersonnelId(Long currentBusinessId, Long personnelId);
+
+	/**
+	 * @param currentBusienssId
+	 * @param personnelId
+	 * @param localDateTime
+	 * @param localDateTime2
+	 * @return
+	 */
+	List<Appointment> findAllByCustomer_Account_Businesses_IdAndPersonnelIdAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(
+			Long currentBusienssId, Long personnelId, LocalDateTime localDateTime, LocalDateTime localDateTime2);
+
+	List<Appointment> findAllByCustomer_Account_Businesses_IdAndAppointmentDateBetweenOrderByAppointmentDateAsc(
+			Long currentBusinessId, LocalDateTime localDateTime, LocalDateTime localDateTime2);
+
 }

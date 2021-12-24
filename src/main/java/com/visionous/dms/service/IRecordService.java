@@ -99,4 +99,22 @@ public interface IRecordService {
 	 * @return
 	 */
 	Integer sumOfPersonnelReceipts(Long id, LocalDateTime startDate, LocalDateTime endDate);
+
+	/**
+	 * @param currentBusinessId
+	 * @param localDateTime
+	 * @param localDateTime2
+	 * @return
+	 */
+	Integer countByBusinessIdAndServicedateBetween(Long currentBusinessId, LocalDateTime localDateTime,
+			LocalDateTime localDateTime2);
+
+	/**
+	 * @param personnelId
+	 * @param beginDate
+	 * @param endDate
+	 * @return all records of personnel serviced between dates
+	 */
+	List<Record> findAllByPersonnelIdAndServicedateBetween(Long personnelId, LocalDateTime beginDate,
+			LocalDateTime endDate);
 }

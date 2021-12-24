@@ -38,22 +38,17 @@ public class HistoryModelController extends ModelControllerImpl{
 	private HistoryService historyService;
 	private RecordService recordService;
 	private CustomerService customerService;
-	private GlobalSettings globalSettings;
-	private Subscription subscription;
 	
 	
 	@Autowired
 	private HistoryModelController(TeethService teethService, CustomerService customerService, 
-			HistoryService historyService, RecordService recordService, Subscription subscription,
-			GlobalSettings globalSettings) {
+			HistoryService historyService, RecordService recordService) {
 	
 		this.teethService = teethService;
 		
 		this.historyService = historyService;
 		this.recordService = recordService;
 		this.customerService = customerService;
-		this.globalSettings = globalSettings;
-		this.subscription = subscription;
 	}
 	
 	/**
@@ -156,9 +151,9 @@ public class HistoryModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", subscription);
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription());
 
 	}
 	

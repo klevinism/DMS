@@ -22,6 +22,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
+
+import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.event.OnRegistrationCompleteEvent;
 import com.visionous.dms.pojo.Account;
@@ -42,8 +44,6 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     private VerificationService verificationService;
     private JavaMailSender mailSender;
     private RoleService roleService;
-
-    private GlobalSettings globalSettings;
 	/**
 	 * @param verificationRepository
 	 * @param messages
@@ -51,14 +51,12 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 	@Autowired
 	public RegistrationListener(VerificationService verificationService, 
 			JavaMailSender mailSender, RoleService roleService,
-			SpringTemplateEngine thymeleafTemplateEngine,
-			GlobalSettings globalSettings) {
+			SpringTemplateEngine thymeleafTemplateEngine) {
 		
 		this.mailSender = mailSender;
 		this.roleService = roleService;
 		this.verificationService = verificationService;
 		this.thymeleafTemplateEngine = thymeleafTemplateEngine;
-		this.globalSettings = globalSettings;
 	}
 	
 	/**
@@ -82,7 +80,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 		String template= null;
         Account account = event.getAccount();
         String recipientAddress = account.getEmail();
-        String fromAddress= this.globalSettings.getBusinessEmail();
+        String fromAddress= AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEmail();
         String token = null;
         String rawPass = account.getPassword();
          
@@ -115,8 +113,8 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 	    String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
 	     
 	    JavaMailSenderImpl jMailSender = (JavaMailSenderImpl)mailSender;
-	    jMailSender.setUsername(this.globalSettings.getBusinessEmail());
-	    jMailSender.setPassword(this.globalSettings.getBusinessPassword());
+	    jMailSender.setUsername(AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEmail());
+	    jMailSender.setPassword(AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessPassword());
 	    
 	    MimeMessage mailMessage = mailSender.createMimeMessage();
         try {

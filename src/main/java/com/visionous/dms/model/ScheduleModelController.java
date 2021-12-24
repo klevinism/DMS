@@ -29,18 +29,13 @@ import com.visionous.dms.service.AppointmentService;
 public class ScheduleModelController extends ModelControllerImpl{
 	private static String currentPage = LandingPages.AGENDA.value();
 	
-	private GlobalSettings globalSettings;
 	private AppointmentService appointmentService;
-
-	private Subscription subscription;
 	/**
 	 * 
 	 */
 	@Autowired
-	public ScheduleModelController(GlobalSettings globalSettings, AppointmentService appointmentService, Subscription subscription) {
-		this.globalSettings = globalSettings;
+	public ScheduleModelController(AppointmentService appointmentService) {
 		this.appointmentService = appointmentService;
-		this.subscription = subscription;
 	}
 	
 	/**
@@ -121,9 +116,9 @@ public class ScheduleModelController extends ModelControllerImpl{
 
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", subscription);
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription());
 
 	}
 	

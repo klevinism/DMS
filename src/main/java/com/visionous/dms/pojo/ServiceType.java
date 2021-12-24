@@ -9,11 +9,14 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -50,6 +53,9 @@ public class ServiceType implements Serializable{
 	
 	private int price;
 	
+	@Column(name="global_settings_id", insertable = false, updatable = false)
+	private Long globalSettingsId;
+	
     @JsonIgnore
 	@OneToOne(mappedBy = "serviceType", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@PrimaryKeyJoinColumn
@@ -62,6 +68,12 @@ public class ServiceType implements Serializable{
     @JsonIgnore
 	@OneToMany(cascade = CascadeType.REFRESH, mappedBy="serviceType")
 	private List<RecordReceiptItem> receipts = new ArrayList<>();
+    
+	@JsonIgnore
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	@JoinColumn(name = "global_settings_id")
+	private GlobalSettings globalSettings;
+	
 	/**
 	 * 
 	 */
@@ -129,6 +141,20 @@ public class ServiceType implements Serializable{
 	public void setPrice(int price) {
 		this.price = price;
 	}
+	
+	/**
+	 * @return
+	 */
+	public Long getGlobalSettingsId() {
+		return globalSettingsId;
+	}
+
+	/**
+	 * @param businessSettingsId
+	 */
+	public void setGlobalSettingsId(Long globalSettingsId) {
+		this.globalSettingsId = globalSettingsId;
+	}
 
 	/**
 	 * @return the record
@@ -170,6 +196,20 @@ public class ServiceType implements Serializable{
 	 */
 	public void setReceipts(List<RecordReceiptItem> receipts) {
 		this.receipts = receipts;
+	}
+
+	/**
+	 * @return
+	 */
+	public GlobalSettings getGlobalSettings() {
+		return this.globalSettings;
+	}
+
+	/**
+	 * @param globalSettings
+	 */
+	public void setGlobalSettings(GlobalSettings globalSettings) {
+		this.globalSettings = globalSettings;
 	}
 	
 }

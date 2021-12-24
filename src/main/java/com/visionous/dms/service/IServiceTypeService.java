@@ -48,4 +48,10 @@ public interface IServiceTypeService {
 	 */
 	void delete(ServiceType serviceType);
 
+	/**
+	 * @param id
+	 * @return
+	 */
+	List<ServiceType> findAllByGlobalSettingsId(Long id);
+
 }

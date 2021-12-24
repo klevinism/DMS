@@ -52,7 +52,10 @@ public class ResponseAdvice implements ResponseBodyAdvice {
 		
 		
 		ResponseBody<String> bodyReplacing = new ResponseBody<>();
-		if(request.getMethodValue().equals("POST") && !subscriptionHistoryService.findActiveSubscription().isPresent()) {
+		if(AccountUtil.currentLoggedInUser() != null && request.getMethodValue().equals("POST") && !subscriptionHistoryService
+				.findActiveSubscriptionByBusinessId(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId())
+				.isPresent()) {
+			
 			bodyReplacing.setError("error");
 			
 			if(AccountUtil.currentLoggedInUser() != null ) {

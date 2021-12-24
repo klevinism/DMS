@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.ServiceType;
 import com.visionous.dms.repository.ServiceTypeRepository;
 
@@ -79,6 +80,15 @@ public class ServiceTypeService implements IServiceTypeService{
 	@Override
 	public void delete(ServiceType serviceType) {
 		this.serviceTypeRepository.delete(serviceType);
+	}
+
+	/**
+	 * @param id
+	 * @return
+	 */
+	@Override
+	public List<ServiceType> findAllByGlobalSettingsId(Long id) {
+		return this.serviceTypeRepository.findAllByGlobalSettingsId(id);
 	}
 	
 }

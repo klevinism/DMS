@@ -5,7 +5,6 @@ package com.visionous.dms.event.listener;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.mail.internet.MimeMessage;
@@ -20,14 +19,12 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
+import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.event.OnResetPasswordEvent;
 import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Reset;
-import com.visionous.dms.pojo.Role;
 import com.visionous.dms.service.ResetService;
-import com.visionous.dms.service.RoleService;
 
 /**
  * @author delimeta
@@ -38,17 +35,14 @@ public class ResetListener implements ApplicationListener<OnResetPasswordEvent>{
 	private SpringTemplateEngine thymeleafTemplateEngine;
 	private ResetService resetService;
     private JavaMailSender mailSender;
-    private GlobalSettings globalSettings;
     /**
 	 * 
 	 */
     @Autowired
-	public ResetListener(SpringTemplateEngine thymeleafTemplateEngine, JavaMailSender mailSender, ResetService resetService, 
-			GlobalSettings globalSettings) {
+	public ResetListener(SpringTemplateEngine thymeleafTemplateEngine, JavaMailSender mailSender, ResetService resetService) {
 		this.thymeleafTemplateEngine = thymeleafTemplateEngine;
 		this.resetService = resetService;
 		this.mailSender = mailSender;
-		this.globalSettings = globalSettings;
 	}
 	
 	@Override
@@ -66,9 +60,7 @@ public class ResetListener implements ApplicationListener<OnResetPasswordEvent>{
 		Account account = event.getAccount();
 		String recipientAddress = account.getEmail();
         String token = UUID.randomUUID().toString();
-        
-        String fromAddress= this.globalSettings.getBusinessEmail();
-        
+                
         resetService.create(new Reset(account, token));
         
         String domainPath = LandingPages.getDomainPathFromRequest(
@@ -87,7 +79,6 @@ public class ResetListener implements ApplicationListener<OnResetPasswordEvent>{
         	mailMessage.setSubject("Reset Password", "UTF-8");
         
         	MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true, "UTF-8");
-        	helper.setFrom(fromAddress.toString());
             helper.setTo(recipientAddress);
             helper.setText(htmlBody, true);
         	

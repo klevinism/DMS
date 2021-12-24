@@ -72,7 +72,7 @@ public class Subscription implements Serializable{
 	
     @JsonIgnore
     @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER) 
+    @ManyToMany(cascade = CascadeType.REFRESH) 
     @JoinTable(name = "subscription_restrictions",
             joinColumns = @JoinColumn(name = "subscriptionid"),
             inverseJoinColumns = @JoinColumn(name = "restrictionid"))
@@ -250,7 +250,7 @@ public class Subscription implements Serializable{
 	 * @return List {@link Restrictions} filtered by page name; 
 	 */
 	public List<Restrictions> getRestrictionsByPageName(String pageName) {
-		return this.getRestrictions().parallelStream().filter(restriction -> restriction.getRestrictionPage().equals(pageName)).collect(Collectors.toList());
+		return this.getRestrictions().parallelStream().filter(restriction -> restriction.getRestrictionPage().contains(pageName)).collect(Collectors.toList());
 	}
 	
 	/**

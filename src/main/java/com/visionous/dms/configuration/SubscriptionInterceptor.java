@@ -13,6 +13,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.visionous.dms.configuration.helpers.AccountUtil;
+import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.service.SubscriptionHistoryService;
 
 /**
@@ -38,13 +39,16 @@ public class SubscriptionInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object arg2) throws Exception {
       String path=request.getRequestURI();
       
-      if(!subscriptionHistoryService.findActiveSubscription().isPresent()) {
-	  	  if(request.getMethod().equals("POST") && path.contains("/api") && request.getParameter("status") == null) {
+      if(!path.contains(LandingPages.LOGIN.value()) 
+    		  && !path.contains(LandingPages.BUSINESS.value()) ) {
+	  	  
+    	  if(request.getMethod().equals("POST") && path.contains("/api") && request.getParameter("status") == null
+    			  && !subscriptionHistoryService.findActiveSubscriptionByBusinessId(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId()).isPresent()) {
 	  		  path = "/api/subscription?status=expired";  		  
 	  		  request.getRequestDispatcher(path).forward(request,response); //redirect to /api/subscription to not get 404 or 500 error, to not invoke actual restricted post rpc 
 	  		  return false;
 	  	  }else {
-	    	  if(request.getMethod().equals("GET") && path.contains("create")) {
+	    	  if(request.getMethod().equals("GET") && path.contains("create") && !subscriptionHistoryService.findActiveSubscriptionByBusinessId(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId()).isPresent()) {
 	    		  if(AccountUtil.currentLoggedInUser().getRoles().stream().anyMatch(role -> role.getName().equals("ADMIN"))) {
 	    			  path = "/admin/subscription?status=expired";
 	    		  }else {

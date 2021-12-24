@@ -29,4 +29,17 @@ public interface SubscriptionHistoryRepository extends JpaRepository<Subscriptio
 	 */
 	Optional<SubscriptionHistory> findOneByActive(boolean b);
 
+	/**
+	 * @param b
+	 * @param currentBusinessId
+	 * @return
+	 */
+	Optional<SubscriptionHistory> findOneByActiveAndBusinessId(boolean b, Long currentBusinessId);
+
+	/**
+	 * @param businessId
+	 * @return
+	 */
+	List<SubscriptionHistory> findAllByBusiness_IdOrderBySubscriptionEndDateDesc(Long businessId);
+
 }

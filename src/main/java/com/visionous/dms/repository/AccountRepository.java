@@ -81,4 +81,43 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 	 * @return
 	 */
 	public Optional<Account> findAllByPhone(Long phoneNr);
+
+	/**
+	 * @param id
+	 * @param currentBusinessId
+	 * @return
+	 */
+	public Optional<Account> findByIdAndBusinesses_Id(Long id, long currentBusinessId);
+
+	/**
+	 * @param currentBusinessId
+	 * @param b
+	 * @param b2
+	 * @param name
+	 * @return
+	 */
+	public List<Account> findAllByBusinesses_IdAndActiveAndEnabledAndRoles_Name(Long currentBusinessId, boolean enabled,
+			boolean active, String name);
+
+
+	/**
+	 * @param currentBusinessId
+	 * @param enabled
+	 * @param active
+	 * @param beginMonthDate
+	 * @param endMonthDate
+	 * @return
+	 */
+	public Integer countByBusinesses_IdAndEnabledAndActiveAndCustomer_RegisterdateBetween(Long currentBusinessId,
+			boolean enabled, boolean active, Date beginMonthDate, Date endMonthDate);
+
+	/**
+	 * @param id
+	 * @param b
+	 * @param c
+	 * @param roles
+	 * @return
+	 */
+	public List<Account> findAllByBusinesses_IdAndActiveAndEnabledAndRoles_NameIn(Long id, boolean b, boolean c,
+			List<String> roles);
 }

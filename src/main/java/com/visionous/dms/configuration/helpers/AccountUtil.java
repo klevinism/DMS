@@ -10,6 +10,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.visionous.dms.configuration.AccountUserDetail;
+import com.visionous.dms.pojo.Business;
 
 /**
  * @author delimeta
@@ -30,6 +31,10 @@ public class AccountUtil {
 		}
 		
 		return loggedIn;
+	}
+	
+	public static Business currentLoggedInBussines(){
+		return currentLoggedInUser().getCurrentBusiness();
 	}
 	
 	public static int calculateAgeFromBirthday(Date birthday) {

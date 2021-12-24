@@ -40,15 +40,25 @@ public class SubscriptionHistoryService implements ISubscriptionHistoryService {
 	/**
 	 * @return
 	 */
-	public Optional<SubscriptionHistory> findActiveSubscription() { 
-		return this.subscriptionHistoryRepository.findOneByActive(true);
+	@Override
+	public Optional<SubscriptionHistory> findActiveSubscriptionByBusinessId(Long currentBusinessId) { 
+		return this.subscriptionHistoryRepository.findOneByActiveAndBusinessId(true,currentBusinessId);
 	}
 
 	/**
 	 * @param subscription
 	 * @return 
 	 */
+	@Override
 	public SubscriptionHistory update(SubscriptionHistory subscription) {
 		return this.subscriptionHistoryRepository.saveAndFlush(subscription);
+	}
+
+	/**
+	 * @param businessId
+	 * @return
+	 */
+	public List<SubscriptionHistory> findAllByBusinessIdOrderedBySubscriptionEndDateDesc(Long businessId) {
+		return this.subscriptionHistoryRepository.findAllByBusiness_IdOrderBySubscriptionEndDateDesc(businessId);
 	}
 }

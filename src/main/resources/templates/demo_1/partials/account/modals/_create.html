@@ -3,6 +3,7 @@
     
     <hr/>
     <div class="alert alert-danger" role="alert" th:if="${subscriptionLimit != null}"> [[#{SubscriptionReachLimit}]] [[#{SubscriptionLimitUpgrade}]]</div>
+	<input type="hidden" th:field="*{account.businesses}">  
 
     <div class="row pt-0">
 	<div class="form-group col-sm-6 " id="attachmentInput">

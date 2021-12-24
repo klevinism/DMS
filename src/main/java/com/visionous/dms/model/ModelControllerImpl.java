@@ -89,7 +89,9 @@ public class ModelControllerImpl implements ModelController{
 	@Override
 	public ModelControllerImpl addControllerParam(String key, Object value) {
 		if(value != null && !value.equals("")
-				&& key != null && !key.equals("")) paramMap.put(key, value) ;
+				&& key != null && !key.equals("")) { 
+			paramMap.put(key, value);
+		}
 		return this;
 	}
 
@@ -98,8 +100,9 @@ public class ModelControllerImpl implements ModelController{
 	 */
 	@Override
 	public ModelControllerImpl removeControllerParam(String key) {
-		if(key != null && !key.equals("")) 
+		if(key != null && !key.equals("")) { 
 			paramMap.remove(key);
+		}
 		return this;
 	}
 
@@ -112,8 +115,9 @@ public class ModelControllerImpl implements ModelController{
 	@Override
 	public ModelControllerImpl setControllerParam(String key, Object newValue) {
 		if(newValue != null && !newValue.equals("")
-				&& key != null && !key.equals("")) 
+				&& key != null && !key.equals("")) { 
 			paramMap.replace(key, paramMap.get(key), newValue);
+		}
 		return this;
 	}
 	
@@ -144,7 +148,9 @@ public class ModelControllerImpl implements ModelController{
 	 * @return the resultBindingError
 	 */
 	public boolean hasResultBindingError() {
-		if(resultBindingError == null) return false;
+		if(resultBindingError == null) {
+			return false;
+		}
 		return resultBindingError.hasErrors();
 	}
 	

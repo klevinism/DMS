@@ -18,4 +18,6 @@ import com.visionous.dms.pojo.Subscription;
 public interface SubscriptionListRepository extends JpaRepository<Subscription, Long> {
 	
 	public List<Subscription> findAllByOrderByIdAsc();
+
+	public List<Subscription> findAllBySubscriptionHistory_Business_IdOrderByIdAsc(Long businessId);
 }

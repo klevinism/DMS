@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import com.visionous.dms.configuration.AccountUserDetail;
+import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Role;
 import com.visionous.dms.pojo.Subscription;
@@ -33,15 +37,20 @@ public class AccountUserDetailService implements UserDetailsService{
 	
 	private AccountService accountService;
 	
+	private BusinessService businessService;
+	
 	private ApplicationContext context;
 	
 	private SubscriptionHistoryService subscriptionHistoryService;
 	
+	
 	@Autowired
-	private AccountUserDetailService(AccountService accountService, ApplicationContext context, SubscriptionHistoryService subscriptionHistoryService) {
+	private AccountUserDetailService(AccountService accountService, ApplicationContext context, 
+			SubscriptionHistoryService subscriptionHistoryService, BusinessService businessService) {
 		this.accountService = accountService;
 		this.context = context;
 		this.subscriptionHistoryService = subscriptionHistoryService;
+		this.businessService = businessService; 
 	}
 	
 	/**
@@ -57,29 +66,38 @@ public class AccountUserDetailService implements UserDetailsService{
 			authorities.addAll(buildUserAuthority(acc.get().getRoles()));
 			accountUserDetail = buildUserForAuthentication(acc.get(), authorities);
 			
+			
+			// TEMPorary implementation, current Business Id should come from another place not here.
+			// TODO fix it!
+			if(!acc.get().getBusinesses().isEmpty()) {
+				if(acc.get().getBusinesses().size() == new AtomicInteger(1).get()) {
+					accountUserDetail.setCurrentBusiness(acc.get().getBusinesses().stream().findFirst().get());
+				}
+			}
+			
 			// Update Subscription() bean after subscription expiration checks.
-			updateBeanSubscription(); 
+//			updateBeanSubscription(); 
 		}
 		
 		return accountUserDetail;
 	}
 	
 	
-	public void updateBeanSubscription() {
-    	Optional<SubscriptionHistory> activeSubscription = this.subscriptionHistoryService.findActiveSubscription();
-		if(activeSubscription.isPresent()) {
-			if(activeSubscription.get().getSubscriptionEndDate().isBefore(LocalDateTime.now())) {
-				activeSubscription.get().setActive(false);
-				this.subscriptionHistoryService.update(activeSubscription.get());
-				
-				context.getBean(Subscription.class).setSubscription(new Subscription());
-			}else {
-				context.getBean(Subscription.class).setSubscription(activeSubscription.get().getSubscription());
-			}
-		}else {
-			context.getBean(Subscription.class).setSubscription(new Subscription());
-		}
-	}
+//	public void updateBeanSubscription() {
+//    	Optional<SubscriptionHistory> activeSubscription = this.subscriptionHistoryService.findActiveSubscriptionByBusinessId(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
+//		if(activeSubscription.isPresent()) {
+//			if(activeSubscription.get().getSubscriptionEndDate().isBefore(LocalDateTime.now())) {
+//				activeSubscription.get().setActive(false);
+//				this.subscriptionHistoryService.update(activeSubscription.get());
+//				
+//				context.getBean(Subscription.class).setSubscription(new Subscription());
+//			}else {
+//				context.getBean(Subscription.class).setSubscription(activeSubscription.get().getSubscription());
+//			}
+//		}else {
+//			context.getBean(Subscription.class).setSubscription(new Subscription());
+//		}
+//	}
 	
     /** 
      * @param user 

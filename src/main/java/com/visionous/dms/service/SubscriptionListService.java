@@ -39,6 +39,10 @@ public class SubscriptionListService implements ISubscriptionListService {
 	public List<Subscription> findAllOrderedByIdAsc() { 
 		return this.subscriptionListRepository.findAllByOrderByIdAsc();
 	}
+
+	public List<Subscription> findAllByBusinessIdOrderedByIdAsc(Long businessId) {
+		return this.subscriptionListRepository.findAllBySubscriptionHistory_Business_IdOrderByIdAsc(businessId);
+	}
 	
 	
 }

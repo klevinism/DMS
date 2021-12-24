@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
+import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.event.OnCustomerAppointmentBookEvent;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Role;
@@ -35,7 +36,6 @@ public class CustomerAppointmentBookListener implements ApplicationListener<OnCu
 	 	private SpringTemplateEngine thymeleafTemplateEngine;
 	    private JavaMailSender mailSender;
 	    private RoleService roleService; 
-	    private GlobalSettings globalSettings;
 	    private MessageSource messages;
 	    
 		/**
@@ -45,11 +45,10 @@ public class CustomerAppointmentBookListener implements ApplicationListener<OnCu
 		@Autowired
 		public CustomerAppointmentBookListener(JavaMailSender mailSender, 
 				SpringTemplateEngine thymeleafTemplateEngine, RoleService roleService,
-				GlobalSettings globalSettings, MessageSource messages) {
+				MessageSource messages) {
 			
 			this.mailSender = mailSender;
 			this.thymeleafTemplateEngine = thymeleafTemplateEngine;
-			this.globalSettings = globalSettings;
 			this.roleService = roleService;
 			this.messages = messages;
 		}
@@ -74,21 +73,21 @@ public class CustomerAppointmentBookListener implements ApplicationListener<OnCu
 	    	String dentalAppointment = messages.getMessage("DentalAppointment", null, LocaleContextHolder.getLocale());
 
 	        String recipientAddress = event.getAppointment().getCustomer().getAccount().getEmail();
-	        String fromAddress = this.globalSettings.getBusinessEmail();
+	        String fromAddress = AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEmail();
 	        
 			vars.put("appointment", event.getAppointment());
-			vars.put("businessName", globalSettings.getBusinessName());
+			vars.put("businessName", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessName());
 			
 		    thymeleafContext.setVariables(vars);
 		    String htmlBody = thymeleafTemplateEngine.process(emailTemplatePath, thymeleafContext);
 		     
 		    JavaMailSenderImpl jMailSender = (JavaMailSenderImpl)mailSender;
-		    jMailSender.setUsername(this.globalSettings.getBusinessEmail());
-		    jMailSender.setPassword(this.globalSettings.getBusinessPassword());
+		    jMailSender.setUsername(AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEmail());
+		    jMailSender.setPassword(AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessPassword());
 		    
 		    MimeMessage mailMessage = mailSender.createMimeMessage();
 	        try {
-	        	mailMessage.setSubject(dentalAppointment + " " + globalSettings.getBusinessName(), "UTF-8");
+	        	mailMessage.setSubject(dentalAppointment + " " + AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessName(), "UTF-8");
 	        	
 	        	MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true, "UTF-8");
 	        	helper.setFrom(new InternetAddress(fromAddress.toString()));

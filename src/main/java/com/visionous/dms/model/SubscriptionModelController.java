@@ -30,10 +30,6 @@ public class SubscriptionModelController extends ModelControllerImpl{
 	private final Log logger = LogFactory.getLog(SubscriptionModelController.class);
 	
 	private static String currentPage = LandingPages.SUBSCRIPTION.value();
-
-	private GlobalSettings globalSettings;
-	
-	private Subscription subscription;
 	
 	private SubscriptionListService subscriptionListService;
 	
@@ -44,12 +40,9 @@ public class SubscriptionModelController extends ModelControllerImpl{
 	 */
 	@Autowired
 	public SubscriptionModelController(SubscriptionListService subscriptionListService, 
-			SubscriptionHistoryService subscriptionHistoryService, GlobalSettings globalSettings,
-			Subscription subscription) {
+			SubscriptionHistoryService subscriptionHistoryService) {
 		this.subscriptionHistoryService = subscriptionHistoryService;
 		this.subscriptionListService = subscriptionListService;
-		this.globalSettings = globalSettings;
-		this.subscription = subscription;
 	}
 	
 	/**
@@ -94,7 +87,7 @@ public class SubscriptionModelController extends ModelControllerImpl{
 		if(viewType.equals(Actions.CREATE.getValue())) {
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
 
-			this.subscriptionHistoryService.findActiveSubscription().ifPresent(
+			this.subscriptionHistoryService.findActiveSubscriptionByBusinessId(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId()).ifPresent(
 					subscription -> super.addModelCollectionToView("currentSubscription", subscription));
 		}
 		
@@ -110,15 +103,15 @@ public class SubscriptionModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("currentPage", currentPage);
 
 		super.addModelCollectionToView("subscriptionList", this.subscriptionListService.findAllOrderedByIdAsc());
-		super.addModelCollectionToView("subscriptionHistory", this.subscriptionHistoryService.findAllOrderedBySubscriptionEndDateDesc());
+		super.addModelCollectionToView("subscriptionHistory", this.subscriptionHistoryService.findAllByBusinessIdOrderedBySubscriptionEndDateDesc(AccountUtil.currentLoggedInBussines().getId()));
 		
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getAccount().getRoles());
 		super.addModelCollectionToView("loggedInAccount", AccountUtil.currentLoggedInUser().getAccount());
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", globalSettings.getBusinessImage());
-		super.addModelCollectionToView("subscription", subscription);
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription());
 	}
 	
 	@Override

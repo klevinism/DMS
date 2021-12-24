@@ -3,10 +3,12 @@
  */
 package com.visionous.dms.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.ServiceType;
 
 /**
@@ -21,5 +23,11 @@ public interface ServiceTypeRepository extends JpaRepository<ServiceType,Long>{
 	 * @return
 	 */
 	Optional<ServiceType> findByName(String name);
+
+	/**
+	 * @param id
+	 * @return
+	 */
+	List<ServiceType> findAllByGlobalSettingsId(Long id);
 
 }

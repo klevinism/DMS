@@ -54,7 +54,6 @@
 
 
 		       $(document).ready(function() {
-		           $.fn.dataTable.moment( 'D-M-YYYY' );
 		           $('#historyRecords').DataTable({
 		        	   language: {
 		        		   lengthMenu: 	   tableLengthMenu,
@@ -64,6 +63,12 @@
 		                   infoFiltered:   tableInfoFiltered,
 		                   zeroRecords:    tableZeroRecord
 		        	   },
+		        	   "columnDefs": [
+	                        {
+	                            "targets": [0],
+	                            "render": $.fn.dataTable.moment('DD-MM-YYYY HH:mm')
+	                        }
+	                   ],
 		               order: [0,"desc"]
 		           });
 
