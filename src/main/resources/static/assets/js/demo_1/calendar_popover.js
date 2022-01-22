@@ -14,12 +14,13 @@ function dismissPopover(){
 function renderEditPopover(elem, i){
   dismissPopover();
   
-  var popUpElem$ = "<div class='form-group'>"+
+  
+  var popUpElem$ = $("<div class='form-group'>"+
   			"<h4>&nbsp;<button type='button' class='close text-primary' onClick='dismissPopover()'>&times;</button></h4>"+
-  			"</div>";
+  			"</div>");
   
   var alertEl$ = $(alertElem$).clone();
-  popUpElem$ = $(popUpElem$).append($(wrapperElem$).html()).append(dateRangeElem$).append(alertEl$).append(saveEditElem$);
+  $(wrapperElem$).appendTo($(popUpElem$)).append(dateRangeElem$).append(alertEl$).append(saveEditElem$);
   
   setInputFields(popUpElem$, i);
   setDateToDateTimePickers(i);
@@ -33,9 +34,8 @@ function renderEditPopover(elem, i){
             return popUpElem$;
         }
    });
-    
+   
    $(elem).popover("show");
-   $(popUpElem$).find("select").selectpicker('refresh');
    $(alertEl$).hide();
    
    initEventOfSaveEdit(popUpElem$, i);
@@ -68,7 +68,7 @@ function setInputFields(element, schedule){
         $(popupFooterButtons).hide();  
       }
       
-      $(dentistElem).find("select").selectpicker("val", accId);
+      $(dentistElem).find("select").val(accId);
       $(popupFooterButtons).find("button").html(saveIconElem$);
       $(element).find("#popoverId").val(null);
     }    

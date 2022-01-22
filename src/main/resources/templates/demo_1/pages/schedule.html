@@ -218,8 +218,8 @@
 		                <i class="mdi mdi-tooth-outline fa-lg text-primary"></i>
 		              </span>
 		            </div>
-		            <select data-live-search="true" data-width="auto" data-style="btn-outline-secondary text-primary" th:title="#{DentalService}">
-		            	<option data-tokens="" value=""></option>
+		            <select class="form-control text-primary" data-live-search="true" data-width="50%" data-style="btn-outline-secondary text-primary" th:placeholder="#{DentalService}" th:title="#{DentalService}">
+		            	<option data-tokens="" value="">[[#{DentalService}]]</option>
 					</select>
 		          </div>
 		        </div>
@@ -230,8 +230,8 @@
 			                <i class="mdi mdi-doctor fa-lg text-primary"></i>
 			              </span>
 			            </div>
-			            <select class="form-control" data-live-search="true" data-style="btn-outline-secondary text-primary" th:title="#{personnel}">
-							<option data-tokens="" value="" ></option>
+			            <select class="form-control text-primary" data-live-search="true" data-style="btn-outline-secondary text-primary" th:placeholder="#{personnel}" th:title="#{personnel}">
+							<option data-tokens="" value="" >[[#{personnel}]]</option>
 						</select>
 			          </div>
 				 </div>
@@ -242,8 +242,8 @@
 			                <i class="mdi mdi-account-outline fa-lg text-primary"></i>
 			              </span>
 			            </div>
-			            <select class="form-control" data-live-search="true" data-style="btn-outline-secondary text-primary" th:title="#{customer}">
-							<option data-tokens="" value="" ></option>
+			            <select class="form-control text-primary" data-live-search="true" data-style="btn-outline-secondary text-primary" th:placeholder="#{customer}" th:title="#{customer}">
+							<option data-tokens="" value="" >[[#{customer}]]</option>
 						</select>
 						<div class="input-group-prepend ">
 							<!-- Button trigger create customer modal -->
@@ -445,6 +445,12 @@
      	$(document).ajaxSend(function(e, xhr, options) {
      	    xhr.setRequestHeader(header, token);
      	});
+     	
+
+      	//initServiceTypeFilters()
+      	initServiceTypeSelectPicker($(serviceElem$).find("select")); // Init personnel select picker
+      	initPersonnelSelectPicker($(dentistElem$).find("select")); // Init personnel select picker
+      	initCustomerSelectPicker($(customerElem$).find("select"));// Init customer select picker
         
        	$('#createCustomerModal').on('show.bs.modal', function (e) {
 			currentpopover = $(elemPopover).parent().parent().find(".popover");
@@ -526,13 +532,7 @@
      	   e.stopPropagation();
      	});
 
-      	setRenderRangeText(); // render first date range text
-      	
-      	//initServiceTypeFilters()
-      	initServiceTypeSelectPicker($(serviceElem$).find("select")); // Init personnel select picker
-
-      	initPersonnelSelectPicker($(dentistElem$).find("select")); // Init personnel select picker
-      	initCustomerSelectPicker($(customerElem$).find("select"))// Init customer select picker
+      	setRenderRangeText(); // render first date range text	
       	
 		reloadCalendar();
       	
@@ -993,6 +993,7 @@
 	    	    buildOptions(elem, data.result);
 	    	    buildServiceFilters(data.result);
 	        }
+
 	    });
 	}
 	
@@ -1002,6 +1003,7 @@
 	    	    buildOptions(elem, data.result);
 	    	    buildPersonnelFilters(data.result);
 	        }
+
 	    });
 	}
 	   
@@ -1105,6 +1107,7 @@
 	        $(optionEl$).val(obj.id);
 	        $(optionEl$).attr("data-tokens", optionName)
 	        $(element).append(optionEl$);
+	        
 	    });
 	}
 	
