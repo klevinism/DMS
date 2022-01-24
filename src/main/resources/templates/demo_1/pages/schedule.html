@@ -432,8 +432,7 @@
   	var currentpopover;
   	
    	$('#createCustomerModal').on('show.bs.modal', function (e) {
-    	   dismissPopover();
-    	   console.log($('#createCustomerModal').find('#fullname'));
+    	  dismissPopover();
     	  $('#fullname').click();
     	  $('#fullname').focus();
    	});
@@ -565,10 +564,10 @@
 	        $("input[name=gender]").removeClass("border-danger"); 
 	    }
 	    
+	    
+	    
     	if(fullname != null && fullname.length > 4 
-    	        && phone != null && phone.length > 6 
-    	        && birthday != null && birthday.length > 2
-    	        && gender != null && birthday.length > 0){
+    	        && phone != null && phone.length > 6){
             
             var obj = {
     	            'fullname':fullname,
@@ -604,9 +603,6 @@
         	}
             if(birthday == null || birthday.length < 2){
                 $("#birthdayCalendar").toggleClass("border-danger");
-            }
-            if(gender == null || birthday.length < 1){
-                $("input[name=gender]").toggleClass("border-danger");                
             }
     	}
     }

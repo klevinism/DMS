@@ -157,4 +157,8 @@ public class ModelControllerImpl implements ModelController{
 	public BindingResult getBindingResult() {
 		return resultBindingError;
 	}
+
+	public void clearResultBindingErrors() {
+		this.resultBindingError = null;
+	}
 }

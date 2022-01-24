@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.visionous.dms.exception.EmailExistsException;
+import com.visionous.dms.exception.PhoneNumberExistsException;
 import com.visionous.dms.exception.UsernameExistsException;
 import com.visionous.dms.pojo.Account;
 
@@ -22,7 +23,7 @@ public interface IAccountService {
 	 * @throws EmailExistsException
 	 * @throws UsernameExistsException
 	 */
-	Account create(Account newAccount) throws EmailExistsException, UsernameExistsException;
+	Account create(Account newAccount) throws EmailExistsException, UsernameExistsException, PhoneNumberExistsException;
 	
 	/**
 	 * @param id
@@ -36,12 +37,19 @@ public interface IAccountService {
 	 * @throws UsernameExistsException 
 	 * @throws EmailExistsException 
 	 */
-	Account update(Account newAccount) throws EmailExistsException, UsernameExistsException;
+	Account update(Account newAccount) throws EmailExistsException, UsernameExistsException, PhoneNumberExistsException;
 	
 	/**
 	 * @param account
 	 */
 	void delete(Account account);
+	
+
+	/**
+	 * @param phone Long phone number
+	 * @return
+	 */
+	boolean phoneNumberExists(Long phone);
 	
 	/**
 	 * @param email
@@ -131,5 +139,11 @@ public interface IAccountService {
 	 */
 	List<Account> findAllByAccountBusinessIdAndActiveAndEnabledAndRoles_Name(Long currentBusinessId, boolean active,
 			boolean enabled, String name);
+
+	/**
+	 * @param username
+	 * @return
+	 */
+	Optional<Account> findByUsernameOrEmailOrPhoneNumber(String username);
 
 }

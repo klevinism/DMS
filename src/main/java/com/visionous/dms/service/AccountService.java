@@ -5,17 +5,22 @@ package com.visionous.dms.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.exception.EmailExistsException;
+import com.visionous.dms.exception.PhoneNumberExistsException;
 import com.visionous.dms.exception.UsernameExistsException;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.repository.AccountRepository;
+
+import ch.qos.logback.classic.Logger;
 
 /**
  * @author delimeta
@@ -38,16 +43,20 @@ public class AccountService implements IAccountService{
 	 *
 	 */
 	@Override
-	public Account create(Account newAccount) throws EmailExistsException, UsernameExistsException {
-		if(emailExists(newAccount.getEmail())) {
+	public Account create(Account newAccount) throws EmailExistsException, UsernameExistsException, PhoneNumberExistsException {
+		if(Strings.isNotEmpty(newAccount.getEmail()) && emailExists(newAccount.getEmail())) {
 			throw new EmailExistsException();
-		}else if(usernameExists(newAccount.getUsername())) {
+		}else if(Strings.isNotEmpty(newAccount.getUsername()) && usernameExists(newAccount.getUsername())) {
 			throw new UsernameExistsException();
+		}else if(Objects.nonNull(newAccount.getPhone()) && phoneNumberExists(newAccount.getPhone())) {
+			throw new PhoneNumberExistsException();
 		}
 		
 		newAccount.setCustomer(null);
 		newAccount.setPersonnel(null);
-		newAccount.setPassword(new BCryptPasswordEncoder().encode(newAccount.getPassword()));
+		if(newAccount.getPassword() != null) {
+			newAccount.setPassword(new BCryptPasswordEncoder().encode(newAccount.getPassword()));
+		}
 
 		return createPlain(newAccount);
 	}
@@ -81,6 +90,14 @@ public class AccountService implements IAccountService{
 		}
 		
 		return createPlain(newAccount);
+	}
+	
+	/**
+	 *
+	 */
+	@Override
+	public boolean phoneNumberExists(Long phone) {
+		return accountRepository.findByPhone(phone).isPresent();
 	}
 	
 	/**
@@ -177,7 +194,7 @@ public class AccountService implements IAccountService{
 	 */
 	@Override
 	public Optional<Account> findByPhoneNr(Long phoneNr) {
-		return this.accountRepository.findAllByPhone(phoneNr);
+		return this.accountRepository.findByPhone(phoneNr);
 	}
 
 	/**
@@ -226,6 +243,21 @@ public class AccountService implements IAccountService{
 	public List<Account> findAllByAccountBusinessIdAndActiveAndEnabledAndRoles_NameIn(Long id, boolean b, boolean c,
 			List<String> roles) {
 		return this.accountRepository.findAllByBusinesses_IdAndActiveAndEnabledAndRoles_NameIn(id, b, c, roles);
+	}
+	
+
+
+	/**
+	 * @param username
+	 * @return
+	 */
+	@Override
+	public Optional<Account> findByUsernameOrEmailOrPhoneNumber(String username) {
+		try{
+			return this.accountRepository.findByPhone(Long.valueOf(username));
+		}catch(NumberFormatException exception) {
+			return this.accountRepository.findByUsernameOrEmail(username, username);
+		}
 	}
 	
 }

@@ -4,13 +4,13 @@
 package com.visionous.dms.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.visionous.dms.exception.EmailExistsException;
+import com.visionous.dms.exception.PhoneNumberExistsException;
 import com.visionous.dms.exception.UsernameExistsException;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Personnel;
@@ -37,7 +37,7 @@ public class PersonnelService implements IPersonnelService{
 	}
 	
 	@Override
-	public Personnel create(Personnel newPersonnel) throws EmailExistsException, UsernameExistsException {
+	public Personnel create(Personnel newPersonnel) throws EmailExistsException, UsernameExistsException, PhoneNumberExistsException {
 		newPersonnel.getAccount().setCustomer(null);
 		
 		Account newAccount = accountService.create(newPersonnel.getAccount());
@@ -52,17 +52,6 @@ public class PersonnelService implements IPersonnelService{
 		return this.personnelRepository.findById(id);
 	}
 
-	@Override
-	public Personnel update(Personnel oldPersonnel, Personnel newPersonnel)
-			throws EmailExistsException, UsernameExistsException {
-		oldPersonnel.getAccount().setPersonnel(newPersonnel);
-		
-		Account updated = accountService.update(oldPersonnel.getAccount());
-		if(updated != null) {
-			return updated.getPersonnel();
-		}
-		return null;
-	}
 	
 	@Override
 	public List<Personnel> findAllByRoleName(String roleName){

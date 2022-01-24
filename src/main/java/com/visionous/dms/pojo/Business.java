@@ -52,7 +52,7 @@ public class Business implements Serializable{
     private GlobalSettings globalSettings;
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(cascade = CascadeType.REFRESH) 
+    @ManyToMany
     @JoinTable(name = "business_accounts",
             joinColumns = @JoinColumn(name = "businessid"),
             inverseJoinColumns = @JoinColumn(name = "accountid"))

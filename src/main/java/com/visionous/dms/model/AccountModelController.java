@@ -196,7 +196,14 @@ public class AccountModelController extends ModelControllerImpl{
 		if(viewType.equals(Actions.CREATE.getValue())) {
 			Personnel newPersonnel = new Personnel();
 			newPersonnel.setAccount(new Account());
-			super.addModelCollectionToView("account", newPersonnel); 
+			super.addModelCollectionToView("account", newPersonnel);
+			
+			if(super.hasResultBindingError()) {
+				if(super.getAllControllerParams().containsKey("modelAttribute")) {	
+					Account account = (Account) super.getAllControllerParams().get("modelAttribute");
+					setImageToAccount((MultipartFile)super.getAllControllerParams().get("profileimage"), account, account);
+				}
+			} 
 		}else if(viewType.equals(Actions.EDIT.getValue())) {
 			if(super.getAllControllerParams().get("id") != null) {
 				

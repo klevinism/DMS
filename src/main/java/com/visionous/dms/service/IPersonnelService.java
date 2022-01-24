@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.visionous.dms.exception.EmailExistsException;
+import com.visionous.dms.exception.PhoneNumberExistsException;
 import com.visionous.dms.exception.UsernameExistsException;
 import com.visionous.dms.pojo.Personnel;
 
@@ -15,11 +16,11 @@ import com.visionous.dms.pojo.Personnel;
  *
  */
 public interface IPersonnelService {
-	Personnel create(Personnel personnel) throws EmailExistsException, UsernameExistsException;
+	
+	Personnel create(Personnel personnel) throws EmailExistsException, UsernameExistsException, PhoneNumberExistsException;
 	
 	Optional<Personnel> findById(Long id);
 	
-	Personnel update(Personnel oldPersonnel, Personnel newPersonnel) throws EmailExistsException, UsernameExistsException;
 
 	/**
 	 * @param roleName

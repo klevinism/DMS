@@ -60,7 +60,7 @@ public class AccountUserDetailService implements UserDetailsService{
 	public UserDetails loadUserByUsername(String username){
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		AccountUserDetail accountUserDetail = null;
-		Optional<Account> acc = accountService.findByUsernameOrEmail(username); 
+		Optional<Account> acc = accountService.findByUsernameOrEmailOrPhoneNumber(username); 
 		
 		if(acc.isPresent()) {
 			authorities.addAll(buildUserAuthority(acc.get().getRoles()));

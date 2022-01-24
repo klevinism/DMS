@@ -27,6 +27,7 @@ import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.event.OnRegistrationCompleteEvent;
 import com.visionous.dms.exception.EmailExistsException;
+import com.visionous.dms.exception.PhoneNumberExistsException;
 import com.visionous.dms.exception.SubscriptionException;
 import com.visionous.dms.exception.UsernameExistsException;
 import com.visionous.dms.pojo.Account;
@@ -109,7 +110,8 @@ public class PersonnelModelController extends ModelControllerImpl{
 
 		String messageEmailExists = messages.getMessage("alert.emailExists", null, LocaleContextHolder.getLocale());
         String messageUsernameExists = messages.getMessage("alert.usernameExists", null, LocaleContextHolder.getLocale());
-		
+        String messagePhoneNumberExists = messages.getMessage("alert.phoneNumberExists", null, LocaleContextHolder.getLocale());
+
         String subscriptionReachLimit = messages.getMessage("SubscriptionReachLimit", null, LocaleContextHolder.getLocale());
         String subscriptionLimitUpgrade = messages.getMessage("SubscriptionLimitUpgrade", null, LocaleContextHolder.getLocale());
 		
@@ -170,6 +172,15 @@ public class PersonnelModelController extends ModelControllerImpl{
 					super.addModelCollectionToView("subscriptionLimit", e.getMessage());
 				    super.removeControllerParam("viewType");
 					super.addControllerParam("viewType", Actions.CREATE.getValue());
+				} catch (PhoneNumberExistsException e) {
+
+					super.getBindingResult().addError(
+							new FieldError("account", "account.phone", newPersonnel.getAccount().getPhone(), false, null, null, messageUsernameExists)
+						);
+
+				    super.removeControllerParam("viewType");
+					super.addControllerParam("viewType", Actions.CREATE.getValue());
+					logger.error(messagePhoneNumberExists);
 				}
 			}
 		}else if(action.equals(Actions.VIEW.getValue())) {

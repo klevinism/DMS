@@ -76,11 +76,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 	public Optional<Account> findByNameIgnoreCaseAndSurnameIgnoreCaseAndBirthday(String name, String surname,
 			Date birthday);
 
-	/**
-	 * @param phoneNr
-	 * @return
-	 */
-	public Optional<Account> findAllByPhone(Long phoneNr);
 
 	/**
 	 * @param id
@@ -120,4 +115,11 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 	 */
 	public List<Account> findAllByBusinesses_IdAndActiveAndEnabledAndRoles_NameIn(Long id, boolean b, boolean c,
 			List<String> roles);
+	
+	/**
+	 * @param phone Long phone number
+	 * @return
+	 */
+	public Optional<Account> findByPhone(Long phone);
+	
 }

@@ -1,0 +1,273 @@
+  <div th:fragment="create">
+    <h4 class="card-title">[[#{CreateAccount}]]</h4>
+    
+    <hr/>
+    <div class="alert alert-danger" role="alert" th:if="${subscriptionLimit != null}"> [[#{SubscriptionReachLimit}]] [[#{SubscriptionLimitUpgrade}]]</div>
+	<input type="hidden" th:field="*{account.businesses}">  
+
+   <!--  <div class="row pt-0">
+	<div class="form-group col-12 " id="attachmentInput">
+			    
+		<label>[[#{ProfileImage}]]</label>
+		<input id="recordAttachments" type="file" class="file" name="profileimage" multiple="false" data-preview-file-type="any">		
+	</div>
+    </div> -->
+
+
+					<div class="row">
+						<div class="col-12">
+							
+							<div class="row">
+							  <div class="col-md-12">
+							    <p>[[#{BasicInformation}]]</p>
+							    <div class="form-group row">
+							      <div class="col-sm-6 input-group" th:title="#{Name}">
+							        <input type="text" class="form-control form-control-lg" aria-describedby="validationNameFeedback" th:classappend ="${#fields.hasErrors('account.name')} ? 'is-invalid'" required th:placeholder="*{account.name != null} ? *{account.name} : #{Name}" th:field="*{account.name}">
+							        <div class="input-group-append">
+				                       <span class="input-group-text">
+				                         <i class="mdi mdi-account fa-lg"></i>
+				                       </span>
+				                    </div>
+				                    <div id="validationNameFeedback" class="invalid-feedback" th:errors="*{account.name}">
+								        Please choose a username.
+								    </div>
+							      </div>
+							      <div class="col-sm-6 input-group" th:title="#{Surname}">
+									<input type="text" class="form-control form-control-lg " aria-describedby="validationSurnameFeedback" th:classappend ="${#fields.hasErrors('account.surname')} ? 'is-invalid'" required th:placeholder="*{account.surname != null} ? *{account.surname} : #{Surname}" th:field="*{account.surname}">
+									<div class="input-group-append">
+				                       <span class="input-group-text">
+				                         <i class="mdi mdi-account fa-lg"></i>
+				                       </span>
+				                    </div>
+				                    <div id="validationSurnameFeedback" class="invalid-feedback" th:errors="*{account.surname}">
+								        Please choose a username.
+								      </div>
+							      </div>
+							    </div>
+							  </div>
+							</div>
+							<div class="row">
+		                        <div class="col-md-6">
+		                          <div class="form-group row">
+		                            <div class="col-sm-12 input-group" th:title="#{Gender}" >
+		                              <select class="form-control" aria-describedby="validationGenderFeedback" th:classappend ="${#fields.hasErrors('account.gender')} ? 'is-invalid'" th:field="*{account.gender}">
+		                              	<option value=""> [[#{Gender}]] </option>
+		                                <option value="male">[[#{Male}]]</option>
+		                                <option value="female">[[#{Female}]]</option>
+		                              </select>
+		                              <div class="input-group-append">
+				                        <span class="input-group-text">
+				                          <i class="mdi mdi-gender-male-female fa-lg"></i>
+				                        </span>
+				                      </div>
+				                      <div id="validationGenderFeedback" class="invalid-feedback" th:errors="*{account.gender}">
+								        Please choose a username.
+								      </div>
+		                            </div>
+		                          </div>
+		                        </div>
+		                        <div class="col-md-6">
+		                          <div class="form-group row" >
+		                            <div class="col-sm-12">
+		                            <div class="form-group input-group" th:title="#{Birthday}">
+	        						  <input type="date" class="form-control form-control-lg" aria-describedby="validationBirthdayFeedback" th:classappend ="${#fields.hasErrors('account.birthday')} ? 'is-invalid'" id="birthdayCalendar" th:placeholder="*{account.birthday}"  th:field="*{account.birthday}">
+					                  <div class="input-group-append">
+				                        <span class="input-group-text">
+				                          <i class="mdi mdi-cake-variant fa-lg"></i>
+				                        </span>
+				                      </div>
+				                      <div id="validationBirthdayFeedback" class="invalid-feedback" th:errors="*{account.birthday}">
+								        Please choose a username.
+								      </div>
+					      			</div>
+		                            </div>
+		                          </div>
+	                         	</div>
+							 </div>
+							 
+							 <div class="row p-0">
+							    <div class="col-md-12">
+
+							 	<p>[[#{ContactInformation}]]</p>
+								</div>							 
+								<div class="col-md-6">
+		                          <div class="form-group row">
+		                            <div class="col-sm-12 input-group" th:title="#{Email}" >
+									  <input type="text" class="form-control form-control-lg" aria-describedby="validationEmailFeedback" th:classappend ="${#fields.hasErrors('account.email')} ? 'is-invalid'" th:placeholder="*{account.email != null} ? *{account.email} : #{Email}" th:field="*{account.email}">
+	        						  <div class="input-group-append">
+				                        <span class="input-group-text">
+				                          <i class="mdi mdi-at fa-lg"></i>
+				                        </span>
+				                      </div>
+				                      <div id="validationEmailFeedback" class="invalid-feedback" th:errors="*{account.email}">
+								        Please choose a username.
+								      </div>
+		                            </div>
+		                          </div>
+		                        </div>
+		                        <div class="col-md-6">
+		                          <div class="form-group row">
+		                            <div class="col-sm-12 input-group" th:title="#{PhoneNr}">
+									<input type="number" class="form-control form-control-lg" aria-describedby="validationPhoneNumberFeedback" th:classappend ="${#fields.hasErrors('account.phone')} ? 'is-invalid'" th:placeholder="*{account.phone != null} ? *{account.phone} : #{PhoneNr}"  th:field="*{account.phone}">
+		                              <div class="input-group-append">
+				                        <span class="input-group-text">
+				                          <i class="mdi mdi-phone"></i>
+				                        </span>
+				                      </div>
+				                      <div id="validationPhoneNumberFeedback" class="invalid-feedback" th:errors="*{account.phone}">
+								        Please choose a username.
+								      </div>
+		                            </div>
+		                          </div>
+		                        </div>
+							 </div>
+							<div class="row">
+							<div class="col-md-12" >
+								<div class="alert alert-danger alert-dismissible fade show" role="alert" id="basicInfoError" style="display:none">
+								  <p>Alert enter Name and Surname!</p>
+								  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								    <span aria-hidden="true">&times;</span>
+								  </button>
+								</div>
+							</div>
+				            
+				            </div>
+						</div>
+					</div>
+      <div class="form-group" style="display:none;">
+        <select th:field="*{account.roles}" th:with="roleName = ${isPersonnelCreation !=null ? 'PERSONNEL' : 'CUSTOMER'}">
+        	<option th:each="role: ${allRoles}" th:if="${role.name == roleName}"  th:value="${role.id}" th:text="${role.name}"></option>
+        </select>
+      </div>
+     <!--  <div class="row">
+      
+      	<div class="col-sm-6">
+      	  <div class="form-group">      
+	        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.name != null} ? *{account.name} : #{Name}" th:field="*{account.name}">
+	        <p class="alert alert-danger" id="nameEmpty" style="display:none"></p>
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.name')}" th:errors="*{account.name}"></p>
+	      </div>
+      	</div>
+      	<div class="col-sm-6">
+	      <div class="form-group">      
+	        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.surname != null} ? *{account.surname} : #{Surname}" th:field="*{account.surname}">
+	        <p class="alert alert-danger" id="surnameEmpty" style="display:none"></p>
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.surname')}" th:errors="*{account.surname}"></p>
+	      </div>      	
+      	</div>
+      	
+      </div>
+
+      <div class="row">
+      
+      	<div class="col-sm-6">
+		  <div class="form-group">      
+	        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.email != null} ? *{account.email} : #{Email}" th:field="*{account.email}">
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.email')}" th:errors="*{account.email}"></p>
+	      </div>
+      	</div>
+      	<div class="col-sm-6">
+	      <div class="form-group">      
+	        <input type="number" class="form-control form-control-lg" th:placeholder="*{account.phone != null} ? *{account.phone} : #{PhoneNr}"  th:field="*{account.phone}">
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.email')}" th:errors="*{account.phone}"></p>
+	      </div>
+      	</div>
+      </div>
+      
+      <div class="row mb-3">
+        <div class="col-sm-1" for="gender">[[#{Gender}]] </div>
+      	<div class="col-sm-5">
+      	  <div class="form-radio form-radio-flat">
+		    <label class="form-check-label">
+		      <input type="radio" class="form-check-inputform-control-lg" value="male" th:checked="*{account.gender == 'male'}" th:field="*{account.gender}"> [[#{Male}]] <i class="input-helper"></i></label>
+		  </div>
+      	</div>
+      	<div class="col-sm-6">
+      	  <div class="form-radio form-radio-flat">
+		    <label class="form-check-label">
+		      <input type="radio" class="form-check-input"value="female"  th:checked="*{account.gender == 'female'}"  th:field="*{account.gender}"> [[#{Female}]] <i class="input-helper"></i></label>
+		  </div>
+      	</div>
+		<p class="alert alert-danger" th:if="${#fields.hasErrors('account.gender')}" th:errors="*{account.gender}"></p>
+      </div>
+      
+      <div class="row">
+      
+      	<div class="col-sm-6">
+	      <div class="form-group" id="birthdayCalendar" >
+	        <input type="date" class="form-control form-control-lg" id="birthdayCalendar" th:placeholder="*{account.birthday}"  th:field="*{account.birthday}">
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.birthday')}" th:errors="*{account.birthday}"></p>
+	      </div>
+      	</div>
+      	<div class="col-sm-6">
+	      <div class="form-group">
+	        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.address != null} ? *{account.address} : #{Address}" th:field="*{account.address}">
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.address')}" th:errors="*{account.address}"></p>
+	      </div>
+      	</div>
+      </div>
+      
+      <div class="row">
+      
+      	<div class="col-sm-6">
+	      <div class="form-group">
+	        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.city != null} ? *{account.city} : #{City}" th:field="*{account.city}">
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.city')}" th:errors="*{account.city}"></p>
+	      </div>
+      	</div>
+      	<div class="col-sm-6">
+	      <div class="form-group">
+	        <input type="text" class="form-control form-control-lg" th:placeholder="*{account.country != null} ? *{account.country} : #{Country}"  th:field="*{account.country}">
+	        <p class="alert alert-danger" th:if="${#fields.hasErrors('account.country')}" th:errors="*{account.country}"></p>
+	      </div>
+      	</div>
+      </div>
+      
+      <div class="form-group" style="display:none;">
+        <select th:field="*{account.roles}" th:with="roleName = ${isPersonnelCreation !=null ? 'PERSONNEL' : 'CUSTOMER'}">
+        	<option th:each="role: ${allRoles}" th:if="${role.name == roleName}"  th:value="${role.id}" th:text="${role.name}"></option>
+        </select>
+      </div> -->
+      
+      
+      <script>
+      $('#birthdayCalendar').datetimepicker({
+     	    "allowInputToggle": true,
+     	    "showClose": true,
+     	    "showClear": true,
+     	    "format": "YYYY-MM-DD",
+     	    "daysOfWeekDisabled": [],
+            "defaultDate": new Date(),
+
+      });
+      
+      $("#birthdayCalendar").datetimepicker(new Date());
+      
+      $('#registerDayCalendarDiv').datetimepicker({
+   	    "allowInputToggle": true,
+   	    "showClose": true,
+   	    "showClear": true,
+   	    "format": "YYYY-MM-DD",
+   	    "daysOfWeekDisabled": [],
+        "defaultDate": new Date(),
+
+      });
+      
+//      $("#registerDayCalendarDiv").val(new Date());
+      
+      var input = $("#recordAttachments").fileinput({
+          showCancel: false,
+          showUpload: false,
+          autoReplace:true,
+          showCaption: true,
+          fileType:"any",
+          showDrag:false,
+          maxFileCount: 1,
+          dropZoneEnabled:false,
+          browseIcon:'<i class="fa fa-folder-open-o"></i>&nbsp;',
+          removeIcon:'<i class="fa fa-trash-o"></i>',
+
+      });
+
+      </script>
+</div> 

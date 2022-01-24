@@ -55,40 +55,27 @@ public class Account implements Serializable{
     @SequenceGenerator(sequenceName = "account_seq", allocationSize = 1, name = "ACC_SEQ")
     private Long id;
 	
-    @NotNull(message = "Name should not be empty")
-    @NotEmpty(message = "Name should not be empty")
+    @NotNull(message = "{alert.fieldEmpty}")
+    @NotEmpty(message = "{alert.fieldEmpty}")
 	private String name;
 	
-    @NotNull(message = "Surname should not be empty")
-    @NotEmpty(message = "Surname should not be empty")
+    @NotNull(message = "{alert.fieldEmpty}")
+    @NotEmpty(message = "{alert.fieldEmpty}")
 	private String surname;
 	
-    @NotNull(message = "Age should not be empty")
 	private int age;
 	
-    @NotNull(message = "Pick a gender")
 	private String gender;
 	
-	@Valid
-	@ValidEmail(message = "Email must be valid, example@example.com")
-    @NotNull(message = "Email must not be null")
 	private String email;
 	
-	@NotNull(message = "Enter a phone number")
+	@NotNull(message = "{alert.fieldEmpty}")
 	private Long phone;
     
-	@NotNull(message = "Enter a username")
-	@NotEmpty(message = "Enter a username")
     private String username;
     
-	@Valid
-	@NotNull(message = "Enter a password")
-	@NotEmpty(message = "Enter a password")
-	@NotBlank(message = "Enter a password")
     private String password;
     
-	@NotNull(message = "Enter birthday")
-	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(iso = ISO.DATE)
 	private Date birthday;
 	
@@ -103,6 +90,8 @@ public class Account implements Serializable{
 	
 	@Nullable
 	private String country;
+	
+	private boolean isAccount;
 	
     @JsonIgnore
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -522,6 +511,14 @@ public class Account implements Serializable{
 	 */
 	public void setCountry(String country) {
 		this.country = country;
+	}
+	
+	public boolean isAccount() {
+		return isAccount;
+	}
+
+	public void setAccount(boolean isAccount) {
+		this.isAccount = isAccount;
 	}
 
 	@Override

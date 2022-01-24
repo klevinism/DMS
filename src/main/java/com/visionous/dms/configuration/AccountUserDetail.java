@@ -19,7 +19,6 @@ import com.visionous.dms.pojo.Business;
  *
  */
 public class AccountUserDetail extends Account implements UserDetails{
-	private final Log logger = LogFactory.getLog(AccountUserDetail.class);
 
 	/**
 	 * 
@@ -28,7 +27,7 @@ public class AccountUserDetail extends Account implements UserDetails{
 	
 	private Account account;
 	
-	private Business currentBusinessId;
+	private Business currentBusiness;
 	
 	private boolean accountNonExpired;
 	private boolean credentialsNonExpired;
@@ -78,14 +77,14 @@ public class AccountUserDetail extends Account implements UserDetails{
 	 * @return
 	 */
 	public Business getCurrentBusiness() {
-		return currentBusinessId;
+		return currentBusiness;
 	}
 
 	/**
 	 * @param currentBusinessId
 	 */
-	public void setCurrentBusiness(Business currentBusinessId) {
-		this.currentBusinessId = currentBusinessId;
+	public void setCurrentBusiness(Business currentBusiness) {
+		this.currentBusiness = currentBusiness;
 	}
 
 	/**

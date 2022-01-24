@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.visionous.dms.exception.EmailExistsException;
+import com.visionous.dms.exception.PhoneNumberExistsException;
 import com.visionous.dms.exception.UsernameExistsException;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Customer;
@@ -49,7 +50,7 @@ public class CustomerService implements ICustomerService{
 	}
 	
 	@Override
-	public Customer create(Customer newCustomer) throws EmailExistsException, UsernameExistsException {
+	public Customer create(Customer newCustomer) throws EmailExistsException, UsernameExistsException, PhoneNumberExistsException {
 		newCustomer.getAccount().setCustomer(null);
 
 		if(newCustomer.getRegisterdate() == null) {
@@ -72,7 +73,7 @@ public class CustomerService implements ICustomerService{
 	}
 
 	@Override
-	public Customer update(Customer oldCustomer, Customer newCustomer) throws EmailExistsException, UsernameExistsException{
+	public Customer update(Customer oldCustomer, Customer newCustomer) throws EmailExistsException, UsernameExistsException, PhoneNumberExistsException{
 		
 		if(newCustomer.getRegisterdate() == null) {
 			newCustomer.setRegisterdate(new Date(System.currentTimeMillis()));

@@ -46,4 +46,8 @@ public class AccountUtil {
 	public static String getCurrentLocaleLanguageAndCountry() {
 		return LocaleContextHolder.getLocale().getLanguage() + "_" + LocaleContextHolder.getLocale().getCountry();
 	}
+	
+	public static void setCurrentLoggedInBusiness(Business updatedBusiness) {
+		currentLoggedInUser().setCurrentBusiness(updatedBusiness);
+	}
 }

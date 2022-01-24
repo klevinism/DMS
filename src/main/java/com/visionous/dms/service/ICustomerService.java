@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.visionous.dms.exception.EmailExistsException;
+import com.visionous.dms.exception.PhoneNumberExistsException;
 import com.visionous.dms.exception.UsernameExistsException;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.History;
@@ -22,7 +23,7 @@ public interface ICustomerService {
 	 * @throws EmailExistsException
 	 * @throws UsernameExistsException
 	 */
-	Customer create(Customer customer) throws EmailExistsException, UsernameExistsException;
+	Customer create(Customer customer) throws EmailExistsException, UsernameExistsException, PhoneNumberExistsException;
 	
 	/**
 	 * @param id
@@ -42,7 +43,7 @@ public interface ICustomerService {
 	 * @throws EmailExistsException
 	 * @throws UsernameExistsException
 	 */
-	Customer update(Customer oldCustomer, Customer newCustomer) throws EmailExistsException, UsernameExistsException;
+	Customer update(Customer oldCustomer, Customer newCustomer) throws EmailExistsException, UsernameExistsException, PhoneNumberExistsException;
 
 	/**
 	 * @param newCustomer

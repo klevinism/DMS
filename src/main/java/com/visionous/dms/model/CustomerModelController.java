@@ -24,6 +24,7 @@ import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.exception.EmailExistsException;
+import com.visionous.dms.exception.PhoneNumberExistsException;
 import com.visionous.dms.exception.UsernameExistsException;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Business;
@@ -110,7 +111,8 @@ public class CustomerModelController extends ModelControllerImpl{
 
 		String messageEmailExists = messages.getMessage("alert.emailExists", null, LocaleContextHolder.getLocale());
         String messageUsernameExists = messages.getMessage("alert.usernameExists", null, LocaleContextHolder.getLocale());
-		
+        String messagePhoneNumberExists = messages.getMessage("alert.phoneNumberExists", null, LocaleContextHolder.getLocale());
+
 		if(action.equals(Actions.DELETE.getValue())) {
 			customerService.deleteByIdAndAccount_Businesses_Id(newCustomer.getId(),AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
 		}else if(action.equals(Actions.EDIT.getValue()) ) {
@@ -141,6 +143,15 @@ public class CustomerModelController extends ModelControllerImpl{
 					
 				    super.removeControllerParam("viewType");
 					super.addControllerParam("viewType", Actions.CREATE.getValue());
+				} catch (PhoneNumberExistsException e) {
+
+					super.getBindingResult().addError(
+							new FieldError("account", "account.phone", newCustomer.getAccount().getPhone(), false, null, null, messagePhoneNumberExists));
+					
+					logger.error(messagePhoneNumberExists);
+					
+				    super.removeControllerParam("viewType");
+					super.addControllerParam("viewType", Actions.CREATE.getValue());
 				}
 				
 			});
@@ -148,14 +159,7 @@ public class CustomerModelController extends ModelControllerImpl{
 		}else if(action.equals(Actions.CREATE.getValue())) {
 			logger.debug(" Creating new Customer with email = " + newCustomer.getAccount().getEmail());
 
-			if(newCustomer.getAccount().getRoles().get(0).getName().equals("CUSTOMER")) {
-
-				if(newCustomer.getAccount().getUsername() == null) {
-					String name = newCustomer.getAccount().getName();
-					String surname = newCustomer.getAccount().getSurname();
-					newCustomer.getAccount().setUsername(name+"."+surname);
-					newCustomer.getAccount().setPassword(name+"."+surname+".1234");
-				}
+			if(newCustomer.getAccount().getCustomer() != null) {
 				
 				
 				try {
@@ -163,22 +167,33 @@ public class CustomerModelController extends ModelControllerImpl{
 					if((imageName = uploadProfileImage()) != null) {
 						newCustomer.getAccount().setImage(imageName);
 					}
+
+					Customer createdCustomer = customerService.create(newCustomer);
 					
 					Business loggedInBusiness = AccountUtil.currentLoggedInBussines();
-					loggedInBusiness.getAccounts().add(newCustomer.getAccount());
-					newCustomer.getAccount().addBusiness(loggedInBusiness);
+					loggedInBusiness.getAccounts().add(createdCustomer.getAccount());
+					createdCustomer.getAccount().addBusiness(loggedInBusiness);
 					
-					
-					Customer createdCustomer = customerService.create(newCustomer);
 					Business updatedBusiness = businessService.update(loggedInBusiness);
+					AccountUtil.setCurrentLoggedInBusiness(updatedBusiness);
 					
 				} catch (IOException e) {
 					logger.error(e.getMessage());
 				} catch (EmailExistsException | UsernameExistsException e) {
-					super.getBindingResult().addError(new FieldError("account", "account.email", newCustomer.getAccount().getEmail(), false, null, null, messageEmailExists));
+					super.getBindingResult().addError(
+							new FieldError("account", "account.email", newCustomer.getAccount().getEmail(), false, null, null, messageEmailExists));
 					logger.error(messageEmailExists);
 					
 			        super.removeControllerParam("viewType");
+					super.addControllerParam("viewType", Actions.CREATE.getValue());
+				} catch (PhoneNumberExistsException e) {
+
+					super.getBindingResult().addError(
+							new FieldError("account", "account.phone", newCustomer.getAccount().getPhone(), false, null, null, messagePhoneNumberExists));
+
+					logger.error(messagePhoneNumberExists);
+					
+				    super.removeControllerParam("viewType");
 					super.addControllerParam("viewType", Actions.CREATE.getValue());
 				}
 			}
@@ -199,7 +214,7 @@ public class CustomerModelController extends ModelControllerImpl{
 			if(!super.hasResultBindingError()) {
 				Customer newCustomer = new Customer();
 				Account newAccount = new Account();
-
+				newAccount.setPersonnel(null);
 				newCustomer.setAccount(newAccount);
 				super.addModelCollectionToView("customer", newCustomer);
 			}
@@ -244,6 +259,11 @@ public class CustomerModelController extends ModelControllerImpl{
 				super.addModelCollectionToView("allRoles", allRoles);
 			}
 			
+		}
+		if(super.hasResultBindingError()) {
+			if(!super.getAllControllerParams().containsKey("modelAttribute")) {
+				super.clearResultBindingErrors();
+			}
 		}
 		super.addModelCollectionToView("lastCustomerRecord", 
 				recordService.findLastRecordForAllCustomers(customerService.findAllByAccount_Businesses_Id(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId()))
