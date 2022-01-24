@@ -430,12 +430,6 @@
 
   	
   	var currentpopover;
-  	
-   	$('#createCustomerModal').on('show.bs.modal', function (e) {
-    	  dismissPopover();
-    	  $('#fullname').click();
-    	  $('#fullname').focus();
-   	});
 
     $(document).ready(function(){
         var token = $("meta[name='_csrf']").attr("content");
@@ -452,6 +446,7 @@
       	initCustomerSelectPicker($(customerElem$).find("select"));// Init customer select picker
         
        	$('#createCustomerModal').on('show.bs.modal', function (e) {
+       		
 			currentpopover = $(elemPopover).parent().parent().find(".popover");
 			if(currentpopover.length == 0){
 			    currentpopover = $("#calendar").find(".popover");
@@ -459,8 +454,13 @@
 			
 			$(currentpopover).popover('hide');
 			
-       		$('#fullname').focus();
-       		$(this).modal('toggle');
+			console.log($(this).find("#fullname")[0]);			
+
+       		//$(this).modal('toggle');
+			$(this).find("#fullname").focus();
+			
+			console.log($(this).find("#fullname"));
+
        	});
        	
        	$('#createCustomerModal').on('hide.bs.modal', function (e) {
@@ -581,10 +581,9 @@
     	        if(data.error != "error"){    	            
     	            buildOptions($(currentpopover).find("#"+$(customerElem$).attr("id")).find("select"), data.result);
     	            
-    	            $(currentpopover).find("#"+$(customerElem$).attr("id")).find("select").selectpicker('refresh');
-    	            $(currentpopover).find("#"+$(customerElem$).attr("id")).find("select").selectpicker('val', data.result[0].id);
-    	            
-    	            buildOptions($(wrapperElem$).find("#"+$(customerElem$).attr("id")).find("select"), data.result);
+    	            $(currentpopover).find("#"+$(customerElem$).attr("id")).find("select").val(data.result[0].id);
+
+    	            //buildOptions($(wrapperElem$).find("#"+$(customerElem$).attr("id")).find("select"), data.result);
 
     	            $('#createCustomerModal').modal('hide');
     	        }else{
