@@ -218,7 +218,7 @@
 		                <i class="mdi mdi-tooth-outline fa-lg text-primary"></i>
 		              </span>
 		            </div>
-		            <select class="form-control text-primary" data-live-search="true" data-width="50%" data-style="btn-outline-secondary text-primary" th:placeholder="#{DentalService}" th:title="#{DentalService}">
+		            <select class=" form-control text-primary" data-live-search="true" data-width="50%" data-style="btn-outline-secondary text-primary" th:placeholder="#{DentalService}" th:title="#{DentalService}">
 		            	<option data-tokens="" value="">[[#{DentalService}]]</option>
 					</select>
 		          </div>
@@ -230,7 +230,7 @@
 			                <i class="mdi mdi-doctor fa-lg text-primary"></i>
 			              </span>
 			            </div>
-			            <select class="form-control text-primary" data-live-search="true" data-style="btn-outline-secondary text-primary" th:placeholder="#{personnel}" th:title="#{personnel}">
+			            <select class=" form-control text-primary" data-live-search="true" data-style="btn-outline-secondary text-primary" th:placeholder="#{personnel}" th:title="#{personnel}">
 							<option data-tokens="" value="" >[[#{personnel}]]</option>
 						</select>
 			          </div>
@@ -242,7 +242,7 @@
 			                <i class="mdi mdi-account-outline fa-lg text-primary"></i>
 			              </span>
 			            </div>
-			            <select class="form-control text-primary" data-live-search="true" data-style="btn-outline-secondary text-primary" th:placeholder="#{customer}" th:title="#{customer}">
+			            <select class=" form-control text-primary" data-live-search="true" data-style="btn-outline-secondary text-primary" th:placeholder="#{customer}" th:title="#{customer}">
 							<option data-tokens="" value="" >[[#{customer}]]</option>
 						</select>
 						<div class="input-group-prepend ">
@@ -485,12 +485,10 @@
      		});
      		
      		var popup = $("#newScheduleBtn").parent(); 
-     		popup.find("#"+$(serviceElem$).attr('id')).find("select").selectpicker("val", e.target.dataset.id);
+     		popup.find("#"+$(serviceElem$).attr('id')).find("select").val( e.target.dataset.id);
      		if(popup.find("#"+$(dentistElem$).attr('id')).find("select").find("option[value='"+accId+"']").length > 0){
-     		   popup.find("#"+$(dentistElem$).attr('id')).find("select").selectpicker("val", accId);    
-     		   popup.find("#"+$(customerElem$).attr('id')).find("select").selectpicker("toggle");
+     		   popup.find("#"+$(dentistElem$).attr('id')).find("select").val(accId);    
      		}else{
-     		   popup.find("#"+$(dentistElem$).attr('id')).find("select").selectpicker("toggle");
      		}
      		
      	});

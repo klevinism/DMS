@@ -58,9 +58,10 @@ function setInputFields(element, schedule){
         $(popupFooterButtons).hide();
       }
       
-      $(serviceElem).find("select").selectpicker("val", schedule.raw.serviceId);
-      $(dentistElem).find("select").selectpicker("val", schedule.raw.personnelId != null && schedule.raw.personnelId != '' ? schedule.raw.personnelId : accId);
-      $(customerElem).find("select").selectpicker("val", schedule.raw.customerId);
+      $(serviceElem).find("select").val(schedule.raw.serviceId);
+      $(dentistElem).find("select").val(schedule.raw.personnelId != null && schedule.raw.personnelId != '' ? schedule.raw.personnelId : accId);
+      $(customerElem).find("select").val(schedule.raw.customerId);
+      
       $(popupFooterButtons).find("button").html(editIconElem$);
       $(element).find("#popoverId").val(schedule.id);
     }else{
@@ -101,17 +102,18 @@ function initEventOfSaveEdit(popUpElem$, i){
       	e.stopPropagation();
 
       	var newSchedule = getNewScheduleValues(popUpElem$);
-		
 		if(newSchedule){
 		    if(isEdit){
 		        console.log("Updating Schedule with id: '"+scheduleId+"'", newSchedule);
 				toggleLoadButton(e.target);
 				newSchedule.id = scheduleId;
-				var calendarId = newSchedule.calendarId;
+
 			  	updateAppointment(newSchedule, function(data, status){
+
 					if(data.error != "error"){
 						var result = data.result[0];
-			    		cal.updateSchedule(result.id+'', calendarId+'', buildNewSchedule(result, calendarId));
+						var calendarId = data.result[0].personnel.id + '';
+			    		cal.updateSchedule(result.id+'', calendarId+'', buildNewSchedule(result, calendarId+''));
 			    		refreshScheduleVisibility();
 			    		dismissPopover();
 					}else{

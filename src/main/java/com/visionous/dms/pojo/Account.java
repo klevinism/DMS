@@ -178,6 +178,7 @@ public class Account implements Serializable{
 		this.businesses = account.businesses;
 		this.enabled = account.enabled;
 		this.active = account.active;
+		this.isAccount = account.isAccount;
 	}
 	
 	/**

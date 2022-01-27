@@ -414,7 +414,6 @@ function renderPeriodToElement(element, start, end, isTime){
 }
 
 function refreshScheduleVisibility() {
-    var calendarElements = Array.prototype.slice.call(document.querySelectorAll('#calendarList input'));
 
     cal.render(true);
 	cal.render();
