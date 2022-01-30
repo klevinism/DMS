@@ -19,6 +19,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -41,6 +42,16 @@ public class Questionnaire implements Serializable{
 	@Column(name="customerid", insertable = false, updatable =false)
 	private Long customerId;
 
+	@NotEmpty(message = "{alert.fieldEmpty}")
+	private String signatureString;
+	
+	@NotEmpty(message = "{alert.fieldEmpty}")
+	private String signatureImgPath;
+	
+	@NotEmpty(message = "{alert.fieldEmpty}")
+	@Column(updatable = false)
+	private boolean consented = false;
+	
 	@Column(name="addeddate")
 	@DateTimeFormat (pattern="dd-MM-YYYY")
 	private Date addedDate;
@@ -79,6 +90,48 @@ public class Questionnaire implements Serializable{
 	 */
 	public void setCustomerId(Long customerId) {
 		this.customerId = customerId;
+	}
+	
+	/**
+	 * @return
+	 */
+	public String getSignatureString() {
+		return signatureString;
+	}
+
+	/**
+	 * @param signatureString
+	 */
+	public void setSignatureString(String signatureString) {
+		this.signatureString = signatureString;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getSignatureImgPath() {
+		return signatureImgPath;
+	}
+
+	/**
+	 * @param signatureImgPath
+	 */
+	public void setSignatureImgPath(String signatureImgPath) {
+		this.signatureImgPath = signatureImgPath;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isConsented() {
+		return consented;
+	}
+
+	/**
+	 * @param consented
+	 */
+	public void setConsented(boolean consented) {
+		this.consented = consented;
 	}
 
 	/**

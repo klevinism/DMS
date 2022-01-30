@@ -32,7 +32,7 @@
               														createPersonnelView = 'demo_1/partials/personnel/modals/_'+${viewType}+' :: '+ ${viewType}" >
               	<div class="card"> 
               		<div class="card-body">
-              	<form th:object="${questionnaire}" th:action="@{/customer/__${questionnaire.customerId}__/questionnaire}"  method="post" >
+              	<form th:object="${questionnaire}" th:action="@{/customer/__${questionnaire.customerId}__/questionnaire}"  method="post">
               	
               		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
               		<input type="hidden" th:if="*{customerId != null}" th:field="*{customerId}">
@@ -50,65 +50,128 @@
                               <input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.question}">
                               <input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.multipleChoice}">
                               <input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.addedDate}">
-          					<div class="row">
+          					<div class="wrapper">
         						<label >[[${all_questions.question}]]</label>
-          					<div class="col-md-12 grid-margin" th:if="${not all_questions.multipleChoice}">
-          						<input type="text" th:field="*{questionnaireResponse[__${itemStat.index}__].response}">
-          					</div>
-          					
-          					<div class="col-md-12 grid-margin" th:if="${all_questions.multipleChoice}">
-          						<span th:if="*{#lists.size(questionnaireResponse) &gt; __${itemStat.index}__}">
-	          						<input type="radio" th:field="*{questionnaireResponse[__${itemStat.index}__].response}" value="yes" >
-	          						
-	          						<label th:for="*{questionnaireResponse[__${itemStat.index}__].response}" th:text="#{Yes}"></label>
-	          						
-	          						<input type="radio" th:field="*{questionnaireResponse[__${itemStat.index}__].response}" value="no">
-	          						
-	          						<label th:for="*{questionnaireResponse[__${itemStat.index}__].response}" th:text="#{No}"></label>
-	          						
-	          						<p class="alert alert-danger" th:if="${#fields.hasErrors('questionnaireResponse['+__${itemStat.index}__+'].response')}" th:errors="*{questionnaireResponse[__${itemStat.index}__].response}"></p>
-	          						
-          						</span>
-          						
-          						<span th:if="*{#lists.size(questionnaireResponse) &lt;= __${itemStat.index}__}">
-          							<input type="radio" th:id="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+1}" th:name="'questionnaireResponse['+${itemStat.index}+'].response'" value="yes" >
-
-	          						<label th:for="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+1}" th:text="#{Yes}"></label>
-	          						
-	          						<input type="radio" th:id="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+1}" th:name="'questionnaireResponse['+${itemStat.index}+'].response'" value="no">
-	          						
-	          						<label th:for="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+1}" th:text="#{No}"></label>
-          						</span>
-          						
-          					</div>
+	          					<div class="col-md-12 grid-margin" th:if="${not all_questions.multipleChoice}">
+	          						<input type="text" th:field="*{questionnaireResponse[__${itemStat.index}__].response}">
+	          					</div>
+	          					
+	          					<div class="col-md-12" th:if="${all_questions.multipleChoice}">
+	          						<div th:if="*{#lists.size(questionnaireResponse) &gt; __${itemStat.index}__}">
+		          						
+		          						<div class="custom-control custom-radio">
+										  <input type="radio" th:field="*{questionnaireResponse[__${itemStat.index}__].response}" value="yes"  class="custom-control-input">
+										  <label class="custom-control-label" th:for="${'questionnaireResponse' + __${itemStat.index}__ + '.response1'}" th:text="#{Yes}"></label>
+										</div>
+										<div class="custom-control custom-radio">
+										  <input type="radio" th:field="*{questionnaireResponse[__${itemStat.index}__].response}" value="no" class="custom-control-input">
+										  <label class="custom-control-label" th:for="${'questionnaireResponse' + __${itemStat.index}__ + '.response2'}" th:text="#{No}"></label>
+										</div>
+		          								          						
+		          						<p class="alert alert-danger" th:if="${#fields.hasErrors('questionnaireResponse['+__${itemStat.index}__+'].response')}" th:errors="*{questionnaireResponse[__${itemStat.index}__].response}"></p>
+		          						
+	          						</div>
+	          						<!-- 
+	          						<span th:if="*{#lists.size(questionnaireResponse) &lt;= __${itemStat.index}__}">
+	          							<input type="radio" th:id="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+1}" th:name="'questionnaireResponse['+${itemStat.index}+'].response'" value="yes" >
+	
+		          						<label th:for="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+1}" th:text="#{Yes}"></label>
+		          						
+		          						<input type="radio" th:id="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+1}" th:name="'questionnaireResponse['+${itemStat.index}+'].response'" value="no">
+		          						
+		          						<label th:for="'questionnaireResponse'+${itemStat.index}+'.response'+${itemStat.index+2}" th:text="#{No}"></label>
+	          						</span>
+	          						 -->
+	          					</div>
 	          					
           					</div>
           					
           					</td>
           				</tr>
+          				<tr>
+	          				<td>
+	          				    <div class="sigPad mt-4" >
+			          			  <label class="mb-0 pb-0" style="float:left">[[#{CustomerSignature}]] : </label> 
+			          			  <a type="button" class="btn btn-icons btn-inverse-light" style="float:right" id="clearSignature"><i class="fa fa-eraser"></i></a>
+				          		  <div class="sig sigWrapper" >
+								    <div class="typed"></div>
+								    <canvas class="pad" width="400" height="70"></canvas>
+								    <input type="hidden" th:field="*{signatureString}">
+								  </div>
+								</div>
+	          				</td>
+          				</tr>
           			</tbody>
           			</table>
-          			
-			      <div >
-			    	<a type="button" class="btn btn-secondary"  data-dismiss="modal" th:href="'/customer/'">[[#{action.close}]]</a>
-			        <button type="submit" class="btn btn-primary">[[#{__${#strings.capitalize(viewType)}__}]]</button>
-			      </div>
+				    <div class="custom-control custom-checkbox mt-4 mb-2" id="consent">
+                   		<input type="checkbox" class="custom-control-input" th:field="*{consented}" required>
+                   		<label class="custom-control-label" for="consented1" style="width: 25rem;">
+                     		<small class="text-muted text-wrap">[[#{ConsentToTermsOfOxydentCustomerAgreement}]]</small>
+                     	</label>
+                    </div>
+			        <div >
+			    		<a type="button" class="btn btn-secondary mr-2"  data-dismiss="modal" th:href="'/customer/'">[[#{action.close}]]</a>
+			        	<button type="submit" class="btn btn-primary" >[[#{__${#strings.capitalize(viewType)}__}]]</button>
+			        </div>
 		  			
 		  		</form>
 		  		<script>
+		  			var sigPad;
+		  			$(function(){
+
+				  		sigPad = $('.sigPad').signaturePad({
+				  		  // Whether the to allow a typed signature or not
+				  		  drawOnly : true, 
+
+				  		  // Distance to draw the line from the top
+				  		  lineTop : 100,
+				  		  
+				  		  clear : '#clearSignature',
+				  		  
+				  		  output : '#' + $('.sigPad').find("input[type='hidden']").attr("id")
+				  		});
+		  			});
+		  			$(document).ready(function(){
+		  				console.log("ready");
+		  				$("form").submit(function(event){
+		  					onSubmit(event);	
+		  				});
+		  			});
+		  			
+		  			function onSubmit(e){		  				
+		  				e.preventDefault();
+		  				console.log(e);
+		  				var formData = $(e.target).serialize();
+		  				
+		  				if(sigPad.validateForm() && validateConsent(formData)){
+		  					console.log(formData);
+		  					console.log(sigPad.getSignatureImage());	
+		  				}
+		  			}
+		  			
+		  			function validateConsent(formData){
+		  				console.log(formData);
+		  				console.log(formData.includes("&consented"));
+		  				if(!formData.includes("&consented")){
+		  					$("#consent").append("<div class='invalid-feedback' style='display:block'>Please consent to our Terms and Services.</div>")
+		  				}else {
+		  					
+		  				}
+		  			}
+		  			
 		  			function selectAllNo(){
-		  				for(var x=0; x<$("table").find("input").length/2; x++){
-			  				if($("table").find("input[name='questionnaireResponse["+x+"].response']") != undefined || $("table").find("input[name='questionnaireResponse["+x+"].response']") != null){
+		  				for(var x=0; x<$("table").find("input[type='radio']").length; x++){
+			  				if($("table").find("input[name='questionnaireResponse["+x+"].response']") != undefined || $("table").find("input[name='questionnaireResponse["+x+"].response']") != null){			  					
 			  					$($("table").find("input[name='questionnaireResponse["+x+"].response']")[1]).attr("checked","checked");
 			  				}
 			  			}
 		  			}
 		  			
 		  			function deselectAll(){
-		  				for(var x=0; x<$("table").find("input").length/2; x++){
+		  				for(var x=0; x<$("table").find("input[type='radio']").length; x++){
 			  				if($("table").find("input[name='questionnaireResponse["+x+"].response']") != undefined || $("table").find("input[name='questionnaireResponse["+x+"].response']") != null){
-			  					$($("table").find("input[name='questionnaireResponse["+x+"].response']")[0]).removeAttr("checked");
-			  					$($("table").find("input[name='questionnaireResponse["+x+"].response']")[1]).removeAttr("checked");
+			  					$($("table").find("input[name='questionnaireResponse["+x+"].response']")[0]).prop('checked', false);
+			  					$($("table").find("input[name='questionnaireResponse["+x+"].response']")[1]).prop('checked', false);
 			  				}
 			  			}
 		  			}
@@ -133,6 +196,10 @@
     <!-- plugins:js -->
     <script src="/assets/vendors/js/vendor.bundle.base.js"></script>
     <script src="/assets/vendors/js/vendor.bundle.addons.js"></script>
+    
+    <script src="/assets/vendors/signature-pad-master/assets/json2.min.js"></script>
+
+    <script src="/assets/vendors/signature-pad-master/jquery.signaturepad.js"></script>
     <!-- endinject -->
     <!-- Plugin js for this page-->
     <!-- End plugin js for this page-->
