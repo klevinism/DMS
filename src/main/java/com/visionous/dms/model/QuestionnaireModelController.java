@@ -137,6 +137,12 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 					super.addModelCollectionToView("questionnaire", newQuestionnaire);
 				}
 			}
+			
+			if(super.hasResultBindingError()) {
+				if(!super.getAllControllerParams().containsKey("modelAttribute")) {
+					super.clearResultBindingErrors();
+				}
+			}
 		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
 		}

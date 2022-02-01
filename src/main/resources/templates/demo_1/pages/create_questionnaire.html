@@ -120,6 +120,14 @@
 			        </div>
 		  			
 		  		</form>
+		  		    <script th:inline="javascript">
+						/*<![CDATA[*/ 
+					    var alertConsent = /*[[#{alert.ConsentTo}]]*/'';
+						var alertSignDocument =  /*[[#{alert.SignDocument}]]*/'';
+						var TermsAndConditions = /*[[#{TermsAndConditions}]]*/'';
+						
+					   	/*]]>*/
+				    </script>
 		  		<script>
 		  			var sigPad;
 		  			$(function(){
@@ -133,7 +141,10 @@
 				  		  
 				  		  clear : '#clearSignature',
 				  		  
-				  		  output : '#' + $('.sigPad').find("input[type='hidden']").attr("id")
+				  		  output : '#' + $('.sigPad').find("input[type='hidden']").attr("id"),
+
+				  		  errorMessageDraw : alertSignDocument
+
 				  		});
 		  			});
 		  			$(document).ready(function(){
@@ -163,7 +174,7 @@
 		  			
 		  			function validateConsent(formData){
 		  				if(!formData.includes("&consented")){
-		  					$("#consent").append("<div class='invalid-feedback' style='display:block'>Please consent to our Terms and Conditions.</div>");
+		  					$("#consent").append("<div class='invalid-feedback' style='display:block'>"+alertConsent+" <a href='' >"+TermsAndConditions+"</a>.</div>");
 		  					return false;
 		  				}else {
 		  					return true;
