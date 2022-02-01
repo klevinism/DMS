@@ -20,6 +20,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -43,14 +44,16 @@ public class Questionnaire implements Serializable{
 	private Long customerId;
 
 	@NotEmpty(message = "{alert.fieldEmpty}")
+	@Column(columnDefinition="TEXT")
 	private String signatureString;
 	
 	@NotEmpty(message = "{alert.fieldEmpty}")
+	@Column(columnDefinition="TEXT")
 	private String signatureImgPath;
 	
-	@NotEmpty(message = "{alert.fieldEmpty}")
+	@NotNull(message = "{alert.fieldEmpty}")
 	@Column(updatable = false)
-	private boolean consented = false;
+	private boolean consented = Boolean.FALSE;
 	
 	@Column(name="addeddate")
 	@DateTimeFormat (pattern="dd-MM-YYYY")

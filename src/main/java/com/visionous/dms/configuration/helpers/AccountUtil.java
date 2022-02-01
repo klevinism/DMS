@@ -6,6 +6,8 @@ package com.visionous.dms.configuration.helpers;
 import java.time.Period;
 import java.util.Date;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -17,6 +19,8 @@ import com.visionous.dms.pojo.Business;
  *
  */
 public class AccountUtil {
+	private final static Log logger = LogFactory.getLog(AccountUtil.class);
+
 	
 	private AccountUtil() {
 	}
@@ -26,8 +30,12 @@ public class AccountUtil {
 		
 		try {
 			loggedIn = (AccountUserDetail)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			
 		}catch(Exception e) {
+			
 			e.printStackTrace();
+
+			logger.error(e.getMessage());
 		}
 		
 		return loggedIn;

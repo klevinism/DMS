@@ -44,14 +44,12 @@ public class ResponseAdvice implements ResponseBodyAdvice {
 	public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
 			Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
 
+		String subscriptionExpired=messageSource.getMessage("SubscriptionExpired", null, LocaleContextHolder.getLocale());
+		String featureExcluded = messageSource.getMessage("FeatureNotAllowedSubscriptionExpired", null, LocaleContextHolder.getLocale());
+		String subscriptionExpiredPersonnel = messageSource.getMessage("SubscriptionExpiredPersonnel", null, LocaleContextHolder.getLocale());
+		String subscriptionExpiredAdmin = messageSource.getMessage("SubscriptionExpiredAdmin", null, LocaleContextHolder.getLocale());
 		
-		if(request.getMethodValue().equals("POST") && !subscriptionHistoryService.findActiveSubscription().isPresent()) {
-			String subscriptionExpired=messageSource.getMessage("SubscriptionExpired", null, LocaleContextHolder.getLocale());
-			String featureExcluded = messageSource.getMessage("FeatureNotAllowedSubscriptionExpired", null, LocaleContextHolder.getLocale());
-			String subscriptionExpiredPersonnel = messageSource.getMessage("SubscriptionExpiredPersonnel", null, LocaleContextHolder.getLocale());
-			String subscriptionExpiredAdmin = messageSource.getMessage("SubscriptionExpiredAdmin", null, LocaleContextHolder.getLocale());
-			
-			ResponseBody<String> bodyReplacing = new ResponseBody<>();
+		ResponseBody<String> bodyReplacing = new ResponseBody<>();
 		if(AccountUtil.currentLoggedInUser() != null && request.getMethodValue().equals("POST") && !subscriptionHistoryService
 				.findActiveSubscriptionByBusinessId(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId())
 				.isPresent()) {

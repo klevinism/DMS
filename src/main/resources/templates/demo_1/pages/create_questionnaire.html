@@ -97,6 +97,11 @@
 								    <div class="typed"></div>
 								    <canvas class="pad" width="400" height="70"></canvas>
 								    <input type="hidden" th:field="*{signatureString}">
+								    <p class="alert alert-danger" th:if="${#fields.hasErrors('signatureString')}" th:errors="*{signatureString}"></p>
+								    
+								    <input type="hidden" style="display:none;" th:field="*{signatureImgPath}">
+   								    <p class="alert alert-danger" th:if="${#fields.hasErrors('signatureImgPath')}" th:errors="*{signatureImgPath}"></p>
+								    
 								  </div>
 								</div>
 	          				</td>
@@ -104,7 +109,7 @@
           			</tbody>
           			</table>
 				    <div class="custom-control custom-checkbox mt-4 mb-2" id="consent">
-                   		<input type="checkbox" class="custom-control-input" th:field="*{consented}" required>
+                   		<input type="checkbox" class="custom-control-input" th:field="*{consented}" >
                    		<label class="custom-control-label" for="consented1" style="width: 25rem;">
                      		<small class="text-muted text-wrap">[[#{ConsentToTermsOfOxydentCustomerAgreement}]]</small>
                      	</label>
@@ -132,37 +137,43 @@
 				  		});
 		  			});
 		  			$(document).ready(function(){
-		  				console.log("ready");
 		  				$("form").submit(function(event){
 		  					onSubmit(event);	
 		  				});
 		  			});
 		  			
+		  			function getSignature() {
+		  				 var imageData = sigPad.getSignatureImage();
+		  				 document.getElementsByName("signatureImgPath")[0].setAttribute("value", imageData);
+	  				}
+		  			
 		  			function onSubmit(e){		  				
-		  				e.preventDefault();
-		  				console.log(e);
+		  				
+		  				getSignature();
+		  				
 		  				var formData = $(e.target).serialize();
 		  				
 		  				if(sigPad.validateForm() && validateConsent(formData)){
-		  					console.log(formData);
-		  					console.log(sigPad.getSignatureImage());	
+		  					event.currentTarget.submit();
+		  				}else{
+		  					e.preventDefault();
 		  				}
+		  				return;
 		  			}
 		  			
 		  			function validateConsent(formData){
-		  				console.log(formData);
-		  				console.log(formData.includes("&consented"));
 		  				if(!formData.includes("&consented")){
-		  					$("#consent").append("<div class='invalid-feedback' style='display:block'>Please consent to our Terms and Services.</div>")
+		  					$("#consent").append("<div class='invalid-feedback' style='display:block'>Please consent to our Terms and Conditions.</div>");
+		  					return false;
 		  				}else {
-		  					
+		  					return true;
 		  				}
 		  			}
 		  			
 		  			function selectAllNo(){
 		  				for(var x=0; x<$("table").find("input[type='radio']").length; x++){
-			  				if($("table").find("input[name='questionnaireResponse["+x+"].response']") != undefined || $("table").find("input[name='questionnaireResponse["+x+"].response']") != null){			  					
-			  					$($("table").find("input[name='questionnaireResponse["+x+"].response']")[1]).attr("checked","checked");
+			  				if($("table").find("input[name='questionnaireResponse["+x+"].response']") != undefined || $("table").find("input[name='questionnaireResponse["+x+"].response']") != null){
+			  					$($("table").find("input[name='questionnaireResponse["+x+"].response']")[1]).prop("checked",true);
 			  				}
 			  			}
 		  			}

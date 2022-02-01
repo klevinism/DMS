@@ -116,26 +116,26 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 		
 		if(viewType.equals(Actions.CREATE.getValue())) {			
 		
-				Long customerId = null;
+			Long customerId = null;
+			
+			if(super.getAllControllerParams().get("id") != null) {
+				 customerId = Long.valueOf(super.getAllControllerParams().get("id").toString());
+			}else if(super.getAllControllerParams().get("modelAttribute") != null) {
+				Questionnaire questionnaire = (Questionnaire) super.getAllControllerParams().get("modelAttribute");
+				customerId = questionnaire.getCustomerId();
+			}
+			
+			Optional<Questionnaire> questionnaire = questionnaireService.findByCustomerId(customerId);
+			if(questionnaire.isPresent()) {
+				super.addModelCollectionToView("questionnaire", questionnaire.get());
+			}else {
+				List<QuestionnaireForm> allQuestions = questionnaireFormRepository.findAll();
+				super.addModelCollectionToView("allQuestions", allQuestions);
 				
-				if(super.getAllControllerParams().get("id") != null) {
-					 customerId = Long.valueOf(super.getAllControllerParams().get("id").toString());
-				}else if(super.getAllControllerParams().get("modelAttribute") != null) {
-					Questionnaire questionnaire = (Questionnaire) super.getAllControllerParams().get("modelAttribute");
-					customerId = questionnaire.getCustomerId();
+				if(!super.hasResultBindingError()) {
+					Questionnaire newQuestionnaire = generateQuestionnaireFromQuestionsAndCustomerId(allQuestions, customerId);
+					super.addModelCollectionToView("questionnaire", newQuestionnaire);
 				}
-				
-				Optional<Questionnaire> questionnaire = questionnaireService.findByCustomerId(customerId);
-				if(questionnaire.isPresent()) {
-					super.addModelCollectionToView("questionnaire", questionnaire.get());
-				}else {
-					List<QuestionnaireForm> allQuestions = questionnaireFormRepository.findAll();
-					super.addModelCollectionToView("allQuestions", allQuestions);
-					
-					if(!super.hasResultBindingError()) {
-						Questionnaire newQuestionnaire = generateQuestionnaireFromQuestionsAndCustomerId(allQuestions, customerId);
-						super.addModelCollectionToView("questionnaire", newQuestionnaire);
-					}
 			}
 		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
