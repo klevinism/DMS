@@ -21,7 +21,7 @@ jobs:
         HOST: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         PORT: ${{ secrets.PORT }}
-        KEY: ${{ secrets.VMIPASS }}
+        KEY: ${{ secrets.VMISSHSECRET }}
       with:
         source: "."
         target: "/var/www/dmsAlphaTest"
@@ -33,5 +33,5 @@ jobs:
         host: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         PORT: ${{ secrets.PORT }}
-        KEY: ${{ secrets.VMIPASS }}
+        KEY: ${{ secrets.VMISSHSECRET }}
         script: ls
