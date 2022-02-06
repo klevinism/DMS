@@ -35,4 +35,4 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         PORT: ${{ secrets.PORT }}
         PASSWORD: ${{ secrets.VMIPASSWORD }}
-        script: ls
+        script: cd /var/www/dms/master mvn clean package
