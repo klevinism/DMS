@@ -38,3 +38,5 @@ jobs:
         script: |
           cd /var/www/dms/master 
           mvn clean package 
+          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "::set-output name=version::$VERSION"
