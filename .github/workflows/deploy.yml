@@ -27,6 +27,7 @@ jobs:
         source: "."
         target: "/var/www/dmsAlphaTest"
 
+
     - name: Executing remote command
       uses: appleboy/ssh-action@master
       with:
