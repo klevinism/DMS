@@ -25,7 +25,7 @@ jobs:
         PASSWORD: ${{ secrets.VMIPASSWORD }}
       with:
         source: "."
-        target: "/var/www/dms/master"
+        target: "/var/www/dms/${GITHUB_REF#refs/heads/}"
 
 
     - name: Executing remote command
@@ -36,7 +36,10 @@ jobs:
         PORT: ${{ secrets.PORT }}
         PASSWORD: ${{ secrets.VMIPASSWORD }}
         script: |
-          cd /var/www/dms/master 
+          cd /var/www/dms 
           mvn clean package 
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          mv target/dcms-$VERSION.war /var/www/dmsAlphaTestCI/
+          mv ${GITHUB_REF#refs/heads/}/target/dcms-$VERSION.war /var/www/dmsAlphaTestCI/
+          echo DCMSVERSION=${VERSION} > config/env
+          sudo systemctl stop AlphaTestDms.service
+          sudo systemctl start AlphaTestDms.service
