@@ -23,7 +23,7 @@ jobs:
         HOST: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         PORT: ${{ secrets.PORT }}
-        KEY: ${{ secrets.SSHKEY }}
+        KEY: ${{ secrets.VMISSHSECRET }}
       with:
         source: "."
         target: "/var/www/dmsAlphaTest"
