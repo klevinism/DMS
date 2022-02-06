@@ -14,6 +14,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
+
     steps:
     - uses: actions/checkout@v2
     - name: Copy repository contents via scp
@@ -27,10 +28,11 @@ jobs:
         source: "."
         target: "/var/www/dmsAlphaTest"
 
+
     - name: Executing remote command
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         PORT: ${{ secrets.PORT }}
-        KEY: ${{ secrets.SSHKEY }}
+        KEY: ${{ secrets.VMISSHSECRET }}
