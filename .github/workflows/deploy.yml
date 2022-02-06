@@ -25,7 +25,7 @@ jobs:
         PASSWORD: ${{ secrets.VMIPASSWORD }}
       with:
         source: "."
-        target: "/var/www/dmsAlphaTest"
+        target: "/var/www/dms/master"
 
 
     - name: Executing remote command
