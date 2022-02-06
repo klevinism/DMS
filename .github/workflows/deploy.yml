@@ -36,5 +36,5 @@ jobs:
         PORT: ${{ secrets.PORT }}
         PASSWORD: ${{ secrets.VMIPASSWORD }}
         script: |
-          cd /var/www/dms/master \ 
-          mvn clean package \
+          cd /var/www/dms/master 
+          mvn clean package 
