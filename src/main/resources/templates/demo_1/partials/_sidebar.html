@@ -24,6 +24,7 @@
         <span class="menu-title">[[#{Home}]]</span>
       </a>
     </li>
+    
     <li th:class="'nav-item'+${currentPage == 'Personnel' ? ' active' : ''}" th:if="${currentRoles != null}">
       <a class="nav-link" href="/admin/personnel" th:if="${not currentRoles.?[name == 'ADMIN'].isEmpty()}">
         <i class="menu-icon mdi mdi-doctor" ></i>
