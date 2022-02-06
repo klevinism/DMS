@@ -43,7 +43,7 @@
 			                        </button>
 			                        <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
 			                          <h6 class="dropdown-header">[[#{MostUsed}]]</h6>
-			                          <button class="dropdown-item btn-block" th:data-subscription="${subscription.id == null ? 'expired' : 'active'}" th:each="obj ,i : ${top5ServiceTypes}" th:if="${i.index}<5" th:data-id="${obj.id}" >
+			                          <button class="dropdown-item btn-block" th:data-subscription="${subscription?.id == null ? 'expired' : 'active'}" th:each="obj ,i : ${top5ServiceTypes}" th:if="${i.index}<5" th:data-id="${obj.id}" >
 			                          <i class="mdi mdi-tooth-outline fa-sm"> </i> [[${obj.name}]]
 			                          </button>
 			                        </div>

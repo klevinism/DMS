@@ -1,6 +1,7 @@
 package com.visionous.dms.pojo;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -148,14 +149,15 @@ public class Business implements Serializable{
 	/**
 	 * @return
 	 */
-	public SubscriptionHistory getActiveSubscription() {
+	public Subscription getActiveSubscription() {
 		Optional<SubscriptionHistory> subscriptionHistory = this.getSubscriptionHistory()
 				.stream()
-				.filter(subscription -> subscription.isActive())
+				.filter(subscription -> subscription.isActive() 
+						&& subscription.getSubscriptionEndDate().isAfter(LocalDateTime.now()))
 				.findFirst();
 		
 		if(subscriptionHistory.isPresent()) {
-			return subscriptionHistory.get();
+			return subscriptionHistory.get().getSubscription();
 		}else {
 			return null;
 		}

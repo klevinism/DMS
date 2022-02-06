@@ -27,31 +27,52 @@
     <li th:class="'nav-item'+${currentPage == 'Personnel' ? ' active' : ''}" th:if="${currentRoles != null}">
       <a class="nav-link" href="/admin/personnel" th:if="${not currentRoles.?[name == 'ADMIN'].isEmpty()}">
         <i class="menu-icon mdi mdi-doctor" ></i>
-        <span class="menu-title">[[#{Personnel}]] <span class="badge badge-pill badge-danger" th:if="${subscription.hasRestrictionsByPageName('/personnel') == true && subscription.getSumOfRestrictionsAmountByPageName('/personnel') <= 0 || subscription == null}">[[#{Upgrade}]]</span></span>
+        <span class="menu-title">
+        	[[#{Personnel}]] 
+        	<span class="badge badge-pill badge-warning" th:if="${subscription != null}" th:text="${subscription?.hasRestrictionsByPageName('/personnel') == true && subscription?.getSumOfRestrictionsAmountByPageName('/personnel') <= 0} ? #{Upgrade}"></span>
+        	<span class="badge badge-pill badge-danger" th:if="${subscription == null}" th:text="#{Subscription}"></span>
+        </span>
       </a>
     </li>
     <li th:class="'nav-item'+${currentPage == 'Customer' ? ' active' : ''}" th:if="${currentRoles != null}">
       <a class="nav-link" href="/customer" th:if="${not currentRoles.?[name == 'ADMIN' or name == 'PERSONNEL'].isEmpty()}">
         <i class="menu-icon mdi mdi-account-multiple-outline"></i>
-        <span class="menu-title">[[#{Customers}]] <span class="badge badge-pill badge-danger" th:if="${subscription.hasRestrictionsByPageName('/customer') == true}">[[#{Upgrade}]]</span></span>
+        <span class="menu-title">
+        	[[#{Customers}]] 
+        	<span class="badge badge-pill badge-warning" th:text="${subscription?.hasRestrictionsByPageName('/customer') == true } ? #{Upgrade}"></span>
+        	<span class="badge badge-pill badge-danger" th:if="${subscription == null}" th:text="#{Subscription}"></span>
+        	
+        </span>
       </a>
     </li>
     <li th:class="'nav-item'+${currentPage == 'Schedule' ? ' active' : ''}" th:if="${currentRoles != null}">
       <a class="nav-link" href="/schedule" >
         <i class="menu-icon mdi mdi-calendar-outline" ></i>
-        <span class="menu-title">[[#{Schedule}]] <span class="badge badge-pill badge-danger" th:if="${subscription.hasRestrictionsByPageName('/schedule')}">[[#{Upgrade}]]</span></span>
+        <span class="menu-title">
+        	[[#{Schedule}]] 
+        	<span class="badge badge-pill badge-danger" th:text="${subscription?.hasRestrictionsByPageName('/schedule') == true } ? #{Upgrade}">[[#{Upgrade}]]</span>
+          	<span class="badge badge-pill badge-danger" th:if="${subscription == null}" th:text="#{Subscription}"></span>
+        </span>
       </a>
     </li>
     <li th:class="'nav-item'+${currentPage == 'Subscription' ? ' active' : ''}" th:if="${currentRoles != null}">
       <a class="nav-link" href="/admin/subscription" th:if="${currentRoles[0].name == 'ADMIN'}">
         <i class="menu-icon fa fa-handshake-o fa-sm" style="font-size:20px" > </i>
-        <span class="menu-title">[[#{Subscription}]] <span class="badge badge-pill badge-danger" th:if="${subscription.hasRestrictionsByPageName('/subscription') == true}">[[#{Upgrade}]]</span></span>
+        <span class="menu-title">
+        	[[#{Subscription}]] 
+        	<!-- <span class="badge badge-pill badge-danger" th:text="${subscription?.hasRestrictionsByPageName('/subscription') == true} ? #{Upgrade}">[[#{Upgrade}]]</span>
+        	<span class="badge badge-pill badge-danger" th:if="${subscription == null}" th:text="#{Subscription}"></span> -->
+        </span>
       </a>
     </li>
     <li th:class="'nav-item'+${currentPage == 'Global' ? ' active' : ''}" th:if="${currentRoles != null}">
       <a class="nav-link" href="/admin/global" th:if="${currentRoles[0].name == 'ADMIN'}">
         <i class="menu-icon mdi mdi-cogs" ></i>
-        <span class="menu-title">[[#{GeneralSettings}]] <span class="badge badge-pill badge-danger" th:if="${subscription.hasRestrictionsByPageName('/global') == true}">[[#{Upgrade}]]</span></span>
+        <span class="menu-title">
+        	[[#{GeneralSettings}]] 
+        	<!-- <span class="badge badge-pill badge-danger" th:text="${subscription?.hasRestrictionsByPageName('/global') == true } ? #{Upgrade}"></span>
+        	<span class="badge badge-pill badge-danger" th:if="${subscription == null}" th:text="#{Subscription}"></span> -->
+        </span>
       </a>
     </li>
     <li th:class="'nav-item'+${currentPage == 'Logout' ? ' active' : ''}" >
@@ -59,7 +80,7 @@
     	<i class="menu-icon mdi mdi-power"></i>
         <span class="menu-title">[[#{SignOut}]]</span>
       </a>
-    </li>
+    </li> 
     <!-- <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
         <i class="menu-icon typcn typcn-coffee"></i>

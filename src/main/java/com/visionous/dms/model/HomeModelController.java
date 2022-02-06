@@ -465,7 +465,7 @@ public class HomeModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusiness().getGlobalSettings().getBusinessImage());
 		super.addModelCollectionToView("settings", AccountUtil.currentLoggedInUser().getCurrentBusiness().getGlobalSettings());
 		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusiness().getActiveSubscription().getSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusiness().getActiveSubscription());
 	}
 	
 	/**

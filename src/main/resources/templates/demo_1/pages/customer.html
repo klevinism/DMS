@@ -31,7 +31,7 @@
               <div class="col-12 ">
        			<div class="d-flex flex-column flex-md-row float-left mb-2">
 	              	<div class="wrapper">
-	                	<a class="btn btn-primary btn-lg" th:data-subscription="${subscription.id == null ? 'expired' : 'active'}" th:href="${currentPage}+'/create'"> 
+	                	<a class="btn btn-primary btn-lg" th:data-subscription="${subscription?.id == null ? 'expired' : 'active'}" th:href="${currentPage}+'/create'"> 
 	                		<i class="fa fa-plus"></i>
 		              		<i class="mdi mdi-account-multiple-outline mdi-18px"></i>
 	                	</a>

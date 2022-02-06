@@ -178,7 +178,7 @@ public class GreetingModelViewController {
 		
 		model.addAttribute("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
 		model.addAttribute("settings", AccountUtil.currentLoggedInBussines().getGlobalSettings());
-		model.addAttribute("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription());
+		model.addAttribute("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription());
 		
 		return "demo_1/pages/expiredsubscription";
 	}

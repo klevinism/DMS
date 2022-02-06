@@ -192,8 +192,12 @@ public class PersonnelModelController extends ModelControllerImpl{
 	private boolean reachedSubscriptionLimit() {
 		int personnelSize = this.personnelService.findAllByAccount_EnabledAndAccount_Roles_NameAndAccount_Businesses_Id(true, "PERSONNEL", AccountUtil.currentLoggedInUser().getCurrentBusiness().getId()).size();
 		
-		if(AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription().hasRestrictionsByPageName(currentPage)) {
-			int subscriptionRestrictionSize = AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription().getSumOfRestrictionsAmountByPageName(currentPage);
+		if(AccountUtil.currentLoggedInBussines().getActiveSubscription() == null) {
+			return false;
+		}
+		
+		if(AccountUtil.currentLoggedInBussines().getActiveSubscription().hasRestrictionsByPageName(currentPage)) {
+			int subscriptionRestrictionSize = AccountUtil.currentLoggedInBussines().getActiveSubscription().getSumOfRestrictionsAmountByPageName(currentPage);
 			return personnelSize >= subscriptionRestrictionSize;
 		}else {
 			return false;
@@ -203,8 +207,12 @@ public class PersonnelModelController extends ModelControllerImpl{
 	private boolean nearSubscriptionLimitBy(int count) {
 		int personnelSize = this.personnelService.findAllByAccount_EnabledAndAccount_Roles_NameAndAccount_Businesses_Id(true, "PERSONNEL", AccountUtil.currentLoggedInUser().getCurrentBusiness().getId()).size();
 
-		if(AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription().hasRestrictionsByPageName(currentPage)) {
-			int subscriptionRestrictionSize = AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription().getSumOfRestrictionsAmountByPageName(currentPage);
+		if(AccountUtil.currentLoggedInBussines().getActiveSubscription() == null) {
+			return false;
+		}
+		
+		if(AccountUtil.currentLoggedInBussines().getActiveSubscription().hasRestrictionsByPageName(currentPage)) {
+			int subscriptionRestrictionSize = AccountUtil.currentLoggedInBussines().getActiveSubscription().getSumOfRestrictionsAmountByPageName(currentPage);
 			return (subscriptionRestrictionSize - personnelSize) == count;
 		}else {
 			return false;
@@ -335,7 +343,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("settings", AccountUtil.currentLoggedInBussines().getGlobalSettings());
 
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription().getSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription());
 
 	}
 	
