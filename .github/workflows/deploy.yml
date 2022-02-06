@@ -24,6 +24,7 @@ jobs:
         PORT: ${{ secrets.PORT }}
         KEY: ${{ secrets.VMISSHSECRET }}
       with:
+        sync: true
         source: "."
         target: "/var/www/dmsAlphaTest"
 
@@ -32,6 +33,7 @@ jobs:
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
+        sync: true
         USERNAME: ${{ secrets.USERNAME }}
         PORT: ${{ secrets.PORT }}
         KEY: ${{ secrets.VMISSHSECRET }}
