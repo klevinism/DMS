@@ -6,15 +6,44 @@
   <body>
     <div class="container-scroller">
       <div class="container-fluid page-body-wrapper full-page-wrapper">
-        <div class="content-wrapper d-flex align-items-center auth register-bg-1 theme-one">
+        <div class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
           <div class="row w-100">
-            <div class="col-lg-4 mx-auto">
-              <h2 class="text-center mb-4" th:text="${users}">Register </h2>
-              <div class="auto-form-wrapper">
+            <div class="col-lg-3 mx-auto">
+              <div class="auto-form-wrapper mb-4" style="border-radius:3.5%;">
                 <form th:action="@{/register}" method="POST">
-                  <div class="form-group">
+                
+                <div class="row bg-outline-primary" >
+			
+					<div class="col-md-6">
+					  <div class="form-group ml-0 mr-auto">
+	                    <div class="input-group">
+	                      <input type="text" class="form-control" name="name" th:placeholder="#{Name}">
+	                      <div class="input-group-append">
+	                        <span class="input-group-text">
+	                          <i class="mdi mdi-check-circle-outline"></i>
+	                        </span>
+	                      </div>
+	                    </div>
+	                  </div>
+					</div>
+					<div class="col-md-6">
+					  <div class="form-group ml-auto mr-0 ">
+	                    <div class="input-group">
+	                      <input type="text" class="form-control" name="surname" th:placeholder="#{Surname}">
+	                      <div class="input-group-append">
+	                        <span class="input-group-text">
+	                          <i class="mdi mdi-check-circle-outline"></i>
+	                        </span>
+	                      </div>
+	                    </div>
+	                  </div>
+					</div>
+				</div>
+                <div class="row bg-outline-primary" >
+                <div class="col-md-12">
+                  <div class="form-group mx-0 my-2">
                     <div class="input-group">
-                      <input type="text" class="form-control" name="username" placeholder="Username">
+                      <input type="email" class="form-control" name="email" th:placeholder="#{EmailOrPhoneNr}">
                       <div class="input-group-append">
                         <span class="input-group-text">
                           <i class="mdi mdi-check-circle-outline"></i>
@@ -22,9 +51,13 @@
                       </div>
                     </div>
                   </div>
-                  <div class="form-group">
+                </div>
+                </div>
+                <div class="row bg-outline-primary" >
+                <div class="col-md-12">
+                  <div class="form-group mx-0 my-2">
                     <div class="input-group">
-                      <input type="password" class="form-control" name="password" placeholder="Password">
+                      <input type="password" class="form-control" name="password" th:placeholder="#{Password}">
                       <div class="input-group-append">
                         <span class="input-group-text">
                           <i class="mdi mdi-check-circle-outline"></i>
@@ -32,17 +65,10 @@
                       </div>
                     </div>
                   </div>
-                  <div class="form-group">
-                    <div class="input-group">
-                      <input type="password" class="form-control" name="confirmation" placeholder="Confirm Password">
-                      <div class="input-group-append">
-                        <span class="input-group-text">
-                          <i class="mdi mdi-check-circle-outline"></i>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group d-flex justify-content-center">
+                </div>
+                </div>
+                
+                  <div class="form-group d-flex justify-content-center my-2">
                     <div class="form-check form-check-flat mt-0">
                       <label class="form-check-label">
                         <input type="checkbox" class="form-check-input" name="terms" value="accept"> I agree to the terms </label>
@@ -57,6 +83,8 @@
                   </div>
                 </form>
               </div>
+			<div th:replace="demo_1/partials/_footer :: footer" >
+			</div>
             </div>
           </div>
         </div>

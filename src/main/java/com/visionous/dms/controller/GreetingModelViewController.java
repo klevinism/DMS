@@ -280,7 +280,7 @@ public class GreetingModelViewController {
 	/**
 	 * @return
 	 */
-	@GetMapping("/register")
+	@GetMapping("register")
 	public String register() {
 		return "demo_1/pages/samples/register";
 	}
