@@ -15,9 +15,9 @@
                 <div class="row bg-outline-primary" >
 			
 					<div class="col-md-6">
-					  <div class="form-group ml-0 mr-auto">
+					  <div class="form-group ml-0 mr-auto mb-2">
 	                    <div class="input-group">
-	                      <input type="text" class="form-control" name="name" th:placeholder="#{Name}">
+	                      <input type="text" class="form-control bg-light" name="name" th:placeholder="#{Name}">
 	                      <div class="input-group-append">
 	                        <span class="input-group-text">
 	                          <i class="mdi mdi-check-circle-outline"></i>
@@ -27,9 +27,9 @@
 	                  </div>
 					</div>
 					<div class="col-md-6">
-					  <div class="form-group ml-auto mr-0 ">
+					  <div class="form-group ml-auto mr-0 mb-2">
 	                    <div class="input-group">
-	                      <input type="text" class="form-control" name="surname" th:placeholder="#{Surname}">
+	                      <input type="text" class="form-control bg-light" name="surname" th:placeholder="#{Surname}">
 	                      <div class="input-group-append">
 	                        <span class="input-group-text">
 	                          <i class="mdi mdi-check-circle-outline"></i>
@@ -43,7 +43,7 @@
                 <div class="col-md-12">
                   <div class="form-group mx-0 my-2">
                     <div class="input-group">
-                      <input type="email" class="form-control" name="email" th:placeholder="#{EmailOrPhoneNr}">
+                      <input type="email" class="form-control bg-light" name="email" th:placeholder="#{EmailOrPhoneNr}">
                       <div class="input-group-append">
                         <span class="input-group-text">
                           <i class="mdi mdi-check-circle-outline"></i>
@@ -57,7 +57,7 @@
                 <div class="col-md-12">
                   <div class="form-group mx-0 my-2">
                     <div class="input-group">
-                      <input type="password" class="form-control" name="password" th:placeholder="#{Password}">
+                      <input type="password" class="form-control bg-light" name="password" th:placeholder="#{Password}">
                       <div class="input-group-append">
                         <span class="input-group-text">
                           <i class="mdi mdi-check-circle-outline"></i>
@@ -67,6 +67,85 @@
                   </div>
                 </div>
                 </div>
+                
+                
+                <div class="row bg-outline-primary" >
+                	<div class="col-md-12">
+                		<small> Birthday </small>
+                	</div>
+                	<div class="col-md-4">
+                	<div class="form-group m-0">
+			                <select aria-label="Month" name="birthday_month" id="month" title="Month" class="form-control form-control-lg bg-light">
+			                	<option value="1">Jan</option>
+			                	<option value="2" selected="1">Feb</option>
+			                	<option value="3">Mar</option>
+			                	<option value="4">Apr</option>
+			                	<option value="5">May</option>
+			                	<option value="6">Jun</option>
+			                	<option value="7">Jul</option>
+			                	<option value="8">Aug</option>
+			                	<option value="9">Sep</option>
+			                	<option value="10">Oct</option>
+			                	<option value="11">Nov</option>
+			                	<option value="12">Dec</option>
+			                </select>
+					</div>
+					</div>
+					<div class="col-md-4">
+                	<div class="form-group m-0">
+							<select aria-label="Month" name="birthday_month" id="month" title="Month" class="form-control form-control-lg bg-light">
+			                	<option value="1">Jan</option>
+			                	<option value="2" selected="1">Feb</option>
+			                	<option value="3">Mar</option>
+			                	<option value="4">Apr</option>
+			                	<option value="5">May</option>
+			                	<option value="6">Jun</option>
+			                	<option value="7">Jul</option>
+			                	<option value="8">Aug</option>
+			                	<option value="9">Sep</option>
+			                	<option value="10">Oct</option>
+			                	<option value="11">Nov</option>
+			                	<option value="12">Dec</option>
+			                </select>
+			        </div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group m-0">
+			                <select aria-label="Month" name="birthday_month" id="month" title="Month" class="form-control form-control-lg bg-light">
+			                	<option value="1">Jan</option>
+			                	<option value="2" selected="1">Feb</option>
+			                	<option value="3">Mar</option>
+			                	<option value="4">Apr</option>
+			                	<option value="5">May</option>
+			                	<option value="6">Jun</option>
+			                	<option value="7">Jul</option>
+			                	<option value="8">Aug</option>
+			                	<option value="9">Sep</option>
+			                	<option value="10">Oct</option>
+			                	<option value="11">Nov</option>
+			                	<option value="12">Dec</option>
+			                </select>
+						</div>
+					</div>
+				</div>                
+                
+                <div class=" form-group row bg-outline-primary mb-0" >
+                	<div class="col-md-12">
+                		<small> Gender </small>
+                	</div>
+                	<div class="col-md-5 ml-auto mr-1 mt-1 mb-4" style="border: 1px solid #dfe0e1;border-radius: 7px;">
+			        	<div class="form-radio form-radio-flat mx-1 my-2">
+                              <label class="form-check-label">
+                                <input type="radio" class="form-check-input" name="flatRadios1" id="flatRadios1" value="" checked=""> Option one <i class="input-helper"></i></label>
+                        </div>
+					</div>
+					<div class="col-md-5 mr-auto ml-1 mt-1 mb-4" style="border: 1px solid #dfe0e1;border-radius: 7px;">
+						<div class="form-radio form-radio-flat mx-1 my-2">
+                              <label class="form-check-label">
+                                <input type="radio" class="form-check-input" name="flatRadios1" id="flatRadios1" value="" checked=""> Option one <i class="input-helper"></i></label>
+                        </div>
+					</div>
+				</div>    
                 
                   <div class="form-group d-flex justify-content-center my-2">
                     <div class="form-check form-check-flat mt-0">
