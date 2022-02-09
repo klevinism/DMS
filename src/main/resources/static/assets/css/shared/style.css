@@ -10732,6 +10732,14 @@ ul {
         display: inline-block;
         padding-top: 0px;
         padding-bottom: 0px; }
+      .auth.theme-one .auto-form-wrapper .form-group .input-group .form-control-round {
+        border: 1px solid #cfd5db;
+        border-radius: 6px 6px 6px 6px;
+        height: 44px;
+        line-height: 4px;
+        display: inline-block;
+        padding-top: 0px;
+        padding-bottom: 0px; }
         .auth.theme-one .auto-form-wrapper .form-group .input-group .form-control:focus {
           border-right: none;
           border-color: #cfd5db; }
