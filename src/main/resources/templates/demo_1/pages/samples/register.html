@@ -17,14 +17,14 @@
 					<div class="col-md-6">
 					  <div class="form-group ml-0 mr-auto mb-2">
 	                    <div class="input-group">
-	                      <input type="text" class="form-control form-control-round bg-light" name="name" th:placeholder="#{Name}">
+	                      <input type="text" class="form-control form-control-round bg-light" id="name" name="name" th:placeholder="#{Name}">
 	                    </div>
 	                  </div>
 					</div>
 					<div class="col-md-6">
 					  <div class="form-group ml-auto mr-0 mb-2">
 	                    <div class="input-group">
-	                      <input type="text" class="form-control form-control-round bg-light" name="surname" th:placeholder="#{Surname}">
+	                      <input type="text" class="form-control form-control-round bg-light" id="surname" name="surname" th:placeholder="#{Surname}">
 	                    </div>
 	                  </div>
 					</div>
@@ -33,7 +33,7 @@
                 <div class="col-md-12">
                   <div class="form-group mx-0 my-2">
                     <div class="input-group">
-                      <input type="email" class="form-control form-control-round bg-light" name="email" th:placeholder="#{EmailOrPhoneNr}">
+                      <input type="text" class="form-control form-control-round bg-light" id="email" name="email" th:placeholder="#{EmailOrPhoneNr}">
                     </div>
                   </div>
                 </div>
@@ -42,7 +42,7 @@
                 <div class="col-md-12">
                   <div class="form-group mx-0 my-2">
                     <div class="input-group">
-                      <input type="password" class="form-control form-control-round bg-light" name="password" th:placeholder="#{NewPassword}">
+                      <input type="password" class="form-control form-control-round bg-light" id="password" name="password" th:placeholder="#{NewPassword}">
                     </div>
                   </div>
                 </div>
@@ -51,23 +51,12 @@
                 
                 <div class="row bg-outline-primary" >
                 	<div class="col-md-12">
-                		<small> Birthday </small>
+                		<small> [[#{Birthday}]] </small>
                 	</div>
                 	<div class="col-md-4">
                 	<div class="form-group m-0">
-			                <select aria-label="Month" name="birthday_month" id="month" title="Month" class="form-control form-control-lg bg-light">
-			                	<option value="1">Jan</option>
-			                	<option value="2" selected="1">Feb</option>
-			                	<option value="3">Mar</option>
-			                	<option value="4">Apr</option>
-			                	<option value="5">May</option>
-			                	<option value="6">Jun</option>
-			                	<option value="7">Jul</option>
-			                	<option value="8">Aug</option>
-			                	<option value="9">Sep</option>
-			                	<option value="10">Oct</option>
-			                	<option value="11">Nov</option>
-			                	<option value="12">Dec</option>
+			                <select aria-label="Day" name="birthday_day" id="day" title="day" class="form-control form-control-lg bg-light">
+			                	
 			                </select>
 					</div>
 					</div>
@@ -91,19 +80,7 @@
 					</div>
 					<div class="col-md-4">
 						<div class="form-group m-0">
-			                <select aria-label="Month" name="birthday_month" id="month" title="Month" class="form-control form-control-lg bg-light">
-			                	<option value="1">Jan</option>
-			                	<option value="2" selected="1">Feb</option>
-			                	<option value="3">Mar</option>
-			                	<option value="4">Apr</option>
-			                	<option value="5">May</option>
-			                	<option value="6">Jun</option>
-			                	<option value="7">Jul</option>
-			                	<option value="8">Aug</option>
-			                	<option value="9">Sep</option>
-			                	<option value="10">Oct</option>
-			                	<option value="11">Nov</option>
-			                	<option value="12">Dec</option>
+			                <select aria-label="Year" name="birthday_year" id="year" title="Year" class="form-control form-control-lg bg-light">
 			                </select>
 						</div>
 					</div>
@@ -111,37 +88,253 @@
                 
                 <div class=" form-group row bg-outline-primary mb-0" >
                 	<div class="col-md-12">
-                		<small> Gender </small>
+                		<small> [[#{Gender}]] </small>
                 	</div>
                 	<div class="col-md-5 ml-auto mr-1 mt-1 mb-4" style="border: 1px solid #dfe0e1;border-radius: 7px;">
 			        	<div class="form-radio form-radio-flat mx-1 my-2">
                               <label class="form-check-label">
-                                <input type="radio" class="form-check-input" name="flatRadios1" id="flatRadios1" value="" checked=""> Option one <i class="input-helper"></i></label>
+                                <input type="radio" class="form-check-input" name="gender" id="male" value="" > [[#{Male}]] <i class="input-helper"></i></label>
                         </div>
 					</div>
 					<div class="col-md-5 mr-auto ml-1 mt-1 mb-4" style="border: 1px solid #dfe0e1;border-radius: 7px;">
 						<div class="form-radio form-radio-flat mx-1 my-2">
                               <label class="form-check-label">
-                                <input type="radio" class="form-check-input" name="flatRadios1" id="flatRadios1" value="" checked=""> Option one <i class="input-helper"></i></label>
+                                <input type="radio" class="form-check-input" name="gender" id="female" value="" > [[#{Female}]] <i class="input-helper"></i></label>
                         </div>
 					</div>
 				</div>    
                 
                   <div class="form-group d-flex justify-content-center my-2">
-                    <div class="form-check form-check-flat mt-0">
-                      <label class="form-check-label">
-                        <input type="checkbox" class="form-check-input" name="terms" value="accept"> I agree to the terms </label>
+                  <div class="custom-control custom-checkbox">
+                       <input type="checkbox" class="custom-control-input" id="terms" name="terms"> 
+                       <label class="custom-control-label pt-1" for="terms">
+                       [[#{alert.ConsentTo}]] <a href="#" target="_blank" >[[#{TermsAndConditions}]]</a></label>
                     </div>
                   </div>
                   <div class="form-group">
-                    <button type="submit" class="btn btn-primary submit-btn btn-block">Register</button>
+                    <button type="submit" class="btn btn-primary submit-btn btn-block">[[#{Register}]]</button>
                   </div>
+                  <hr/>
                   <div class="text-block text-center my-3">
-                    <span class="text-small font-weight-semibold">Already have and account ?</span>
-                    <a href="/login" class="text-black text-small">Login</a>
+                    <span class="text-small font-weight-semibold">[[#{HaveAccount}]]</span>
+                    <a href="/login" class="text-black text-small">[[#{Login}]]</a>
                   </div>
                 </form>
               </div>
+              <script>
+              	$(document).ready(function(){
+              		console.log("ready");
+              		
+              		generateDays();
+              		generateYears();
+              		
+              	});
+              	
+              	function generateDays(){
+              		for(var cnt=1; cnt<32; cnt++){
+              			$("#day").html($("#day").html() + "<option value='"+cnt+"'>" + cnt + "</option>");	
+              		}
+              	}
+              	
+              	function generateYears(){
+              		for(var cnt=0; cnt<96; cnt++){
+              			var currentYear = new Date().getFullYear() - cnt;
+              			$("#year").html($("#year").html() + "<option value='"+currentYear+"'>" + currentYear + "</option>");
+              		}
+              	}
+              	
+              	$("#name").focusout(function(e){
+              		validateName(e.target);
+              	});
+              	
+              	$("#surname").focusout(function(e){
+              		validateSurname(e.target);
+              	});
+              	
+              	$("#email").focusout(function(e){
+              		validateEmailOrPhone(e.target);
+              	});
+              	
+              	$("#password").change(function(e){
+              		validatePassword(e.target);
+              	});
+              	
+              	$("#year").change(function(e){
+              		validateBirthday(e.target);
+              	});
+              	
+              	$("[name = 'gender']").change(function(e){
+              		validateGender();
+              	});
+              	
+              	$("#terms").change(function(e){
+              		validateTerms(e.target);
+              	});
+              	
+              	$("form").submit(function(event){
+              		submitForm(event);
+              	});
+              	
+              	function submitForm(e){
+              		if(validateFields(e)){
+	  					e.currentTarget.submit();
+	  				}else{
+	  					e.preventDefault();
+	  				}
+	  				return;
+              	}
+              	
+              	function validateFields(e){
+              		if(validateName($(e.currentTarget).find("#name")) &&
+              				validateSurname($(e.currentTarget).find("#surname")) &&
+              				validateEmailOrPhone($(e.currentTarget).find("#email")) &&
+              				validatePassword($(e.currentTarget).find("#password")) && 
+              				validateBirthday($(e.currentTarget).find("#year")) &&
+              				validateGender() &&
+              				validateTerms($(e.currentTarget).find("#terms"))){
+              			return true;
+              		}
+              		return false;
+              	}
+              	
+              	function validateName(element){
+              		if(validText($(element).val()) && $(element).val().length > 3){
+              			toggleValidInputFieldValidation(element);
+              			return true;
+              		}else{
+              		 	toggleInValidInputFieldValidation(element, "Please enter a valid name!");
+              		 	return false;
+              		}	
+              	}
+              	
+              	function validateSurname(element){
+              		console.log(element);
+              		if(validText($(element).val()) && $(element).val().length > 3){
+              			toggleValidInputFieldValidation(element);
+              			return true;
+              		}else{
+              		 	toggleInValidInputFieldValidation(element, "Please enter a valid surname!");   
+              		 	return false;
+              		}	
+              	}
+              	
+              	function validateEmailOrPhone(element){
+              		if(validEmail($(element).val()) || validPhone($(element).val())){
+              			toggleValidInputFieldValidation(element);
+              			return true;
+              		}else{
+            			toggleInValidInputFieldValidation(element, "Please enter a valid email of phone number!");
+            			return false;
+              		}
+              	}
+              	
+              	function validatePassword(element){
+              		if(validPassword($(element).val())){
+              			toggleValidInputFieldValidation(element);
+              			return true;
+              		}else{
+            			toggleInValidInputFieldValidation(element, "Password should contain minimum 8 characters, at least one letter and one number!");
+            			return false;
+              		}
+              	}
+              	
+              	function validateBirthday(element){
+              		var birthdayDate = parseBirthday(parseInt($("#day").val()), parseInt($("#month").val()), parseInt($("#year").val())); 
+              		if(validBirthday(birthdayDate)){
+              			toggleValidInputFieldValidation(element);
+              			return true;
+              		}else{
+            			toggleInValidInputFieldValidation(element, "You should be older then 13 years old to register!");
+            			return false;
+              		}
+              	}
+              	
+              	function validateGender(){
+              		var element = $("[name='gender']");
+
+              		if($("[name='gender']").is(":checked")){
+              			toggleValidInputFieldValidation(element);
+              			return true;
+              		}else{
+            			toggleInValidInputFieldValidation(element, "Please select your gender!");	
+            			return false;
+              		}
+              	}
+              	
+              	function validateTerms(element){
+              		if($(element).is(":checked")){
+              			toggleValidInputFieldValidation(element);
+              			return true;
+              		}else{
+            			toggleInValidInputFieldValidation(element);
+            			return false;
+              		}
+              	}
+              	
+              	function parseBirthday(day, month, year){
+              		var date = new Date();
+              		date = new Date(date).setDate(day);
+              		date = new Date(date).setMonth(month);
+              		date = new Date(date).setYear(year);
+              		return date;
+              	}
+              	
+              	function validEmail(val){
+              		var pattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+              		return pattern.test(val);
+              	}
+              	
+              	function validPhone(val){
+              		var pattern = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+              		return pattern.test(val);
+              	}
+              	
+              	function validPassword(val){
+              		var pattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+              		return pattern.test(val);
+              	}
+              	
+              	function validBirthday(val){
+              		if(getAge(val) > 13){
+              			return true;
+              		}
+              		return false;
+              	}
+              	
+              	function getAge(date) {
+              	    var today = new Date();
+              	    var birthDate = new Date(date);
+              	    var age = today.getFullYear() - birthDate.getFullYear();
+              	    var m = today.getMonth() - birthDate.getMonth();
+              	    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+              	        age--;
+              	    }
+              	    return age;
+              	}
+              	
+              	function validText(text){
+              		var pattern = /^[a-z]{3,}$/i;
+              		return pattern.test(text);
+              	}
+              	
+              	function toggleValidInputFieldValidation(el){
+          			$(el).removeClass("is-invalid");
+          			$(el).addClass("is-valid");
+          			$(el).parent().find(".invalid-tooltip").remove();
+              	}
+              	
+              	function toggleInValidInputFieldValidation(el,errorMsg){
+          			$(el).removeClass("is-valid");
+          			$(el).addClass("is-invalid");
+          			if(errorMsg != null || errorMsg != undefined){
+          				$(el).parent().append(invalidDiv(errorMsg));	
+          			}
+              	}
+              	
+              	function invalidDiv(errorMsg){
+              		return "<div class='invalid-tooltip'>"+errorMsg+"</div>";
+              	}
+              </script>
 			<div th:replace="demo_1/partials/_compact_footer :: footer" >
 			</div>
             </div>
