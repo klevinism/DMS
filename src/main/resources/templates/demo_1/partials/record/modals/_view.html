@@ -13,12 +13,12 @@
                 </div>
         	</div>
         	<div class="col-md-12 grid-margin">
-        		<a th:href="'/customer/'+${currentCustomer.id}+'/questionnaire/create'" th:data-subscription="${subscription.id == null ? 'expired' : 'active'}" class="btn btn-primary btn-sm">[[#{action.newVisit}]]</a>
+        		<a th:href="'/customer/'+${currentCustomer.id}+'/questionnaire/create'" th:data-subscription="${subscription?.id == null ? 'expired' : 'active'}" class="btn btn-primary btn-sm">[[#{action.newVisit}]]</a>
         	</div>
         </div>
         <div class="row" th:if="*{records != null}">
         	<div class="col-md-12 grid-margin">
-        		<a th:href="'/customer/__${currentCustomer.id}__/history/'+*{id}+'/record/create'" th:data-subscription="${subscription.id == null ? 'expired' : 'active'}" class="btn btn-primary btn-sm">[[#{action.newVisit}]]</a>
+        		<a th:href="'/customer/__${currentCustomer.id}__/history/'+*{id}+'/record/create'" th:data-subscription="${subscription?.id == null ? 'expired' : 'active'}" class="btn btn-primary btn-sm">[[#{action.newVisit}]]</a>
         	</div>
         	<div class="col-md-12 grid-margin tbl-overflow">
         		<table id="historyRecords" class="table table-hover" >
@@ -40,8 +40,8 @@
 						th:with="visitedTeethTxt = ${#strings.listJoin(record.visitedTeeth.![name],' , ')}"
 						th:onclick="'window.location=\'/customer/'+*{customer.id}+'/history/'+*{id}+'/record/'+${record.id}+'\''">
 							<td  th:text="${#temporals.format(record.servicedate, 'dd-MM-YYYY HH:mm')}"></td>
-							<td th:text="*{customer.account.username}"></td>
-							<td th:text="${record.personnel.account.name}"></td>
+							<td th:text="${record.history.customer.account.name} + ' ' + ${record.history.customer.account.surname}"></td>
+							<td th:text="${record.personnel.account.name} + ' ' + ${record.personnel.account.surname}"></td>
 							<td th:text="${#strings.abbreviate(visitedTeethTxt,19)}"  data-toggle="tooltip" data-html="true" th:title="${visitedTeethTxt}"></td>
 							<td th:text="${record.serviceType.name}"></td>
 							<td th:text="${record.servicedetail}"></td>
