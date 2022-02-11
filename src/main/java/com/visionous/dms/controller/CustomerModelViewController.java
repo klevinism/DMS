@@ -87,9 +87,9 @@ public class CustomerModelViewController {
 	@GetMapping("")
 	public String customerDefault(Model model) {
 		customerModelController.init()
-		.addControllerParam("viewType", Actions.VIEW.getValue())
-		.setViewModel(model)
-		.run(); // GetValuesForView
+			.addControllerParam("viewType", Actions.VIEW.getValue())
+			.setViewModel(model)
+			.run(); // GetValuesForView
 
 		return "demo_1/pages/customer"; 
 	}

@@ -280,14 +280,6 @@ public class GreetingModelViewController {
 	/**
 	 * @return
 	 */
-	@GetMapping("register")
-	public String register() {
-		return "demo_1/pages/samples/register";
-	}
-	
-	/**
-	 * @return
-	 */
 	@GetMapping("/form-elements")
 	public String formElements() {
 		return "demo_1/pages/forms/basic_elements";
@@ -379,21 +371,4 @@ public class GreetingModelViewController {
 		return "demo_1/pages/new_appointment";
 	}
 	
-	/**
-	 * @param user
-	 * @param model
-	 * @return
-	 */
-	@PostMapping("/register")
-	public String register(@Valid Account user,
-			Model model) {
-		
-		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-        accountService.createPlain(user);
-
-	    Iterable<Account> accounts = accountService.findAll();
-		model.addAttribute("user",accounts);
-		
-		return "demo_1/pages/samples/register";
-	}
 }

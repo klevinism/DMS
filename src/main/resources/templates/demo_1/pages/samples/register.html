@@ -10,21 +10,22 @@
           <div class="row w-100">
             <div class="col-lg-3 mx-auto">
               <div class="auto-form-wrapper mb-1" style="border-top-left-radius: 14.5px;border-top-right-radius: 14.5px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;">
-                <form th:action="@{/register}" method="POST">
+                <form th:action="@{/register}" th:object="${register}" method="POST">
+           		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
                 
                 <div class="row bg-outline-primary" >
 			
 					<div class="col-md-6">
 					  <div class="form-group ml-0 mr-auto mb-2">
 	                    <div class="input-group">
-	                      <input type="text" class="form-control form-control-round bg-light" id="name" name="name" th:placeholder="#{Name}">
+	                      <input type="text" class="form-control form-control-round bg-light" th:field="*{name}" th:placeholder="#{Name}">
 	                    </div>
 	                  </div>
 					</div>
 					<div class="col-md-6">
 					  <div class="form-group ml-auto mr-0 mb-2">
 	                    <div class="input-group">
-	                      <input type="text" class="form-control form-control-round bg-light" id="surname" name="surname" th:placeholder="#{Surname}">
+	                      <input type="text" class="form-control form-control-round bg-light" th:field="*{surname}" th:placeholder="#{Surname}">
 	                    </div>
 	                  </div>
 					</div>
@@ -33,7 +34,7 @@
                 <div class="col-md-12">
                   <div class="form-group mx-0 my-2">
                     <div class="input-group">
-                      <input type="text" class="form-control form-control-round bg-light" id="email" name="email" th:placeholder="#{EmailOrPhoneNr}">
+                      <input type="text" class="form-control form-control-round bg-light" th:field="*{email}" th:placeholder="#{EmailOrPhoneNr}">
                     </div>
                   </div>
                 </div>
@@ -42,7 +43,7 @@
                 <div class="col-md-12">
                   <div class="form-group mx-0 my-2">
                     <div class="input-group">
-                      <input type="password" class="form-control form-control-round bg-light" id="password" name="password" th:placeholder="#{NewPassword}">
+                      <input type="password" class="form-control form-control-round bg-light" th:field="*{password}" th:placeholder="#{NewPassword}">
                     </div>
                   </div>
                 </div>
@@ -93,21 +94,21 @@
                 	<div class="col-md-5 ml-auto mr-1 mt-1 mb-4" style="border: 1px solid #dfe0e1;border-radius: 7px;">
 			        	<div class="form-radio form-radio-flat mx-1 my-2">
                               <label class="form-check-label">
-                                <input type="radio" class="form-check-input" name="gender" id="male" value="" > [[#{Male}]] <i class="input-helper"></i></label>
+                                <input type="radio" class="form-check-input" th:field="*{gender}" value="male" > [[#{Male}]] <i class="input-helper"></i></label>
                         </div>
 					</div>
 					<div class="col-md-5 mr-auto ml-1 mt-1 mb-4" style="border: 1px solid #dfe0e1;border-radius: 7px;">
 						<div class="form-radio form-radio-flat mx-1 my-2">
                               <label class="form-check-label">
-                                <input type="radio" class="form-check-input" name="gender" id="female" value="" > [[#{Female}]] <i class="input-helper"></i></label>
+                                <input type="radio" class="form-check-input" th:field="*{gender}" value="female"> [[#{Female}]] <i class="input-helper"></i></label>
                         </div>
 					</div>
 				</div>    
                 
                   <div class="form-group d-flex justify-content-center my-2">
                   <div class="custom-control custom-checkbox">
-                       <input type="checkbox" class="custom-control-input" id="terms" name="terms"> 
-                       <label class="custom-control-label pt-1" for="terms">
+                       <input type="checkbox" class="custom-control-input" th:field="*{terms}"> 
+                       <label class="custom-control-label pt-1" for="terms1">
                        [[#{alert.ConsentTo}]] <a href="#" target="_blank" >[[#{TermsAndConditions}]]</a></label>
                     </div>
                   </div>
@@ -122,9 +123,7 @@
                 </form>
               </div>
               <script>
-              	$(document).ready(function(){
-              		console.log("ready");
-              		
+              	$(document).ready(function(){              		
               		generateDays();
               		generateYears();
               		
@@ -143,23 +142,23 @@
               		}
               	}
               	
-              	$("#name").focusout(function(e){
+              	$("[name='name']").focusout(function(e){
               		validateName(e.target);
               	});
               	
-              	$("#surname").focusout(function(e){
+              	$("[name='surname']").focusout(function(e){
               		validateSurname(e.target);
               	});
               	
-              	$("#email").focusout(function(e){
+              	$("[name='email']").focusout(function(e){
               		validateEmailOrPhone(e.target);
               	});
               	
-              	$("#password").change(function(e){
+              	$("[name='password']").change(function(e){
               		validatePassword(e.target);
               	});
               	
-              	$("#year").change(function(e){
+              	$("[name='year']").change(function(e){
               		validateBirthday(e.target);
               	});
               	
@@ -167,7 +166,7 @@
               		validateGender();
               	});
               	
-              	$("#terms").change(function(e){
+              	$("[name='terms']").change(function(e){
               		validateTerms(e.target);
               	});
               	
@@ -176,22 +175,22 @@
               	});
               	
               	function submitForm(e){
+              		console.log(validateTerms($(e.currentTarget).find("[name='terms']")));
               		if(validateFields(e)){
 	  					e.currentTarget.submit();
 	  				}else{
 	  					e.preventDefault();
 	  				}
-	  				return;
               	}
               	
               	function validateFields(e){
-              		if(validateName($(e.currentTarget).find("#name")) &&
-              				validateSurname($(e.currentTarget).find("#surname")) &&
-              				validateEmailOrPhone($(e.currentTarget).find("#email")) &&
-              				validatePassword($(e.currentTarget).find("#password")) && 
-              				validateBirthday($(e.currentTarget).find("#year")) &&
+              		if(validateName($(e.currentTarget).find("[name='name']")) &&
+              				validateSurname($(e.currentTarget).find("[name='surname']")) &&
+              				validateEmailOrPhone($(e.currentTarget).find("[name='email']")) &&
+              				validatePassword($(e.currentTarget).find("[name='password']")) && 
+              				validateBirthday($(e.currentTarget).find("[name='year']")) &&
               				validateGender() &&
-              				validateTerms($(e.currentTarget).find("#terms"))){
+              				validateTerms($(e.currentTarget).find("[name='terms']"))){
               			return true;
               		}
               		return false;
