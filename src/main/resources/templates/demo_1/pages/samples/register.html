@@ -10,7 +10,7 @@
           <div class="row w-100">
             <div class="col-lg-3 mx-auto">
               <div class="auto-form-wrapper mb-1" style="border-top-left-radius: 14.5px;border-top-right-radius: 14.5px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;">
-                <form th:action="@{/register}" th:object="${register}" method="POST">
+                <form th:action="@{/register}" th:object="${iaoAccount}" method="POST">
            		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
                 
                 <div class="row bg-outline-primary" >
@@ -18,14 +18,16 @@
 					<div class="col-md-6">
 					  <div class="form-group ml-0 mr-auto mb-2">
 	                    <div class="input-group">
-	                      <input type="text" class="form-control form-control-round bg-light" th:field="*{name}" th:placeholder="#{Name}">
+	                      <input type="text" class="form-control form-control-round bg-light" th:classappend=" ${#fields.hasErrors('name')} ? 'is-invalid' : ''" th:field="*{name}" th:placeholder="#{Name}">
+		        		  <div class='invalid-tooltip' th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
 	                    </div>
 	                  </div>
 					</div>
 					<div class="col-md-6">
 					  <div class="form-group ml-auto mr-0 mb-2">
 	                    <div class="input-group">
-	                      <input type="text" class="form-control form-control-round bg-light" th:field="*{surname}" th:placeholder="#{Surname}">
+	                      <input type="text" class="form-control form-control-round bg-light" th:classappend="${#fields.hasErrors('surname')} ? 'is-invalid' : ''" th:field="*{surname}" th:placeholder="#{Surname}">
+		        		  <div class='invalid-tooltip' th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></div>
 	                    </div>
 	                  </div>
 					</div>
@@ -34,7 +36,8 @@
                 <div class="col-md-12">
                   <div class="form-group mx-0 my-2">
                     <div class="input-group">
-                      <input type="text" class="form-control form-control-round bg-light" th:field="*{email}" th:placeholder="#{EmailOrPhoneNr}">
+                      <input type="text" class="form-control form-control-round bg-light" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''" th:field="*{email}" th:placeholder="#{Email}">
+		        	  <div class='invalid-tooltip' th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                     </div>
                   </div>
                 </div>
@@ -43,7 +46,8 @@
                 <div class="col-md-12">
                   <div class="form-group mx-0 my-2">
                     <div class="input-group">
-                      <input type="password" class="form-control form-control-round bg-light" th:field="*{password}" th:placeholder="#{NewPassword}">
+                      <input type="password" class="form-control form-control-round bg-light" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" th:field="*{password}" th:placeholder="#{NewPassword}">
+		        	  <div class='invalid-tooltip' th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
                     </div>
                   </div>
                 </div>
@@ -83,8 +87,11 @@
 						<div class="form-group m-0">
 			                <select aria-label="Year" name="birthday_year" id="year" title="Year" class="form-control form-control-lg bg-light">
 			                </select>
+   		        		    <p class="alert alert-danger" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}"></p>
 						</div>
 					</div>
+					<input type="hidden" th:field="*{birthday}" />
+					
 				</div>                
                 
                 <div class=" form-group row bg-outline-primary mb-0" >
@@ -101,6 +108,7 @@
 						<div class="form-radio form-radio-flat mx-1 my-2">
                               <label class="form-check-label">
                                 <input type="radio" class="form-check-input" th:field="*{gender}" value="female"> [[#{Female}]] <i class="input-helper"></i></label>
+                                <p class="alert alert-danger" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></p>
                         </div>
 					</div>
 				</div>    
@@ -110,6 +118,7 @@
                        <input type="checkbox" class="custom-control-input" th:field="*{terms}"> 
                        <label class="custom-control-label pt-1" for="terms1">
                        [[#{alert.ConsentTo}]] <a href="#" target="_blank" >[[#{TermsAndConditions}]]</a></label>
+                       <p class="alert alert-danger" th:if="${#fields.hasErrors('terms')}" th:errors="*{terms}"></p>
                     </div>
                   </div>
                   <div class="form-group">
@@ -122,6 +131,17 @@
                   </div>
                 </form>
               </div>
+              <script th:inline="javascript">
+				/*<![CDATA[*/ 
+	              	var alertValidName = /*[[#{alert.invalidName}]]*/'';
+	              	var alertValidSurname = /*[[#{alert.invalidSurname}]]*/'';
+	              	var alertValidEmail = /*[[#{alert.invalidEmail}]]*/'';
+	              	var alertValidGender = /*[[#{alert.selectGender}]]*/'';
+	              	var alertBirthday =/*[[#{alert.selectBirthday}]]*/'';
+	              	var alertValidPassword = /*[[#{alert.invalidPassword}]]*/'';
+	              	var alertValidPhoneNumber = /*[[#{alert.invalidPhoneNr}]]*/'';
+			   	/*]]>*/
+			  </script>
               <script>
               	$(document).ready(function(){              		
               		generateDays();
@@ -142,15 +162,15 @@
               		}
               	}
               	
-              	$("[name='name']").focusout(function(e){
+              	$("[name='name']").change(function(e){
               		validateName(e.target);
               	});
               	
-              	$("[name='surname']").focusout(function(e){
+              	$("[name='surname']").change(function(e){
               		validateSurname(e.target);
               	});
               	
-              	$("[name='email']").focusout(function(e){
+              	$("[name='email']").change(function(e){
               		validateEmailOrPhone(e.target);
               	});
               	
@@ -158,7 +178,7 @@
               		validatePassword(e.target);
               	});
               	
-              	$("[name='year']").change(function(e){
+              	$("#year").change(function(e){
               		validateBirthday(e.target);
               	});
               	
@@ -171,16 +191,45 @@
               	});
               	
               	$("form").submit(function(event){
+              		setBirthdayToField(event);
               		submitForm(event);
               	});
               	
+              	function setBirthdayToField(e){
+              		var day = $(e.currentTarget).find("#day").val();
+              		var month = $(e.currentTarget).find("#month").val();
+              		var year = $(e.currentTarget).find("#year").val();
+              		var selectedDate = new Date(year, month-1, day);
+              		console.log(day);
+              		console.log(month);
+              		console.log(year);
+              		console.log(selectedDate.getDate());
+              		
+              		$(e.currentTarget).find("[name='birthday']").val(selectedDate.getDate()+"-"+(selectedDate.getMonth()+1)+"-"+selectedDate.getFullYear());
+              	}
+              	
               	function submitForm(e){
-              		console.log(validateTerms($(e.currentTarget).find("[name='terms']")));
+              		toggleLoadButton($(e.currentTarget).find("button"));
               		if(validateFields(e)){
 	  					e.currentTarget.submit();
 	  				}else{
 	  					e.preventDefault();
+	              		toggleLoadButton($(e.currentTarget).find("button"));
 	  				}
+              	}
+              	
+              	function toggleLoadButton(elem){
+              		var iconEl$;
+
+              		if($(elem).find("i").length){ 
+              			iconEl$ = $(elem);
+              		}else{
+              			$(elem).append("<i class='fa fa-lg '> </i>");
+              			iconEl$ = $(elem);
+              		};
+
+               	    $(iconEl$).find("i").toggleClass("fa-spin fa-spinner");
+              		$(iconEl$).prop("disabled", (_, val) => !val);
               	}
               	
               	function validateFields(e){
@@ -188,7 +237,7 @@
               				validateSurname($(e.currentTarget).find("[name='surname']")) &&
               				validateEmailOrPhone($(e.currentTarget).find("[name='email']")) &&
               				validatePassword($(e.currentTarget).find("[name='password']")) && 
-              				validateBirthday($(e.currentTarget).find("[name='year']")) &&
+              				validateBirthday($(e.currentTarget).find("#year")) &&
               				validateGender() &&
               				validateTerms($(e.currentTarget).find("[name='terms']"))){
               			return true;
@@ -201,18 +250,17 @@
               			toggleValidInputFieldValidation(element);
               			return true;
               		}else{
-              		 	toggleInValidInputFieldValidation(element, "Please enter a valid name!");
+              		 	toggleInValidInputFieldValidation(element, alertValidName);
               		 	return false;
               		}	
               	}
               	
               	function validateSurname(element){
-              		console.log(element);
               		if(validText($(element).val()) && $(element).val().length > 3){
               			toggleValidInputFieldValidation(element);
               			return true;
               		}else{
-              		 	toggleInValidInputFieldValidation(element, "Please enter a valid surname!");   
+              		 	toggleInValidInputFieldValidation(element, alertValidSurname);   
               		 	return false;
               		}	
               	}
@@ -222,7 +270,7 @@
               			toggleValidInputFieldValidation(element);
               			return true;
               		}else{
-            			toggleInValidInputFieldValidation(element, "Please enter a valid email of phone number!");
+            			toggleInValidInputFieldValidation(element, alertValidEmail);
             			return false;
               		}
               	}
@@ -232,18 +280,18 @@
               			toggleValidInputFieldValidation(element);
               			return true;
               		}else{
-            			toggleInValidInputFieldValidation(element, "Password should contain minimum 8 characters, at least one letter and one number!");
+            			toggleInValidInputFieldValidation(element, alertValidPassword);
             			return false;
               		}
               	}
               	
               	function validateBirthday(element){
-              		var birthdayDate = parseBirthday(parseInt($("#day").val()), parseInt($("#month").val()), parseInt($("#year").val())); 
+              		var birthdayDate = parseBirthday(parseInt($("#day").val()), parseInt($("#month").val()), parseInt($("#year").val()));
               		if(validBirthday(birthdayDate)){
               			toggleValidInputFieldValidation(element);
               			return true;
               		}else{
-            			toggleInValidInputFieldValidation(element, "You should be older then 13 years old to register!");
+            			toggleInValidInputFieldValidation(element, alertValidBirthday);
             			return false;
               		}
               	}
@@ -255,7 +303,7 @@
               			toggleValidInputFieldValidation(element);
               			return true;
               		}else{
-            			toggleInValidInputFieldValidation(element, "Please select your gender!");	
+            			toggleInValidInputFieldValidation(element, alertValidGender);	
             			return false;
               		}
               	}

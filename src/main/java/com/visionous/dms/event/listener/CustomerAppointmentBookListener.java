@@ -4,8 +4,8 @@
 package com.visionous.dms.event.listener;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -23,9 +23,6 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.event.OnCustomerAppointmentBookEvent;
-import com.visionous.dms.pojo.GlobalSettings;
-import com.visionous.dms.pojo.Role;
-import com.visionous.dms.service.RoleService;
 
 /**
  * @author delimeta
@@ -35,7 +32,6 @@ import com.visionous.dms.service.RoleService;
 public class CustomerAppointmentBookListener implements ApplicationListener<OnCustomerAppointmentBookEvent>{
 	 	private SpringTemplateEngine thymeleafTemplateEngine;
 	    private JavaMailSender mailSender;
-	    private RoleService roleService; 
 	    private MessageSource messages;
 	    
 		/**
@@ -44,12 +40,10 @@ public class CustomerAppointmentBookListener implements ApplicationListener<OnCu
 		 */
 		@Autowired
 		public CustomerAppointmentBookListener(JavaMailSender mailSender, 
-				SpringTemplateEngine thymeleafTemplateEngine, RoleService roleService,
-				MessageSource messages) {
+				SpringTemplateEngine thymeleafTemplateEngine, MessageSource messages) {
 			
 			this.mailSender = mailSender;
 			this.thymeleafTemplateEngine = thymeleafTemplateEngine;
-			this.roleService = roleService;
 			this.messages = messages;
 		}
 		
@@ -67,7 +61,7 @@ public class CustomerAppointmentBookListener implements ApplicationListener<OnCu
 		 * @param event
 		 */
 		private void confirmRegistration(OnCustomerAppointmentBookEvent event) {
-			Context thymeleafContext = new Context();
+			Context thymeleafContext = new Context(new Locale("en", "US"));
 			Map<String, Object> vars = new HashMap<>();
 			String emailTemplatePath = "demo_1/partials/emails/appointmentVerification.html";
 	    	String dentalAppointment = messages.getMessage("DentalAppointment", null, LocaleContextHolder.getLocale());

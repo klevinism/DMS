@@ -36,18 +36,13 @@ import com.visionous.dms.service.SubscriptionHistoryService;
 @Configuration
 @EnableWebMvc
 public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
-	private GlobalSettingsService globalSettingService;
-	private SubscriptionHistoryService subscriptionHistoryService;
 	private SubscriptionInterceptor subscriptionInterceptor;
 	
 	/**
 	 * 
 	 */
 	@Autowired
-	public DmsMvcConfigurationAdapter(GlobalSettingsService globalSettingService, SubscriptionHistoryService subscriptionHistoryService,
-			SubscriptionInterceptor subscriptionInterceptor) {
-		this.globalSettingService = globalSettingService;
-		this.subscriptionHistoryService = subscriptionHistoryService;
+	public DmsMvcConfigurationAdapter(SubscriptionInterceptor subscriptionInterceptor) {
 		this.subscriptionInterceptor = subscriptionInterceptor;
 	}
 

@@ -5,9 +5,12 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.model.SignUpModelController;
@@ -42,10 +45,21 @@ public class SignUpModelViewController {
 	 * @return
 	 */
 	@PostMapping("")
-	public String register(@Valid IaoAccount user, Model model) {
+	public String createAccount(@Valid @ModelAttribute("iaoAccount") IaoAccount iaoAccount, BindingResult bindingResult, Model model, @RequestParam(required = false) String action) {
 		
-		System.out.println(user);
+		signUpModel.init()
+			.addControllerParam("viewType", Actions.VIEW.getValue())
+			.addControllerParam("action", action)
+			.setViewModel(model)
+			.addModelAttributes(iaoAccount)
+			.addBindingResult(bindingResult)
+			.run(); // GetValuesForView
+			
 		
+		if(signUpModel.hasResultBindingError()) {
+			signUpModel.getBindingResult().getAllErrors().forEach(x -> System.out.println(x.toString()));
+			return "demo_1/pages/samples/register";
+		}
 		return "demo_1/pages/samples/register";
 	}
 }

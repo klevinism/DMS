@@ -67,9 +67,10 @@ public class Account implements Serializable{
 	
 	private String gender;
 	
+	@Nullable
 	private String email;
 	
-	@NotNull(message = "{alert.fieldEmpty}")
+	@Nullable
 	private Long phone;
     
     private String username;
