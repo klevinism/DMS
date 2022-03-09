@@ -334,6 +334,15 @@ public class GreetingModelViewController {
 		return "demo_1/pages/icons/font-awesome";
 	}
 	
+	/**
+	 * @return
+	 */
+	@GetMapping("/email-template")
+	public String emailTemplate() {
+		
+		return "demo_1/partials/emails/template.html";
+	}
+	
 	
 	@GetMapping("/error")
 	public String handleError(HttpServletRequest request) {
