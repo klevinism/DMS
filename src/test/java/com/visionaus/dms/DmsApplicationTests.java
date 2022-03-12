@@ -22,7 +22,7 @@ class DmsApplicationTests {
 	@Test
 	public void givenPhoneNumber_whenValid_thenOK() throws NumberParseException {
 		PhoneNumberUtil phoneUtils = PhoneNumberUtil.getInstance();
-	    PhoneNumber phone = phoneUtils.parse("696433538", 
+	    PhoneNumber phone = phoneUtils.parse("+355696433538", 
 	      CountryCodeSource.UNSPECIFIED.name());
 
 	    System.out.println(phoneUtils.isValidNumber(phone));
