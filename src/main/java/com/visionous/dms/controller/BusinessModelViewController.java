@@ -33,11 +33,31 @@ public class BusinessModelViewController {
 			return "redirect:/login";
 		}
 		
-		if(AccountUtil.currentLoggedInUser().getCurrentBusiness() != null) {
-			return "redirect:/home";
+		
+		if(AccountUtil.currentLoggedInUser() != null) {
+			if(AccountUtil.currentLoggedInUser().getCurrentBusiness() != null) {
+				return "redirect:/home";
+			}else {
+				return "redirect:/business/create";
+			}
 		}else{
 			return "demo_1/pages/business";
 		}
+	}
+	
+	@GetMapping("/create")
+	public String createBusiness(Model model) {
+		
+		businessModelController.init()
+			.addControllerParam("viewType", Actions.VIEW.getValue())
+			.setViewModel(model)
+			.run(); // GetValuesForView
+
+		if(businessModelController.hasResultBindingError()) {
+			return "redirect:/login";
+		}
+		
+		return "demo_1/pages/create_business";
 	}
 	
 	@GetMapping("/{practice}")
@@ -54,4 +74,6 @@ public class BusinessModelViewController {
 		
 		return "redirect:/business";
 	}
+	
+
 }
