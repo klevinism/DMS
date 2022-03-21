@@ -39,7 +39,9 @@ jobs:
           cd /var/www/dms 
           mvn clean package 
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          PREV_APP=find . -type f -name "dcms*" 
           mv ${GITHUB_REF#refs/heads/}/target/dcms-$VERSION.war /var/www/dmsAlphaTestCI/
           echo DCMSVERSION=${VERSION} > config/env
+          echo PREV_APP
           sudo systemctl stop AlphaTestDms.service
           sudo systemctl start AlphaTestDms.service
