@@ -12,20 +12,25 @@
 		<span class="mdi mdi-menu"></span>
   	</button>
     <ul class="navbar-nav">
-      <li class="nav-item font-weight-semibold d-none d-lg-block">[[#{Help}]] : +355 0696433538</li>
+      <li class="nav-item font-weight-semibold d-none d-lg-block"></li>
       <li class="nav-item dropdown language-dropdown" id="LanguageDropdown">
         <a class="nav-link dropdown-toggle px-2 d-flex align-items-center" href="#" data-toggle="dropdown" aria-expanded="false">
           <div class="d-inline-flex mr-0 mr-md-3"  >
             <div class="flag-icon-holder">
               <i class="flag-icon flag-icon-us"></i>
             </div>
-          </div>English
+          </div>[[#{EnglishLangName}]]
         </a>
         <div class="dropdown-menu dropdown-menu-left navbar-dropdown py-2" aria-labelledby="LanguageDropdown" id="languageItems">
           <a class="dropdown-item" href="?lang=al_SQ">
             <div class="flag-icon-holder">
               <i class="flag-icon flag-icon-al"></i>
-            </div>Albania
+            </div>[[#{AlbanianLangName}]]
+          </a>
+          <a class="dropdown-item" href="?lang=it_IT">
+            <div class="flag-icon-holder">
+              <i class="flag-icon flag-icon-it"></i>
+            </div>[[#{ItalianLangName}]]
           </a>
         </div>
       </li>
@@ -45,9 +50,15 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="notificationDropdown">
           <a class="dropdown-item py-3 border-bottom">
-            <p class="mb-0 font-weight-medium float-left">You have no upcoming visits today! </p>
+            <p class="mb-0 font-weight-medium float-left">[[#{alert.noUpcomingAppointments}]]!</p>
           </a>
         </div>
+      </li>
+      
+      <li class="nav-item ">
+       <a class="nav-link count-indicator" target="_blank" href="https://o2dent.atlassian.net/servicedesk/customer/portal/1/group/-1">
+         <i class="mdi mdi-help-circle-outline"></i>
+       </a>
       </li>
       <!-- <li class="nav-item dropdown">
         <a class="nav-link count-indicator" id="messageDropdown" href="#" data-toggle="dropdown">
@@ -121,6 +132,7 @@
 	/*<![CDATA[*/
 		var alName=/*[[#{AlbanianLangName}]]*/'';
   		var enName=/*[[#{EnglishLangName}]]*/'';
+  		var itName=/*[[#{ItalianLangName}]]*/'';
     /*]]>*/
   </script>
   <script>
@@ -129,13 +141,28 @@
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
 
-  var alUrl="?lang=al_SQ";
-  var enUrl="?lang=en_US";
-  var alFlag="al";
-  var enFlag="us";
+  var engLanguageLocalization = {
+		  name: enName,
+		  localization_code: "en_US",
+		  flag_tag: "us"
+  }
+  var alLanguageLocalization = {
+		  name: alName,
+		  localization_code: "al_SQ",
+		  flag_tag: "al"
+  }
+  var itLanguageLocalization = {
+		  name: itName,
+		  localization_code: "it_IT",
+		  flag_tag: "it"
+  }
+  
+  var languageLocalizationArray = [engLanguageLocalization, alLanguageLocalization, itLanguageLocalization];
   
   var chosenLangName = "[[${locale}]]";
-  var chosenFlag;
+  var chosenLanguage;
+  
+  var langHtml = "";
   
   var nxtUrl = "";
   var nxtName = "";
@@ -145,38 +172,44 @@
 	  if(urlParams.has('lang') || chosenLangName != ''){
 			var paramLang = urlParams.get("lang");
 			
-			if(paramLang == "al_SQ" || chosenLangName == 'al_SQ'){
-				chosenLangName=alName;
-				chosenFlag=alFlag;
-				nxtUrl=enUrl;
-				nxtName=enName;
-				nxtFlag=enFlag;
-			}else{
-				chosenLangName=enName;
-				chosenFlag=enFlag;
-				nxtUrl=alUrl;
-				nxtName=alName;
-				nxtFlag=alFlag;
+			languageLocalizationArray.forEach(function(language, i){
+				console.log(language.localization_code + " <<< localization_code");
+				console.log(paramLang+ " paramLang");
+				console.log(language.localization_code == paramLang);
+				
+				if(language.localization_code == paramLang || language.localization_code == chosenLangName){
+					chosenLanguage=language;
+					languageLocalizationArray.splice(i, 1);
+					languageLocalizationArray.unshift(language);
+				}
+			});
+			
+			console.log(languageLocalizationArray);
+			
+			langHtml =  $('<a class="nav-link dropdown-toggle px-2 d-flex align-items-center" href="#" data-toggle="dropdown" aria-expanded="false">'+
+			  '<div class="d-inline-flex mr-0 mr-md-3" id="LanguageDropdown" >'+
+			    '<div class="flag-icon-holder">'+
+			      '<i class="flag-icon flag-icon-'+languageLocalizationArray[0].flag_tag+'"></i>'+
+			    '</div>'+
+			  '</div>'+languageLocalizationArray[0].name+
+			  '</a>');
+			
+			var dropdownHtml = $('<div class="dropdown-menu dropdown-menu-left navbar-dropdown py-2" aria-labelledby="LanguageDropdown" id="languageItems"></div>');
+			
+			for(var i = 1; i < languageLocalizationArray.length; i++){
+				var languageAnchorElem = '<a class="dropdown-item" href="?lang='+languageLocalizationArray[i].localization_code+'">'+
+			    '<div class="flag-icon-holder">'+
+			      '<i class="flag-icon flag-icon-'+languageLocalizationArray[i].flag_tag+'"></i>'+
+			    '</div>'+languageLocalizationArray[i].name+
+			   '</a>';
+			   
+			   $(dropdownHtml).html($(dropdownHtml).html()+languageAnchorElem);
+			   
 			}
-	  
-		  var langHTML = '<a class="nav-link dropdown-toggle px-2 d-flex align-items-center" href="#" data-toggle="dropdown" aria-expanded="false">'+
-		  '<div class="d-inline-flex mr-0 mr-md-3" id="LanguageDropdown" >'+
-		    '<div class="flag-icon-holder">'+
-		      '<i class="flag-icon flag-icon-'+chosenFlag+'"></i>'+
-		    '</div>'+
-		  '</div>'+chosenLangName+
-		  '</a>'+
-		  '<div class="dropdown-menu dropdown-menu-left navbar-dropdown py-2" aria-labelledby="LanguageDropdown" id="languageItems">'+
-		   '<a class="dropdown-item" href="'+nxtUrl+'">'+
-		    '<div class="flag-icon-holder">'+
-		      '<i class="flag-icon flag-icon-'+nxtFlag+'"></i>'+
-		    '</div>'+nxtName+
-		   '</a>'+
-		  '</div>';
-	
-	
-		  $("#LanguageDropdown").html(langHTML);
-		  
+			
+			$("#LanguageDropdown").html("");
+			$("#LanguageDropdown").append(langHtml);
+			$("#LanguageDropdown").append(dropdownHtml);
 	  }
   });
   
