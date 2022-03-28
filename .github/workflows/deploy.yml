@@ -39,7 +39,7 @@ jobs:
           cd /var/www/dms
           mvn clean package 
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo DCMSVERSION=${VERSION} > /etc/environment
+          echo DCMSVERSION=${VERSION} >> /etc/environment
           
           mv target/dcms-$VERSION.war /var/www/dmsAlphaTestCI/
           rm -r /var/www/dms/*
