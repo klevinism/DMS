@@ -36,9 +36,10 @@ jobs:
         PORT: ${{ secrets.PORT }}
         PASSWORD: ${{ secrets.VMIPASSWORD }}
         script: | 
+          cd /var/www/dms
           mvn clean package 
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          mv /var/www/dms/target/dcms-$VERSION.war /var/www/dmsAlphaTestCI/
+          mv target/dcms-$VERSION.war /var/www/dmsAlphaTestCI/
           rm -r /var/www/dms/*
           sudo systemctl stop AlphaTestDms.service
           sudo systemctl start AlphaTestDms.service
