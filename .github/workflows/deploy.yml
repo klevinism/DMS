@@ -37,7 +37,7 @@ jobs:
         PASSWORD: ${{ secrets.VMIPASSWORD }}
         script: | 
           GITHUB_DESTINATION='/var/www/dms'
-          FINAL_DESTINATION='/var/www/dmsAlphaTestCI'
+          FINAL_DESTINATION='/var/www/dmsAlphaTest'
           ENVIRONMENT_DESTINATION='/etc/environment'
           
           cd $GITHUB_DESTINATION
@@ -54,5 +54,5 @@ jobs:
           mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
           rm -r $GITHUB_DESTINATION/*
 
-          sudo systemctl stop AlphaTestDms.service
-          sudo systemctl start AlphaTestDms.service
+          sudo systemctl stop DcmsAlphaTest.service
+          sudo systemctl start DcmsAlphaTest.service
