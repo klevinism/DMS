@@ -5,9 +5,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+     tags: '**'
+#   pull_request:
+#     branches: [ master ]
 
 jobs:
   build:
@@ -35,11 +35,24 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         PORT: ${{ secrets.PORT }}
         PASSWORD: ${{ secrets.VMIPASSWORD }}
-        script: |
-          cd /var/www/dms 
-          mvn clean package 
+        script: | 
+          GITHUB_DESTINATION='/var/www/dms'
+          FINAL_DESTINATION='/var/www/dmsAlphaTest'
+          ENVIRONMENT_DESTINATION='/etc/environment'
+          
+          cd $GITHUB_DESTINATION
+          
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          mv ${GITHUB_REF#refs/heads/}/target/dcms-$VERSION.war /var/www/dmsAlphaTestCI/
-          echo DCMSVERSION=${VERSION} > config/env
-          sudo systemctl stop AlphaTestDms.service
-          sudo systemctl start AlphaTestDms.service
+          echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
+          echo DCMSVERSION=${VERSION} >> $ENVIRONMENT_DESTINATION
+          PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
+          
+          rm -r $PREV_DCMS_APP_NAME
+          
+          mvn clean package 
+          
+          mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
+          rm -r $GITHUB_DESTINATION/*
+
+          sudo systemctl stop DcmsAlphaTest.service
+          sudo systemctl start DcmsAlphaTest.service
