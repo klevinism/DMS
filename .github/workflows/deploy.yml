@@ -43,8 +43,8 @@ jobs:
           cd $GITHUB_DESTINATION
           
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo "$(sed '2d' ENVIRONMENT_DESTINATION)" > ENVIRONMENT_DESTINATION
-          echo DCMSVERSION=${VERSION} >> ENVIRONMENT_DESTINATION
+          echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
+          echo DCMSVERSION=${VERSION} >> $ENVIRONMENT_DESTINATION
           PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
           
           rm -r $PREV_DCMS_APP_NAME
