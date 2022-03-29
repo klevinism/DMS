@@ -36,12 +36,22 @@ jobs:
         PORT: ${{ secrets.PORT }}
         PASSWORD: ${{ secrets.VMIPASSWORD }}
         script: | 
-          cd /var/www/dms
-          mvn clean package 
+          GITHUB_DESTINATION='/var/www/dms'
+          FINAL_DESTINATION='/var/www/dmsAlphaTestCI'
+          
+          cd $GITHUB_DESTINATION
+          
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
           echo DCMSVERSION=${VERSION} >> /etc/environment
+          PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
           
-          mv target/dcms-$VERSION.war /var/www/dmsAlphaTestCI/
-          rm -r /var/www/dms/*
+          mvn clean package 
+          
+          mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
+          rm -r $GITHUB_DESTINATION/*
+          
+          echo $PREV_DCMS_APP_NAME
+          rm -r $PREV_DCMS_APP_NAME
+
           sudo systemctl stop AlphaTestDms.service
           sudo systemctl start AlphaTestDms.service
