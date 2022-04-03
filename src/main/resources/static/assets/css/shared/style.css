@@ -10750,6 +10750,11 @@ ul {
           border-left: none;
           border-color: #cfd5db;
           color: #b6b6b6; }
+        .auth.theme-one .auto-form-wrapper .form-group .input-group .input-group-prepend .input-group-text {
+          border-radius: 6px 0 0 6px;
+          border-right: none;
+          border-color: #cfd5db;
+          color: #b6b6b6; }
     .auth.theme-one .auto-form-wrapper .form-group .submit-btn {
       font-family: "roboto", sans-serif;
       font-size: 13px;
