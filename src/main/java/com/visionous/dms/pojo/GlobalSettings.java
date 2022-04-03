@@ -73,6 +73,7 @@ public class GlobalSettings implements Serializable{
 	@Column(name = "business_id", updatable = false, insertable = false)
 	private Long businessId;
 	
+	@JsonIgnore
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH )
 	@JoinColumn(name = "business_id")
 	private Business business;

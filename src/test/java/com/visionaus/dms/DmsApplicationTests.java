@@ -1,13 +1,21 @@
 package com.visionaus.dms;
 
+import java.util.Objects;
+import java.util.regex.Pattern;
+
+import javax.validation.ConstraintValidatorContext;
+
+import org.assertj.core.api.AssertJProxySetup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.Assert;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber.CountryCodeSource;
+import com.visionous.dms.configuration.validators.UrlValidator;
 import com.visionous.dms.repository.AccountRepository;
 
 class DmsApplicationTests {
@@ -29,6 +37,16 @@ class DmsApplicationTests {
 	    System.out.println(phoneUtils.isValidNumberForRegion(phone, "IN"));
 	    System.out.println(phoneUtils.isValidNumberForRegion(phone, "US"));
 	    System.out.println(phoneUtils.isValidNumber(phoneUtils.getExampleNumber("IN")));
+//	    
+//        Pattern txt_pattern = Pattern.compile("^[a-zA-Z0-9]+$");
+//        String txt = "expressionexpression";
+//        
+//        if(Objects.nonNull(txt) && txt_pattern.matcher(txt).find()) {
+//        	Assert.isTrue(true);
+//        }else {
+//        	Assert.isTrue(false);
+//        }
+//	    
 	}
 
 }

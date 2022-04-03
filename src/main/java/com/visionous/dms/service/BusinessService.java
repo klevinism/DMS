@@ -1,5 +1,7 @@
 package com.visionous.dms.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +17,24 @@ public class BusinessService implements IBusinessService{
 		this.businessRepository = businessRepository;
 	}
 
-	public Business update(Business loggedInBusiness) {
-		return this.businessRepository.saveAndFlush(loggedInBusiness);
+	@Override
+	public Business update(Business business) {
+		return this.businessRepository.saveAndFlush(business);
+	}
+
+	@Override
+	public Business create(Business business) {
+		return this.businessRepository.saveAndFlush(business);
 	}
 	
+	@Override
+	public Business disable(Business business) {
+		business.setEnabled(false);
+		return this.businessRepository.saveAndFlush(business);
+	}
+	
+	@Override
+	public Optional<Business> findById(Long businessId) {
+		return this.businessRepository.findById(businessId);
+	}
 }

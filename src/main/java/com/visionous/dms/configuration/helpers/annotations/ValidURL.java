@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.visionous.dms.configuration.helpers.annotations;
 
 import java.lang.annotation.Documented;
@@ -12,18 +9,14 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import com.visionous.dms.configuration.validators.EmailValidator;
+import com.visionous.dms.configuration.validators.UrlValidator;
 
-/**
- * @author delimeta
- *
- */
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.ANNOTATION_TYPE}) 
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = EmailValidator.class)
+@Constraint(validatedBy = UrlValidator.class)
 @Documented
-public @interface ValidEmail {   
-    String message() default "javax.validation.constraints.Email.message";
+public @interface ValidURL {   
+    String message() default "{javax.validation.constraints.URL.message}";
     Class<?>[] groups() default {}; 
     Class<? extends Payload>[] payload() default {};
 }
