@@ -9,28 +9,35 @@
         <div class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
           <div class="row w-100">
             <div class="col-lg-4 mx-auto">
-              
               <div class="auto-form-wrapper mb-2">
-              	<div class="row">
-              	<h2 class="text-center ">Some quick example text</h2>
-              	<p class="muted text-center mb-4">Some quick example text</p>
-              	</div>
+                  <div class="row">
+                    <div class="col-12">
+                      <h2>Create bussiness</h2>
+                      <p class="muted mb-4">Please input the subdomain you would like to use:</p>
+                    </div>
+                  </div>
                   <div class="row" >
-						<div class="col-12 card " style="width: 18rem;" >
-						  <img class="card-img-top" >
-						  <div class="card-body">
-						    <h5 class="card-title">Some quick example text</h5>
-						    <p class="card-text">Some quick example text.</p>
-						    <a type="button" class="btn-lg btn-primary mb-2 ">Enter</a>
-						  </div>
-						</div>
-						
-						
+                    <div class="col-12">
+                      <form action="/first-bussiness-name" method="post" class="mb-3">     
+                        <div class="input-group mb-3">
+                          <input 
+                            type="text" 
+                            class="form-control" 
+                            pattern="[a-z]{1,15}"
+                            title="Bussines name should only contain lowercase letters. e.g. google"  
+                            placeholder="Bussines name" required>
+                          <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">.o2dent.com</span>
+                          </div>
+                          <div class="invalid-feedback">Example invalid feedback text</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mb-2 mx-auto">Enter</a>
+                      </form>
+                    </div>
+                  </div>
+                  <div th:replace="demo_1/partials/_compact_footer :: footer">
                   </div>
               </div>
-              
-            <div th:replace="demo_1/partials/_compact_footer :: footer">
-			</div>
             </div>
           </div>
         </div>
