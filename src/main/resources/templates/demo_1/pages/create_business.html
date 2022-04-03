@@ -9,30 +9,63 @@
         <div class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
           <div class="row w-100">
             <div class="col-lg-4 mx-auto">
-              <div class="auto-form-wrapper mb-2">
-                  <div class="row">
-                    <div class="col-12">
-                      <h2>Create bussiness</h2>
-                      <p class="muted mb-4">Please input the subdomain you would like to use:</p>
+              <div class="mb-2">
+                  <div class="template-wrapper" 
+                    style="
+                      background-color: #fff; 
+                      margin-bottom: 10px; 
+                      border-top-left-radius: 14.5px;
+                      border-top-right-radius: 14.5px;
+                      padding: 25px;">
+                    <div class="row">
+                      <div class="col-12">
+                        <h2>Create bussiness</h2>
+                        <p class="muted mb-4">Please input your bussiness information:</p>
+                      </div>
                     </div>
-                  </div>
-                  <div class="row" >
-                    <div class="col-12">
-                      <form action="/first-bussiness-name" method="post" class="mb-3">     
-                        <div class="input-group mb-3">
-                          <input 
-                            type="text" 
-                            class="form-control" 
-                            pattern="[a-z]{1,15}"
-                            title="Bussines name should only contain lowercase letters. e.g. google"  
-                            placeholder="Bussines name" required>
-                          <div class="input-group-append">
-                            <span class="input-group-text" id="basic-addon2">.o2dent.com</span>
+                    <div class="row" >
+                      <div class="col-12">
+                        <form action="/first-bussiness-name" method="post" class="mb-3"> 
+                          <div class="form-group mb-3">
+                            <label for="bussinesName">Bussines name *</label>
+                            <input 
+                              type="text" 
+                              name="bussinesName"
+                              class="form-control" 
+                              placeholder="Bussines name" required>
                           </div>
-                          <div class="invalid-feedback">Example invalid feedback text</div>
-                        </div>
-                        <button type="submit" class="btn btn-primary mb-2 mx-auto">Enter</a>
-                      </form>
+                          <div class="form-group">
+                            <label for="subdomain">Subdomain *</label>
+                            <div class="input-group mb-3">
+                              <input 
+                                type="text" 
+                                class="form-control" 
+                                name="subdomain"
+                                pattern="[a-z]{1,15}"
+                                title="Bussines name should only contain lowercase letters. e.g. google"  
+                                placeholder="Subdomain" required>
+                              <div class="input-group-append">
+                                <span class="input-group-text" id="basic-addon2">.o2dent.com</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="bussinesURL">Bussines URL</label>
+                            <input 
+                            type="text" 
+                            name="bussinesURL"
+                            pattern="[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
+                            title="Please type you bussiness url without http or https"
+                            class="form-control"
+                            placeholder="Bussines url">
+                          </div>
+                          <p style="color: red;">Fields marked with `*` are Required</p>
+                          <div style="display: flex; align-items: center;">
+                            <button type="submit" class="btn-lg btn-primary mt-3 mb-2 mx-auto">Enter</a>
+                          </div>
+                          
+                        </form>
+                      </div>
                     </div>
                   </div>
                   <div th:replace="demo_1/partials/_compact_footer :: footer">
