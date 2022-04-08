@@ -10710,7 +10710,7 @@ ul {
 .auth {
   min-height: 100vh; }
   .auth.auth-bg-1 {
-    background: url("../../images/auth/backgroundDental.jpg");
+    background: url("../../images/bg_oxydent_light.jpg");
     background-size: cover; }
   .auth.register-bg-1 {
     background: url("../../images/auth/register.jpg") center center no-repeat;
