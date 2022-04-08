@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.visionous.dms.pojo.Appointment;
+import com.visionous.dms.pojo.Business;
 import com.visionous.dms.repository.AppointmentRepository;
 
 /**
@@ -172,6 +173,12 @@ public class AppointmentService implements IAppointmentService{
 			LocalDateTime localDateTime, LocalDateTime localDateTime2) {
 		return this.appointmentRepository
 				.findAllByCustomer_Account_Businesses_IdAndPersonnelIdAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(currentBusienssId, personnelId, localDateTime, localDateTime2);
+	}
+
+
+	public List<Object[]> findTopAppointmentsByMostUsedServiceTypeAndCustomerBusinessId(Long businessId) {
+		return this.appointmentRepository
+				.findTopAppointmentsByMostUsedServiceTypeAndCustomerBusinessId(businessId);
 	}
 
 }

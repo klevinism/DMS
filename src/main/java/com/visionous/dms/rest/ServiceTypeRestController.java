@@ -62,7 +62,8 @@ public class ServiceTypeRestController {
     }
 
 	@PostMapping("/api/serviceType/edit")
-    public ResponseEntity<?> editService(@RequestParam(name = "id", required = true) Long currentServiceId, @RequestParam(name = "newName", required = true) String newName,
+    public ResponseEntity<?> editService(@RequestParam(name = "id", required = true) Long currentServiceId, 
+    		@RequestParam(name = "newName", required = true) String newName,
     		@RequestParam(name = "price", required = true) int serviceTypePrice) { 
 
         String success = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
@@ -71,7 +72,7 @@ public class ServiceTypeRestController {
         
         ResponseBody<ServiceType> result = new ResponseBody<>();
         
-        Optional<ServiceType> oldService = serviceTypeService.findById(currentServiceId);
+        Optional<ServiceType> oldService = serviceTypeService.findByIdAndGlobalSettingsId(currentServiceId, AccountUtil.currentLoggedInBussines().getGlobalSettings().getId());
         
         if(oldService.isPresent()) {
         	oldService.get().setName(newName);
@@ -124,7 +125,7 @@ public class ServiceTypeRestController {
 
         ResponseBody<ServiceType> result = new ResponseBody<>();
         
-        List<ServiceType> allServices = serviceTypeService.findAll();
+        List<ServiceType> allServices = serviceTypeService.findAllByGlobalSettingsId(AccountUtil.currentLoggedInBussines().getGlobalSettings().getId());
         
         if(!allServices.isEmpty()) {
 			result.setError(success);
@@ -144,7 +145,7 @@ public class ServiceTypeRestController {
         String error = messageSource.getMessage("alert.errorGeneric", null, LocaleContextHolder.getLocale());
 
         ResponseBody<ServiceType> result = new ResponseBody<>();
-        Optional<ServiceType> selectedService = serviceTypeService.findById(selectedServiceId);
+        Optional<ServiceType> selectedService = serviceTypeService.findByIdAndGlobalSettingsId(selectedServiceId, AccountUtil.currentLoggedInBussines().getGlobalSettings().getId());
         
         if(selectedService.isPresent()) {
 			result.setError(success);

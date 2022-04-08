@@ -30,4 +30,12 @@ public interface ServiceTypeRepository extends JpaRepository<ServiceType,Long>{
 	 */
 	List<ServiceType> findAllByGlobalSettingsId(Long id);
 
+	
+	/**
+	 * @param selectedServiceId
+	 * @param globalSettingsId
+	 * @return
+	 */
+	Optional<ServiceType> findByIdAndGlobalSettingsId(Long selectedServiceId, Long globalSettingsId);
+
 }

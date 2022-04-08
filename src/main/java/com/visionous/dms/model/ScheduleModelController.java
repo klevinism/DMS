@@ -16,9 +16,7 @@ import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.ServiceType;
-import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.service.AppointmentService;
 
 /**
@@ -87,7 +85,10 @@ public class ScheduleModelController extends ModelControllerImpl{
 		}else if(viewType.equals(Actions.EDIT.getValue())) {
 			
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
-			List<Object[]> mostUsedFromServiceType = appointmentService.findTopAppointmentsByMostUsedServiceType();
+			List<Object[]> mostUsedFromServiceType = appointmentService
+					.findTopAppointmentsByMostUsedServiceTypeAndCustomerBusinessId(
+							AccountUtil.currentLoggedInBussines().getId());
+			
 			List<ServiceType> servicesMostUsed = new ArrayList<>(); 
 			servicesMostUsed.addAll(
 					mostUsedFromServiceType.stream().map(
