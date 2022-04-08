@@ -4,6 +4,7 @@
 package com.visionous.dms.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -20,4 +21,6 @@ public interface SubscriptionListRepository extends JpaRepository<Subscription, 
 	public List<Subscription> findAllByOrderByIdAsc();
 
 	public List<Subscription> findAllBySubscriptionHistory_Business_IdOrderByIdAsc(Long businessId);
+
+	public Optional<Subscription> findByName(String name);
 }

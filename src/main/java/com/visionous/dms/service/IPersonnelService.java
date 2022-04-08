@@ -99,4 +99,10 @@ public interface IPersonnelService {
 	 */
 	List<Personnel> findAllByAccount_EnabledAndAccount_Roles_NameAndAccount_Businesses_Id(boolean enabled,
 			String roleName, long businessId);
+
+	/**
+	 * @param newPersonnel
+	 * @return
+	 */
+	Personnel update(Personnel newPersonnel);
 }

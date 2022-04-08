@@ -1,22 +1,20 @@
 package com.visionous.dms.rest;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.MethodParameter;
-import org.springframework.data.mapping.PreferredConstructor.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,19 +25,42 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.visionous.dms.configuration.helpers.AccountUtil;
+import com.visionous.dms.exception.SubdomainExistsException;
+import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Business;
+import com.visionous.dms.pojo.GlobalSettings;
+import com.visionous.dms.pojo.Personnel;
+import com.visionous.dms.pojo.SubscriptionHistory;
 import com.visionous.dms.rest.response.ResponseBody;
+import com.visionous.dms.service.AccountService;
 import com.visionous.dms.service.BusinessService;
+import com.visionous.dms.service.GlobalSettingsService;
+import com.visionous.dms.service.PersonnelService;
+import com.visionous.dms.service.SubscriptionHistoryService;
+import com.visionous.dms.service.SubscriptionListService;
 
 @RestController
 @RequestMapping("/api/business")
 public class BusinessRestController {
 
 	private BusinessService businessService;
+	private SubscriptionListService subscriptionListService;
+	private SubscriptionHistoryService subscriptionHistoryService;
+	private GlobalSettingsService globalSettingsService;
+	private PersonnelService personnelService;
+	private AccountService accountService;
 	
 	@Autowired
-	public BusinessRestController(BusinessService businessService) {
+	public BusinessRestController(BusinessService businessService, SubscriptionListService subscriptionListService,
+			SubscriptionHistoryService subscriptionHistoryService, GlobalSettingsService globalSettingsService, 
+			PersonnelService personnelService, AccountService accountService) {
 		this.businessService = businessService;
+		this.subscriptionListService = subscriptionListService;
+		this.subscriptionHistoryService = subscriptionHistoryService;
+		this.globalSettingsService = globalSettingsService;
+		this.personnelService = personnelService;
+		this.accountService = accountService;
 	}
 	
 	
@@ -98,9 +119,69 @@ public class BusinessRestController {
         	result.setError("Enter a valid subdomain name:" + business.getSubdomainUri());
         }
         
+        if(Objects.isNull(business.getAccounts()) || business.getAccounts().isEmpty()) {
+        	business.setAccounts(new HashSet<Account>());
+        }
+        
+    	business.getAccounts().add(AccountUtil.currentLoggedInUser().getAccount());
+        
         if(Objects.isNull(result.getError())) {
-        	Business newBusiness = businessService.create(business);
-        	result.addResult(newBusiness);
+			try {
+			
+	        	business.setEnabled(true);
+
+		        Business newBusiness = businessService.create(business);
+
+		        Optional<Account> newAccount = accountService.findById(AccountUtil.currentLoggedInUser().getId());
+		        newAccount.ifPresent(account -> {
+			        Personnel newPersonnel = new Personnel();
+			        newPersonnel.setType("ADMIN");
+			        
+			        account.setPersonnel(newPersonnel);
+			        newPersonnel.setAccount(account);
+
+			        personnelService.update(newPersonnel);
+		        });
+				
+
+		        GlobalSettings globalSettingsDraft = new GlobalSettings();
+		        globalSettingsDraft.setAppointmentTimeSplit(30);
+		        globalSettingsDraft.setBusinessDays("1,6");
+		        globalSettingsDraft.setBusinessEmail("business@email.com");
+		        globalSettingsDraft.setBusinessName("MyDentalClinic");
+		        globalSettingsDraft.setBusinessTimes("07:00,18:00");
+		        
+		        if(Objects.isNull(globalSettingsDraft.getSubscriptions())) {
+		        	globalSettingsDraft.setSubscriptions(new HashSet<>());
+		        }
+		        
+		        globalSettingsDraft.setBusiness(business);
+	        	
+		        GlobalSettings newGlobalSettings = this.globalSettingsService.update(globalSettingsDraft);
+	        	
+		        SubscriptionHistory subscriptionHistoryDraft = new SubscriptionHistory();
+		        subscriptionHistoryDraft.setActive(true);
+		        subscriptionHistoryDraft.setAddeddate(LocalDateTime.now());
+		        subscriptionHistoryDraft.setBusiness(business);
+		        subscriptionHistoryDraft.setSubscriptionStartDate(LocalDateTime.now());
+		        subscriptionHistoryDraft.setSubscriptionEndDate(LocalDateTime.now().plusDays(31));
+		        
+		        subscriptionListService.findByName("Free").ifPresent(freeSubscription -> {
+			        subscriptionHistoryDraft.setSubscription(freeSubscription);
+		        });
+		        
+		        subscriptionHistoryDraft.setGlobalSettings(newGlobalSettings);
+		        newGlobalSettings.getSubscriptions().add(subscriptionHistoryDraft);
+		        
+		        SubscriptionHistory subscriptionHistory = this.subscriptionHistoryService.update(subscriptionHistoryDraft);
+		        
+		        result.addResult(newBusiness);
+		        
+			} catch (SubdomainExistsException e) {
+				result.setError("Subdomain exists [subdomain]:" + business.getSubdomainUri());
+				e.printStackTrace();
+			}
+			
         }
         
 		return ResponseEntity.ok(result);

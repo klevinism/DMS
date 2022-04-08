@@ -1,15 +1,23 @@
 package com.visionous.dms.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.model.BusinessModelController;
+import com.visionous.dms.pojo.Business;
+import com.visionous.dms.pojo.GlobalSettings;
 
 @Controller
 @RequestMapping("/business")
@@ -46,18 +54,37 @@ public class BusinessModelViewController {
 	}
 	
 	@GetMapping("/create")
-	public String createBusiness(Model model) {
+	public String createFormBusiness(Model model) {
 		
 		businessModelController.init()
-			.addControllerParam("viewType", Actions.VIEW.getValue())
+			.addControllerParam("viewType", Actions.CREATE.getValue())
 			.setViewModel(model)
 			.run(); // GetValuesForView
 
 		if(businessModelController.hasResultBindingError()) {
-			return "redirect:/login";
+			businessModelController.clearResultBindingErrors();
 		}
 		
 		return "demo_1/pages/create_business";
+	}
+	
+	@PostMapping("/create")
+	public String createBusiness(@Valid @ModelAttribute Business business, BindingResult errors, 
+			@RequestParam(name = "action", required = true) String action, Model model) {
+		
+		businessModelController.init()
+			.addControllerParam("viewType", Actions.VIEW.getValue())
+			.addControllerParam("action", action)
+			.addModelAttributes(business)
+			.addBindingResult(errors)
+			.setViewModel(model)
+			.run(); // GetValuesForView
+
+		if(businessModelController.hasResultBindingError()) {
+			return "demo_1/pages/create_business";
+		}
+		
+		return "redirect:/login";
 	}
 	
 	@GetMapping("/{practice}")

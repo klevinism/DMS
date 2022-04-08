@@ -51,7 +51,7 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers(LandingPages.INDEX.value(), 
 						LandingPages.DASHBOARD.value()).access("hasRole('ROLE_USER')")
 				.antMatchers(LandingPages.NEW_APPOINTMENT.value()).access("hasRole('ROLE_PERSONNEL') or hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
-				.antMatchers(LandingPages.BUSINESS.value()).authenticated()
+				.antMatchers(LandingPages.BUSINESS.value()+"/**").authenticated()
 				.antMatchers(LandingPages.HOME.value()).access("hasRole('ROLE_PERSONNEL') or hasRole('ROLE_ADMIN')")
 				.antMatchers(LandingPages.CUSTOMER.value()+ "/**").access("hasRole('ROLE_PERSONNEL') or hasRole('ROLE_ADMIN')")
 				.antMatchers(LandingPages.ACCOUNT.value()+ "/**").access("hasRole('ROLE_PERSONNEL') or hasRole('ROLE_ADMIN')")

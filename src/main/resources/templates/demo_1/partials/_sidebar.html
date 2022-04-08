@@ -12,7 +12,7 @@
         </div>
         
         <div class="text-wrapper">
-          <p class="profile-name">[[${#httpServletRequest.remoteUser}]]</p>
+          <p class="profile-name">[[${#strings.capitalize(loggedInAccount.name)}]] [[${#strings.capitalize(loggedInAccount.surname)}]]</p>
           <p class="designation"><span th:each="role: ${currentRoles}" >[[#{__${role.name}__}]]</span></p>
         </div>
       </a>

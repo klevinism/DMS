@@ -1,5 +1,6 @@
 package com.visionous.dms.model;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
@@ -28,7 +29,9 @@ import com.visionous.dms.exception.PhoneNumberExistsException;
 import com.visionous.dms.exception.UsernameExistsException;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.IaoAccount;
+import com.visionous.dms.pojo.Role;
 import com.visionous.dms.service.AccountService;
+import com.visionous.dms.service.RoleService;
 
 @Controller
 public class SignUpModelController extends ModelControllerImpl {
@@ -46,16 +49,19 @@ public class SignUpModelController extends ModelControllerImpl {
 	private ApplicationContext ctx;
 	
 	private MessageSource messageSource;
+
+	private RoleService roleService;
 	
 	/**
 	 * 
 	 */
 	@Autowired
 	public SignUpModelController( ApplicationContext ctx, AccountService accountService, 
-			MessageSource messageSource, ApplicationEventPublisher eventPublisher) {
+			MessageSource messageSource, ApplicationEventPublisher eventPublisher, RoleService roleService) {
 		this.accountService = accountService;
 		this.messageSource = messageSource;
 		this.eventPublisher = eventPublisher;
+		this.roleService = roleService;
 		this.ctx = ctx;
 	}
 	
@@ -206,6 +212,11 @@ public class SignUpModelController extends ModelControllerImpl {
 			
 			try {
 				if(!super.hasResultBindingError()) {
+					Optional<Role> roleAdmin = roleService.findByName("ADMIN");
+					roleAdmin.ifPresent(role -> {
+						newAccount.addRole(role);
+					});
+					
 					Account createdAccount = accountService.create(newAccount);
 					eventPublisher.publishEvent(
 			        		new OnRegistrationCompleteEvent(createdAccount, LocaleContextHolder.getLocale(), DmsCore.appMainPath())

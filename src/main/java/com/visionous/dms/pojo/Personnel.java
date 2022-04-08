@@ -36,7 +36,7 @@ public class Personnel implements Serializable{
 	
 	@Valid
 	@MapsId
-	@OneToOne(mappedBy = "personnel", optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(mappedBy = "personnel", optional = true, fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
     @JoinColumn(name="id")
 	private Account account;
 	

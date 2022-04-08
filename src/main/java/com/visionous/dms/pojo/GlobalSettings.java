@@ -63,7 +63,6 @@ public class GlobalSettings implements Serializable{
 	@Column(name = "business_email")
 	private String businessEmail;
 	
-	@NotEmpty(message = "Enter a password")
 	@Column(name = "business_password")
 	private String businessPassword;
 

@@ -3,6 +3,8 @@
  */
 package com.visionous.dms.configuration;
 
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -50,9 +52,13 @@ public class ResponseAdvice implements ResponseBodyAdvice {
 		String subscriptionExpiredAdmin = messageSource.getMessage("SubscriptionExpiredAdmin", null, LocaleContextHolder.getLocale());
 		
 		ResponseBody<String> bodyReplacing = new ResponseBody<>();
-		if(AccountUtil.currentLoggedInUser() != null && request.getMethodValue().equals("POST") && !subscriptionHistoryService
-				.findActiveSubscriptionByBusinessId(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId())
-				.isPresent()) {
+		if(AccountUtil.currentLoggedInUser() != null 
+				&& Objects.nonNull(AccountUtil.currentLoggedInUser().getCurrentBusiness())
+				&& request.getMethodValue().equals("POST") 
+				&& !subscriptionHistoryService.findActiveSubscriptionByBusinessId(
+						AccountUtil.currentLoggedInUser()
+						.getCurrentBusiness()
+						.getId()).isPresent()) {
 			
 			bodyReplacing.setError("error");
 			

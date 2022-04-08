@@ -71,9 +71,6 @@ public class AccountService implements IAccountService{
 	
 	@Override
 	public Account createPlain(Account account) {
-		account.setAge(
-				AccountUtil.calculateAgeFromBirthday(account.getBirthday())
-			);
 		
 		return accountRepository.saveAndFlush(account);
 	}

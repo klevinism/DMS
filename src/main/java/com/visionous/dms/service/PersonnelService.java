@@ -46,6 +46,11 @@ public class PersonnelService implements IPersonnelService{
 		
 		return personnelRepository.saveAndFlush(newPersonnel);
 	}
+	
+	@Override
+	public Personnel update(Personnel newPersonnel) {
+		return personnelRepository.saveAndFlush(newPersonnel);
+	}
 
 	@Override
 	public Optional<Personnel> findById(Long id) {

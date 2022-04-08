@@ -54,5 +54,4 @@ public class GlobalSettingsService implements IGlobalSettingsService{
 		return this.globalSettingsRepository.findByBusinessId(id);
 	}
 	
-	
 }
