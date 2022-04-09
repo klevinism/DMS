@@ -29,7 +29,11 @@
 	                      type="text"
 	                      th:field="*{name}"
 	                      class="form-control form-control-round bg-light" 
+	                      th:classappend=" ${#fields.hasErrors('name')} ? 'is-invalid' : ''"
 	                      placeholder="Bussines name" required>
+	                      
+	                    <div class='invalid-tooltip' th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+	                    
 	                  </div>
 	                </div>
 	                <div class="form-group">
@@ -41,11 +45,14 @@
 	                    <input 
 	                      type="text" 
 	                      class="form-control form-control-round bg-light" 
+	                      th:classappend=" ${#fields.hasErrors('subdomainUri')} ? 'is-invalid' : ''"
 	                      th:field="*{subdomainUri}"
-	                      pattern="[a-z]{1,15}"
-	                      style="border-top-right-radius: 0; border-bottom-right-radius: 0;border-top-left-radius: 0; border-bottom-left-radius: 0;"
+	                      style="border-top-right-radius: 0;border-bottom-right-radius: 0; border-top-left-radius: 0;border-bottom-left-radius: 0;"
 	                      title="Bussines name should only contain lowercase letters. e.g. google"  
 	                      placeholder="Subdomain" required>
+	                      
+  	                    <div class='invalid-tooltip' th:if="${#fields.hasErrors('subdomainUri')}" th:errors="*{subdomainUri}"></div>
+	                      
 	                    <div class="input-group-append">
 	                      <span class="input-group-text text-primary h6" id="basic-addon2">.o2dent.com</span>
 	                    </div>
@@ -57,15 +64,18 @@
 	                    <input 
 	                    type="text"
 	                    th:field="*{businessUrl}"
-	                    pattern="[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
 	                    title="Please type you bussiness url without http or https"
 	                    class="form-control form-control-round bg-light"
+                    	th:classappend=" ${#fields.hasErrors('businessUrl')} ? 'is-invalid' : ''"
 	                    placeholder="Bussines url">
+	                    
+  	                    <div class='invalid-tooltip' th:if="${#fields.hasErrors('businessUrl')}" th:errors="*{businessUrl}"></div>
+  	                    
 	                  </div>
 	                </div>
 	                <p style="color: red;">Fields marked with `*` are Required</p>
 	                <div style="display: flex; align-items: center;">
-	                  <button type="submit" class="btn btn-primary btn-block btn-lg">Enter</a>
+	                  <button type="submit" class="btn btn-primary btn-block btn-lg" >Create</button>
 	                </div>
 	                
 	              </form>

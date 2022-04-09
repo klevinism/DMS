@@ -81,6 +81,7 @@ public class BusinessModelViewController {
 			.run(); // GetValuesForView
 
 		if(businessModelController.hasResultBindingError()) {
+			businessModelController.getBindingResult().getAllErrors().forEach(x -> System.out.println(x.toString()));
 			return "demo_1/pages/create_business";
 		}
 		

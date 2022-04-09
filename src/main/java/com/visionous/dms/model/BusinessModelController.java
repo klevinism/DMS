@@ -100,19 +100,21 @@ public class BusinessModelController extends ModelControllerImpl{
 	        if(Objects.nonNull(business.getName()) 
 	        		&& !txtAndNr_pattern.matcher(business.getName()).find()) {
 	        	super.getBindingResult().addError(
-						new FieldError("business", "business.name", business.getName(), false, null, null, "Business name not coerrect!"));
+						new FieldError("name", "name", business.getName(), false, null, null, "Business name not coerrect!"));
 								
 			    super.removeControllerParam("viewType");
 				super.addControllerParam("viewType", Actions.CREATE.getValue());
+				return ;
 	        }
 	        
 	        if(Objects.nonNull(business.getSubdomainUri()) 
 	        		&& !txt_pattern.matcher(business.getSubdomainUri()).find()) {
 	        	super.getBindingResult().addError(
-						new FieldError("business", "business.subdomainUri", business.getSubdomainUri(), false, null, null, "Business subdomainURI not coerrect!"));
+						new FieldError("subdomainUri", "subdomainUri", business.getSubdomainUri(), false, null, null, "Business subdomainURI not coerrect!"));
 								
 			    super.removeControllerParam("viewType");
 				super.addControllerParam("viewType", Actions.CREATE.getValue());
+				return ;
 	        }
 	        
 	        if(Objects.isNull(business.getAccounts()) || business.getAccounts().isEmpty()) {
@@ -185,12 +187,14 @@ public class BusinessModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("viewType", viewType);
 		
 		if(viewType.equals(Actions.CREATE.getValue())) {
-			Business newBusiness = new Business();
-			newBusiness.setAccounts(new HashSet<Account>());
-			newBusiness.getAccounts().add(AccountUtil.currentLoggedInUser().getAccount());
-			
-			super.addModelCollectionToView("business", newBusiness);
-			
+			if(!super.getAllControllerParams().containsKey("modelAttribute")) {
+	
+				Business newBusiness = new Business();
+				newBusiness.setAccounts(new HashSet<Account>());
+				newBusiness.getAccounts().add(AccountUtil.currentLoggedInUser().getAccount());
+				
+				super.addModelCollectionToView("business", newBusiness);
+			}
 		}else if(viewType.equals(Actions.DELETE.getValue())) {
 			
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
@@ -209,6 +213,12 @@ public class BusinessModelController extends ModelControllerImpl{
 						super.getBindingResult().addError(new ObjectError("practiceNotFound", null, null, "Practice not found! Redirecting.."));
 					}
 				}
+			}
+		}
+		
+		if(super.hasResultBindingError()) {
+			if(!super.getAllControllerParams().containsKey("modelAttribute")) {
+				super.clearResultBindingErrors();
 			}
 		}
 		
