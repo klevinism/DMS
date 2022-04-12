@@ -2,17 +2,50 @@
   <div class="container-fluid text-center d-flex clearfix p-0">
   <p class="text-muted text-center p-0 my-1 my-auto"><a href="http://www.o2dent.com/" class="text-muted text-center" target="_blank">Oxydent</a> © 2022 </p>
     <ul class="auth-footer ml-auto my-2" style="text-align:end;">
-	  <li class="mx-0 pl-0 " >
+	  <li class="mx-0 pl-0 my-auto border-right border-dark" >
 	    <a href="#">[[#{Help}]]</a>
 	  </li>
-	  <li class="mx-0 pl-2 pr-2">
+	  <li class="mx-0 pl-2 pr-2 my-auto border-right border-dark">
 	    <a href="#">[[#{Terms}]]</a>
 	  </li>
-	  <li class="mx-0 pl-2 pr-0">
+	  <li class="mx-0 pl-2 pr-2 my-auto border-right border-dark" >
 	    <a href="#">[[#{Conditions}]]</a>
 	  </li>
   	</ul>
    <!-- <p class="text-muted d-block text-center text-sm-center p-0 m-0">[[#{RightsReserved}]]</p>
    <p class="float-none float-sm-center d-block mt-1 mb-0 text-center">[[#{HandcraftedFooter}]] <i class="mdi mdi-heart text-danger"></i></p> -->
+	<div class="dropdown ">
+          <button type="button" class="btn btn-light btn-icons btn-rounded btn-sm icon-btn dropdown-toggle-split" id="dropdownMenuIconButton3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          	<i class="flag-icon flag-icon-us"></i>
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton3" x-placement="top-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -186px, 0px);">
+            <a class="dropdown-item" href="?lang=al_SQ" id="al_SQ">
+	            <i class="flag-icon flag-icon-al" ></i>
+	            [[#{AlbanianLangName}]]
+			</a>
+			<a class="dropdown-item" href="?lang=en_US" id="en_US">
+	            <i class="flag-icon flag-icon-us"></i>
+	            [[#{EnglishLangName}]]
+			</a>
+          </div>
+        </div>
   </div>
+  <script th:inline="javascript">
+	/*<![CDATA[*/
+		var localizationCode = /*[[${#locale}]]*/'';
+    /*]]>*/
+  </script>
+  <script>
+  $(function(){
+	  
+	  $(".dropdown .btn").html($("#"+localizationCode).find("i").clone());
+	  
+	  $(".dropdown li a").click(function(){
+	    
+	    $(".dropdown .btn").html($(this).html());
+	    $(".btn:first-child").val($(this).text());
+	  });
+
+	});
+  </script>
 </footer>
