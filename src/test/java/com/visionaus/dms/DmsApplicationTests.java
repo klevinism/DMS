@@ -7,6 +7,8 @@ import javax.validation.ConstraintValidatorContext;
 
 import org.assertj.core.api.AssertJProxySetup;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
@@ -47,6 +49,12 @@ class DmsApplicationTests {
 //        	Assert.isTrue(false);
 //        }
 //	    
+	}
+	
+	@Test
+	public void testEmailValidation() {
+		ConstraintValidatorContext cvc = Mockito.mock(ConstraintValidatorContext.class);
+		Assert.isTrue(new UrlValidator().isValid("google.com", cvc));
 	}
 
 }

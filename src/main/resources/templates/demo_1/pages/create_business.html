@@ -23,57 +23,69 @@
               		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
 
 	                <div class="form-group mb-3">
-	                  <label for="bussinesName">Bussines name*</label>
 	                  <div class="input-group">
 	                    <input 
 	                      type="text"
 	                      th:field="*{name}"
 	                      class="form-control form-control-round bg-light" 
 	                      th:classappend=" ${#fields.hasErrors('name')} ? 'is-invalid' : ''"
-	                      placeholder="Bussines name" required>
+	                      placeholder="Bussines name*" required>
 	                      
 	                    <div class='invalid-tooltip' th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
 	                    
 	                  </div>
 	                </div>
-	                <div class="form-group">
-	                  <label for="subdomain">Subdomain*</label>
-	                  <div class="input-group mb-3">
+	                <div class="form-group mb-0">
+	                  <div class="input-group">
 	                    <div class="input-group-prepend">
 	                      <span class="input-group-text text-primary h6">https://</span>
 	                    </div>
 	                    <input 
 	                      type="text" 
-	                      class="form-control form-control-round bg-light" 
+	                      class="form-control bg-light border-left-0 border-right-0"
 	                      th:classappend=" ${#fields.hasErrors('subdomainUri')} ? 'is-invalid' : ''"
 	                      th:field="*{subdomainUri}"
-	                      style="border-top-right-radius: 0;border-bottom-right-radius: 0; border-top-left-radius: 0;border-bottom-left-radius: 0;"
-	                      title="Bussines name should only contain lowercase letters. e.g. google"  
-	                      placeholder="Subdomain" required>
+	                      title="Bussines name should only contain lowercase letters. e.g. google"
+	                      style="border-radius: 0px;"
+	                      placeholder="Subdomain*" required>
 	                      
   	                    <div class='invalid-tooltip' th:if="${#fields.hasErrors('subdomainUri')}" th:errors="*{subdomainUri}"></div>
-	                      
 	                    <div class="input-group-append">
 	                      <span class="input-group-text text-primary h6" id="basic-addon2">.o2dent.com</span>
 	                    </div>
 	                  </div>
 	                </div>
+	                <div class="form-group m-0 p-0">
+                      	<p class="text-small text-muted">Business management url
+                      	<span>
+                      	<a href="#"
+                      	data-container="body" 
+                    	data-toggle="popover"
+                    	data-content="Business Url">
+	                    	<i class="fa fa-icon fa-question-circle"></i>
+	                    </a>
+                      	</span>: 
+                      	<a href="#"
+                      	data-container="body" 
+                    	data-toggle="popover"
+                    	data-content="Business Url">
+                      		<span id="fullManagementUrl">
+                      		</span>
+                      	</a>
+                      	</p>
+	                </div>
 	                <div class="form-group">
-	                  <label for="bussinesURL">Bussines URL</label>
 	                  <div class="input-group">
 	                    <input 
 	                    type="text"
 	                    th:field="*{businessUrl}"
-	                    title="Please type you bussiness url without http or https"
 	                    class="form-control form-control-round bg-light"
                     	th:classappend=" ${#fields.hasErrors('businessUrl')} ? 'is-invalid' : ''"
-	                    placeholder="Bussines url">
-	                    
+                    	placeholder="Bussines url">
   	                    <div class='invalid-tooltip' th:if="${#fields.hasErrors('businessUrl')}" th:errors="*{businessUrl}"></div>
   	                    
 	                  </div>
 	                </div>
-	                <p style="color: red;">Fields marked with `*` are Required</p>
 	                <div style="display: flex; align-items: center;">
 	                  <button type="submit" class="btn btn-primary btn-block btn-lg" >Create</button>
 	                </div>
@@ -90,6 +102,19 @@
       </div>
       <!-- page-body-wrapper ends -->
     </div>
+    <script>
+	
+    $(function () {
+   	  $('[data-toggle="popover"]').popover();
+   	});
+    
+    $(document).ready(function(){
+    	$("#subdomainUri").keyup(function(e){
+    		$("#fullManagementUrl").text("https://"+ $(this).val() + ".o2dent.com");
+    	});
+    });
+    
+    </script>
     <!-- container-scroller -->
     <!-- plugins:js -->
     <script src="../../../assets/vendors/js/vendor.bundle.base.js"></script>

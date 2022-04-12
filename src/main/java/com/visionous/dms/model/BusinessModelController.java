@@ -130,13 +130,15 @@ public class BusinessModelController extends ModelControllerImpl{
 
 		        Optional<Account> newAccount = accountService.findById(AccountUtil.currentLoggedInUser().getId());
 		        newAccount.ifPresent(account -> {
-			        Personnel newPersonnel = new Personnel();
-			        newPersonnel.setType("ADMIN");
-			        
-			        account.setPersonnel(newPersonnel);
-			        newPersonnel.setAccount(account);
+		        	if(Objects.isNull(account.getPersonnel())) {
+		        		Personnel newPersonnel = new Personnel();
+				        newPersonnel.setType("ADMIN");
+				        
+				        account.setPersonnel(newPersonnel);
+				        newPersonnel.setAccount(account);
 
-			        personnelService.update(newPersonnel);
+				        personnelService.update(newPersonnel);
+		        	}
 		        });
 				
 
