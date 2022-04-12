@@ -221,6 +221,7 @@ public class SignUpModelController extends ModelControllerImpl {
 					eventPublisher.publishEvent(
 			        		new OnRegistrationCompleteEvent(createdAccount, LocaleContextHolder.getLocale(), DmsCore.appMainPath())
 			    		);
+					super.addModelCollectionToView("createdAccount", createdAccount);
 				}
 			}catch(EmailExistsException emailExists) {
 				super.getBindingResult().addError(
@@ -247,7 +248,6 @@ public class SignUpModelController extends ModelControllerImpl {
 			    super.removeControllerParam("viewType");
 				super.addControllerParam("viewType", Actions.CREATE.getValue());
 			}
-			super.addModelCollectionToView("iaoAccount", iaoAccount);
 
 		} else if(action.equals(Actions.VIEW.getValue())) {
 		}		

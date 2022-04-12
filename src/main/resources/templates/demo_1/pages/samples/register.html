@@ -10,7 +10,7 @@
           <div class="row w-100">
             <div class="col-lg-3 mx-auto">
               <div class="auto-form-wrapper mb-1" style="border-top-left-radius: 14.5px;border-top-right-radius: 14.5px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;">
-                <form th:action="@{/register}" th:object="${iaoAccount}" method="POST">
+                <form th:action="@{/register}" th:object="${iaoAccount}" method="POST" th:if="${iaoAccount != null && createdAccount == null}">
            		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
                 
                 <div class="row bg-outline-primary" >
@@ -131,7 +131,13 @@
                     </a>
                   </div>
                 </form>
+
+				<div class="form-group" th:if="${createdAccount != null}">
+                	<p class="alert alert-success"> [[#{email.thanksRegister}]]! Please check your email for a verification email from Oxydent team!</p>
+				</div>
+
               </div>
+              
               <script th:inline="javascript">
 				/*<![CDATA[*/ 
 	              	var alertValidName = /*[[#{alert.invalidName}]]*/'';
