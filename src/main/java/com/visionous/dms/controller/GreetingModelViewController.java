@@ -5,12 +5,15 @@ import java.time.LocalDateTime;
  *
  */
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,6 +27,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -198,10 +203,10 @@ public class GreetingModelViewController {
 	 * @return
 	 */
 	@PostMapping("/reset")
-	public String resetPassword(@RequestParam(name = "username", required = true) String username, Model model) {
+	public String resetPassword(@NotNull @NotEmpty @RequestParam(name = "username", required = true) String username, Model model) {
 		String appUrl = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getContextPath();
 		
-		if(username != null) {
+		if(Objects.nonNull(username) && !StringUtils.isEmpty(username)) {
 		    Optional<Account> user = accountService.findByUsernameOrEmail(username);
 		    if(user.isPresent()) {
 		    	System.out.println("publishing..");
@@ -214,8 +219,10 @@ public class GreetingModelViewController {
 		    	String message = messages.getMessage("alert.tokenExpired", null, LocaleContextHolder.getLocale());
 		        model.addAttribute("errorMessage", message);
 		    }
+		}else {
+			String message = messages.getMessage("alert.fieldEmpty", null, LocaleContextHolder.getLocale());
+	        model.addAttribute("errorMessage", message);
 		}
-		
 		return "demo_1/pages/reset_password";
 	}
 	
