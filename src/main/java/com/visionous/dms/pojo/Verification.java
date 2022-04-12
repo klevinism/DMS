@@ -54,7 +54,6 @@ public class Verification {
     
 	public Verification(Account account, String token) {
 		this.account = account;
-		this.account.setPassword(new BCryptPasswordEncoder().encode(account.getPassword()));
 		this.token = token;
 		this.expiryDate = DateUtil.calculateExpiryDate(60);
 	}
