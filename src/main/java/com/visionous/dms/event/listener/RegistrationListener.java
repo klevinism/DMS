@@ -15,7 +15,6 @@ import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -78,8 +77,6 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         Account account = event.getAccount();
         String recipientAddress = account.getEmail();
         String token = null;
-        String rawPass = account.getPassword();
-         
         
         Optional<Verification> verification = verificationService.findByAccount_idAndExpirationDateAfter(account.getId(), LocalDateTime.now());
         
@@ -89,7 +86,6 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         	token = UUID.randomUUID().toString();
         	
             verificationService.create(new Verification(account, token));
-            account.setPassword(rawPass);
         }
         
 		String domainPath = LandingPages.getDomainPathFromRequest(

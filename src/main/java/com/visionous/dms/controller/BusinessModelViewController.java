@@ -17,7 +17,6 @@ import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.model.BusinessModelController;
 import com.visionous.dms.pojo.Business;
-import com.visionous.dms.pojo.GlobalSettings;
 
 @Controller
 @RequestMapping("/business")
@@ -79,13 +78,8 @@ public class BusinessModelViewController {
 			.addBindingResult(errors)
 			.setViewModel(model)
 			.run(); // GetValuesForView
-
-		if(businessModelController.hasResultBindingError()) {
-			businessModelController.getBindingResult().getAllErrors().forEach(x -> System.out.println(x.toString()));
-			return "demo_1/pages/create_business";
-		}
 		
-		return "redirect:/login";
+		return "demo_1/pages/create_business";
 	}
 	
 	@GetMapping("/{practice}")

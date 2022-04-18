@@ -9,7 +9,7 @@
         <div class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
           <div class="row w-100">
             <div class="col-lg-4 mx-auto">
-              <div class="auto-form-wrapper mb-1" style=" border-top-left-radius: 14.5px;border-top-right-radius: 14.5px;
+              <div class="auto-form-wrapper mb-1" th:if="${account == null}" style=" border-top-left-radius: 14.5px;border-top-right-radius: 14.5px;
               											border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;">
               
                 <div class="row">
@@ -19,7 +19,7 @@
                   </div>
                 </div>
                 
-              	<form th:action="@{__${currentPage}__/create}" th:object="${business}" class="mb-3" method="post" >
+              	<form th:action="@{__${currentPage}__/create}" th:object="${business}" class="mb-3" method="post" th:if="${account == null}">
               		<input type="hidden" name="action" th:value="${T(com.visionous.dms.configuration.helpers.Actions).CREATE}">
 
 	                <div class="form-group mb-3">
@@ -58,12 +58,12 @@
 	                <div class="form-group m-0 p-0">
                       	<p class="text-small text-muted">Business management url
                       	<span>
-                      	<a href="#"
-                      	data-container="body" 
-                    	data-toggle="popover"
-                    	data-content="Business Url">
-	                    	<i class="fa fa-icon fa-question-circle"></i>
-	                    </a>
+	                      	<a href="#"
+	                      	data-container="body" 
+	                    	data-toggle="popover"
+	                    	data-content="Business Url">
+		                    	<i class="fa fa-icon fa-question-circle"></i>
+		                    </a>
                       	</span>: 
                       	<a href="#"
                       	data-container="body" 
@@ -92,9 +92,25 @@
 	                
 	              </form>
               </div>
-              
-                  <div th:replace="demo_1/partials/_compact_footer :: footer">
-                  </div>
+              <div th:if="${account != null && createdBusiness != null}" class="auto-form-wrapper mb-1" style=" border-top-left-radius: 14.5px;border-top-right-radius: 14.5px;
+              											border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;">
+	              	<div class="row">
+	                  <div class="col-12">
+	                    <h2>Your dental practice "[[${createdBusiness.name}]]" created successfully!</h2>
+	                    <p class="muted mb-4">Please check your inbox for confirmation email containing all your business details, 
+	                    as well as the subscription confirmation.</p>
+	                    <p class="muted mb-4">Please wait while we set up your clinic's environment. You will be redirected shortly...</p>
+	                    <i class="fa fa-load"></i>
+	                  </div>
+	                </div>
+	                <script>
+	                	setTimeout(function() { 
+	                		location.href = '/admin/global'; 
+	                	}, 10000);
+	                </script>
+              </div>
+              <div th:replace="demo_1/partials/_compact_footer :: footer">
+              </div>
             </div>
           </div>
         </div>

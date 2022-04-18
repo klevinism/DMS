@@ -7,17 +7,19 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
+import com.visionous.dms.configuration.helpers.DmsCore;
 import com.visionous.dms.configuration.helpers.LandingPages;
-import com.visionous.dms.exception.EmailExistsException;
-import com.visionous.dms.exception.PhoneNumberExistsException;
+import com.visionous.dms.event.OnBusinessConfirmationEvent;
+import com.visionous.dms.event.OnSubscriptionConfirmationEvent;
 import com.visionous.dms.exception.SubdomainExistsException;
-import com.visionous.dms.exception.UsernameExistsException;
 import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Business;
 import com.visionous.dms.pojo.GlobalSettings;
@@ -46,6 +48,8 @@ public class BusinessModelController extends ModelControllerImpl{
 	private PersonnelService personnelService;
 	
 	private AccountService accountService;
+
+	private ApplicationEventPublisher eventPublisher;
 	
 	/**
 	 * @param businessService
@@ -54,7 +58,7 @@ public class BusinessModelController extends ModelControllerImpl{
 	public BusinessModelController(BusinessService businessService, SubscriptionHistoryService subscriptionHistoryService, 
 			SubscriptionListService subscriptionListService,
 			GlobalSettingsService globalSettingsService, PersonnelService personnelService,
-			AccountService accountService) {
+			AccountService accountService, ApplicationEventPublisher eventPublisher) {
 		
 		this.businessService = businessService;
 		this.subscriptionHistoryService = subscriptionHistoryService;
@@ -62,6 +66,7 @@ public class BusinessModelController extends ModelControllerImpl{
 		this.personnelService = personnelService;
 		this.accountService = accountService;
 		this.subscriptionListService = subscriptionListService;
+		this.eventPublisher = eventPublisher;
 	}
 	
 	@Override
@@ -90,7 +95,7 @@ public class BusinessModelController extends ModelControllerImpl{
 	private void persistModelAttributes(Business business, String action) {
 
         Pattern txt_pattern = Pattern.compile("^[a-z]+$");
-        Pattern txtAndNr_pattern = Pattern.compile("^[a-zA-Z0-9]+$");
+        Pattern txtAndNr_pattern = Pattern.compile("^[a-zA-Z0-9_ ]+$");
         
 		if(action.equals(Actions.DELETE.getValue())) {
 		}else if(action.equals(Actions.EDIT.getValue()) ) {
@@ -146,17 +151,18 @@ public class BusinessModelController extends ModelControllerImpl{
 		        globalSettingsDraft.setAppointmentTimeSplit(30);
 		        globalSettingsDraft.setBusinessDays("1,6");
 		        globalSettingsDraft.setBusinessEmail("business@email.com");
-		        globalSettingsDraft.setBusinessName("MyDentalClinic");
+		        globalSettingsDraft.setBusinessName(newBusiness.getName());
 		        globalSettingsDraft.setBusinessTimes("07:00,18:00");
 		        
 		        if(Objects.isNull(globalSettingsDraft.getSubscriptions())) {
 		        	globalSettingsDraft.setSubscriptions(new HashSet<>());
 		        }
 		        
-		        globalSettingsDraft.setBusiness(business);
-	        	
+		        globalSettingsDraft.setBusiness(newBusiness);
+	        	newBusiness.setGlobalSettings(globalSettingsDraft);
+
 		        GlobalSettings newGlobalSettings = this.globalSettingsService.update(globalSettingsDraft);
-	        	
+		        
 		        SubscriptionHistory subscriptionHistoryDraft = new SubscriptionHistory();
 		        subscriptionHistoryDraft.setActive(true);
 		        subscriptionHistoryDraft.setAddeddate(LocalDateTime.now());
@@ -169,10 +175,40 @@ public class BusinessModelController extends ModelControllerImpl{
 		        });
 		        
 		        subscriptionHistoryDraft.setGlobalSettings(newGlobalSettings);
+		        subscriptionHistoryDraft.setBusiness(newGlobalSettings.getBusiness());
 		        newGlobalSettings.getSubscriptions().add(subscriptionHistoryDraft);
+		        if(Objects.isNull(newGlobalSettings.getBusiness().getSubscriptionHistory())) {
+		        	newGlobalSettings.getBusiness().setSubscriptionHistory(new HashSet<>());
+		        }
+		        
+		        newGlobalSettings.getBusiness().getSubscriptionHistory().add(subscriptionHistoryDraft);
 		        
 		        SubscriptionHistory subscriptionHistory = this.subscriptionHistoryService.update(subscriptionHistoryDraft);
 		        
+		        Business currentLoggedInBusiness = subscriptionHistory.getBusiness();
+		        
+		        AccountUtil.currentLoggedInUser().addBusiness(currentLoggedInBusiness);
+		        AccountUtil.setCurrentLoggedInBusiness(currentLoggedInBusiness);
+		        
+		        super.addModelCollectionToView("account", AccountUtil.currentLoggedInUser().getAccount());
+		        super.addModelCollectionToView("createdBusiness", AccountUtil.currentLoggedInBussines());
+		        
+		        eventPublisher.publishEvent(
+		        		new OnBusinessConfirmationEvent(
+		        				AccountUtil.currentLoggedInUser().getAccount(), 
+		        				currentLoggedInBusiness,
+		        				LocaleContextHolder.getLocale(), 
+		        				DmsCore.appMainPath())
+		        		);
+		        
+		        eventPublisher.publishEvent(
+		        		new OnSubscriptionConfirmationEvent(
+		        				AccountUtil.currentLoggedInUser().getAccount(), 
+		        				currentLoggedInBusiness,
+		        				LocaleContextHolder.getLocale(), 
+		        				DmsCore.appMainPath())
+		        		);
+
 	        }catch(SubdomainExistsException e) {
 	        	super.getBindingResult().addError(
 						new FieldError("business", "business.subdomainUri", business.getSubdomainUri(), false, null, null, "Business subdomainURI exists!"));
@@ -195,7 +231,8 @@ public class BusinessModelController extends ModelControllerImpl{
 				newBusiness.setAccounts(new HashSet<Account>());
 				newBusiness.getAccounts().add(AccountUtil.currentLoggedInUser().getAccount());
 				
-				super.addModelCollectionToView("business", newBusiness);
+		        super.addModelCollectionToView("business", newBusiness);
+
 			}
 		}else if(viewType.equals(Actions.DELETE.getValue())) {
 			
