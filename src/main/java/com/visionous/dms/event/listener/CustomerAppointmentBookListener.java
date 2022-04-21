@@ -13,7 +13,6 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -64,7 +63,7 @@ public class CustomerAppointmentBookListener implements ApplicationListener<OnCu
 			Context thymeleafContext = new Context(new Locale("en", "US"));
 			Map<String, Object> vars = new HashMap<>();
 			String emailTemplatePath = "demo_1/partials/emails/appointmentVerification.html";
-	    	String dentalAppointment = messages.getMessage("DentalAppointment", null, LocaleContextHolder.getLocale());
+	    	String dentalAppointment = messages.getMessage("DentalAppointment", null, event.getLocale());
 
 	        String recipientAddress = event.getAppointment().getCustomer().getAccount().getEmail();
 	        String fromAddress = AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEmail();

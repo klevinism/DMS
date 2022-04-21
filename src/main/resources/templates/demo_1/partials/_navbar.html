@@ -8,7 +8,7 @@
       <img th:src="${imgUrlMini}" alt="logo" /> </a>
   </div>
   <div class="navbar-menu-wrapper d-flex align-items-center">
-    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize" >
 		<span class="mdi mdi-menu"></span>
   	</button>
     <ul class="navbar-nav">
@@ -106,7 +106,7 @@
           <img th:if="${currentRoles!= null && currentRoles[0].name == 'ADMIN' && loggedInAccount.image != null}" class="img-xs rounded-circle" th:src="@{/resources/personnel/img/profile/__${loggedInAccount.image}__}" alt="Profile image">
           <img th:if="${currentRoles!= null && loggedInAccount.image == null}" class="img-xs rounded-circle" th:src="'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg'" alt="Profile image"> 
         </a>
-        <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
+        <div class="dropdown-menu dropdown-menu-right navbar-dropdown pb-0" aria-labelledby="UserDropdown">
           <div class="dropdown-header text-center" >
             <img  th:if="${currentRoles!= null &&  currentRoles[0].name == 'CUSTOMER' && loggedInAccount.image != null}" class="img-md rounded-circle"  th:src="@{/resources/customer/img/profile/__${loggedInAccount.image}__}">
             <img class="img-md rounded-circle" th:if="${currentRoles!= null && currentRoles[0].name == 'PERSONNEL' && loggedInAccount.image != null}" th:src="@{/resources/personnel/img/profile/__${loggedInAccount.image}__}">
@@ -184,7 +184,6 @@
 				}
 			});
 			
-			console.log(languageLocalizationArray);
 			
 			langHtml =  $('<a class="nav-link dropdown-toggle px-2 d-flex align-items-center" href="#" data-toggle="dropdown" aria-expanded="false">'+
 			  '<div class="d-inline-flex mr-0 mr-md-3" id="LanguageDropdown" >'+

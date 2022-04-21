@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it_IT">
   <div th:replace="demo_1/partials/_header :: header">
   </div>
   
@@ -133,7 +133,7 @@
                 </form>
 
 				<div class="form-group" th:if="${createdAccount != null}">
-                	<p class="alert alert-success"> [[#{email.thanksRegister}]]! Please check your email for a verification email from Oxydent team!</p>
+                	<p class="alert alert-success"> [[#{email.thanksRegister}]]! [[#{email.checkYourEmailToValidate}]]!</p>
 				</div>
 
               </div>
@@ -207,10 +207,6 @@
               		var month = $(e.currentTarget).find("#month").val();
               		var year = $(e.currentTarget).find("#year").val();
               		var selectedDate = new Date(year, month-1, day);
-              		console.log(day);
-              		console.log(month);
-              		console.log(year);
-              		console.log(selectedDate.getDate());
               		
               		$(e.currentTarget).find("[name='birthday']").val(selectedDate.getDate()+"-"+(selectedDate.getMonth()+1)+"-"+selectedDate.getFullYear());
               	}

@@ -5,6 +5,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -20,15 +21,18 @@ public class SubscriptionConfirmationListener implements ApplicationListener<OnS
 
     private SpringTemplateEngine thymeleafTemplateEngine;
     private JavaMailSender mailSender;
+	private MessageSource messageSource;
     
 	/**
 	 * @param verificationRepository
 	 * @param messages
 	 */
 	@Autowired
-	public SubscriptionConfirmationListener(JavaMailSender mailSender, SpringTemplateEngine thymeleafTemplateEngine) {
+	public SubscriptionConfirmationListener(JavaMailSender mailSender, SpringTemplateEngine thymeleafTemplateEngine,
+			MessageSource messageSource) {
 		
 		this.mailSender = mailSender;
+		this.messageSource = messageSource;
 		this.thymeleafTemplateEngine = thymeleafTemplateEngine;
 	}
 	
@@ -56,7 +60,9 @@ public class SubscriptionConfirmationListener implements ApplicationListener<OnS
         Account account = event.getAccount();
         Business business = event.getBusiness();
         String recipientAddress = account.getEmail();
-						
+
+        String emailSubscriptionConfirmation = messageSource.getMessage("email.subject.subscriptionConfirmation", null, event.getLocale());
+
 		thymeleafContext.setVariable("account", account);
 
 		thymeleafContext.setVariable("business", business);
@@ -65,7 +71,7 @@ public class SubscriptionConfirmationListener implements ApplicationListener<OnS
 	     
 	    MimeMessage mailMessage = mailSender.createMimeMessage();
 	    
-    	mailMessage.setSubject("Subscription Receipt Confirmation!", "UTF-8");
+    	mailMessage.setSubject(emailSubscriptionConfirmation + "!", "UTF-8");
     	
     	MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true, "UTF-8");
     	helper.setTo(recipientAddress);

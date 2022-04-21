@@ -3,9 +3,7 @@
  */
 package com.visionous.dms.configuration;
 
-import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -21,13 +19,6 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-
-import com.visionous.dms.configuration.helpers.AccountUtil;
-import com.visionous.dms.pojo.GlobalSettings;
-import com.visionous.dms.pojo.Subscription;
-import com.visionous.dms.pojo.SubscriptionHistory;
-import com.visionous.dms.service.GlobalSettingsService;
-import com.visionous.dms.service.SubscriptionHistoryService;
 
 /**
  * @author delimeta
@@ -50,7 +41,7 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource msgSrc = new ReloadableResourceBundleMessageSource();
         msgSrc.setBasenames("classpath:i18n/home");
-        msgSrc.setDefaultEncoding("UTF-8");
+        msgSrc.setDefaultEncoding("iso-8859-1");
         return msgSrc;
     }
 	

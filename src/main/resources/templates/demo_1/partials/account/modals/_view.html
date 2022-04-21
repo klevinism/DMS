@@ -1,7 +1,7 @@
 <div class="card-body p-0" th:fragment="view">
   
   <div class="row">
-          <div class="col-sm-6 col-md-4" th:if="*{account.image != null }" th:with="imgsuburl = *{account.roles[0].name == 'ADMIN' || account.roles[0].name == 'PERSONNEL' ? 'personnel' : 'customer'}">
+          <div class="col-sm-6 col-md-4" th:if="*{account != null && account.image != null}" th:with="imgsuburl = *{account.roles[0].name == 'ADMIN' || account.roles[0].name == 'PERSONNEL' ? 'personnel' : 'customer'}">
               <img th:src="@{/resources/__${imgsuburl}__/img/profile/__*{account.image}__}" alt="" width="100%" height="100%" border="0" class="rounded"  />
           </div>
           <div class="col-sm-6 col-md-4" th:if="*{account.image == null }">

@@ -27,6 +27,10 @@
 	            <i class="flag-icon flag-icon-us"></i>
 	            [[#{EnglishLangName}]]
 			</a>
+			<a class="dropdown-item" href="?lang=it_IT" id="it_IT">
+	            <i class="flag-icon flag-icon-it"></i>
+	            [[#{ItalianLangName}]]
+			</a>
           </div>
         </div>
   </div>
@@ -44,6 +48,8 @@
 	    
 	    $(".dropdown .btn").html($(this).html());
 	    $(".btn:first-child").val($(this).text());
+		$(".dropdown .btn").html($("#"+localizationCode).find("i").clone());
+
 	  });
 
 	});

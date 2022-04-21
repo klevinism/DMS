@@ -5,6 +5,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -20,14 +21,17 @@ public class BusinessConfirmationListener implements ApplicationListener<OnBusin
 
     private SpringTemplateEngine thymeleafTemplateEngine;
     private JavaMailSender mailSender;
+	private MessageSource messageSource;
 	/**
 	 * @param verificationRepository
 	 * @param messages
 	 */
 	@Autowired
-	public BusinessConfirmationListener(JavaMailSender mailSender, SpringTemplateEngine thymeleafTemplateEngine) {
+	public BusinessConfirmationListener(JavaMailSender mailSender, SpringTemplateEngine thymeleafTemplateEngine,
+			MessageSource messageSource) {
 		
 		this.mailSender = mailSender;
+		this.messageSource = messageSource;
 		this.thymeleafTemplateEngine = thymeleafTemplateEngine;
 	}
 	
@@ -56,6 +60,9 @@ public class BusinessConfirmationListener implements ApplicationListener<OnBusin
         Business business = event.getBusiness();
         String recipientAddress = account.getEmail();
 		
+        String yourDentalClinic = messageSource.getMessage("YourDentalClinic", null, event.getLocale());
+        String created = messageSource.getMessage("alert.createdSuccessfully", null, event.getLocale());
+        
 		thymeleafContext.setVariable("account", account);
 		
 		thymeleafContext.setVariable("business", business);
@@ -64,7 +71,7 @@ public class BusinessConfirmationListener implements ApplicationListener<OnBusin
 	     
 	    MimeMessage mailMessage = mailSender.createMimeMessage();
 	    
-    	mailMessage.setSubject("Dental Practice Created!", "UTF-8");
+    	mailMessage.setSubject(yourDentalClinic +" \""+ business.getName() +"\" "+ created.toLowerCase() + "!", "UTF-8");
     	
     	MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true, "UTF-8");
     	helper.setTo(recipientAddress);

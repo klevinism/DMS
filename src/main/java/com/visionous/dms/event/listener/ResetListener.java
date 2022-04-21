@@ -19,7 +19,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
-import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.event.OnResetPasswordEvent;
 import com.visionous.dms.pojo.Account;
@@ -54,7 +53,7 @@ public class ResetListener implements ApplicationListener<OnResetPasswordEvent>{
 	 * @param event
 	 */
 	private void resetPassword(OnResetPasswordEvent event) {
-		Context thymeleafContext = new Context();
+		Context thymeleafContext = new Context(event.getLocale());
 		Map<String, Object> vars = new HashMap<>();
 		
 		Account account = event.getAccount();

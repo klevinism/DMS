@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.FieldError;
@@ -50,15 +51,17 @@ public class BusinessModelController extends ModelControllerImpl{
 	private AccountService accountService;
 
 	private ApplicationEventPublisher eventPublisher;
+
+	private MessageSource messageSource;
 	
 	/**
 	 * @param businessService
 	 */
 	@Autowired
 	public BusinessModelController(BusinessService businessService, SubscriptionHistoryService subscriptionHistoryService, 
-			SubscriptionListService subscriptionListService,
-			GlobalSettingsService globalSettingsService, PersonnelService personnelService,
-			AccountService accountService, ApplicationEventPublisher eventPublisher) {
+			SubscriptionListService subscriptionListService, GlobalSettingsService globalSettingsService, 
+			PersonnelService personnelService, AccountService accountService, 
+			ApplicationEventPublisher eventPublisher, MessageSource messageSource) {
 		
 		this.businessService = businessService;
 		this.subscriptionHistoryService = subscriptionHistoryService;
@@ -67,6 +70,7 @@ public class BusinessModelController extends ModelControllerImpl{
 		this.accountService = accountService;
 		this.subscriptionListService = subscriptionListService;
 		this.eventPublisher = eventPublisher;
+		this.messageSource = messageSource;
 	}
 	
 	@Override
@@ -96,6 +100,11 @@ public class BusinessModelController extends ModelControllerImpl{
 
         Pattern txt_pattern = Pattern.compile("^[a-z]+$");
         Pattern txtAndNr_pattern = Pattern.compile("^[a-zA-Z0-9_ ]+$");
+
+        String errorBusinessName = messageSource.getMessage("alert.businessNameNotCorrect", null, LocaleContextHolder.getLocale());
+        String errorBusinessSubdomain = messageSource.getMessage("alert.businessSubdomainNotCorrect", null, LocaleContextHolder.getLocale());
+        String errorBusinessSubdomainExists = messageSource.getMessage("alert.businessSubdomainExists", null, LocaleContextHolder.getLocale());
+
         
 		if(action.equals(Actions.DELETE.getValue())) {
 		}else if(action.equals(Actions.EDIT.getValue()) ) {
@@ -105,7 +114,7 @@ public class BusinessModelController extends ModelControllerImpl{
 	        if(Objects.nonNull(business.getName()) 
 	        		&& !txtAndNr_pattern.matcher(business.getName()).find()) {
 	        	super.getBindingResult().addError(
-						new FieldError("name", "name", business.getName(), false, null, null, "Business name not coerrect!"));
+						new FieldError("name", "name", business.getName(), false, null, null, errorBusinessName+"!"));
 								
 			    super.removeControllerParam("viewType");
 				super.addControllerParam("viewType", Actions.CREATE.getValue());
@@ -115,7 +124,7 @@ public class BusinessModelController extends ModelControllerImpl{
 	        if(Objects.nonNull(business.getSubdomainUri()) 
 	        		&& !txt_pattern.matcher(business.getSubdomainUri()).find()) {
 	        	super.getBindingResult().addError(
-						new FieldError("subdomainUri", "subdomainUri", business.getSubdomainUri(), false, null, null, "Business subdomainURI not coerrect!"));
+						new FieldError("subdomainUri", "subdomainUri", business.getSubdomainUri(), false, null, null, errorBusinessSubdomain+"!"));
 								
 			    super.removeControllerParam("viewType");
 				super.addControllerParam("viewType", Actions.CREATE.getValue());
@@ -142,7 +151,8 @@ public class BusinessModelController extends ModelControllerImpl{
 				        account.setPersonnel(newPersonnel);
 				        newPersonnel.setAccount(account);
 
-				        personnelService.update(newPersonnel);
+				        Personnel createdPersonnel = personnelService.update(newPersonnel);
+				        AccountUtil.currentLoggedInUser().setPersonnel(createdPersonnel);
 		        	}
 		        });
 				
@@ -211,7 +221,7 @@ public class BusinessModelController extends ModelControllerImpl{
 
 	        }catch(SubdomainExistsException e) {
 	        	super.getBindingResult().addError(
-						new FieldError("business", "business.subdomainUri", business.getSubdomainUri(), false, null, null, "Business subdomainURI exists!"));
+						new FieldError("business", "business.subdomainUri", business.getSubdomainUri(), false, null, null, errorBusinessSubdomainExists));
 								
 			    super.removeControllerParam("viewType");
 				super.addControllerParam("viewType", Actions.CREATE.getValue());
