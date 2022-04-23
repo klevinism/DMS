@@ -109,6 +109,7 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 				}
 
 				GlobalSettings newSetting = globalSettingsService.update(globalSetting);
+				AccountUtil.currentLoggedInBussines().setGlobalSettings(newSetting);
 			}
 			
 		}else if(action.equals(Actions.CREATE.getValue())) {
