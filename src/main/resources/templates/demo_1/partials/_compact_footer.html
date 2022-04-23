@@ -1,6 +1,11 @@
 <footer class="footer text-center bg-light" th:fragment="compact_footer" style="border-bottom-left-radius: 14.5px;border-bottom-right-radius: 14.5px;">
   <div class="container-fluid text-center d-flex clearfix p-0">
-  <p class="text-muted text-center p-0 my-1 my-auto"><a href="http://www.o2dent.com/" class="text-muted text-center" target="_blank">Oxydent</a> © 2022 </p>
+  <p class="text-muted text-center p-0 my-1 my-auto">
+  	<a href="http://www.o2dent.com/" class="text-muted text-center" target="_blank">
+  		<img src="/assets/images/OxydentFavicon.png" class="mb-1" />
+  	</a> © 2022 <span class="blockquote-footer pb-1" style="display: inline-flex;font-size: 60%;">v.[[${@environment.getProperty("dcms.app.version")}]]</span>
+  	 
+  </p>
     <ul class="auth-footer ml-auto my-2" style="text-align:end;">
 	  <li class="mx-0 pl-0 my-auto border-right border-dark" >
 	    <a href="#">[[#{Help}]]</a>

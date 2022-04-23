@@ -49,7 +49,7 @@
           					  <input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.id}">
                               <input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.question}">
                               <input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.multipleChoice}">
-                              <input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.addedDate}">
+                              <!-- <input type="hidden" th:field="*{questionnaireResponse[__${itemStat.index}__].questionForm.addedDate}"> -->
           					<div class="wrapper">
         						<label >[[${all_questions.question}]]</label>
 	          					<div class="col-md-12 grid-margin" th:if="${not all_questions.multipleChoice}">
