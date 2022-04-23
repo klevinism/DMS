@@ -1,4 +1,10 @@
-Insert into GLOBAL_SETTINGS (ID,BUSINESS_NAME,BUSINESS_IMAGE,BUSINESS_DAYS,BUSINESS_TIMES,BUSINESS_EMAIL,BUSINESS_PASSWORD,APPOINTMENTS_TIMES_SPLIT) values (1,'Prestige','210223172943-brilliantdentLogo.PNG','1,5','09:00,18:00','info@prestige.it','1234',30) ;
+INSERT INTO Business
+(id, business_url, "name", enabled, subdomain_uri)
+VALUES(1, 'http://dental1.com', 'Dental1', true, 'dentalpracticeone');
+
+INSERT INTO GLOBAL_SETTINGS
+(id, appointments_times_split, business_days, business_email, business_image, business_name, business_password, business_times, business_id)
+VALUES(1, 60, '1,6', 'klevin.delimeta@hotmail.com', '220314222101-Oxydent logo_white-01.svg', 'Dental1', 'Klklkl@002', '09:00,18:30', 1);
 
 Insert into ROLE (ID,NAME) values (2,'ADMIN') ;
 Insert into ROLE (ID,NAME) values (1,'GUEST') ;
@@ -6,23 +12,51 @@ Insert into ROLE (ID,NAME) values (3,'USER') ;
 Insert into ROLE (ID,NAME) values (4,'CUSTOMER') ;
 Insert into ROLE (ID,NAME) values (5,'PERSONNEL') ;
 
-Insert into PERSONNEL (ID, TYPE) VALUES ('1', 'ADMIN')  ;
-
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (1,'Jeni vizituar nga ndonje mjek ne dy ditet e fundit?',1,to_date('12-JAN-21','DD-MON-YY')) ;
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (2,'Jeni shtruar ne spital apo keni bere nderhyrje kirurgjikale?',1,to_date('12-JAN-21','DD-MON-YY')) ;
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (3,'Perdorni ilace?',1,to_date('12-JAN-21','DD-MON-YY')) ;
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (4,'Jeni alergjik nga ndonje ilac apo substance?',1,to_date('12-JAN-21','DD-MON-YY')) ;
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (5,'Keni pasur reagime te padeshiruara gjate anestezise?',1,to_date('13-JAN-21','DD-MON-YY')) ;
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (6,'Keni semundje zemre?',1,to_date('13-JAN-21','DD-MON-YY')) ;
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (7,'Keni tensjon?',1,to_date('13-JAN-21','DD-MON-YY')) ;
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (8,'Keni semundje pulmonare?',1,to_date('13-JAN-21','DD-MON-YY')) ;
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (9,'Keni semundje turbekulozi?',1,to_date('13-JAN-21','DD-MON-YY')) ;
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (10,'Keni semundje veshkash?',1,to_date('13-JAN-21','DD-MON-YY')) ;
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (11,'Jeni diabetik?',1,to_date('13-JAN-21','DD-MON-YY')) ;
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (12,'Keni probleme me koaguilimin e gjakut apo anemise?',1,to_date('13-JAN-21','DD-MON-YY')) ;
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (13,'Keni patur hepatit apo probleme me melcine?',1,to_date('13-JAN-21','DD-MON-YY')) ;
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (14,'(Femra) Jeni shtatezene?',1,to_date('13-JAN-21','DD-MON-YY')) ;
-Insert into QUESTIONNAIRE_FORM (ID,QUESTION,MULTIPLE_CHOICE,ADDEDDATE) values (15,'Keni patur ndonje semundje tjeter?',1,to_date('13-JAN-21','DD-MON-YY')) ;
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(15, '0001-01-13 00:00:00.000', true, 'Keni patur ndonje semundje tjeter?');
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(1, '0001-01-12 00:00:00.000', true, 'Jeni vizituar nga ndonje mjek ne dy ditet e fundit?');
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(2, '0001-01-12 00:00:00.000', true, 'Jeni shtruar ne spital apo keni bere nderhyrje kirurgjikale?');
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(3, '0001-01-12 00:00:00.000', true, 'Perdorni ilace?');
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(4, '0001-01-12 00:00:00.000', true, 'Jeni alergjik nga ndonje ilac apo substance?');
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(5, '0001-01-13 00:00:00.000', true, 'Keni pasur reagime te padeshiruara gjate anestezise?');
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(6, '0001-01-13 00:00:00.000', true, 'Keni semundje zemre?');
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(7, '0001-01-13 00:00:00.000', true, 'Keni tensjon?');
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(8, '0001-01-13 00:00:00.000', true, 'Keni semundje pulmonare?');
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(9, '0001-01-13 00:00:00.000', true, 'Keni semundje turbekulozi?');
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(10, '0001-01-13 00:00:00.000', true, 'Keni semundje veshkash?');
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(11, '0001-01-13 00:00:00.000', true, 'Jeni diabetik?');
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(12, '0001-01-13 00:00:00.000', true, 'Keni probleme me koaguilimin e gjakut apo anemise?');
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(13, '0001-01-13 00:00:00.000', true, 'Keni patur hepatit apo probleme me melcine?');
+INSERT INTO QUESTIONNAIRE_FORM
+(id, addeddate, multiple_choice, question)
+VALUES(14, '0001-01-13 00:00:00.000', true, '(Femra) Jeni shtatezene?');
 
 Insert into TEETH (ID,NAME,DESCRIPTION,ADDEDDATE) values (1,'1 : 8','Maxillary Right Third Molar : 8UR <img width="50px" height="50px" src="https://static.turbosquid.com/Preview/2020/07/16__08_05_28/Molar_Upper_Jaw_Right_03_Clean_Square_0000.jpg898E5DC6-8184-4CAE-A0F7-36A91633D485Res300.jpg" > ',to_date('14-JAN-21 00:00:00','DD-MON-YY HH24:MI:SS')) ;
 Insert into TEETH (ID,NAME,DESCRIPTION,ADDEDDATE) values (2,'1 : 7','Maxillary Right Second Molar : 7UR <img width="50px" height="50px" src="https://static.turbosquid.com/Preview/2020/07/16__08_05_28/Molar_Upper_Jaw_Right_03_Clean_Square_0000.jpg898E5DC6-8184-4CAE-A0F7-36A91633D485Res300.jpg" > ',to_date('14-JAN-21 00:00:00','DD-MON-YY HH24:MI:SS')) ;
@@ -57,8 +91,16 @@ Insert into TEETH (ID,NAME,DESCRIPTION,ADDEDDATE) values (30,'4 : 6','Manibular 
 Insert into TEETH (ID,NAME,DESCRIPTION,ADDEDDATE) values (31,'4 : 7','Manibular Right Second Molar : 7DR <img width="50px" height="50px" src="https://static.turbosquid.com/Preview/2020/07/16__08_05_28/Molar_Upper_Jaw_Right_03_Clean_Square_0000.jpg898E5DC6-8184-4CAE-A0F7-36A91633D485Res300.jpg" > ',to_date('14-JAN-21 00:00:00','DD-MON-YY HH24:MI:SS')) ;
 Insert into TEETH (ID,NAME,DESCRIPTION,ADDEDDATE) values (32,'4 : 8','Manibular Right Third Molar : 8DR <img width="50px" height="50px" src="https://static.turbosquid.com/Preview/2020/07/16__08_05_28/Molar_Upper_Jaw_Right_03_Clean_Square_0000.jpg898E5DC6-8184-4CAE-A0F7-36A91633D485Res300.jpg" > ',to_date('14-JAN-21 00:00:00','DD-MON-YY HH24:MI:SS')) ;
 
+INSERT INTO ACCOUNT
+(id, active, address, age, birthday, city, country, email, enabled, gender, image, "name", "password", phone, surname, username, is_account)
+VALUES(1, true, 'Tirane', 28, '1993-06-15', 'Tirane', 'Shqiperi', 'klevindelimeta@hotmail.com', true, 'male', '210315205804-33020811_10208881922763931_5402227929541246976_n.jpg', 'Admin', '$2a$10$aXdGc9NqFVuCnDlat1v.Te7wzKZ9t.LveIpLqYwBu93SHIaoRy/Au', 692458023, 'Admin', 'admin.admin', true);
 
-Insert into  ACCOUNT (ID,USERNAME,PASSWORD,ENABLED,ACTIVE,NAME,SURNAME,AGE,GENDER,EMAIL,PHONE,BIRTHDAY,IMAGE,ADDRESS,CITY,COUNTRY) values (1,'admin.erdit','$2a$10$uaS47hIHlt23gHyjgmo0ruibc.tH2NBXBbiW7p5lJ/pzBLfQWt0we',1,1,'Dervishi','Admin',24,'male','erosdent@hotmail.com',699997000,to_date('17-MAY-21','DD-MON-YY'),'210131141407-27581980_343242869495406_4241852814134870016_n.jpg','Tirane','Tirane','Shqiperi') ;
+
+INSERT INTO BUSINESS_ACCOUNTS
+(businessid, accountid)
+VALUES(1, 1);
+
+Insert into PERSONNEL (ID, TYPE) VALUES ('1', 'ADMIN')  ;
 
 Insert into AUTHORITY (ACCOUNTID,ROLEID) values (1,2) ;
 
@@ -66,32 +108,82 @@ Insert into SERVICE_TYPE (ID,NAME,ADDEDDATE,PRICE) values (1,'Kontrroll','14-JAN
 
 /* SUBSCRIPTION FEATURE */
 
-Insert into SUBSCRIPTION_LIST (ID,NAME,DESCRIPTION,ACTION_URL,ADDEDDATE,IMAGE_URL,INFO_URL,PRICE,ACTIVE) values (0,'Free','<li>3 Month Free</li>
+INSERT INTO SUBSCRIPTION_LIST
+(id, action_url, active, addeddate, description, image_url, info_url, name, price)
+VALUES(3, 'http://www.example.com', true, '2021-05-12 20:31:16.000', '<li>5 doctors included (with roles)</li>
+<li>Unlimited patients included</li>
+<li>Unlimited visits</li>
+<li>Unlimited appointments</li>
+<li>Payments & Invoices</li>
+<li>Reminders</li>
+<li>Dental Chart</li>
+<li>X-Rays & attachments</li>
+<li>Price List</li>
+<li>Documents And Forms</li>
+<li>Statistics</li>
+<li>ToIP</li>
+<li>Online Booking</li>
+<li>Patient Portal</li>', 'http://www.example.com', 'http://www.example.com', 'Large Dental Clinic', 39.99);
+INSERT INTO SUBSCRIPTION_LIST
+(id, action_url, active, addeddate, description, image_url, info_url, name, price)
+VALUES(2, 'http://www.example.com', true, '2021-05-12 20:31:16.000', '<li>3 doctors included (with roles)</li>
+<li>Unlimited patients included</li>
+<li>Unlimited visits</li>
+<li>Unlimited appointments</li>
+<li>Payments & Invoices</li>
+<li>Reminders</li>
+<li>Dental Chart</li>
+<li>X-Rays & attachments</li>
+<li>Price List</li>
+<li>Documents And Forms</li>
+<li>Statistics</li>
+<li>ToIP</li>', 'http://www.example.com', 'http://www.example.com', 'Medium Dental Clinic', 29.99);
+INSERT INTO SUBSCRIPTION_LIST
+(id, action_url, active, addeddate, description, image_url, info_url, name, price)
+VALUES(1, 'http://www.example.com', true, '2021-05-12 20:31:16.000', '<li>1 doctor included</li>
+<li>Unlimited patients included</li>
+<li>Unlimited visits</li>
+<li>Unlimited appointments</li>
+<li>Payments & Invoices</li>
+<li>Dental Chart</li>
+<li>X-Rays & attachments</li>
+<li>Price List</li>', 'http://www.example.com', 'http://www.example.com', 'Solo Dental Clinic', 19.99);
+INSERT INTO SUBSCRIPTION_LIST
+(id, action_url, active, addeddate, description, image_url, info_url, name, price)
+VALUES(0, 'http://www.example.com', false, '2021-05-12 20:31:16.000', '<li>1 Month Free</li>
 <li>Unlimited patients included</li>
 <li>Unlimited visits</li>
 <li>10 GB of storage</li>
 <li>Unlimited appointments</li>
-<li>Unlimited doctors included</li>','http://www.example.com',to_date('12-MAY-21 20:31:16','DD-MON-YY HH24:MI:SS'),'http://www.example.com','http://www.example.com',0,0) ;
-
-Insert into SUBSCRIPTION_LIST (ID,NAME,DESCRIPTION,ACTION_URL,ADDEDDATE,IMAGE_URL,INFO_URL,PRICE,ACTIVE) values (1,'Solo Dental Clinic','<li>1 doctor included</li>
-<li>Unlimited patients included</li>
-<li>Unlimited visits</li>
-<li>10 GB of storage</li>
-<li>Unlimited appointments</li>
-<li>Free Integrations</li>','http://www.example.com',to_date('12-MAY-21 20:31:16','DD-MON-YY HH24:MI:SS'),'http://www.example.com','http://www.example.com',25,1) ;
-
-Insert into SUBSCRIPTION_LIST (ID,NAME,DESCRIPTION,ACTION_URL,ADDEDDATE,IMAGE_URL,INFO_URL,PRICE,ACTIVE) values (2,'Large Dental Clinic','<li>Unlimited doctors included</li>
-<li>Unlimited patients included</li>
-<li>Unlimited visits</li>
-<li>10 GB of storage</li>
-<li>Unlimited appointments</li>
-<li>Free Integrations</li>','http://www.example.com',to_date('12-MAY-21 20:31:16','DD-MON-YY HH24:MI:SS'),'http://www.example.com','http://www.example.com',19,1) ;
-
-Insert into RESTRICTIONS (ID,DESCRIPTION,NAME,RESTRICTION_AMOUNT,RESTRICTION_PAGE,RESTRICTION_TYPE,ADDEDDATE) values (0,'Solo Personnel Restriction','Personnel Restriction Solo',1,'/personnel','type',to_date('12-MAY-21 20:28:33','DD-MON-YY HH24:MI:SS')) ;
-Insert into RESTRICTIONS (ID,DESCRIPTION,NAME,RESTRICTION_AMOUNT,RESTRICTION_PAGE,RESTRICTION_TYPE,ADDEDDATE) values (1,'Large Personnel Restriction','Personnel Restriction Large',2,'/personnel','type',to_date('12-MAY-21 20:28:33','DD-MON-YY HH24:MI:SS')) ;
+<li>Unlimited doctors included</li>', 'http://www.example.com', 'http://www.example.com', 'Free', 0);
 
 
-Insert into SUBSCRIPTION_RESTRICTIONS (SUBSCRIPTIONID,RESTRICTIONID) values (1,0) ;
-Insert into SUBSCRIPTION_RESTRICTIONS (SUBSCRIPTIONID,RESTRICTIONID) values (2,1) ;
+INSERT INTO RESTRICTIONS
+(id, addeddate, description, "name", restriction_amount, restriction_page, restriction_type)
+VALUES(0, '2021-05-12 20:28:33.000', 'Solo Personnel Restriction', 'Personnel Restriction Solo', 1, '/personnel', 'type');
+INSERT INTO RESTRICTIONS
+(id, addeddate, description, "name", restriction_amount, restriction_page, restriction_type)
+VALUES(2, '2021-05-12 20:28:33.000', 'Large Personnel Restriction', 'Personnel Restriction Large', 5, '/personnel', 'type');
+INSERT INTO RESTRICTIONS
+(id, addeddate, description, "name", restriction_amount, restriction_page, restriction_type)
+VALUES(1, '2021-05-12 20:28:33.000', 'Medium Personnel Restriction', 'Personnel Restriction Medium', 3, '/personnel', 'type');
+INSERT INTO RESTRICTIONS
+(id, addeddate, description, "name", restriction_amount, restriction_page, restriction_type)
+VALUES(3, '2021-05-12 20:28:33.000', 'Free Restriction', 'Free Restriction', 0, '/personnel', 'type');
 
-Insert into SUBSCRIPTION_HISTORY (ID,ACTIVE,ADDEDDATE,GLOBAL_SETTINGS_ID,SUBSCRIPTION_ID,SUBSCRIPTION_START_DATE,SUBSCRIPTION_END_DATE) values (0,1,to_date('18-JUN-21 21:21:44','DD-MON-YY HH24:MI:SS'),1,0,to_date('18-JUN-21 21:22:29','DD-MON-YY HH24:MI:SS'),to_date('18-SEP-21 21:21:57','DD-MON-YY HH24:MI:SS')) ;
+INSERT INTO SUBSCRIPTION_RESTRICTIONS
+(subscriptionid, restrictionid)
+VALUES(1, 0);
+INSERT INTO SUBSCRIPTION_RESTRICTIONS
+(subscriptionid, restrictionid)
+VALUES(2, 1);
+INSERT INTO SUBSCRIPTION_RESTRICTIONS
+(subscriptionid, restrictionid)
+VALUES(3, 2);
+INSERT INTO SUBSCRIPTION_RESTRICTIONS
+(subscriptionid, restrictionid)
+VALUES(0, 3);
+
+INSERT INTO SUBSCRIPTION_HISTORY
+(id, active, addeddate, global_settings_id, subscription_end_date, subscription_id, subscription_start_date, business_id)
+VALUES(1, true, '2021-10-15 21:21:44.000', 1, '2022-01-15 21:21:57.000', 0, '2021-10-15 21:22:29.000', 1);

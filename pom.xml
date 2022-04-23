@@ -27,6 +27,12 @@
 		    </properties>
 		</profile>
 		<profile>
+		    <id>beta</id>
+		    <properties>
+		        <activatedProperties>beta</activatedProperties>
+		    </properties>
+		</profile>
+		<profile>
 		    <id>release</id>
 		    <properties>
 		        <activatedProperties>release</activatedProperties>
