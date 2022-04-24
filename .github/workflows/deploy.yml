@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.head_ref }} == 'refs/heads/develop'
     steps:
-      - run: echo ${{ github.head_ref }}
+      - run: echo '${{ github.head_ref }}'
       - uses: actions/checkout@v2
       - name: Copy repository contents via scp
         uses: appleboy/scp-action@master
