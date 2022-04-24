@@ -128,7 +128,7 @@ public class SignUpModelController extends ModelControllerImpl {
 //			}
 			
 		} else if(action.equals(Actions.CREATE.getValue())) {
-			Pattern patternText = Pattern.compile("^[a-z]{3,}$");
+			Pattern patternText = Pattern.compile("^[a-zA-Z]{3,}$");
 			Pattern patternPassword = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$");
 			
 			//RFC822 compliant email regex
@@ -139,13 +139,13 @@ public class SignUpModelController extends ModelControllerImpl {
 			newAccount.setPersonnel(null);
 			
 			if(patternText.matcher(iaoAccount.getName()).matches()) {
-				newAccount.setName(iaoAccount.getName());
+				newAccount.setName(iaoAccount.getName().toLowerCase());
 			}else {
 				super.getBindingResult().addError(
 						new FieldError("name", "name", iaoAccount.getName(), false, null, null, messageInvalidName));
 			}
 			if(patternText.matcher(iaoAccount.getSurname()).matches()) {
-				newAccount.setSurname(iaoAccount.getSurname());
+				newAccount.setSurname(iaoAccount.getSurname().toLowerCase());
 			}else {
 				super.getBindingResult().addError(
 						new FieldError("surname", "surname", iaoAccount.getSurname(), false, null, null, messageInvalidSurname));
