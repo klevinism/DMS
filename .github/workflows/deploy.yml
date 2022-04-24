@@ -4,10 +4,21 @@
 name: Java CI with Maven
 
 on:
-  push:
+  create:
      tags: '**'
 
 jobs:  
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout source code
+      uses: actions/checkout@v1
+    - name: Get Branch
+      run: |
+        raw=$(git branch -r --contains ${{ github.ref }})
+        branch=${raw/origin\/}
+        echo ::set-env name=BRANCH::$branch
+    - run: echo ${{ env.BRANCH }}
   build_alpha:
     runs-on: ubuntu-latest
     steps:
