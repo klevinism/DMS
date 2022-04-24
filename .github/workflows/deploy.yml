@@ -18,6 +18,7 @@ jobs:
       - name: Running on the default branch.
         #if: startsWith(${{ github.event.head_commit.message }}, '[maven-release-plugin]')steps.branch-name.outputs.current_branch == 'master'
         run: |
+          echo startsWith(${{ github.event.head_commit.message }}, 'try')
           echo "${{ github.event.head_commit.message }}"
           echo "Running on current_branch: ${{ steps.branch-name.outputs.current_branch }}"
           echo "Running on default_branch: ${{ steps.branch-name.outputs.default_branch }}"
