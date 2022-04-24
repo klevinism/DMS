@@ -15,6 +15,7 @@ jobs:
       run: | 
         echo '${{github.branch}}'
         echo '${{ github.ref }}'
+        echo '${{ github.ref.name }}'
         echo '${{ github.head_ref }}'
         echo '${{ github.event.base_ref }}'
         echo (${{ github.event.base_ref }} == 'refs/heads/develop')
