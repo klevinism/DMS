@@ -10,7 +10,7 @@ on:
 jobs:          
   build_alpha:
     runs-on: ubuntu-latest
-    if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && ${{GITHUB_REF#refs/heads/}} == 'master'
+    if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && github.ref == 'refs/heads/master'
     steps:
     - name: Branch Name action library
       id: branch-name
