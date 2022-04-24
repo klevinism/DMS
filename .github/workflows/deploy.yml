@@ -18,7 +18,11 @@ jobs:
       - name: Running on the default branch.
         #if: steps.branch-name.outputs.current_branch == 'master'
         run: |
-          echo "Running on default: ${{ steps.branch-name.outputs.current_branch }}"
+          echo "Running on current_branch: ${{ steps.branch-name.outputs.current_branch }}"
+          echo "Running on default_branch: ${{ steps.branch-name.outputs.default_branch }}"
+          echo "Running on base_ref_branch: ${{ steps.branch-name.outputs.base_ref_branch }}"
+          echo "Running on head_ref_branch: ${{ steps.branch-name.outputs.head_ref_branch }}"
+
         # Outputs: "Running on default: ".
         
 #   build_alpha:
