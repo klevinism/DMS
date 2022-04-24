@@ -10,7 +10,7 @@ on:
 jobs:
   build_master:
     runs-on: ubuntu-latest
-    if: github.head_ref == 'refs/heads/master'
+    if: ${{ github.head_ref }} == 'refs/heads/develop'
     steps:
     - uses: actions/checkout@v2
     - name: Copy repository contents via scp
@@ -34,14 +34,14 @@ jobs:
         PASSWORD: ${{ secrets.VMIPASSWORD }}
         script: | 
           GITHUB_DESTINATION='/var/www/dms'
-          FINAL_DESTINATION='/var/www/dmsAlphaTest'
+          FINAL_DESTINATION='/var/www/alphaDCMS'
           ENVIRONMENT_DESTINATION='/etc/environment'
           
           cd $GITHUB_DESTINATION
           
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
           echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
-          echo DCMSVERSION=${VERSION} >> $ENVIRONMENT_DESTINATION
+          echo DCMSVERSIONALPHA=${VERSION} >> $ENVIRONMENT_DESTINATION
           PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
           
           rm -r $PREV_DCMS_APP_NAME
@@ -51,8 +51,8 @@ jobs:
           mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
           rm -r $GITHUB_DESTINATION/*
 
-          sudo systemctl stop DcmsAlphaTest.service
-          sudo systemctl start DcmsAlphaTest.service
+          sudo systemctl stop alphaDCMS.service
+          sudo systemctl start alphaDCMS.service
   build_beta:
     runs-on: ubuntu-latest
     if: ${{ github.head_ref }} == 'refs/heads/beta'
@@ -98,3 +98,48 @@ jobs:
 
          sudo systemctl stop betaDCMS.service
          sudo systemctl start betaDCMS.service
+  build_production:
+    runs-on: ubuntu-latest
+    if: ${{ github.head_ref }} == 'refs/heads/master'
+    steps:
+    - uses: actions/checkout@v2
+    - name: Copy repository contents via scp for Production branch
+      uses: appleboy/scp-action@master
+      env:
+        HOST: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        PASSWORD: ${{ secrets.VMIPASSWORD }}
+      with:
+        source: "."
+        target: "/var/www/dms/${GITHUB_REF#refs/heads/}"
+
+
+    - name: Executing remote command for Beta
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        PASSWORD: ${{ secrets.VMIPASSWORD }}
+        script: | 
+         GITHUB_DESTINATION='/var/www/dms'
+         FINAL_DESTINATION='/var/www/prodDCMS'
+         ENVIRONMENT_DESTINATION='/etc/environment'
+          
+         cd $GITHUB_DESTINATION
+          
+         VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+         echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
+         echo DCMSVERSIONPROD=${VERSION} >> $ENVIRONMENT_DESTINATION
+         PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
+          
+         rm -r $PREV_DCMS_APP_NAME
+          
+         mvn clean package 
+          
+         mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
+         rm -r $GITHUB_DESTINATION/*
+
+         sudo systemctl stop prodDCMS.service
+         sudo systemctl start prodDCMS.service
