@@ -12,10 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && github.ref == 'refs/heads/master'
     steps:
-    - name: Branch Name action library
-      id: branch-name
-      uses: tj-actions/branch-names@v5.2
-      
     - name: Copy repository contents via scp
       uses: appleboy/scp-action@master
       env:
@@ -29,7 +25,6 @@ jobs:
 
 
     - name: Executing remote command
-      if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'master'
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
@@ -59,13 +54,9 @@ jobs:
           sudo systemctl start alphaDCMS.service
   build_beta:
     runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && github.ref == 'refs/heads/master'
     steps:
-    - name: Branch Name action library
-      id: branch-name
-      uses: tj-actions/branch-names@v5.2
-      
     - name: Copy repository contents via scp for Beta
-      if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'beta'
       uses: appleboy/scp-action@master
       env:
         HOST: ${{ secrets.HOST }}
@@ -76,9 +67,7 @@ jobs:
         source: "."
         target: "/var/www/dms/${GITHUB_REF#refs/heads/}"
 
-
     - name: Executing remote command for Beta
-      if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'beta'
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
@@ -108,13 +97,9 @@ jobs:
          sudo systemctl start betaDCMS.service
   build_production:
     runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && github.ref == 'refs/heads/master'
     steps:
-    - name: Branch Name action library
-      id: branch-name
-      uses: tj-actions/branch-names@v5.2
-      
     - name: Copy repository contents via scp for Production branch
-      if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'master'
       uses: appleboy/scp-action@master
       env:
         HOST: ${{ secrets.HOST }}
@@ -127,7 +112,6 @@ jobs:
 
 
     - name: Executing remote command for Beta
-      if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'master'
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
