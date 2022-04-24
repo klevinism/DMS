@@ -13,6 +13,8 @@ jobs:
     steps:
     - name: Copy repository contents via scp
       run: | 
+        echo '${{ github.ref }}'
+        echo '${{ github.head_ref }}'
         echo '${{ github.event.base_ref }}'
         echo (${{ github.event.base_ref }} == 'refs/heads/develop')
   build_master:
