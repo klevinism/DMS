@@ -60,7 +60,7 @@ jobs:
           sudo systemctl start alphaDCMS.service
   build_beta:
     runs-on: ubuntu-latest
-    if: ${{ env.BRANCH }} == 'refs/heads/beta'
+#     if: ${{ env.BRANCH }} == 'refs/heads/beta'
     steps:
     - uses: actions/checkout@v2
     - name: Copy repository contents via scp for Beta
@@ -105,7 +105,7 @@ jobs:
          sudo systemctl start betaDCMS.service
   build_production:
     runs-on: ubuntu-latest
-    if: ${{ env.BRANCH }} == 'refs/heads/master'
+#     if: ${{ env.BRANCH }} == 'refs/heads/master'
     steps:
     - uses: actions/checkout@v2
     - name: Copy repository contents via scp for Production branch
