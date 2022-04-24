@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Running on the default branch.
-        if: startsWith('${{ github.event.head_commit.message }}', '[maven-release-plugin]')
+        if: startsWith(github.event.head_commit.message, '[maven-release-plugin]')
         run: |
           echo "${{ github.event.head_commit.message }}"
 
