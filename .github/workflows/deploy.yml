@@ -7,7 +7,8 @@ on:
   push:
      branches:
       - master
-
+     tags:
+      - '*'
 jobs:  
   job1:
     runs-on: ubuntu-latest
