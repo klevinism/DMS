@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>com.visionous</groupId>
 	<artifactId>dcms</artifactId>
-	<version>2.1.1</version>
+	<version>2.1.2-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>Oxydent</name>
 	<description>Dental Clinic Management System</description>
@@ -21,7 +21,7 @@
     <scm>
       <connection>scm:git:https://github.com/klevinism/DMS.git</connection>
       <developerConnection>scm:git:https://github.com/klevinism/DMS.git</developerConnection>
-      <tag>dcms-2.1.1</tag>
+      <tag>HEAD</tag>
   </scm>
 	
 	<profiles>
