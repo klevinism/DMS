@@ -8,6 +8,13 @@ on:
      tags: '**'
 
 jobs:
+  build_echo_branch_name:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Copy repository contents via scp
+      run: | 
+        echo '${{ github.event.base_ref }}'
+        echo (${{ github.event.base_ref }} == 'refs/heads/develop')
   build_master:
     runs-on: ubuntu-latest
     if: ${{ github.event.base_ref }} == 'refs/heads/develop'
@@ -15,9 +22,6 @@ jobs:
     - uses: actions/checkout@v2
     - name: Copy repository contents via scp
       uses: appleboy/scp-action@master
-      run: | 
-       echo "${{ github.event.base_ref }}"
-       echo (${{ github.event.base_ref }} == 'refs/heads/develop')
       env:
         HOST: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
@@ -59,9 +63,6 @@ jobs:
   build_beta:
     runs-on: ubuntu-latest
     if: ${{ github.event.base_ref }} == 'refs/heads/beta'
-    run: | 
-     echo "${{ github.event.base_ref }}"
-     echo (${{ github.event.base_ref }} == 'refs/heads/beta')
     steps:
     - uses: actions/checkout@v2
     - name: Copy repository contents via scp for Beta
@@ -111,9 +112,6 @@ jobs:
     - uses: actions/checkout@v2
     - name: Copy repository contents via scp for Production branch
       uses: appleboy/scp-action@master
-      run: | 
-       echo "${{ github.event.base_ref }}"
-       echo (${{ github.event.base_ref }} == 'refs/heads/master')
       env:
         HOST: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
