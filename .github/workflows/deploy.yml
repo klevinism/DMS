@@ -6,8 +6,6 @@ name: Java CI with Maven
 on:
   push:
      branches:
-      - master
-     tags:
       - '*'
 jobs:  
   job1:
@@ -18,8 +16,9 @@ jobs:
         uses: tj-actions/branch-names@v5.2
         
       - name: Running on the default branch.
-        #if: steps.branch-name.outputs.current_branch == 'master'
+        #if: startsWith(${{ github.event.head_commit.message }}, '[maven-release-plugin]')steps.branch-name.outputs.current_branch == 'master'
         run: |
+          echo "${{ github.event.head_commit.message }}"
           echo "Running on current_branch: ${{ steps.branch-name.outputs.current_branch }}"
           echo "Running on default_branch: ${{ steps.branch-name.outputs.default_branch }}"
           echo "Running on base_ref_branch: ${{ steps.branch-name.outputs.base_ref_branch }}"
