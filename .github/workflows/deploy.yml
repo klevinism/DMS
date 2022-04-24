@@ -11,8 +11,12 @@ jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
+      - name: Branch Name action library
+        id: branch-name
+        uses: tj-actions/branch-names@v5.2
+        
       - name: Running on the default branch.
-        if: startsWith(github.event.head_commit.message, '[maven-release-plugin]')
+        if: startsWith(github.event.head_commit.message, '[maven-release-plugin]') &&  steps.branch-name.outputs.current_branch == 'master'
         run: |
           echo "${{ github.event.head_commit.message }} "
 
