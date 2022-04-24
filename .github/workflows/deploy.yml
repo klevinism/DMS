@@ -16,7 +16,7 @@ jobs:
         uses: tj-actions/branch-names@v5.2
         
       - name: Running on the default branch.
-        #if: startsWith(${{ github.event.head_commit.message }}, '[maven-release-plugin]')steps.branch-name.outputs.current_branch == 'master'
+        #if: startsWith('${{ github.event.head_commit.message }}', '[maven-release-plugin]')steps.branch-name.outputs.current_branch == 'master'
         run: |
           echo startsWith(${{ github.event.head_commit.message }}, 'try')
           echo "${{ github.event.head_commit.message }}"
