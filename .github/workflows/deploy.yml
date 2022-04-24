@@ -10,13 +10,13 @@ on:
 jobs:          
   build_alpha:
     runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && ${GITHUB_REF#refs/heads/} == 'master'
     steps:
     - name: Branch Name action library
       id: branch-name
       uses: tj-actions/branch-names@v5.2
       
     - name: Copy repository contents via scp
-      if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'master'
       uses: appleboy/scp-action@master
       env:
         HOST: ${{ secrets.HOST }}
