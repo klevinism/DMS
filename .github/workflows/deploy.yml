@@ -11,6 +11,7 @@ jobs:
 
   build: 
     runs-on: ubuntu-latest
+    if: ${{ github.head_ref }} == 'refs/heads/github_actions_config'
     steps:
       - run: echo "test"
   build_master:
