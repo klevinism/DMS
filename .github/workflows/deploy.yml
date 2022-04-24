@@ -10,7 +10,7 @@ on:
 jobs:          
   build_alpha:
     runs-on: ubuntu-latest
-    if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && github.ref == 'refs/heads/master'
+    if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/master'
     steps:
     - name: Copy repository contents via scp
       uses: appleboy/scp-action@master
@@ -54,7 +54,7 @@ jobs:
           sudo systemctl start alphaDCMS.service
   build_beta:
     runs-on: ubuntu-latest
-    if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && github.ref == 'refs/heads/master'
+    if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/master'
     steps:
     - name: Copy repository contents via scp for Beta
       uses: appleboy/scp-action@master
@@ -97,7 +97,7 @@ jobs:
          sudo systemctl start betaDCMS.service
   build_production:
     runs-on: ubuntu-latest
-    if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && github.ref == 'refs/heads/master'
+    if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/master'
     steps:
     - name: Copy repository contents via scp for Production branch
       uses: appleboy/scp-action@master
