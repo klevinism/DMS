@@ -7,157 +7,154 @@ on:
   push:
      branches:
       - '*'
-jobs:  
-  job1:
+jobs:          
+  build_alpha:
     runs-on: ubuntu-latest
     steps:
-      - name: Branch Name action library
-        id: branch-name
-        uses: tj-actions/branch-names@v5.2
-        
-      - name: Running on the default branch.
-        if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'master'
-        run: |
-          echo "${{ github.event.head_commit.message }} "
-
-        # Outputs: "Running on default: ".
-        
-#   build_alpha:
-#     runs-on: ubuntu-latest
-#     steps:
-#     - uses: actions/checkout@v2
-#       env:
-#           GITHUB_CONTEXT: ${{ toJson(github) }}
-#     - run: |
-#          echo '${{github.event.base_ref}}'
-#          echo $GITHUB_CONTEXT
-#     - name: Copy repository contents via scp
-#       uses: appleboy/scp-action@master
-#       env:
-#         HOST: ${{ secrets.HOST }}
-#         USERNAME: ${{ secrets.USERNAME }}
-#         PORT: ${{ secrets.PORT }}
-#         PASSWORD: ${{ secrets.VMIPASSWORD }}
-#       with:
-#         source: "."
-#         target: "/var/www/dms/${GITHUB_REF#refs/heads/}"
+    - name: Branch Name action library
+      id: branch-name
+      uses: tj-actions/branch-names@v5.2
+      
+    - uses: actions/checkout@v2
+      if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'master'
+    - name: Copy repository contents via scp
+      uses: appleboy/scp-action@master
+      env:
+        HOST: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        PASSWORD: ${{ secrets.VMIPASSWORD }}
+      with:
+        source: "."
+        target: "/var/www/dms/${GITHUB_REF#refs/heads/}"
 
 
-#     - name: Executing remote command
-#       uses: appleboy/ssh-action@master
-#       with:
-#         host: ${{ secrets.HOST }}
-#         USERNAME: ${{ secrets.USERNAME }}
-#         PORT: ${{ secrets.PORT }}
-#         PASSWORD: ${{ secrets.VMIPASSWORD }}
-#         script: | 
-#           GITHUB_DESTINATION='/var/www/dms'
-#           FINAL_DESTINATION='/var/www/alphaDCMS'
-#           ENVIRONMENT_DESTINATION='/etc/environment'
+    - name: Executing remote command
+      if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'master'
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        PASSWORD: ${{ secrets.VMIPASSWORD }}
+        script: | 
+          GITHUB_DESTINATION='/var/www/dms'
+          FINAL_DESTINATION='/var/www/alphaDCMS'
+          ENVIRONMENT_DESTINATION='/etc/environment'
           
-#           cd $GITHUB_DESTINATION
+          cd $GITHUB_DESTINATION
           
-#           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-#           echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
-#           echo DCMSVERSIONALPHA=${VERSION} >> $ENVIRONMENT_DESTINATION
-#           PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
+          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
+          echo DCMSVERSIONALPHA=${VERSION} >> $ENVIRONMENT_DESTINATION
+          PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
           
-#           rm -r $PREV_DCMS_APP_NAME
+          rm -r $PREV_DCMS_APP_NAME
           
-#           mvn clean package 
+          mvn clean package 
           
-#           mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
-#           rm -r $GITHUB_DESTINATION/*
+          mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
+          rm -r $GITHUB_DESTINATION/*
 
-#           sudo systemctl stop alphaDCMS.service
-#           sudo systemctl start alphaDCMS.service
-#   build_beta:
-#     runs-on: ubuntu-latest
-# #     if: ${{ env.BRANCH }} == 'refs/heads/beta'
-#     steps:
-#     - uses: actions/checkout@v2
-#     - name: Copy repository contents via scp for Beta
-#       uses: appleboy/scp-action@master
-#       env:
-#         HOST: ${{ secrets.HOST }}
-#         USERNAME: ${{ secrets.USERNAME }}
-#         PORT: ${{ secrets.PORT }}
-#         PASSWORD: ${{ secrets.VMIPASSWORD }}
-#       with:
-#         source: "."
-#         target: "/var/www/dms/${GITHUB_REF#refs/heads/}"
-
-
-#     - name: Executing remote command for Beta
-#       uses: appleboy/ssh-action@master
-#       with:
-#         host: ${{ secrets.HOST }}
-#         USERNAME: ${{ secrets.USERNAME }}
-#         PORT: ${{ secrets.PORT }}
-#         PASSWORD: ${{ secrets.VMIPASSWORD }}
-#         script: | 
-#          GITHUB_DESTINATION='/var/www/dms'
-#          FINAL_DESTINATION='/var/www/betaDCMS'
-#          ENVIRONMENT_DESTINATION='/etc/environment'
-          
-#          cd $GITHUB_DESTINATION
-          
-#          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-#          echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
-#          echo DCMSVERSIONBETA=${VERSION} >> $ENVIRONMENT_DESTINATION
-#          PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
-          
-#          rm -r $PREV_DCMS_APP_NAME
-          
-#          mvn clean package 
-          
-#          mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
-#          rm -r $GITHUB_DESTINATION/*
-
-#          sudo systemctl stop betaDCMS.service
-#          sudo systemctl start betaDCMS.service
-#   build_production:
-#     runs-on: ubuntu-latest
-# #     if: ${{ env.BRANCH }} == 'refs/heads/master'
-#     steps:
-#     - uses: actions/checkout@v2
-#     - name: Copy repository contents via scp for Production branch
-#       uses: appleboy/scp-action@master
-#       env:
-#         HOST: ${{ secrets.HOST }}
-#         USERNAME: ${{ secrets.USERNAME }}
-#         PORT: ${{ secrets.PORT }}
-#         PASSWORD: ${{ secrets.VMIPASSWORD }}
-#       with:
-#         source: "."
-#         target: "/var/www/dms/${GITHUB_REF#refs/heads/}"
+          sudo systemctl stop alphaDCMS.service
+          sudo systemctl start alphaDCMS.service
+  build_beta:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Branch Name action library
+      id: branch-name
+      uses: tj-actions/branch-names@v5.2
+      
+    - uses: actions/checkout@v2
+    - name: Copy repository contents via scp for Beta
+      if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'beta'
+      uses: appleboy/scp-action@master
+      env:
+        HOST: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        PASSWORD: ${{ secrets.VMIPASSWORD }}
+      with:
+        source: "."
+        target: "/var/www/dms/${GITHUB_REF#refs/heads/}"
 
 
-#     - name: Executing remote command for Beta
-#       uses: appleboy/ssh-action@master
-#       with:
-#         host: ${{ secrets.HOST }}
-#         USERNAME: ${{ secrets.USERNAME }}
-#         PORT: ${{ secrets.PORT }}
-#         PASSWORD: ${{ secrets.VMIPASSWORD }}
-#         script: | 
-#          GITHUB_DESTINATION='/var/www/dms'
-#          FINAL_DESTINATION='/var/www/prodDCMS'
-#          ENVIRONMENT_DESTINATION='/etc/environment'
+    - name: Executing remote command for Beta
+      if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'beta'
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        PASSWORD: ${{ secrets.VMIPASSWORD }}
+        script: | 
+         GITHUB_DESTINATION='/var/www/dms'
+         FINAL_DESTINATION='/var/www/betaDCMS'
+         ENVIRONMENT_DESTINATION='/etc/environment'
           
-#          cd $GITHUB_DESTINATION
+         cd $GITHUB_DESTINATION
           
-#          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-#          echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
-#          echo DCMSVERSIONPROD=${VERSION} >> $ENVIRONMENT_DESTINATION
-#          PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
+         VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+         echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
+         echo DCMSVERSIONBETA=${VERSION} >> $ENVIRONMENT_DESTINATION
+         PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
           
-#          rm -r $PREV_DCMS_APP_NAME
+         rm -r $PREV_DCMS_APP_NAME
           
-#          mvn clean package 
+         mvn clean package 
           
-#          mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
-#          rm -r $GITHUB_DESTINATION/*
+         mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
+         rm -r $GITHUB_DESTINATION/*
 
-#          sudo systemctl stop prodDCMS.service
-#          sudo systemctl start prodDCMS.service
+         sudo systemctl stop betaDCMS.service
+         sudo systemctl start betaDCMS.service
+  build_production:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Branch Name action library
+      id: branch-name
+      uses: tj-actions/branch-names@v5.2
+      
+    - uses: actions/checkout@v2
+    - name: Copy repository contents via scp for Production branch
+      if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'master'
+      uses: appleboy/scp-action@master
+      env:
+        HOST: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        PASSWORD: ${{ secrets.VMIPASSWORD }}
+      with:
+        source: "."
+        target: "/var/www/dms/${GITHUB_REF#refs/heads/}"
+
+
+    - name: Executing remote command for Beta
+      if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'master'
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        PASSWORD: ${{ secrets.VMIPASSWORD }}
+        script: | 
+         GITHUB_DESTINATION='/var/www/dms'
+         FINAL_DESTINATION='/var/www/prodDCMS'
+         ENVIRONMENT_DESTINATION='/etc/environment'
+          
+         cd $GITHUB_DESTINATION
+          
+         VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+         echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
+         echo DCMSVERSIONPROD=${VERSION} >> $ENVIRONMENT_DESTINATION
+         PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
+          
+         rm -r $PREV_DCMS_APP_NAME
+          
+         mvn clean package 
+          
+         mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
+         rm -r $GITHUB_DESTINATION/*
+
+         sudo systemctl stop prodDCMS.service
+         sudo systemctl start prodDCMS.service
