@@ -116,7 +116,6 @@ jobs:
 
     - name: Executing remote command for Beta
       uses: appleboy/ssh-action@master
-      #rm -r $GITHUB_DESTINATION/*
       with:
         host: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
@@ -140,6 +139,7 @@ jobs:
           
          mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
          
-
+         rm -r $GITHUB_DESTINATION/*
+         
          sudo systemctl stop prodDCMS.service
          sudo systemctl start prodDCMS.service
