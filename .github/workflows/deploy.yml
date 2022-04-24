@@ -11,19 +11,10 @@ jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
-      - name: Get branch name
-        id: branch-name
-        uses: tj-actions/branch-names@v5.2
-        
       - name: Running on the default branch.
-        #if: startsWith('${{ github.event.head_commit.message }}', '[maven-release-plugin]')steps.branch-name.outputs.current_branch == 'master'
+        if: startsWith('${{ github.event.head_commit.message }}', 'try')
         run: |
-          echo startsWith(${{ github.event.head_commit.message }}, 'try')
           echo "${{ github.event.head_commit.message }}"
-          echo "Running on current_branch: ${{ steps.branch-name.outputs.current_branch }}"
-          echo "Running on default_branch: ${{ steps.branch-name.outputs.default_branch }}"
-          echo "Running on base_ref_branch: ${{ steps.branch-name.outputs.base_ref_branch }}"
-          echo "Running on head_ref_branch: ${{ steps.branch-name.outputs.head_ref_branch }}"
 
         # Outputs: "Running on default: ".
         
