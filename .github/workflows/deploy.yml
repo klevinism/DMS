@@ -14,7 +14,7 @@ jobs:
       - name: Running on the default branch.
         if: startsWith(github.event.head_commit.message, '[maven-release-plugin]')
         run: |
-          echo "${{ github.event.head_commit.message }}"
+          echo "${{ github.event.head_commit.message }} "
 
         # Outputs: "Running on default: ".
         
