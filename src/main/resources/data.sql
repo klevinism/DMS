@@ -1,10 +1,3 @@
-INSERT INTO Business
-(id, business_url, "name", enabled, subdomain_uri)
-VALUES(1, 'http://dental1.com', 'Dental1', true, 'dentalpracticeone');
-
-INSERT INTO GLOBAL_SETTINGS
-(id, appointments_times_split, business_days, business_email, business_image, business_name, business_password, business_times, business_id)
-VALUES(1, 60, '1,6', 'klevin.delimeta@hotmail.com', '220314222101-Oxydent logo_white-01.svg', 'Dental1', 'Klklkl@002', '09:00,18:30', 1);
 
 Insert into ROLE (ID,NAME) values (2,'ADMIN') ;
 Insert into ROLE (ID,NAME) values (1,'GUEST') ;
@@ -95,17 +88,6 @@ INSERT INTO ACCOUNT
 (id, active, address, age, birthday, city, country, email, enabled, gender, image, "name", "password", phone, surname, username, is_account)
 VALUES(1, true, 'Tirane', 28, '1993-06-15', 'Tirane', 'Shqiperi', 'klevindelimeta@hotmail.com', true, 'male', '210315205804-33020811_10208881922763931_5402227929541246976_n.jpg', 'Admin', '$2a$10$aXdGc9NqFVuCnDlat1v.Te7wzKZ9t.LveIpLqYwBu93SHIaoRy/Au', 692458023, 'Admin', 'admin.admin', true);
 
-
-INSERT INTO BUSINESS_ACCOUNTS
-(businessid, accountid)
-VALUES(1, 1);
-
-Insert into PERSONNEL (ID, TYPE) VALUES ('1', 'ADMIN')  ;
-
-Insert into AUTHORITY (ACCOUNTID,ROLEID) values (1,2) ;
-
-Insert into SERVICE_TYPE (ID,NAME,ADDEDDATE,PRICE) values (1,'Kontrroll','14-JAN-21',0) ;
-
 /* SUBSCRIPTION FEATURE */
 
 INSERT INTO SUBSCRIPTION_LIST
@@ -183,7 +165,3 @@ VALUES(3, 2);
 INSERT INTO SUBSCRIPTION_RESTRICTIONS
 (subscriptionid, restrictionid)
 VALUES(0, 3);
-
-INSERT INTO SUBSCRIPTION_HISTORY
-(id, active, addeddate, global_settings_id, subscription_end_date, subscription_id, subscription_start_date, business_id)
-VALUES(1, true, '2021-10-15 21:21:44.000', 1, '2022-01-15 21:21:57.000', 0, '2021-10-15 21:22:29.000', 1);
