@@ -10,7 +10,6 @@ on:
 jobs:  
   build_alpha:
     runs-on: ubuntu-latest
-    if: github.event.base_ref == 'refs/heads/master'
     steps:
     - uses: actions/checkout@v2
       env:
