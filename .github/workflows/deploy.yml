@@ -13,6 +13,10 @@ jobs:
     steps:
     - name: Copy repository contents via scp
       run: | 
+        echo '${{github.branch}}'
+        echo '${{GITHUB_BRANCH}}'
+        echo '${{GITHUB_REF#refs/heads/}}'
+        echo '${{GITHUB_REF}}'
         echo '${{ github.ref }}'
         echo '${{ github.head_ref }}'
         echo '${{ github.event.base_ref }}'
