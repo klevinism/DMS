@@ -16,7 +16,7 @@ jobs:
         uses: tj-actions/branch-names@v5.2
         
       - name: Running on the default branch.
-        if: steps.branch-name.outputs.current_branch == 'master'
+        #if: steps.branch-name.outputs.current_branch == 'master'
         run: |
           echo "Running on default: ${{ steps.branch-name.outputs.current_branch }}"
         # Outputs: "Running on default: ".
