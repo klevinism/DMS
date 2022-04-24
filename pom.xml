@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>com.visionous</groupId>
 	<artifactId>dcms</artifactId>
-	<version>2.1.1-SNAPSHOT</version>
+	<version>2.1.1-SNAPSHOT-Beta</version>
 	<packaging>war</packaging>
 	<name>Oxydent</name>
 	<description>Dental Clinic Management System</description>
@@ -149,6 +149,19 @@
 
 	<build>
 		<plugins>
+		  <plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-release-plugin</artifactId>
+		    <version>3.0.0-M5</version>
+		    <configuration>
+		      <!--
+		        During release:perform, enable the "release" profile
+		       -->
+		      <releaseProfiles>release</releaseProfiles>
+		      <goals>install</goals>
+		    </configuration>
+		  </plugin>
+		
 			<plugin>
 	            <groupId>org.springframework.boot</groupId>
 	            <artifactId>spring-boot-maven-plugin</artifactId>
