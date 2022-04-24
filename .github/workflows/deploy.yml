@@ -16,7 +16,7 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
     - run: |
          echo '${{github.event.base_ref}}'
-         echo "$GITHUB_CONTEXT"
+         echo $GITHUB_CONTEXT
     - name: Copy repository contents via scp
       uses: appleboy/scp-action@master
       env:
