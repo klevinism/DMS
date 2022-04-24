@@ -10,7 +10,7 @@ on:
 jobs:
   build_master:
     runs-on: ubuntu-latest
-    if: ${{ github.head_ref }} == 'refs/heads/develop'
+    if: ${{ github.event.base_ref }} == 'refs/heads/develop'
     steps:
     - uses: actions/checkout@v2
     - name: Copy repository contents via scp
@@ -55,7 +55,7 @@ jobs:
           sudo systemctl start alphaDCMS.service
   build_beta:
     runs-on: ubuntu-latest
-    if: ${{ github.head_ref }} == 'refs/heads/beta'
+    if: ${{ github.event.base_ref }} == 'refs/heads/beta'
     steps:
     - uses: actions/checkout@v2
     - name: Copy repository contents via scp for Beta
@@ -100,7 +100,7 @@ jobs:
          sudo systemctl start betaDCMS.service
   build_production:
     runs-on: ubuntu-latest
-    if: ${{ github.head_ref }} == 'refs/heads/master'
+    if: ${{ github.event.base_ref }} == 'refs/heads/master'
     steps:
     - uses: actions/checkout@v2
     - name: Copy repository contents via scp for Production branch
