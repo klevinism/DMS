@@ -8,6 +8,11 @@ on:
      tags: '**'
 
 jobs:
+
+  build: 
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "test"
   build_master:
     runs-on: ubuntu-latest
     if: ${{ github.head_ref }} == 'refs/heads/develop'
