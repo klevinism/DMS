@@ -8,22 +8,21 @@ on:
      tags: '**'
 
 jobs:
-  build_echo_branch_name:
+  get_branch_name:
+   runs-on: ubuntu-latest
+   steps:
+   - name: checkout source code's branch name
+     uses: actions/checkout@v1
+   - name: Get Branch Name
+     run: |
+       raw=$(git branch -r --contains ${{ github.ref }})
+       branch=${raw/origin\/}
+       echo ::set-env name=BRANCH::$branch
+       echo '${{ env.BRANCH }}'
+       
+  build_alpha:
     runs-on: ubuntu-latest
-    steps:
-    - name: Copy repository contents via scp
-      run: | 
-        echo '${{github.branch}}'
-        echo '${{github.action_repository}}'
-        echo '${{github.event_repository}}'
-        echo '${{ github.ref }}'
-        echo '${{ github.ref_name }}'
-        echo '${{ github.head_ref }}'
-        echo '${{ github.event.base_ref }}'
-        echo (${{ github.event.base_ref }} == 'refs/heads/develop')
-  build_master:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.base_ref }} == 'refs/heads/develop'
+    if: ${{ env.BRANCH }} == 'refs/heads/develop'
     steps:
     - uses: actions/checkout@v2
     - name: Copy repository contents via scp
@@ -68,7 +67,7 @@ jobs:
           sudo systemctl start alphaDCMS.service
   build_beta:
     runs-on: ubuntu-latest
-    if: ${{ github.event.base_ref }} == 'refs/heads/beta'
+    if: ${{ env.BRANCH }} == 'refs/heads/beta'
     steps:
     - uses: actions/checkout@v2
     - name: Copy repository contents via scp for Beta
@@ -113,7 +112,7 @@ jobs:
          sudo systemctl start betaDCMS.service
   build_production:
     runs-on: ubuntu-latest
-    if: ${{ github.event.base_ref }} == 'refs/heads/master'
+    if: ${{ env.BRANCH }} == 'refs/heads/master'
     steps:
     - uses: actions/checkout@v2
     - name: Copy repository contents via scp for Production branch
