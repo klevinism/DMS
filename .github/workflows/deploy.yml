@@ -15,9 +15,8 @@ jobs:
       id: branch-name
       uses: tj-actions/branch-names@v5.2
       
-    - uses: actions/checkout@v2
-      if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'master'
     - name: Copy repository contents via scp
+      if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'master'
       uses: appleboy/scp-action@master
       env:
         HOST: ${{ secrets.HOST }}
@@ -65,7 +64,6 @@ jobs:
       id: branch-name
       uses: tj-actions/branch-names@v5.2
       
-    - uses: actions/checkout@v2
     - name: Copy repository contents via scp for Beta
       if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'beta'
       uses: appleboy/scp-action@master
@@ -115,7 +113,6 @@ jobs:
       id: branch-name
       uses: tj-actions/branch-names@v5.2
       
-    - uses: actions/checkout@v2
     - name: Copy repository contents via scp for Production branch
       if: startsWith(github.event.head_commit.message,'[maven-release-plugin]') && steps.branch-name.outputs.current_branch == 'master'
       uses: appleboy/scp-action@master
