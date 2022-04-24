@@ -10,8 +10,6 @@ import java.util.Optional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -23,8 +21,6 @@ import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.ServiceType;
-import com.visionous.dms.pojo.ServiceTypes;
-import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.service.GlobalSettingsService;
 import com.visionous.dms.service.ServiceTypeService;
 
@@ -43,8 +39,6 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 	private GlobalSettingsService globalSettingsService;
 	private ServiceTypeService serviceTypeService;
 	
-	// Bean
-	private ApplicationContext ctx;
 	
 	/**
 	 * 
@@ -52,12 +46,10 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 	@Autowired
 	public GlobalSettingsModelController(
 			GlobalSettingsService globalSettingsService,
-			ServiceTypeService serviceTypeService,
-			ApplicationContext ctx) {
+			ServiceTypeService serviceTypeService) {
 				
 		this.globalSettingsService = globalSettingsService;
 		this.serviceTypeService = serviceTypeService;
-		this.ctx = ctx;
 	}
 	
 	/**
