@@ -3,12 +3,15 @@
  */
 package com.visionous.dms.controller;
 
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.model.HomeModelController;
 
@@ -42,6 +45,10 @@ public class HomeModelViewController {
 			.addControllerParam("viewType", Actions.VIEW)
 			.setViewModel(model)
 			.run(); // GetValuesForView
+		
+		if(Objects.isNull(AccountUtil.currentLoggedInBussines())) {
+			return "redirect:/business";
+		}
 		
 		return "demo_1/index";
 	}

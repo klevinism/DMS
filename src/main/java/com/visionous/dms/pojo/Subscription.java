@@ -52,6 +52,7 @@ public class Subscription implements Serializable{
 	
 	private String name;
 	
+	@Column(length=5000)
 	private String description;
 	
 	private int price;

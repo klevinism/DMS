@@ -84,10 +84,6 @@ Insert into TEETH (ID,NAME,DESCRIPTION,ADDEDDATE) values (30,'4 : 6','Manibular 
 Insert into TEETH (ID,NAME,DESCRIPTION,ADDEDDATE) values (31,'4 : 7','Manibular Right Second Molar : 7DR <img width="50px" height="50px" src="https://static.turbosquid.com/Preview/2020/07/16__08_05_28/Molar_Upper_Jaw_Right_03_Clean_Square_0000.jpg898E5DC6-8184-4CAE-A0F7-36A91633D485Res300.jpg" > ',to_date('14-JAN-21 00:00:00','DD-MON-YY HH24:MI:SS')) ;
 Insert into TEETH (ID,NAME,DESCRIPTION,ADDEDDATE) values (32,'4 : 8','Manibular Right Third Molar : 8DR <img width="50px" height="50px" src="https://static.turbosquid.com/Preview/2020/07/16__08_05_28/Molar_Upper_Jaw_Right_03_Clean_Square_0000.jpg898E5DC6-8184-4CAE-A0F7-36A91633D485Res300.jpg" > ',to_date('14-JAN-21 00:00:00','DD-MON-YY HH24:MI:SS')) ;
 
-INSERT INTO ACCOUNT
-(id, active, address, age, birthday, city, country, email, enabled, gender, image, "name", "password", phone, surname, username, is_account)
-VALUES(1, true, 'Tirane', 28, '1993-06-15', 'Tirane', 'Shqiperi', 'klevindelimeta@hotmail.com', true, 'male', '210315205804-33020811_10208881922763931_5402227929541246976_n.jpg', 'Admin', '$2a$10$aXdGc9NqFVuCnDlat1v.Te7wzKZ9t.LveIpLqYwBu93SHIaoRy/Au', 692458023, 'Admin', 'admin.admin', true);
-
 /* SUBSCRIPTION FEATURE */
 
 INSERT INTO SUBSCRIPTION_LIST
