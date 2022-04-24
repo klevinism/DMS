@@ -41,14 +41,15 @@ public class HomeModelViewController {
 	@GetMapping("")
 	public String homeDefault(Model model) {
 		
+		if(Objects.isNull(AccountUtil.currentLoggedInBussines())) {
+			return "redirect:/business";
+		}
+		
 		homeModelController.init()
 			.addControllerParam("viewType", Actions.VIEW)
 			.setViewModel(model)
 			.run(); // GetValuesForView
 		
-		if(Objects.isNull(AccountUtil.currentLoggedInBussines())) {
-			return "redirect:/business";
-		}
 		
 		return "demo_1/index";
 	}
