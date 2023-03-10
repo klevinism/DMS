@@ -40,8 +40,8 @@
         <i class="menu-icon mdi mdi-account-multiple-outline"></i>
         <span class="menu-title">
         	[[#{Customers}]] 
-        	<span class="badge badge-pill badge-warning" th:text="${subscription?.hasRestrictionsByPageName('/customer') == true } ? #{Upgrade}"></span>
-        	<span class="badge badge-pill badge-danger" th:if="${subscription == null}" th:text="#{Subscription}"></span>
+<!--        	<span class="badge badge-pill badge-warning" th:text="${subscription?.hasRestrictionsByPageName('/customer') == true } ? #{Upgrade}"></span>-->
+<!--        	<span class="badge badge-pill badge-danger" th:if="${subscription == null}" th:text="#{Subscription}"></span>-->
         	
         </span>
       </a>
@@ -51,8 +51,8 @@
         <i class="menu-icon mdi mdi-calendar-outline" ></i>
         <span class="menu-title">
         	[[#{Schedule}]] 
-        	<span class="badge badge-pill badge-danger" th:text="${subscription?.hasRestrictionsByPageName('/schedule') == true } ? #{Upgrade}">[[#{Upgrade}]]</span>
-          	<span class="badge badge-pill badge-danger" th:if="${subscription == null}" th:text="#{Subscription}"></span>
+<!--        	<span class="badge badge-pill badge-danger" th:text="${subscription?.hasRestrictionsByPageName('/schedule') == true } ? #{Upgrade}">[[#{Upgrade}]]</span>-->
+<!--          	<span class="badge badge-pill badge-danger" th:if="${subscription == null}" th:text="#{Subscription}"></span>-->
         </span>
       </a>
     </li>
