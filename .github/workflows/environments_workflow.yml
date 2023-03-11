@@ -1,0 +1,61 @@
+name: Run deployment on particular environment
+
+on:
+  push:
+  branches:
+    - '*'
+jobs:
+  build_alpha:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/develop'
+    steps:
+      - name: Dispatch 'Development' workflow
+        id: dispatch
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          repo: klevinism/DMS
+          ref: develop
+          token: ${{ secrets.GITSECRET }}
+          workflow: development_workflow.yaml
+          inputs: |
+            {
+              "environment": "develop",
+              "github_destination": "/var/www/dms",
+              "app_destination": "/var/www/alphaDCMS",
+            }
+  build_beta:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/beta'
+    steps:
+      - name: Dispatch 'Development' workflow
+        id: dispatch
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          repo: klevinism/DMS
+          ref: beta
+          token: ${{ secrets.GITSECRET }}
+          workflow: development_workflow.yaml
+          inputs: |
+            {
+              "environment": "beta",
+              "github_destination": "/var/www/dms",
+              "app_destination": "/var/www/betaDCMS",
+            }
+  build_production:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/master'
+    steps:
+      - name: Dispatch 'Production' workflow
+        id: dispatch
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          repo: klevinism/DMS
+          ref: master
+          token: ${{ secrets.GITSECRET }}
+          workflow: development_workflow.yaml
+          inputs: |
+            {
+              "environment": "prod",
+              "github_destination": "/var/www/dms",
+              "app_destination": "/var/www/prodDCMS",
+            }

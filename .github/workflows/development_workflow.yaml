@@ -1,0 +1,58 @@
+name: Deployment Workflow
+run-name: {{ inputs.environment }} by @${{ inputs.author }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        type: string
+      github_destination:
+        required: true
+        type: string
+      app_destination:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Copy repository contents via scp
+        uses: appleboy/scp-action@master
+        env:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          PASSWORD: ${{ secrets.VMIPASSWORD }}
+        with:
+          source: "."
+          target: ${{inputs.github_destination}}
+
+      - name: Executing remote command and deploying
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          PASSWORD: ${{ secrets.VMIPASSWORD }}
+          script: |
+            GITHUB_DESTINATION='${{inputs.github_destination}}'
+            FINAL_DESTINATION='${{inputs.app_destination}}'
+            ENVIRONMENT_DESTINATION='/etc/environment'
+            SERVICE_NAME=${{inputs.app_destination##*/}}
+            
+            cd $GITHUB_DESTINATION
+            
+            VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+            echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
+            echo DCMSVERSIONALPHA=${VERSION} >> $ENVIRONMENT_DESTINATION
+            PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
+            
+            rm -r $PREV_DCMS_APP_NAME
+            
+            mvn clean package 
+            
+            mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
+            rm -r $GITHUB_DESTINATION/*
+            sudo systemctl restart $SERVICE_NAME
