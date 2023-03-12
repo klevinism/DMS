@@ -21,7 +21,8 @@ jobs:
             {
               "environment": "develop",
               "github_destination": "/var/www/dms",
-              "app_destination": "/var/www/alphaDCMS"
+              "app_destination": "/var/www/alphaDCMS",
+              "author": ${{ github.actor }}
             }
 
   trigger_deploy_beta:
