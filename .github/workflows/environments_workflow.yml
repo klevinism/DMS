@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Dispatch deployment workflow for 'Alpha'(development) environment
         id: dispatch_alpha
-        uses: benc-uk/workflow-dispatch@v1.2.2
+        uses: benc-uk/workflow-dispatch@v1
         with:
           repo: klevinism/DMS
           ref: ${{ github.ref }}
