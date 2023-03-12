@@ -37,22 +37,22 @@ jobs:
           PORT: ${{ secrets.PORT }}
           PASSWORD: ${{ secrets.VMIPASSWORD }}
           script: |
-            GITHUB_DESTINATION='${{inputs.github_destination}}'
-            FINAL_DESTINATION='${{inputs.app_destination}}'
-            ENVIRONMENT_DESTINATION='/etc/environment'
-            SERVICE_NAME=${{inputs.app_destination##*/}}
-            
-            cd $GITHUB_DESTINATION
-            
-            VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-            echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
-            echo DCMSVERSIONALPHA=${VERSION} >> $ENVIRONMENT_DESTINATION
-            PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
-            
-            rm -r $PREV_DCMS_APP_NAME
-            
-            mvn clean package 
-            
-            mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
-            rm -r $GITHUB_DESTINATION/*
-            sudo systemctl restart $SERVICE_NAME
+#            GITHUB_DESTINATION='${{inputs.github_destination}}'
+#            FINAL_DESTINATION='${{inputs.app_destination}}'
+#            ENVIRONMENT_DESTINATION='/etc/environment'
+#            SERVICE_NAME=${{inputs.app_destination##*/}}
+#
+#            cd $GITHUB_DESTINATION
+#
+#            VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+#            echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
+#            echo DCMSVERSIONALPHA=${VERSION} >> $ENVIRONMENT_DESTINATION
+#            PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
+#
+#            rm -r $PREV_DCMS_APP_NAME
+#
+#            mvn clean package
+#
+#            mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
+#            rm -r $GITHUB_DESTINATION/*
+#            sudo systemctl restart $SERVICE_NAME
