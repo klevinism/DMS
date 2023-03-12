@@ -22,6 +22,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@master
       - name: Copy repository contents via scp
         uses: appleboy/scp-action@master
         env:
@@ -46,26 +47,13 @@ jobs:
             ENVIRONMENT_DESTINATION='/etc/environment'
             SERVICE_NAME=${FINAL_DESTINATION##*/}.'service'
 
-            pwd
-
             cd $GITHUB_DESTINATION
             
-            pwd
-            echo $SERVICE_NAME . "SERVICE NA<E"
-            
-            ls
-
             VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
             echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
             echo DCMSVERSIONALPHA=${VERSION} >> $ENVIRONMENT_DESTINATION
             PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
 
-            
-
-            ls
-            
-            echo "running MVN PACKAGE" 
-            pwd
             mvn clean package
 
             mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
