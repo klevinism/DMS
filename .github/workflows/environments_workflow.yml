@@ -9,14 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/develop'
     steps:
-      - name: Dispatch 'Development' workflow
-        id: dispatch
+      - name: Dispatch deployment workflow for 'Alpha'(development) environment
+        id: dispatch_alpha
         uses: benc-uk/workflow-dispatch@v1
         with:
           repo: klevinism/DMS
           ref: develop
           token: ${{ secrets.GITSECRET }}
-          workflow: development_workflow.yaml
+          workflow: deployment_workflow.yaml
           inputs: |
             {
               "environment": "develop",
@@ -27,14 +27,14 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/beta'
     steps:
-      - name: Dispatch 'Development' workflow
-        id: dispatch
+      - name: Dispatch deployment workflow for 'Beta' environment
+        id: dispatch_beta
         uses: benc-uk/workflow-dispatch@v1
         with:
           repo: klevinism/DMS
           ref: beta
           token: ${{ secrets.GITSECRET }}
-          workflow: development_workflow.yaml
+          workflow: deployment_workflow.yaml
           inputs: |
             {
               "environment": "beta",
@@ -45,14 +45,14 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/master'
     steps:
-      - name: Dispatch 'Production' workflow
-        id: dispatch
+      - name: Dispatch deployment workflow for 'Production' environment
+        id: dispatch_production
         uses: benc-uk/workflow-dispatch@v1
         with:
           repo: klevinism/DMS
           ref: master
           token: ${{ secrets.GITSECRET }}
-          workflow: development_workflow.yaml
+          workflow: deployment_workflow.yaml
           inputs: |
             {
               "environment": "prod",
