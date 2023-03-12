@@ -44,9 +44,14 @@ jobs:
             GITHUB_DESTINATION='${{inputs.github_destination}}'
             FINAL_DESTINATION='${{inputs.app_destination}}'
             ENVIRONMENT_DESTINATION='/etc/environment'
-            SERVICE_NAME=${FINAL_DESTINATION##*/}
+            SERVICE_NAME='${FINAL_DESTINATION##*/}.service'
 
             cd $GITHUB_DESTINATION
+            
+            echo pwd
+            echo $SERVICE_NAME . "SERVICE NA<E"
+            
+            ls
 
             VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
             echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
@@ -55,6 +60,10 @@ jobs:
 
             rm -r $PREV_DCMS_APP_NAME
 
+            ls
+            
+            echo "running MVN PACKAGE" 
+            echo pwd
             mvn clean package
 
             mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
