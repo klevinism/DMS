@@ -5,7 +5,7 @@ on:
     branches:
       - '*'
 jobs:
-  build_alpha:
+  trigger_deploy_alpha:
     runs-on: ubuntu-latest
     if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/develop'
     steps:
@@ -23,7 +23,7 @@ jobs:
               "github_destination": "/var/www/dms",
               "app_destination": "/var/www/alphaDCMS",
             }
-  build_beta:
+  trigger_deploy_beta:
     runs-on: ubuntu-latest
     if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/beta'
     steps:
@@ -41,7 +41,7 @@ jobs:
               "github_destination": "/var/www/dms",
               "app_destination": "/var/www/betaDCMS",
             }
-  build_production:
+  trigger_deploy_production:
     runs-on: ubuntu-latest
     if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/master'
     steps:
