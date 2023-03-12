@@ -7,7 +7,7 @@ on:
 jobs:
   trigger_deploy_alpha:
     runs-on: ubuntu-latest
-#    if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/develop'
+    if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/develop'
     steps:
       - name: Dispatch deployment workflow for 'Alpha'(development) environment
         id: dispatch_alpha
@@ -34,14 +34,15 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         with:
           repo: klevinism/DMS
-          ref: beta
+          ref: ${{ github.ref }}
           token: ${{ secrets.GITSECRET }}
           workflow: deployment_workflow.yaml
           inputs: |
             {
               "environment": "beta",
               "github_destination": "/var/www/dms",
-              "app_destination": "/var/www/betaDCMS"
+              "app_destination": "/var/www/betaDCMS",
+              "author": "${{ github.actor }}"
             }
 
   trigger_deploy_production:
@@ -53,12 +54,13 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         with:
           repo: klevinism/DMS
-          ref: master
+          ref: ${{ github.ref }}
           token: ${{ secrets.GITSECRET }}
           workflow: deployment_workflow.yaml
           inputs: |
             {
               "environment": "prod",
               "github_destination": "/var/www/dms",
-              "app_destination": "/var/www/prodDCMS"
+              "app_destination": "/var/www/prodDCMS",
+              "author": "${{ github.actor }}"
             }
