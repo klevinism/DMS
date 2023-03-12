@@ -58,7 +58,7 @@ jobs:
             echo DCMSVERSIONALPHA=${VERSION} >> $ENVIRONMENT_DESTINATION
             PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
 
-#            rm -r $PREV_DCMS_APP_NAME
+            
 
             ls
             
@@ -67,5 +67,4 @@ jobs:
             mvn clean package
 
             mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
-#            rm -r $GITHUB_DESTINATION/*
             sudo systemctl restart $SERVICE_NAME
