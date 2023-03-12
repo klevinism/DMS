@@ -7,7 +7,7 @@ on:
 jobs:
   trigger_deploy_alpha:
     runs-on: ubuntu-latest
-    if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/develop'
+#    if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/develop'
     steps:
       - name: Dispatch deployment workflow for 'Alpha'(development) environment
         id: dispatch_alpha
