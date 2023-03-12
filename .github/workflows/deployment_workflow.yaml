@@ -1,6 +1,6 @@
 name: Deployment Workflow
 
-run-name: ${{ inputs.environment }} by @${{ inputs.author }}
+run-name: Deploying to '${{ inputs.environment }}' environment. By:'@${{ inputs.author }}'
 
 on:
   workflow_dispatch:
