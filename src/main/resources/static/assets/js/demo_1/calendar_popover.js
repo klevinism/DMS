@@ -101,6 +101,15 @@ function initEventOfSaveEdit(popUpElem$, i){
     $(saveEditButton).on('click', function(e){        
       	e.stopPropagation();
 
+	  	console.log($(saveEditButton).data("subscription") === "expired");
+
+		// Missing or invalid subscription
+		if($(saveEditButton).data("subscription") === "expired"){
+
+			subscriptionExpiredToastBanner();
+			return;
+		}
+
       	var newSchedule = getNewScheduleValues(popUpElem$);
 		if(newSchedule){
 		    if(isEdit){

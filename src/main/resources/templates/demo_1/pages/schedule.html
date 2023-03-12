@@ -37,7 +37,7 @@
 	              			<div class="wrapper">
 	              				  
 	              				  <div class="btn-group btn-block " id="newScheduleBtn">
-									<button class="btn btn-primary btn-block " ><i class="mdi mdi-plus"></i>[[#{action.newAppointment}]]</button>
+									<button class="btn btn-primary btn-block " th:data-subscription="${subscription?.id == null ? 'expired' : 'active'}" ><i class="mdi mdi-plus"></i>[[#{action.newAppointment}]]</button>
 			                        <button type="button" class="btn btn-primary  dropdown-toggle dropdown-toggle-split" id="dropdownMenuSplitButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			                          <span class="sr-only">Toggle Dropdown</span>
 			                        </button>
@@ -299,7 +299,7 @@
 			<div class="modal-footer" id="saveEditElem" style="padding-bottom:0px;">
 				
 				<input type="hidden" id="popoverId">
-	        	<button type="button" class="btn btn-outline-primary"> <i class="fa fa-lg fa-save">  </i> Save</button>
+	        	<button type="button" class="btn btn-outline-primary" th:data-subscription="${subscription?.id == null ? 'expired' : 'active'}"> <i class="fa fa-lg fa-save">  </i> [[#{Save}]]</button>
 	      	</div>
 		
     	</div>
