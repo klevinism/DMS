@@ -31,7 +31,7 @@ jobs:
           PASSWORD: ${{ secrets.VMIPASSWORD }}
         with:
           source: "."
-          target: "${{inputs.github_destination}}/"
+          target: "/root/${{inputs.github_destination}}/"
 
       - name: Executing remote command and deploying
         uses: appleboy/ssh-action@master
@@ -44,7 +44,9 @@ jobs:
             GITHUB_DESTINATION='${{inputs.github_destination}}'
             FINAL_DESTINATION='${{inputs.app_destination}}'
             ENVIRONMENT_DESTINATION='/etc/environment'
-            SERVICE_NAME=${FINAL_DESTINATION##*/}.'.service'
+            SERVICE_NAME=${FINAL_DESTINATION##*/}.'service'
+
+            pwd
 
             cd $GITHUB_DESTINATION
             
