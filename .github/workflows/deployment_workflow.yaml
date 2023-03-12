@@ -1,4 +1,4 @@
-name: Deployment Workflow for '{{ inputs.environment }}'
+name: Deployment Workflow for '${{ inputs.environment }}'
 #run-name: {{ inputs.environment }} by @${{ inputs.author }}
 
 on:
