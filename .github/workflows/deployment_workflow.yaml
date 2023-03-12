@@ -48,7 +48,7 @@ jobs:
 
             cd $GITHUB_DESTINATION
             
-            echo pwd
+            pwd
             echo $SERVICE_NAME . "SERVICE NA<E"
             
             ls
@@ -63,7 +63,7 @@ jobs:
             ls
             
             echo "running MVN PACKAGE" 
-            echo pwd
+            pwd
             mvn clean package
 
             mv $GITHUB_DESTINATION/target/dcms-$VERSION.war $FINAL_DESTINATION/
