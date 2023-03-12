@@ -17,12 +17,8 @@ jobs:
           ref: develop
           token: ${{ secrets.GITSECRET }}
           workflow: deployment_workflow.yaml
-          inputs: |
-            {
-              "environment": "develop",
-              "github_destination": "/var/www/dms",
-              "app_destination": "/var/www/alphaDCMS",
-            }
+          inputs: '{"environment": "develop", "github_destination": "/var/www/dms", "app_destination": "/var/www/alphaDCMS",}'
+
   trigger_deploy_beta:
     runs-on: ubuntu-latest
     if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/beta'
@@ -41,6 +37,7 @@ jobs:
               "github_destination": "/var/www/dms",
               "app_destination": "/var/www/betaDCMS",
             }
+
   trigger_deploy_production:
     runs-on: ubuntu-latest
     if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/master'
