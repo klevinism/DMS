@@ -31,7 +31,7 @@ jobs:
           PASSWORD: ${{ secrets.VMIPASSWORD }}
         with:
           source: "."
-          target: "${{inputs.github_destination}}/${GITHUB_REF#refs/heads/}"
+          target: "${{inputs.github_destination}}/"
 
       - name: Executing remote command and deploying
         uses: appleboy/ssh-action@master
