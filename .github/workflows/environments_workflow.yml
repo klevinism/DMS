@@ -16,7 +16,7 @@ jobs:
           repo: klevinism/DMS
           ref: develop
           token: ${{ secrets.GITSECRET }}
-          workflow: .github/workflows/deployment_workflow.yaml
+          workflow: deployment_workflow.yaml
           inputs: |
             {
               "environment": "develop",
@@ -54,7 +54,7 @@ jobs:
           repo: klevinism/DMS
           ref: master
           token: ${{ secrets.GITSECRET }}
-          workflow: .github/workflows/deployment_workflow.yaml
+          workflow: deployment_workflow.yaml
           inputs: |
             {
               "environment": "prod",
