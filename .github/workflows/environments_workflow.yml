@@ -1,4 +1,4 @@
-name: Run deployment on environment
+name: Pick environment to deploy
 
 on:
   push:
