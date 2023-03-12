@@ -44,7 +44,7 @@ jobs:
             GITHUB_DESTINATION='${{inputs.github_destination}}'
             FINAL_DESTINATION='${{inputs.app_destination}}'
             ENVIRONMENT_DESTINATION='/etc/environment'
-            SERVICE_NAME=${{inputs.app_destination##*/}}
+            SERVICE_NAME=${FINAL_DESTINATION##*/}
 
             cd $GITHUB_DESTINATION
 
