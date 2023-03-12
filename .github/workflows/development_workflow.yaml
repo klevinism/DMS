@@ -1,5 +1,5 @@
-name: Deployment Workflow
-run-name: {{ inputs.environment }} by @${{ inputs.author }}
+name: Deployment Workflow for '{{ inputs.environment }}'
+#run-name: {{ inputs.environment }} by @${{ inputs.author }}
 
 on:
   workflow_dispatch:
