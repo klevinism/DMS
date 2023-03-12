@@ -2,8 +2,8 @@ name: Run deployment on particular environment
 
 on:
   push:
-  branches:
-    - '*'
+    branches:
+      - '*'
 jobs:
   build_alpha:
     runs-on: ubuntu-latest
