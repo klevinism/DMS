@@ -1,0 +1,27 @@
+name: Deploy on Production environment (Prod app)
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  trigger_deploy_production:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/master'
+    steps:
+      - name: Dispatch deployment workflow for 'Production' environment
+        id: dispatch_production
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          repo: klevinism/DMS
+          ref: ${{ github.ref }}
+          token: ${{ secrets.GITSECRET }}
+          workflow: deployment_workflow.yaml
+          inputs: |
+            {
+              "environment": "prod",
+              "github_destination": "/var/www/dms",
+              "app_destination": "/var/www/prodDCMS",
+              "author": "${{ github.actor }}"
+            }
