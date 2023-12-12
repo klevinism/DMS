@@ -5,6 +5,7 @@ on:
     branches:
       - '*'
 
+jobs:
   trigger_deploy_beta:
     runs-on: ubuntu-latest
     if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/beta'
