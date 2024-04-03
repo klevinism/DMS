@@ -160,11 +160,7 @@
 		    <artifactId>maven-release-plugin</artifactId>
 		    <version>3.0.0-M5</version>
 		    <configuration>
-		      <!--
-		        During release:perform, enable the "release" profile
-		       -->
-		      <releaseProfiles>release</releaseProfiles>
-		      <goals>clean, install</goals>
+		      <goals>clean, package, install</goals>
 		    </configuration>
 		  </plugin>
 		
