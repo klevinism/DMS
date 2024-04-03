@@ -45,7 +45,7 @@ public class AccountUserDetailService implements UserDetailsService{
 	
 	
 	@Autowired
-	private AccountUserDetailService(AccountService accountService, ApplicationContext context, 
+	public AccountUserDetailService(AccountService accountService, ApplicationContext context,
 			SubscriptionHistoryService subscriptionHistoryService, BusinessService businessService) {
 		this.accountService = accountService;
 		this.context = context;

@@ -4,8 +4,11 @@ import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.core.Ordered;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,10 +26,9 @@ import com.visionous.dms.service.AccountUserDetailService;
  * @author delimeta
  *
  */
-@Configuration
 @EnableWebSecurity
-public class AuthConfiguration extends WebSecurityConfigurerAdapter {
-	private final Log logger = LogFactory.getLog(AuthConfiguration.class);
+public class O2dentAuthConfiguration extends WebSecurityConfigurerAdapter {
+	private final Log logger = LogFactory.getLog(O2dentAuthConfiguration.class);
 
 	private AccountUserDetailService accountUserDetailService;
 	
@@ -34,7 +36,7 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
 	 * @param accountUserDetailService
 	 */
 	@Autowired
-	public AuthConfiguration(AccountUserDetailService accountUserDetailService) {
+	public O2dentAuthConfiguration(AccountUserDetailService accountUserDetailService) {
 		this.accountUserDetailService = accountUserDetailService;
 	}
 	
@@ -48,6 +50,7 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
 		http
 			.authorizeRequests()			
 				.antMatchers(LandingPages.REGISTER.value()).anonymous()
+				.antMatchers("/my-health-check").anonymous()
 				.antMatchers(LandingPages.INDEX.value(), 
 						LandingPages.DASHBOARD.value()).access("hasRole('ROLE_USER')")
 				.antMatchers(LandingPages.NEW_APPOINTMENT.value()).access("hasRole('ROLE_PERSONNEL') or hasRole('ROLE_ADMIN') or hasRole('ROLE_CUSTOMER')")
@@ -80,6 +83,7 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
 	 * @return
 	 */
 	@Bean
+	@Lazy
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -88,6 +92,7 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
 	 * @return
 	 */
 	@Bean
+	@Lazy
 	DaoAuthenticationProvider authenticationProvider(){
 	    DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
 	    daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
@@ -108,7 +113,8 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
 	 * @throws Exception
 	 */
 	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+	@Lazy
+	public void configureGlobal(@Lazy AuthenticationManagerBuilder auth) throws Exception {
 		auth
 			.authenticationProvider(authenticationProvider())
 			.jdbcAuthentication()
