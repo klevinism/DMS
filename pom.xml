@@ -23,6 +23,7 @@
       <connection>scm:git:https://github.com/klevinism/DMS.git</connection>
       <developerConnection>scm:git:https://github.com/klevinism/DMS.git</developerConnection>
       <tag>dcms-2.1.26</tag>
+<!--  GIT TOKEN 4 klevinism: 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  -->
   	</scm>
 	
 	<profiles>
@@ -150,6 +151,11 @@
 	    <version>8.12.43</version>
 	</dependency>
 
+	<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-consul-config</artifactId>
+		<version>3.0.0</version>
+	</dependency>
         
 	</dependencies>
 
