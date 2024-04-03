@@ -31,7 +31,7 @@ public class AccountUtil {
 		try {
 			loggedIn = (AccountUserDetail)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		}catch(Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			logger.error(e.getMessage());
 		}
 		

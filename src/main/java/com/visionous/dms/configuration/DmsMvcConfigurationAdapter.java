@@ -4,21 +4,13 @@
 package com.visionous.dms.configuration;
 
 import java.util.Locale;
-import java.util.Properties;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.visionous.dms.rest.EmailProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.core.Ordered;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.validation.Validator;
@@ -32,7 +24,6 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import javax.mail.Authenticator;
-import javax.mail.NoSuchProviderException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 
@@ -107,7 +98,7 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
 
     @RefreshScope
     @Bean
-    public JavaMailSender javaMailSender(EmailProperties properties) throws JsonProcessingException, NoSuchProviderException {
+    public JavaMailSender javaMailSender(EmailProperties properties) {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setUsername(properties.getUsername());
         mailSender.setPassword(properties.getPassword());
@@ -124,12 +115,7 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
             }
         });
 
-        session.getTransport("smtps");
-
         mailSender.setSession(session);
-
-
-        System.out.println("NEWSESSION 111");
         return mailSender;
     }
 
