@@ -1,0 +1,27 @@
+name: Deploy on Beta environment (Beta app)
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  trigger_deploy_beta:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/beta'
+    steps:
+      - name: Dispatch deployment workflow for 'Beta' environment
+        id: dispatch_beta
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          repo: klevinism/DMS
+          ref: ${{ github.ref }}
+          token: ${{ secrets.GITSECRET }}
+          workflow: deployment_workflow.yaml
+          inputs: |
+            {
+              "environment": "beta",
+              "github_destination": "/var/www/dms",
+              "app_destination": "/var/www/betaDCMS",
+              "author": "${{ github.actor }}"
+            }

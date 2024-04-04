@@ -1,0 +1,26 @@
+name: Deploy on Alpha environment (Dev app)
+
+on:
+  push:
+    branches:
+      - '*'
+jobs:
+  trigger_deploy_alpha:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message,'[maven-release-plugin] prepare release') && github.ref == 'refs/heads/develop'
+    steps:
+      - name: Dispatch deployment workflow for 'Alpha'(development) environment
+        id: dispatch_alpha
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          repo: klevinism/DMS
+          ref: ${{ github.ref }}
+          token: ${{ secrets.GITSECRET }}
+          workflow: deployment_workflow.yaml
+          inputs: |
+            {
+              "environment": "develop",
+              "github_destination": "/var/www/dms",
+              "app_destination": "/var/www/alphaDCMS",
+              "author": "${{ github.actor }}"
+            }
