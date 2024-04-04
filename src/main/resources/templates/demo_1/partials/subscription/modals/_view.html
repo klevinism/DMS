@@ -11,7 +11,7 @@
 		           	 	<li th:remove="tag" th:utext="${subscr.description}"></li>
 		            </ul>
 	           		<button th:if="${currentSubscription != null && currentSubscription.subscription.id == subscr.id}" type="button" th:disabled="${!subscr.active || currentSubscription != null}" class="btn btn-lg btn-block btn-outline-primary mt-auto">[[#{Active}]]</button>
-	           		<button th:if="${currentSubscription == null || currentSubscription.subscription.id != subscr.id}" type="button" th:disabled="${!subscr.active || currentSubscription != null}" class="btn btn-lg btn-block btn-primary"><i class="mdi mdi-cart"></i> Contact us</button>
+	           		<button th:if="${currentSubscription == null || currentSubscription.subscription.id != subscr.id}" type="button" th:disabled="${!subscr.active || currentSubscription == null}" class="btn btn-lg btn-block btn-primary" ><i class="mdi mdi-cart"></i> <a target="_blank" href="https://o2dent.com/">[[#{ContactUs}]]</a></button>
 	           	</div>
 	        </div>
         </div>

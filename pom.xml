@@ -35,6 +35,14 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<dependencies>
+				<dependency> <!-- Autoreload spring project -->
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-devtools</artifactId>
+					<scope>runtime</scope>
+					<optional>true</optional>
+				</dependency>
+			</dependencies>
 		</profile>
 		<profile>
 		    <id>beta</id>
@@ -139,13 +147,6 @@
 		    <artifactId>ojdbc8</artifactId>
 		    <version>12.2.0.1</version>
 		</dependency>
-        
-    <dependency> <!-- Autoreload spring project on Eclipse -->
-	    <groupId>org.springframework.boot</groupId>
-	    <artifactId>spring-boot-devtools</artifactId>
-	    <scope>runtime</scope>
-	    <optional>true</optional>
-	</dependency>
 
 	<!-- https://mvnrepository.com/artifact/com.googlecode.libphonenumber/libphonenumber -->
 	<dependency>
