@@ -25,9 +25,8 @@ jobs:
       - uses: actions/checkout@master
       - name: Copy repository contents via scp
         uses: appleboy/scp-action@master
-      - run: "run: ${{vars.host}} / ${{ secrets.PORT }} / ${{ secrets.USERNAME }} / ${{ secrets.VMIPASSWORD }}"
-        env:
-          HOST: ${{ vars.HOST }}
+        with:
+          HOST: ${{ secrets.HOST }}
           USERNAME: ${{ secrets.USERNAME }}
           PORT: ${{ secrets.PORT }}
           PASSWORD: ${{ secrets.VMIPASSWORD }}
@@ -51,7 +50,7 @@ jobs:
             
             VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
             echo "$(sed '2d' $ENVIRONMENT_DESTINATION)" > $ENVIRONMENT_DESTINATION
-            echo DCMSVERSIONALPHA=${VERSION} >> $ENVIRONMENT_DESTINATION
+            echo DCMSVERSIONPROD=${VERSION} >> $ENVIRONMENT_DESTINATION
             PREV_DCMS_APP_NAME=$(find $FINAL_DESTINATION -name "dcms*.war")
 
             rm -r $PREV_DCMS_APP_NAME
