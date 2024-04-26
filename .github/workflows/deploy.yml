@@ -106,7 +106,6 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         PORT: ${{ secrets.PORT }}
         PASSWORD: ${{ secrets.VMIPASSWORD }}
-      with:
         source: "."
         target: "/var/www/dms/${GITHUB_REF#refs/heads/}"
 
