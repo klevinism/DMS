@@ -54,7 +54,7 @@ public class ResponseAdvice implements ResponseBodyAdvice {
 		ResponseBody<String> bodyReplacing = new ResponseBody<>();
 		if(AccountUtil.currentLoggedInUser() != null 
 				&& Objects.nonNull(AccountUtil.currentLoggedInUser().getCurrentBusiness())
-				&& request.getMethodValue().equals("POST") 
+				&& request.getMethod().name().equals("POST")
 				&& !subscriptionHistoryService.findActiveSubscriptionByBusinessId(
 						AccountUtil.currentLoggedInUser()
 						.getCurrentBusiness()

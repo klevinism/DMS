@@ -6,6 +6,7 @@ package com.visionous.dms.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import com.visionous.dms.pojo.Appointment;
 
@@ -17,6 +18,9 @@ public interface IAppointmentService {
 	void delete(Appointment appointment);
 	
 	void deleteBatch(List<Appointment> appointments);
+
+	void deleteBatch(Set<Appointment> appointments);
+
 
 	/**
 	 * @param appointmentDate
@@ -67,6 +71,8 @@ public interface IAppointmentService {
 	 */
 	List<Appointment> findAllByPersonnelIdBetweenDateRange(Long personnelId, LocalDateTime startRange, LocalDateTime endRange);
 
+	List<Appointment> findAllByPersonnelIdInAndBetweenDateRange(List<Long> personnelIds, LocalDateTime startRange, LocalDateTime endRange);
+
 	/**
 	 * @param startRange
 	 * @param endRange
@@ -81,13 +87,9 @@ public interface IAppointmentService {
 	List<Object[]> findTopAppointmentsByMostUsedServiceType();
 
 	/**
-	 * @param id
-	 * @param localDateTime
-	 * @param localDateTime2
+	 *
+	 * @param ids
 	 * @return
 	 */
-	List<Appointment> findAllByBusinessIdAndBetweenDateRange(Long id, LocalDateTime localDateTime,
-			LocalDateTime localDateTime2);
-
-
+    List<Appointment> findByPersonnelIdIn(List<Long> ids);
 }

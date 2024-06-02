@@ -1,12 +1,20 @@
 package com.visionous.dms.model;
 
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.entity.Business;
+import com.o2dent.lib.accounts.entity.Role;
+import com.o2dent.lib.accounts.helpers.exceptions.EmailExistsException;
+import com.o2dent.lib.accounts.helpers.exceptions.PhoneNumberExistsException;
+import com.o2dent.lib.accounts.helpers.exceptions.UsernameExistsException;
+import com.o2dent.lib.accounts.persistence.AccountService;
+import com.o2dent.lib.accounts.persistence.BusinessService;
+import com.visionous.dms.configuration.helpers.*;
+import com.visionous.dms.event.OnRegistrationCompleteEvent;
+import com.visionous.dms.exception.SubscriptionException;
+import com.visionous.dms.pojo.Personnel;
+import com.visionous.dms.service.PersonnelService;
+import com.visionous.dms.service.RecordService;
+import com.visionous.dms.service.RoleService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,25 +27,13 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.visionous.dms.configuration.helpers.AccountUtil;
-import com.visionous.dms.configuration.helpers.Actions;
-import com.visionous.dms.configuration.helpers.DateUtil;
-import com.visionous.dms.configuration.helpers.DmsCore;
-import com.visionous.dms.configuration.helpers.FileManager;
-import com.visionous.dms.configuration.helpers.LandingPages;
-import com.visionous.dms.event.OnRegistrationCompleteEvent;
-import com.visionous.dms.exception.EmailExistsException;
-import com.visionous.dms.exception.PhoneNumberExistsException;
-import com.visionous.dms.exception.SubscriptionException;
-import com.visionous.dms.exception.UsernameExistsException;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.Business;
-import com.visionous.dms.pojo.Personnel;
-import com.visionous.dms.pojo.Role;
-import com.visionous.dms.service.BusinessService;
-import com.visionous.dms.service.PersonnelService;
-import com.visionous.dms.service.RecordService;
-import com.visionous.dms.service.RoleService;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author delimeta
@@ -50,21 +46,28 @@ public class PersonnelModelController extends ModelControllerImpl{
 	
 	private RoleService roleService;
 	private RecordService recordService;
-    
     private ApplicationEventPublisher eventPublisher;
     private PersonnelService personnelService;
+	private AccountService accountService;
     private MessageSource messages;
-
 	private BusinessService businessService;
     
 	private static String currentPage = LandingPages.PERSONNEL.value();
 
 	/**
-	 * @param personnelRepository
+	 *
+	 * @param roleService
+	 * @param eventPublisher
+	 * @param recordService
+	 * @param messages
+	 * @param personnelService
+	 * @param businessService
 	 */
 	@Autowired
-	public PersonnelModelController(RoleService roleService, ApplicationEventPublisher eventPublisher, 
-			RecordService recordService, MessageSource messages, PersonnelService personnelService, BusinessService businessService) {
+	public PersonnelModelController(RoleService roleService, ApplicationEventPublisher eventPublisher,
+									RecordService recordService, MessageSource messages,
+									PersonnelService personnelService, BusinessService businessService,
+									AccountService accountService) {
 	
 		this.roleService = roleService;
 		this.eventPublisher = eventPublisher;
@@ -72,6 +75,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 		this.messages = messages;
 		this.personnelService = personnelService;
 		this.businessService = businessService;
+		this.accountService = accountService;
 	}
 	
 	
@@ -116,39 +120,40 @@ public class PersonnelModelController extends ModelControllerImpl{
         String subscriptionLimitUpgrade = messages.getMessage("SubscriptionLimitUpgrade", null, LocaleContextHolder.getLocale());
 		
 		if(action.equals(Actions.DELETE.getValue())) {
-			personnelService.disableById(newPersonnel.getId());
+			accountService.disableById(newPersonnel.getId());
 		}else if(action.equals(Actions.EDIT.getValue()) ) {
 			
 		}else if(action.equals(Actions.CREATE.getValue())) {
+			Optional<Account> newAccount = accountService.findById(newPersonnel.getId());
 
-			if(newPersonnel.getAccount().getRoles().get(0).getName().equals("PERSONNEL")) {
-				
-				String passPlain = newPersonnel.getAccount().getPassword();
+			if(newAccount.isPresent() && newAccount.get().getRoles().get(0).getName().equals("PERSONNEL")) {
+
+				String passPlain = newAccount.get().getPassword();
 
 				try {
 					String imageName = null;
 					if((imageName = this.upladProfileImage()) != null) {
-						newPersonnel.getAccount().setImage(imageName);
+						newAccount.get().setImage(imageName);
 					}
 
 					if(!reachedSubscriptionLimit()) {
 						Business loggedInBusiness = AccountUtil.currentLoggedInBussines();
-						loggedInBusiness.getAccounts().add(newPersonnel.getAccount());
-						newPersonnel.getAccount().addBusiness(loggedInBusiness);
+						loggedInBusiness.getAccounts().add(newAccount.get());
+						newAccount.get().addBusiness(loggedInBusiness);
 						
 						Personnel createdPersonnel = personnelService.create(newPersonnel);
 						Business updatedBusiness = businessService.update(loggedInBusiness);
-						
-						createdPersonnel.getAccount().setPassword(passPlain);
-						this.publishNewAccountEvent(createdPersonnel.getAccount());
+
+						newAccount.get().setPassword(passPlain);
+						this.publishNewAccountEvent(newAccount.get());
 					}else {
 						throw new SubscriptionException(subscriptionReachLimit + " " + subscriptionLimitUpgrade);
 					}
 				} catch (IOException e) {
 					logger.error(e.getMessage());
-				} catch (EmailExistsException e) {					
+				} catch (EmailExistsException e) {
 					super.getBindingResult().addError(
-							new FieldError("account", "account.email", newPersonnel.getAccount().getEmail(), false, null, null, messageEmailExists)
+							new FieldError("account", "account.email", newAccount.get().getEmail(), false, null, null, messageEmailExists)
 						);
 
 			        super.removeControllerParam("viewType");
@@ -156,7 +161,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 			        logger.error(messageEmailExists);
 				} catch (UsernameExistsException e) {
 					super.getBindingResult().addError(
-							new FieldError("account", "account.username", newPersonnel.getAccount().getEmail(), false, null, null, messageUsernameExists)
+							new FieldError("account", "account.username", newAccount.get().getEmail(), false, null, null, messageUsernameExists)
 						);
 
 				    super.removeControllerParam("viewType");
@@ -175,7 +180,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 				} catch (PhoneNumberExistsException e) {
 
 					super.getBindingResult().addError(
-							new FieldError("account", "account.phone", newPersonnel.getAccount().getPhone(), false, null, null, messageUsernameExists)
+							new FieldError("account", "account.phone", newAccount.get().getPhone(), false, null, null, messageUsernameExists)
 						);
 
 				    super.removeControllerParam("viewType");
@@ -190,14 +195,14 @@ public class PersonnelModelController extends ModelControllerImpl{
 	}
 	
 	private boolean reachedSubscriptionLimit() {
-		int personnelSize = this.personnelService.findAllByAccount_EnabledAndAccount_Roles_NameAndAccount_Businesses_Id(true, "PERSONNEL", AccountUtil.currentLoggedInUser().getCurrentBusiness().getId()).size();
+		int personnelSize = this.accountService.findAllByAccountBusinessIdAndActiveAndEnabledAndRoles_NameIn(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId(), true,true, List.of("PERSONNEL")).size();
 		
-		if(AccountUtil.currentLoggedInBussines().getActiveSubscription() == null) {
+		if(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription() == null) {
 			return false;
 		}
 		
-		if(AccountUtil.currentLoggedInBussines().getActiveSubscription().hasRestrictionsByPageName(currentPage)) {
-			int subscriptionRestrictionSize = AccountUtil.currentLoggedInBussines().getActiveSubscription().getSumOfRestrictionsAmountByPageName(currentPage);
+		if(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription().hasRestrictionsByPageName(currentPage)) {
+			int subscriptionRestrictionSize = AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription().getSumOfRestrictionsAmountByPageName(currentPage);
 			return personnelSize >= subscriptionRestrictionSize;
 		}else {
 			return false;
@@ -205,14 +210,14 @@ public class PersonnelModelController extends ModelControllerImpl{
 	}
 	
 	private boolean nearSubscriptionLimitBy(int count) {
-		int personnelSize = this.personnelService.findAllByAccount_EnabledAndAccount_Roles_NameAndAccount_Businesses_Id(true, "PERSONNEL", AccountUtil.currentLoggedInUser().getCurrentBusiness().getId()).size();
+		int personnelSize = this.accountService.findAllByAccountBusinessIdAndActiveAndEnabledAndRoles_NameIn(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId(), true, true, List.of("PERSONNEL")).size();
 
-		if(AccountUtil.currentLoggedInBussines().getActiveSubscription() == null) {
+		if(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription() == null) {
 			return false;
 		}
 		
-		if(AccountUtil.currentLoggedInBussines().getActiveSubscription().hasRestrictionsByPageName(currentPage)) {
-			int subscriptionRestrictionSize = AccountUtil.currentLoggedInBussines().getActiveSubscription().getSumOfRestrictionsAmountByPageName(currentPage);
+		if(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription().hasRestrictionsByPageName(currentPage)) {
+			int subscriptionRestrictionSize = AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription().getSumOfRestrictionsAmountByPageName(currentPage);
 			return (subscriptionRestrictionSize - personnelSize) == count;
 		}else {
 			return false;
@@ -254,7 +259,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 
 			if(super.getModelCollectionToView("personnel") == null) {
 				Personnel newPersonnel = new Personnel();
-				newPersonnel.setAccount(new Account());
+//				newPersonnel.setAccount(new Account());
 				super.addModelCollectionToView("personnel", newPersonnel);
 			}
 						
@@ -264,8 +269,13 @@ public class PersonnelModelController extends ModelControllerImpl{
 			
 		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
 			String personnelId = super.getAllControllerParams().get("id").toString();
-			Optional<Personnel> personnel = personnelService.findByIdAndAccount_Businesses_Id(Long.valueOf(personnelId), AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
-			personnel.ifPresent(x -> super.addModelCollectionToView("selected", personnel.get()));
+			Optional<Account> selectedAccount = accountService.findByIdAndBusinesses_Id(Long.valueOf(personnelId), AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
+			selectedAccount.ifPresent(a -> {
+				Optional<Personnel> personnel = personnelService.findById(a.getId());
+				personnel.ifPresent(p -> {
+					super.addModelCollectionToView("selected", p);
+				});
+			});
 
 			Iterable<Role> allRoles = roleService.findAll();
 			super.addModelCollectionToView("allRoles", allRoles);
@@ -273,8 +283,14 @@ public class PersonnelModelController extends ModelControllerImpl{
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
 			if(super.getAllControllerParams().get("id") != null) {
 				String personnelId = super.getAllControllerParams().get("id").toString();
-				Optional<Personnel> personnel = personnelService.findByIdAndAccount_Businesses_Id(Long.valueOf(personnelId), AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
-				personnel.ifPresent(x -> super.addModelCollectionToView("selected", personnel.get()));
+
+				Optional<Account> selectedAccount = accountService.findByIdAndBusinesses_Id(Long.valueOf(personnelId), AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
+				selectedAccount.ifPresent(a -> {
+					Optional<Personnel> personnel = personnelService.findById(a.getId());
+					personnel.ifPresent(p -> {
+						super.addModelCollectionToView("selected", p);
+					});
+				});
 
 				Iterable<Role> allRoles = roleService.findAll();
 				super.addModelCollectionToView("allRoles", allRoles);
@@ -298,9 +314,10 @@ public class PersonnelModelController extends ModelControllerImpl{
 		super.addModelCollectionToView("currentPage", currentPage);
 		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
 		
-		Iterable<Personnel> personnels = personnelService.findAllByRoleNameAndAccount_Business_Id("PERSONNEL", AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
-		super.addModelCollectionToView("personnelList", personnels);
-		
+		List<Account> accountList = accountService.findAllByBusinessIdAndRoles_Name(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId(), "PERSONNEL");
+		List<Personnel> personnelList = personnelService.findByIdIn(accountList.stream().map(a -> a.getId()).collect(Collectors.toList()));
+
+		super.addModelCollectionToView("personnelList", accountList);
 
 		Date today = new Date();
 		Date lastMonthEnd = DateUtil.getEndingOfMonth(DateUtil.getOneMonthBefore(today));
@@ -309,7 +326,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 		Date lastLastMonthBegin = DateUtil.getBeginingOfMonth(DateUtil.getMonthsBefore(today, 2));
 		
 		List<Double> monthlyVisitPerc = new ArrayList<>();
-		personnels.forEach(personnel->{
+		personnelList.forEach(personnel->{
 			int cntLastMonth = 0;
 			double perc = 0.0;
 			cntLastMonth = recordService.countByPersonnelIdAndServicedateBetween(personnel.getId(), 
@@ -339,11 +356,11 @@ public class PersonnelModelController extends ModelControllerImpl{
 	
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("settings", AccountUtil.currentLoggedInBussines().getGlobalSettings());
+		super.addModelCollectionToView("settings", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings());
 
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
 
 	}
 	

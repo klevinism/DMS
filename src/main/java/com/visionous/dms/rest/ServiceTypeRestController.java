@@ -46,7 +46,7 @@ public class ServiceTypeRestController {
 
         ResponseBody<ServiceType> result = new ResponseBody<>();
         ServiceType service = new ServiceType(serviceTypeName);
-        service.setGlobalSettings(AccountUtil.currentLoggedInBussines().getGlobalSettings());
+        service.setGlobalSettingsId(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getId());
         service.setPrice(serviceTypePrice);
         
         ServiceType savedService = serviceTypeService.create(service);
@@ -72,7 +72,7 @@ public class ServiceTypeRestController {
         
         ResponseBody<ServiceType> result = new ResponseBody<>();
         
-        Optional<ServiceType> oldService = serviceTypeService.findByIdAndGlobalSettingsId(currentServiceId, AccountUtil.currentLoggedInBussines().getGlobalSettings().getId());
+        Optional<ServiceType> oldService = serviceTypeService.findByIdAndGlobalSettingsId(currentServiceId, AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getId());
         
         if(oldService.isPresent()) {
         	oldService.get().setName(newName);
@@ -125,7 +125,7 @@ public class ServiceTypeRestController {
 
         ResponseBody<ServiceType> result = new ResponseBody<>();
         
-        List<ServiceType> allServices = serviceTypeService.findAllByGlobalSettingsId(AccountUtil.currentLoggedInBussines().getGlobalSettings().getId());
+        List<ServiceType> allServices = serviceTypeService.findAllByGlobalSettingsId(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getId());
         
         if(!allServices.isEmpty()) {
 			result.setError(success);
@@ -145,7 +145,7 @@ public class ServiceTypeRestController {
         String error = messageSource.getMessage("alert.errorGeneric", null, LocaleContextHolder.getLocale());
 
         ResponseBody<ServiceType> result = new ResponseBody<>();
-        Optional<ServiceType> selectedService = serviceTypeService.findByIdAndGlobalSettingsId(selectedServiceId, AccountUtil.currentLoggedInBussines().getGlobalSettings().getId());
+        Optional<ServiceType> selectedService = serviceTypeService.findByIdAndGlobalSettingsId(selectedServiceId, AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getId());
         
         if(selectedService.isPresent()) {
 			result.setError(success);

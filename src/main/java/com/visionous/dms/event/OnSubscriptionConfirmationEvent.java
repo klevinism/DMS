@@ -2,11 +2,11 @@ package com.visionous.dms.event;
 
 import java.util.Locale;
 
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.entity.Business;
 import org.springframework.context.ApplicationEvent;
 
 import com.visionous.dms.configuration.helpers.DmsCore;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.Business;
 
 public class OnSubscriptionConfirmationEvent extends ApplicationEvent{
 
@@ -20,8 +20,8 @@ public class OnSubscriptionConfirmationEvent extends ApplicationEvent{
     private Account account;
 	private Business business;
 
-    public OnSubscriptionConfirmationEvent(Account user, Business business, 
-    		Locale locale, String appUrl) {
+    public OnSubscriptionConfirmationEvent(Account user, Business business,
+										   Locale locale, String appUrl) {
         super(user);
         
         this.account = user;

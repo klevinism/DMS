@@ -4,24 +4,22 @@
 package com.visionous.dms.pojo;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -57,22 +55,17 @@ public class ServiceType implements Serializable{
 	private Long globalSettingsId;
 	
     @JsonIgnore
-	@OneToOne(mappedBy = "serviceType", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@PrimaryKeyJoinColumn
-	private Record record;
+	private List<Record> records;
     
     @JsonIgnore
     @OneToMany(mappedBy="serviceType", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    private List<Appointment> appointment = new ArrayList<>();
+    private Set<Appointment> appointment = new HashSet<>();
 	
     @JsonIgnore
 	@OneToMany(cascade = CascadeType.REFRESH, mappedBy="serviceType")
 	private List<RecordReceiptItem> receipts = new ArrayList<>();
-    
-	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-	@JoinColumn(name = "global_settings_id")
-	private GlobalSettings globalSettings;
 	
 	/**
 	 * 
@@ -150,37 +143,37 @@ public class ServiceType implements Serializable{
 	}
 
 	/**
-	 * @param businessSettingsId
+	 * @param globalSettingsId
 	 */
 	public void setGlobalSettingsId(Long globalSettingsId) {
 		this.globalSettingsId = globalSettingsId;
 	}
 
 	/**
-	 * @return the record
+	 * @return the records
 	 */
-	public Record getRecord() {
-		return record;
+	public List<Record> getRecords() {
+		return records;
 	}
 
 	/**
-	 * @param record the record to set
+	 * @param records the record to set
 	 */
-	public void setRecord(Record record) {
-		this.record = record;
+	public void setRecords(List<Record> records) {
+		this.records = records;
 	}
 
 	/**
 	 * @return the appointment
 	 */
-	public List<Appointment> getAppointment() {
+	public Set<Appointment> getAppointment() {
 		return appointment;
 	}
 
 	/**
 	 * @param appointment the appointment to set
 	 */
-	public void setAppointment(List<Appointment> appointment) {
+	public void setAppointment(Set<Appointment> appointment) {
 		this.appointment = appointment;
 	}
 
@@ -196,20 +189,6 @@ public class ServiceType implements Serializable{
 	 */
 	public void setReceipts(List<RecordReceiptItem> receipts) {
 		this.receipts = receipts;
-	}
-
-	/**
-	 * @return
-	 */
-	public GlobalSettings getGlobalSettings() {
-		return this.globalSettings;
-	}
-
-	/**
-	 * @param globalSettings
-	 */
-	public void setGlobalSettings(GlobalSettings globalSettings) {
-		this.globalSettings = globalSettings;
 	}
 	
 }

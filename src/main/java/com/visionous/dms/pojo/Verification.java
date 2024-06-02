@@ -3,25 +3,12 @@
  */
 package com.visionous.dms.pojo;
 
-import java.time.LocalDateTime;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
+import com.o2dent.lib.accounts.entity.Account;
 import com.visionous.dms.configuration.helpers.DateUtil;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * @author delimeta

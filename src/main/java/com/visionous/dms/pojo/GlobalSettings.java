@@ -1,32 +1,31 @@
-/**
- * 
- */
 package com.visionous.dms.pojo;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
+import com.o2dent.lib.accounts.entity.Business;
+import com.visionous.dms.configuration.helpers.annotations.ValidEmail;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.visionous.dms.configuration.helpers.DmsCore;
-import com.visionous.dms.configuration.helpers.annotations.ValidEmail;
 
 /**
  * @author delimeta
@@ -73,17 +72,9 @@ public class GlobalSettings implements Serializable{
 	private Long businessId;
 	
 	@JsonIgnore
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH )
-	@JoinColumn(name = "business_id")
-	private Business business;
-	
-	@JsonIgnore
 	@OneToMany(mappedBy = "globalSettingsId", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@PrimaryKeyJoinColumn
 	private Set<SubscriptionHistory> subscriptions;
-	
-    @OneToMany(mappedBy = "globalSettingsId", fetch = FetchType.EAGER)
-    private Set<ServiceType> serviceType;
     
 	/**
 	 * 
@@ -317,20 +308,6 @@ public class GlobalSettings implements Serializable{
 	}
 
 	/**
-	 * @return business Business
-	 */
-	public Business getBusiness() {
-		return business;
-	}
-
-	/**
-	 * @param business Business
-	 */
-	public void setBusiness(Business business) {
-		this.business = business;
-	}
-
-	/**
 	 * @return the subscriptions
 	 */
 	public Set<SubscriptionHistory> getSubscriptions() {
@@ -347,15 +324,18 @@ public class GlobalSettings implements Serializable{
 	/**
 	 * @return
 	 */
-	public Set<ServiceType> getServiceType() {
-		return serviceType;
-	}
+	@JsonIgnore
+	public Subscription getActiveSubscription() {
+		Optional<SubscriptionHistory> subscriptionHistory = this.getSubscriptions()
+				.stream()
+				.filter(subscription -> subscription.isActive()
+						&& subscription.getSubscriptionEndDate().isAfter(LocalDateTime.now()))
+				.findFirst();
 
-	/**
-	 * @param serviceType
-	 */
-	public void setServiceType(Set<ServiceType> serviceType) {
-		this.serviceType = serviceType;
+		if(subscriptionHistory.isPresent()) {
+			return subscriptionHistory.get().getSubscription();
+		}else {
+			return null;
+		}
 	}
-
 }

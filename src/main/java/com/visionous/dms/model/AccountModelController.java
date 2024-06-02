@@ -1,12 +1,17 @@
-/**
- * 
- */
 package com.visionous.dms.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.entity.Role;
+import com.o2dent.lib.accounts.helpers.exceptions.EmailExistsException;
+import com.o2dent.lib.accounts.helpers.exceptions.UsernameExistsException;
+import com.o2dent.lib.accounts.persistence.AccountService;
+import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.Personnel;
+import com.visionous.dms.service.RoleService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,18 +27,8 @@ import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.configuration.helpers.FileManager;
 import com.visionous.dms.configuration.helpers.LandingPages;
-import com.visionous.dms.exception.EmailExistsException;
-import com.visionous.dms.exception.UsernameExistsException;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.Customer;
-import com.visionous.dms.pojo.GlobalSettings;
-import com.visionous.dms.pojo.Personnel;
-import com.visionous.dms.pojo.Role;
-import com.visionous.dms.pojo.Subscription;
-import com.visionous.dms.service.AccountService;
 import com.visionous.dms.service.CustomerService;
 import com.visionous.dms.service.PersonnelService;
-import com.visionous.dms.service.RoleService;
 
 /**
  * @author delimeta
@@ -52,14 +47,18 @@ public class AccountModelController extends ModelControllerImpl{
 	
 	private static String currentPage = LandingPages.ACCOUNT.value();
 
-
 	/**
-	 * @param personnelRepository
+	 *
+	 * @param accountService
+	 * @param roleService
+	 * @param messageSource
+	 * @param personnelService
+	 * @param customerService
 	 */
 	@Autowired
-	public AccountModelController(AccountService accountService, RoleService roleService, 
-			MessageSource messageSource, PersonnelService personnelService, 
-			CustomerService customerService) {
+	public AccountModelController(AccountService accountService, RoleService roleService,
+								  MessageSource messageSource, PersonnelService personnelService,
+								  CustomerService customerService) {
 		
 		this.accountService = accountService;
 		this.roleService = roleService;
@@ -81,7 +80,7 @@ public class AccountModelController extends ModelControllerImpl{
 					super.setControllerParam("viewType", super.getAllControllerParams().get("action").toString().toLowerCase());
 				}else {
 					persistModelAttributes(
-						(Account) super.getAllControllerParams().get("modelAttribute"), 
+						(Account) super.getAllControllerParams().get("modelAttribute"),
 						super.getAllControllerParams().get("action").toString().toLowerCase()
 						);
 				}
@@ -118,25 +117,19 @@ public class AccountModelController extends ModelControllerImpl{
 					newAccount.addRole(singleRole);
 				});			
 			}
-			
-			if(newAccount.getCustomer().getId() != null) {
-				newAccount.setPersonnel(null);
-				newAccount.getCustomer().setAccount(newAccount);
-			}else if(newAccount.getPersonnel().getId() != null) {
-				newAccount.setCustomer(null);
-				newAccount.getPersonnel().setAccount(newAccount);
-			}
 
 			oldAccount.ifPresent(oldacc -> {
 				newAccount.setPassword(oldacc.getPassword());
 			});
-					
+
+			Optional<Customer> customer = customerService.findById(newAccount.getId());
+
 			try {
 				if(oldAccount.isPresent() && 
 						(oldAccount.get().getEmail().equals(newAccount.getEmail()) || 
 						oldAccount.get().getUsername().equals(newAccount.getUsername()))
 						) { // Has same username/email after account edit
-					setImageToAccount((MultipartFile)super.getAllControllerParams().get("profileimage"), newAccount, oldAccount.get());
+					setImageToAccount((MultipartFile)super.getAllControllerParams().get("profileimage"), newAccount, oldAccount.get(), customer.isPresent());
 					Account created = accountService.createPlain(newAccount);
 					
 					if(created != null && AccountUtil.currentLoggedInUser().getId().equals(created.getId())) { // Self Edit
@@ -144,7 +137,7 @@ public class AccountModelController extends ModelControllerImpl{
 					}
 					
 				}else {
-					accountService.update(newAccount);	
+					accountService.update(newAccount);
 				}
 			} catch (EmailExistsException e) {
 				super.getBindingResult().addError(new FieldError("account", "account.email", newAccount.getEmail(), false, null, null, messageEmailExists));
@@ -166,19 +159,19 @@ public class AccountModelController extends ModelControllerImpl{
 		return FileManager.uploadImage(file, path);
 	}
 	
-	private String uploadNewProfileImage(MultipartFile file, Account account) throws IOException {
-		if(account.getCustomer() != null) {
+	private String uploadNewProfileImage(MultipartFile file, boolean isCustomer) throws IOException {
+		if(isCustomer) {
 			return uploadProfileImage(file, FileManager.CUSTOMER_PROFILE_IMAGE_PATH);
 		}else {
 			return uploadProfileImage(file, FileManager.PERSONNEL_PROFILE_IMAGE_PATH);
 		}
 	}
 	
-	private void setImageToAccount(MultipartFile file, Account newAccount, Account oldAccount) {
+	private void setImageToAccount(MultipartFile file, Account newAccount, Account oldAccount, boolean isCustomer) {
 		MultipartFile uploadedFile = file;
 		if(uploadedFile != null && uploadedFile.getOriginalFilename() != null && !uploadedFile.getOriginalFilename().isEmpty()) {
 			try {
-				newAccount.setImage(uploadNewProfileImage((MultipartFile)super.getAllControllerParams().get("profileimage"), newAccount));
+				newAccount.setImage(uploadNewProfileImage((MultipartFile)super.getAllControllerParams().get("profileimage"), isCustomer));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -195,13 +188,13 @@ public class AccountModelController extends ModelControllerImpl{
 		
 		if(viewType.equals(Actions.CREATE.getValue())) {
 			Personnel newPersonnel = new Personnel();
-			newPersonnel.setAccount(new Account());
+//			newPersonnel.setAccount(new Account());
 			super.addModelCollectionToView("account", newPersonnel);
 			
 			if(super.hasResultBindingError()) {
 				if(super.getAllControllerParams().containsKey("modelAttribute")) {	
 					Account account = (Account) super.getAllControllerParams().get("modelAttribute");
-					setImageToAccount((MultipartFile)super.getAllControllerParams().get("profileimage"), account, account);
+					setImageToAccount((MultipartFile)super.getAllControllerParams().get("profileimage"), account, account, false);
 				}
 			} 
 		}else if(viewType.equals(Actions.EDIT.getValue())) {
@@ -210,7 +203,7 @@ public class AccountModelController extends ModelControllerImpl{
 				Long accountId = Long.valueOf(super.getAllControllerParams().get("id").toString());
 				Optional<Account> oldAccount = accountService.findByIdAndBusinesses_Id(accountId, AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
 
-				Role[] loggedInRoles = AccountUtil.currentLoggedInUser().getRoles().stream().toArray(Role[]::new);					
+				Role[] loggedInRoles = AccountUtil.currentLoggedInUser().getRoles().stream().toArray(Role[]::new);
 				
 				oldAccount.ifPresent(account -> {
 					super.addModelCollectionToView("account", account);
@@ -233,11 +226,13 @@ public class AccountModelController extends ModelControllerImpl{
 					}
 				});
 			}
-			
+
+
 			if(super.hasResultBindingError()) {
 				if(super.getAllControllerParams().containsKey("modelAttribute")) {	
 					Account account = (Account) super.getAllControllerParams().get("modelAttribute");
-					setImageToAccount((MultipartFile)super.getAllControllerParams().get("profileimage"), account, account);
+					Optional<Personnel> personnel = personnelService.findById(account.getId());
+					setImageToAccount((MultipartFile)super.getAllControllerParams().get("profileimage"), account, account, !personnel.isPresent());
 				}
 			} 
 			
@@ -248,17 +243,31 @@ public class AccountModelController extends ModelControllerImpl{
 				Long accountId = Long.valueOf(super.getAllControllerParams().get("id").toString());
 				
 				//Either personnel or customer. not both
-				Optional<Personnel> selectedPersonnel = personnelService.findByIdAndAccount_Businesses_Id(accountId, AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
-				selectedPersonnel.ifPresent(personnel -> super.addModelCollectionToView("selected", personnel));
-				Optional<Customer> selectedCustomer = customerService.findByIdAndAccount_Businesses_Id(accountId, AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
-				selectedCustomer.ifPresent(customer -> super.addModelCollectionToView("selected", customer));
+				Optional<Account> selectedAccount = accountService.findByIdAndBusinesses_Id(accountId, AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
+				selectedAccount.ifPresent(account -> {
+					boolean isPersonnel = account.getRoles().stream().anyMatch(role -> role.getName().equals("PERSONNEL"));
+					boolean isCustomer = account.getRoles().stream().anyMatch(role -> role.getName().equals("CUSTOMER"));
+
+					super.addModelCollectionToView("account", account);
+
+					if(isPersonnel){
+						Optional<Personnel> personnel = personnelService.findById(account.getId());
+						personnel.ifPresent(p -> super.addModelCollectionToView("selected", p));
+					}else if(isCustomer){
+						Optional<Customer> customer = customerService.findById(account.getId());
+						customer.ifPresent(c -> super.addModelCollectionToView("selected", c));
+					}
+				});
 			}else {
-				if(AccountUtil.currentLoggedInUser().getAccount().getPersonnel() != null) {
-					super.addModelCollectionToView("selected", AccountUtil.currentLoggedInUser().getAccount().getPersonnel());
-				}
-				else {
-					super.addModelCollectionToView("selected", AccountUtil.currentLoggedInUser().getAccount().getCustomer());
-				}
+				Long accountId = AccountUtil.currentLoggedInUser().getAccount().getId();
+				Optional<Account> selectedAccount = accountService.findByIdAndBusinesses_Id(accountId, AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
+				selectedAccount.ifPresent(a -> {
+					super.addModelCollectionToView("account", a);
+					Optional<Personnel> personnel = personnelService.findById(a.getId());
+					personnel.ifPresentOrElse(p -> {
+						super.addModelCollectionToView("selected", p);
+					}, () -> addModelCollectionToView("selected", null));
+				});
 			}
 		}
 		
@@ -280,9 +289,9 @@ public class AccountModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
 
 	}
 	

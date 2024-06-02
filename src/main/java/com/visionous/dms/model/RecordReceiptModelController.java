@@ -5,6 +5,8 @@ package com.visionous.dms.model;
 
 import java.util.Optional;
 
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.persistence.AccountService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,24 +36,15 @@ import com.visionous.dms.service.RecordService;
  */
 @Controller
 public class RecordReceiptModelController extends ModelControllerImpl{
-
 	private final Log logger = LogFactory.getLog(RecordModelController.class);
-	
 	private static String currentPage = LandingPages.RECORDRECEIPT.value();
-	
-	
 	private RecordReceiptService recordReceiptService;
-	
 	private RecordReceiptItemService recordReceiptItemService;
-	
 	private CustomerService customerService;
-	
 	private HistoryService historyService;
-	
 	private RecordService recordService;
-	
+	private AccountService accountService;
 	private QuestionnaireResponseService questionnaireResponseService;
-
 
 	/**
 	 * 
@@ -61,7 +54,7 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 			RecordReceiptItemService recordReceiptItemService,
 			CustomerService customerService, HistoryService historyService, 
 			QuestionnaireResponseService questionnaireResponseService,
-			RecordService recordService) {
+			RecordService recordService, AccountService accountService) {
 		
 		this.questionnaireResponseService = questionnaireResponseService;
 		this.recordReceiptItemService = recordReceiptItemService;
@@ -69,6 +62,7 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 		this.customerService = customerService;
 		this.historyService = historyService;
 		this.recordService = recordService;
+		this.accountService = accountService;
 	}
 	
 	/**
@@ -142,21 +136,37 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 					currentRecord.setReceipt(newRecordReceipt);
 					
 					Record newRecord = this.recordService.create(currentRecord);
-					super.addModelCollectionToView("selectedReceipt", newRecord.getReceipt());	
+					super.addModelCollectionToView("selectedReceipt", newRecord.getReceipt());
+
+					Optional<Account> personnel = accountService.findById(newRecord.getPersonnelId());
+					personnel.ifPresent(acc -> {
+						super.addModelCollectionToView("performer", acc);
+					});
+					Optional<Account> customer = accountService.findById(newRecord.getHistory().getCustomerId());
+					customer.ifPresent(acc -> {
+						super.addModelCollectionToView("account", acc);
+					});
 				}else {
-					
 					super.addModelCollectionToView("selectedReceipt", currentRecord.getReceipt());
 				}
-				
 			});
-			
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
 			
 			Long receiptId = (Long) super.getAllControllerParams().get("receiptId");
 			
 			Optional<RecordReceipt> selectedReceipt = this.recordReceiptService.findById(receiptId);
 			selectedReceipt.ifPresent(receipt -> {
-				super.addModelCollectionToView("selectedReceipt", receipt);	
+				super.addModelCollectionToView("selectedReceipt", receipt);
+
+				Optional<Account> personnel = accountService.findById(receipt.getRecord().getPersonnelId());
+				personnel.ifPresent(acc -> {
+					super.addModelCollectionToView("performer", acc);
+				});
+
+				Optional<Account> customer = accountService.findById(receipt.getRecord().getHistory().getCustomerId());
+				customer.ifPresent(acc -> {
+					super.addModelCollectionToView("account", acc);
+				});
 			});
 			
 			
@@ -169,7 +179,7 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 			}
 		});
 		
-		super.addModelCollectionToView("global", AccountUtil.currentLoggedInBussines().getGlobalSettings());
+		super.addModelCollectionToView("global", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings());
 	}
 	
 	/**
@@ -186,9 +196,9 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
 
 	}
 	

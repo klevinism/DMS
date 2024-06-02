@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-    	<version>2.4.5</version>
+    	<version>3.2.5</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.visionous</groupId>
@@ -15,7 +15,7 @@
 	<description>Dental Clinic Management System</description>
 
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
 	</properties>
 	
     <scm>
@@ -73,14 +73,17 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-consul-discovery</artifactId>
-			<version>3.0.0</version>
+			<version>4.1.1</version>
 		</dependency>
 
 
+		<!-- https://mvnrepository.com/artifact/org.thymeleaf.extras/thymeleaf-extras-springsecurity5 -->
 		<dependency>
-		    <groupId>org.thymeleaf.extras</groupId>
-		    <artifactId>thymeleaf-extras-java8time</artifactId>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
+			<version>3.1.2.RELEASE</version>
 		</dependency>
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -148,32 +151,29 @@
 		    <version>12.2.0.1</version>
 		</dependency>
 
-	<!-- https://mvnrepository.com/artifact/com.googlecode.libphonenumber/libphonenumber -->
-	<dependency>
-	    <groupId>com.googlecode.libphonenumber</groupId>
-	    <artifactId>libphonenumber</artifactId>
-	    <version>8.12.43</version>
-	</dependency>
+		<!-- https://mvnrepository.com/artifact/com.googlecode.libphonenumber/libphonenumber -->
+		<dependency>
+			<groupId>com.googlecode.libphonenumber</groupId>
+			<artifactId>libphonenumber</artifactId>
+			<version>8.12.43</version>
+		</dependency>
 
-	<dependency>
-		<groupId>org.springframework.cloud</groupId>
-		<artifactId>spring-cloud-starter-consul-config</artifactId>
-		<version>3.0.0</version>
-	</dependency>
-        
+		<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-consul-config -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-consul-config</artifactId>
+			<version>4.1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.o2dent.lib</groupId>
+			<artifactId>accounts</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
-		  <plugin>
-		    <groupId>org.apache.maven.plugins</groupId>
-		    <artifactId>maven-release-plugin</artifactId>
-		    <version>3.0.0-M5</version>
-		    <configuration>
-		      <goals>clean, package, install</goals>
-		    </configuration>
-		  </plugin>
-		
 			<plugin>
 	            <groupId>org.springframework.boot</groupId>
 	            <artifactId>spring-boot-maven-plugin</artifactId>
@@ -181,7 +181,7 @@
 	                <executable>true</executable>
 	            </configuration>		
 			</plugin>
-		</plugins>
+        </plugins>
 	</build>
 
 </project>

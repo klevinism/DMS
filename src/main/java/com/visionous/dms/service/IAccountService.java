@@ -3,14 +3,14 @@
  */
 package com.visionous.dms.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
+import com.o2dent.lib.accounts.entity.Account;
 import com.visionous.dms.exception.EmailExistsException;
 import com.visionous.dms.exception.PhoneNumberExistsException;
 import com.visionous.dms.exception.UsernameExistsException;
-import com.visionous.dms.pojo.Account;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author delimeta

@@ -1,4 +1,5 @@
 package com.visionous.dms.controller;
+
 import java.time.LocalDateTime;
 /**
  * @author delimeta
@@ -8,13 +9,14 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.persistence.AccountService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,15 +39,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.LocaleResolver;
 
 import com.visionous.dms.configuration.helpers.AccountUtil;
-import com.visionous.dms.configuration.helpers.DmsCore;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.event.OnResetPasswordEvent;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Reset;
-import com.visionous.dms.pojo.Subscription;
 import com.visionous.dms.pojo.Verification;
-import com.visionous.dms.service.AccountService;
 import com.visionous.dms.service.ResetService;
 import com.visionous.dms.service.VerificationService;
 
@@ -181,9 +177,9 @@ public class GreetingModelViewController {
 		
 		model.addAttribute("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		model.addAttribute("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
-		model.addAttribute("settings", AccountUtil.currentLoggedInBussines().getGlobalSettings());
-		model.addAttribute("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription());
+		model.addAttribute("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
+		model.addAttribute("settings", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings());
+		model.addAttribute("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
 		
 		return "demo_1/pages/expiredsubscription";
 	}
@@ -375,13 +371,13 @@ public class GreetingModelViewController {
 	    
 		localeResolver.setLocale(httpServletRequest, httpServletResponse, new Locale("al","sq"));
 		
-		model.addAttribute("disabledDays", AccountUtil.currentLoggedInBussines().getGlobalSettings().getNonBusinessDays());
-		model.addAttribute("bookingSplit", AccountUtil.currentLoggedInBussines().getGlobalSettings().getAppointmentTimeSplit());
-		model.addAttribute("startTime", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessStartTimes()[0]);
-		model.addAttribute("startMinute", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessStartTimes()[1]);
-		model.addAttribute("endTime", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEndTimes()[0]);
-		model.addAttribute("endMinute", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEndTimes()[1]);
-		model.addAttribute("businessName", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessName());
+		model.addAttribute("disabledDays", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getNonBusinessDays());
+		model.addAttribute("bookingSplit", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getAppointmentTimeSplit());
+		model.addAttribute("startTime", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessStartTimes()[0]);
+		model.addAttribute("startMinute", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessStartTimes()[1]);
+		model.addAttribute("endTime", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessEndTimes()[0]);
+		model.addAttribute("endMinute", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessEndTimes()[1]);
+		model.addAttribute("businessName", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessName());
 		model.addAttribute("redirect", redirectUrl);
 		
 		return "demo_1/pages/new_appointment";

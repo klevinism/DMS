@@ -1017,11 +1017,11 @@
 			var pImgPath = "/resources/personnel/img/profile/";
 			var pChecked = true;
 		
-			var pName = personnel.account.name.charAt(0).toUpperCase() + personnel.account.name.slice(1); 
-			var pSurname = personnel.account.surname.charAt(0).toUpperCase() + personnel.account.surname.slice(1);
+			var pName = personnel.name.charAt(0).toUpperCase() + personnel.name.slice(1);
+			var pSurname = personnel.surname.charAt(0).toUpperCase() + personnel.surname.slice(1);
 			pFullName = pName+" "+pSurname;
-			if(personnel.account.image != null){
-				pImgPath += personnel.account.image;
+			if(personnel.image != null){
+				pImgPath += personnel.image;
 			}else{
 			    pImgPath = 'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg';
 			}
@@ -1094,7 +1094,7 @@
 	
 	function buildOptions(element, data){
 	    data.forEach(function(obj){
-	        var optionName = obj.name == null ? obj.account.name + ", "+obj.account.surname : obj.name;
+	        var optionName = obj.name == null ? obj.name + ", "+obj.surname : obj.name;
 		    var optionEl$ = $("<option></option>");
 	        $(optionEl$).html(optionName);
 	        $(optionEl$).val(obj.id);

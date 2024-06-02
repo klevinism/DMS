@@ -5,10 +5,10 @@ package com.visionous.dms.event;
 
 import java.util.Locale;
 
+import com.o2dent.lib.accounts.entity.Account;
 import org.springframework.context.ApplicationEvent;
 
 import com.visionous.dms.configuration.helpers.DmsCore;
-import com.visionous.dms.pojo.Account;
 
 /**
  * @author delimeta

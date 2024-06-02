@@ -1,10 +1,9 @@
-/**
- * 
- */
 package com.visionous.dms.model;
 
 import java.util.Optional;
 
+import com.visionous.dms.pojo.*;
+import com.visionous.dms.service.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +14,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.configuration.helpers.LandingPages;
-import com.visionous.dms.pojo.Customer;
-import com.visionous.dms.pojo.GlobalSettings;
-import com.visionous.dms.pojo.History;
-import com.visionous.dms.pojo.Subscription;
-import com.visionous.dms.service.CustomerService;
-import com.visionous.dms.service.HistoryService;
-import com.visionous.dms.service.RecordService;
-import com.visionous.dms.service.TeethService;
 
 /**
  * @author delimeta
@@ -32,23 +23,21 @@ import com.visionous.dms.service.TeethService;
 public class HistoryModelController extends ModelControllerImpl{
 	private final Log logger = LogFactory.getLog(HistoryModelController.class);
 	private static String currentPage = LandingPages.HISTORY.value();
-
 	private TeethService teethService;
-	
 	private HistoryService historyService;
 	private RecordService recordService;
 	private CustomerService customerService;
-	
+	private PersonnelService personnelService;
 	
 	@Autowired
 	private HistoryModelController(TeethService teethService, CustomerService customerService, 
-			HistoryService historyService, RecordService recordService) {
+			HistoryService historyService, RecordService recordService, PersonnelService personnelService) {
 	
 		this.teethService = teethService;
-		
 		this.historyService = historyService;
 		this.recordService = recordService;
 		this.customerService = customerService;
+		this.personnelService = personnelService;
 	}
 	
 	/**
@@ -81,18 +70,12 @@ public class HistoryModelController extends ModelControllerImpl{
 		History newHistory = historyNewModel;
 
 		if(action.equals(Actions.DELETE.getValue())) {
-			
 		}else if(action.equals(Actions.EDIT.getValue()) ) {
-			
 		}else if(action.equals(Actions.CREATE.getValue())) {
-
 			if(super.getAllControllerParams().get("id") != null) {
-				Long customerId = Long.valueOf(super.getAllControllerParams().get("id").toString());	
-				
-				if(AccountUtil.currentLoggedInUser().isPersonnel()) {
-					newHistory.setSupervisor(AccountUtil.currentLoggedInUser().getPersonnel());	
-				}
-				
+				Long customerId = Long.valueOf(super.getAllControllerParams().get("id").toString());
+				Optional<Personnel> personnel = personnelService.findById(AccountUtil.currentLoggedInUser().getId());
+				newHistory.setSupervisor(personnel.orElseThrow());
 				customerService.createNewHistoryForCustomerId(customerId, newHistory);
 			}
 		}else if(action.equals(Actions.VIEW.getValue())) {
@@ -151,9 +134,9 @@ public class HistoryModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
 
 	}
 	

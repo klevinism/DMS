@@ -6,10 +6,19 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.entity.Business;
+import com.o2dent.lib.accounts.helpers.exceptions.SubdomainExistsException;
+import com.o2dent.lib.accounts.persistence.AccountService;
+import com.o2dent.lib.accounts.persistence.BusinessService;
+import com.visionous.dms.pojo.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -20,19 +29,17 @@ import com.visionous.dms.configuration.helpers.DmsCore;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.event.OnBusinessConfirmationEvent;
 import com.visionous.dms.event.OnSubscriptionConfirmationEvent;
-import com.visionous.dms.exception.SubdomainExistsException;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.Business;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.SubscriptionHistory;
-import com.visionous.dms.service.AccountService;
-import com.visionous.dms.service.BusinessService;
 import com.visionous.dms.service.GlobalSettingsService;
 import com.visionous.dms.service.PersonnelService;
 import com.visionous.dms.service.SubscriptionHistoryService;
 import com.visionous.dms.service.SubscriptionListService;
 
+
+@EnableJpaRepositories("com.*")
+@EntityScan("com.*")
 @Controller
 public class BusinessModelController extends ModelControllerImpl{
 	
@@ -60,7 +67,7 @@ public class BusinessModelController extends ModelControllerImpl{
 	@Autowired
 	public BusinessModelController(BusinessService businessService, SubscriptionHistoryService subscriptionHistoryService, 
 			SubscriptionListService subscriptionListService, GlobalSettingsService globalSettingsService, 
-			PersonnelService personnelService, AccountService accountService, 
+			PersonnelService personnelService, AccountService accountService,
 			ApplicationEventPublisher eventPublisher, MessageSource messageSource) {
 		
 		this.businessService = businessService;
@@ -142,18 +149,18 @@ public class BusinessModelController extends ModelControllerImpl{
 
 		        Business newBusiness = businessService.create(business);
 
+				AccountUtil.setCurrentLoggedInBusiness(newBusiness);
+
 		        Optional<Account> newAccount = accountService.findById(AccountUtil.currentLoggedInUser().getId());
 		        newAccount.ifPresent(account -> {
-		        	if(Objects.isNull(account.getPersonnel())) {
-		        		Personnel newPersonnel = new Personnel();
-				        newPersonnel.setType("ADMIN");
-				        
-				        account.setPersonnel(newPersonnel);
-				        newPersonnel.setAccount(account);
-
-				        Personnel createdPersonnel = personnelService.update(newPersonnel);
-				        AccountUtil.currentLoggedInUser().setPersonnel(createdPersonnel);
-		        	}
+					Optional<Personnel> hasPersonnel = personnelService.findById(account.getId());
+					if(!hasPersonnel.isPresent()){
+						Personnel newPersonnel = new Personnel();
+						newPersonnel.setType("ADMIN");
+						newPersonnel.setId(account.getId());
+						personnelService.update(newPersonnel);
+						AccountUtil.currentLoggedInUser().setPersonnel(true);
+					}
 		        });
 				
 
@@ -168,15 +175,13 @@ public class BusinessModelController extends ModelControllerImpl{
 		        	globalSettingsDraft.setSubscriptions(new HashSet<>());
 		        }
 		        
-		        globalSettingsDraft.setBusiness(newBusiness);
-	        	newBusiness.setGlobalSettings(globalSettingsDraft);
-
+		        globalSettingsDraft.setBusinessId(business.getId());
 		        GlobalSettings newGlobalSettings = this.globalSettingsService.update(globalSettingsDraft);
-		        
-		        SubscriptionHistory subscriptionHistoryDraft = new SubscriptionHistory();
+
+				SubscriptionHistory subscriptionHistoryDraft = new SubscriptionHistory();
 		        subscriptionHistoryDraft.setActive(true);
 		        subscriptionHistoryDraft.setAddeddate(LocalDateTime.now());
-		        subscriptionHistoryDraft.setBusiness(business);
+		        subscriptionHistoryDraft.setBusinessId(business.getId());
 		        subscriptionHistoryDraft.setSubscriptionStartDate(LocalDateTime.now());
 		        subscriptionHistoryDraft.setSubscriptionEndDate(LocalDateTime.now().plusDays(31));
 		        
@@ -185,36 +190,33 @@ public class BusinessModelController extends ModelControllerImpl{
 		        });
 		        
 		        subscriptionHistoryDraft.setGlobalSettings(newGlobalSettings);
-		        subscriptionHistoryDraft.setBusiness(newGlobalSettings.getBusiness());
-		        newGlobalSettings.getSubscriptions().add(subscriptionHistoryDraft);
-		        if(Objects.isNull(newGlobalSettings.getBusiness().getSubscriptionHistory())) {
-		        	newGlobalSettings.getBusiness().setSubscriptionHistory(new HashSet<>());
-		        }
-		        
-		        newGlobalSettings.getBusiness().getSubscriptionHistory().add(subscriptionHistoryDraft);
+
+//				Optional<SubscriptionHistory> subscriptionHistory =
+//						subscriptionHistoryService.findActiveSubscriptionByBusinessId(newGlobalSettings.getBusiness().getId());
+//
+//				subscriptionHistory.ifPresent(history -> {
+//
+//				});
 		        
 		        SubscriptionHistory subscriptionHistory = this.subscriptionHistoryService.update(subscriptionHistoryDraft);
-		        
-		        Business currentLoggedInBusiness = subscriptionHistory.getBusiness();
-		        
-		        AccountUtil.currentLoggedInUser().addBusiness(currentLoggedInBusiness);
-		        AccountUtil.setCurrentLoggedInBusiness(currentLoggedInBusiness);
-		        
+
+				AccountUtil.currentLoggedInUser().setCurrentBusinessSettings(subscriptionHistory.getGlobalSettings());
+
 		        super.addModelCollectionToView("account", AccountUtil.currentLoggedInUser().getAccount());
 		        super.addModelCollectionToView("createdBusiness", AccountUtil.currentLoggedInBussines());
 		        
 		        eventPublisher.publishEvent(
 		        		new OnBusinessConfirmationEvent(
-		        				AccountUtil.currentLoggedInUser().getAccount(), 
-		        				currentLoggedInBusiness,
+		        				AccountUtil.currentLoggedInUser().getAccount(),
+								newBusiness,
 		        				LocaleContextHolder.getLocale(), 
 		        				DmsCore.appMainPath())
 		        		);
 		        
 		        eventPublisher.publishEvent(
 		        		new OnSubscriptionConfirmationEvent(
-		        				AccountUtil.currentLoggedInUser().getAccount(), 
-		        				currentLoggedInBusiness,
+		        				AccountUtil.currentLoggedInUser().getAccount(),
+								newBusiness,
 		        				LocaleContextHolder.getLocale(), 
 		        				DmsCore.appMainPath())
 		        		);

@@ -88,40 +88,36 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long>{
 	List<Object[]> topAppointmentsByMostUsedServiceType();
 
 	/**
-	 * @param businessId
+	 *
+	 * @param ids
 	 * @return
 	 */
-	@Query("select t.serviceType.id, t.serviceType.name from Appointment t join t.customer.account.businesses b where b.id =?1 group by t.serviceType.id, t.serviceType.name order by count(t.serviceType.id) desc")
-	List<Object[]> findTopAppointmentsByMostUsedServiceTypeAndCustomerBusinessId(Long businessId);
+	@Query("select t.serviceType.id, t.serviceType.name from Appointment t join t.personnel p where p.id in (?1) group by t.serviceType.id, t.serviceType.name order by count(t.serviceType.id) desc")
+	List<Object[]> findTopAppointmentsByMostUsedServiceTypeAndPersonnelIdIn(List<Long> ids);
 
 	/**
-	 * @param id
+	 *
+	 * @param ids
+	 * @return
+	 */
+	List<Appointment> findAllByPersonnelIdIn(List<Long> ids);
+
+	/**
+	 *
+	 * @param personnelIds
+	 * @param startRange
+	 * @param endRange
+	 * @return
+	 */
+	List<Appointment> findAllByPersonnelIdInAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(List<Long> personnelIds, LocalDateTime startRange, LocalDateTime endRange);
+
+	/**
+	 *
+	 * @param customerIds
 	 * @param localDateTime
 	 * @param localDateTime2
 	 * @return
 	 */
-	List<Appointment> findAllByCustomer_Account_Businesses_IdAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(
-			Long id, LocalDateTime localDateTime, LocalDateTime localDateTime2);
-
-	/**
-	 * @param currentBusinessId
-	 * @param personnelId
-	 * @return
-	 */
-	List<Appointment> findAllByPersonnel_Account_Businesses_IdAndPersonnelId(Long currentBusinessId, Long personnelId);
-
-	/**
-	 * @param currentBusienssId
-	 * @param personnelId
-	 * @param localDateTime
-	 * @param localDateTime2
-	 * @return
-	 */
-	List<Appointment> findAllByCustomer_Account_Businesses_IdAndPersonnelIdAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(
-			Long currentBusienssId, Long personnelId, LocalDateTime localDateTime, LocalDateTime localDateTime2);
-
-	List<Appointment> findAllByCustomer_Account_Businesses_IdAndAppointmentDateBetweenOrderByAppointmentDateAsc(
-			Long currentBusinessId, LocalDateTime localDateTime, LocalDateTime localDateTime2);
-
+	List<Appointment> findAllByCustomerIdInAndAppointmentDateBetweenOrderByAppointmentDateAsc(List<Long> customerIds, LocalDateTime localDateTime, LocalDateTime localDateTime2);
 
 }

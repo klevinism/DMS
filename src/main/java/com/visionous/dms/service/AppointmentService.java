@@ -4,14 +4,15 @@
 package com.visionous.dms.service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.visionous.dms.pojo.Appointment;
-import com.visionous.dms.pojo.Business;
 import com.visionous.dms.repository.AppointmentRepository;
 
 /**
@@ -39,6 +40,11 @@ public class AppointmentService implements IAppointmentService{
 
 	@Override
 	public void deleteBatch(List<Appointment> appointments) {
+		this.appointmentRepository.deleteInBatch(appointments);
+	}
+
+	@Override
+	public void deleteBatch(Set<Appointment> appointments) {
 		this.appointmentRepository.deleteInBatch(appointments);
 	}
 
@@ -119,6 +125,18 @@ public class AppointmentService implements IAppointmentService{
 				findAllByPersonnelIdAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(personnelId, startRange, endRange);
 	}
 
+	/**
+	 * @param personnelIds
+	 * @param startRange
+	 * @param endRange
+	 * @return
+	 */
+	@Override
+	public List<Appointment> findAllByPersonnelIdInAndBetweenDateRange(List<Long> personnelIds, LocalDateTime startRange, LocalDateTime endRange) {
+		return this.appointmentRepository.
+				findAllByPersonnelIdInAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(personnelIds, startRange, endRange);
+	}
+
 
 	/**
 	 * @param startRange
@@ -139,46 +157,23 @@ public class AppointmentService implements IAppointmentService{
 		return this.appointmentRepository.topAppointmentsByMostUsedServiceType();
 	}
 
-
 	/**
-	 * @param currentBusinessId
-	 * @param localDateTime
-	 * @param localDateTime2
+	 *
+	 * @param ids
 	 * @return
 	 */
 	@Override
-	public List<Appointment> findAllByBusinessIdAndBetweenDateRange(Long currentBusinessId, LocalDateTime localDateTime,
-			LocalDateTime localDateTime2) {
-		return this.appointmentRepository.findAllByCustomer_Account_Businesses_IdAndAppointmentDateBetweenOrderByAppointmentDateAsc(currentBusinessId, localDateTime, localDateTime2);
+	public List<Appointment> findByPersonnelIdIn(List<Long> ids) {
+		return this.appointmentRepository.findAllByPersonnelIdIn(ids);
 	}
 
 
 	/**
-	 * @param personnelId
+	 *
+	 * @param ids
 	 * @return
 	 */
-	public List<Appointment> findByBusinessIdAndPersonnelId(Long currentBusinessId, Long personnelId) {
-		return this.appointmentRepository.findAllByPersonnel_Account_Businesses_IdAndPersonnelId(currentBusinessId, personnelId);
+	public List<Object[]> findTopAppointmentsByMostUsedServiceTypeAndPersonnelIdIn(List<Long> ids) {
+		return this.appointmentRepository.findTopAppointmentsByMostUsedServiceTypeAndPersonnelIdIn(ids);
 	}
-
-
-	/**
-	 * @param id
-	 * @param personnelId
-	 * @param localDateTime
-	 * @param localDateTime2
-	 * @return
-	 */
-	public List<Appointment> findAllByCustomerBusinessIdAndPersonnelIdAndBetweenDateRange(Long currentBusienssId, Long personnelId,
-			LocalDateTime localDateTime, LocalDateTime localDateTime2) {
-		return this.appointmentRepository
-				.findAllByCustomer_Account_Businesses_IdAndPersonnelIdAndAppointmentDateGreaterThanEqualAndAppointmentEndDateLessThanEqualOrderByAppointmentDateAsc(currentBusienssId, personnelId, localDateTime, localDateTime2);
-	}
-
-
-	public List<Object[]> findTopAppointmentsByMostUsedServiceTypeAndCustomerBusinessId(Long businessId) {
-		return this.appointmentRepository
-				.findTopAppointmentsByMostUsedServiceTypeAndCustomerBusinessId(businessId);
-	}
-
 }

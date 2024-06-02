@@ -1,9 +1,10 @@
 package com.visionous.dms.service;
 
-import java.util.Optional;
 
-import com.visionous.dms.exception.SubdomainExistsException;
-import com.visionous.dms.pojo.Business;
+import com.o2dent.lib.accounts.entity.Business;
+import com.o2dent.lib.accounts.helpers.exceptions.SubdomainExistsException;
+
+import java.util.Optional;
 
 public interface IBusinessService {
 	

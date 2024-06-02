@@ -1,46 +1,46 @@
 <div class="card-body p-0" th:fragment="view">
   
   <div class="row">
-          <div class="col-sm-6 col-md-4" th:if="*{account != null && account.image != null}" th:with="imgsuburl = *{account.roles[0].name == 'ADMIN' || account.roles[0].name == 'PERSONNEL' ? 'personnel' : 'customer'}">
-              <img th:src="@{/resources/__${imgsuburl}__/img/profile/__*{account.image}__}" alt="" width="100%" height="100%" border="0" class="rounded"  />
+          <div class="col-sm-6 col-md-4" th:if="${account != null && account.image != null}" th:with="imgsuburl = ${account.roles[0].name == 'ADMIN' || account.roles[0].name == 'PERSONNEL' ? 'personnel' : 'customer'}">
+              <img th:src="@{/resources/__${imgsuburl}__/img/profile/__${account.image}__}" alt="" width="100%" height="100%" border="0" class="rounded"  />
           </div>
-          <div class="col-sm-6 col-md-4" th:if="*{account.image == null }">
+          <div class="col-sm-6 col-md-4" th:if="${account.image == null }">
               <img th:src="'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg'" alt="" width="100%" border="0" class="rounded"  />
           </div>
           <div class="col-sm-6 col-md-8">
           
           <div class="d-flex flex-column flex-lg-row">
 	       	  <div class="data-wrapper d-flex mt-3 mt-lg-0">
-	              <h4>[[*{account.name}]] [[*{account.surname}]]</h4>              
+	              <h4>[[${account.name}]] [[${account.surname}]]</h4>
 
 	              
 	    	  </div>
 	    	  <div class="ml-lg-auto">
 	    	  	<!-- Split button -->
-	              <div class="dropdown" name="actionButton" th:if="*{!account.enabled && !account.active}">
+	              <div class="dropdown" name="actionButton" th:if="${!account.enabled && !account.active}">
 	                 <button type="button" class="btn btn-icons btn-rounded  btn-inverse-outline-primary btn-sm dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	                   	<i class="fa fa-ellipsis-v"></i>
 	                 </button>
 	                 <div class="dropdown-menu"  aria-labelledby="dropdownMenuSplitButton1">
 	                   <h6 class="dropdown-header">[[#{Actions}]]</h6>
 	                   <div class="dropdown-divider" ></div>
-				       <a class="dropdown-item" th:if="*{!account.enabled && !account.active}" href="#" th:onclick="'resendConfirmation('+__*{account.id}__+');'">[[#{ReConfirm}]]</a>
+				       <a class="dropdown-item" th:if="${!account.enabled && !account.active}" href="#" th:onclick="'resendConfirmation('+__${account.id}__+');'">[[#{ReConfirm}]]</a>
 	                 </div>
 	               </div>
 			  </div>
 	      </div>
 	      <div class="d-flex flex-column">
 			  <small>
-			  	<cite th:title="*{account.address} +','+ *{account.city} +','+ *{account.country}"><i class="mdi mdi-map-marker"></i>[[*{account.address} +','+ *{account.city} +','+ *{account.country}]]
+			  	<cite th:title="${account.address} +','+ ${account.city} +','+ ${account.country}"><i class="mdi mdi-map-marker"></i>[[${account.address} +','+ ${account.city} +','+ ${account.country}]]
 	            </cite>
 	          </small>
-	          <small><cite th:title="#{Age}"> <i class="mdi mdi-gift"></i>[[*{account.age}]] </cite></small>
-              <p th:with="activeLabel = *{account.active} ? 'Active' : 'Inactive',
-              			activeClass = *{account.active} ? badge-success : badge-danger">
-                  <i class="mdi mdi-email-box"></i>[[*{account.email}]]<br />
-                  <i class="mdi mdi-cellphone"></i><a href="">[[*{account.phone}]]</a><br />
+	          <small><cite th:title="#{Age}"> <i class="mdi mdi-gift"></i>[[${account.age}]] </cite></small>
+              <p th:with="activeLabel = ${account.active} ? 'Active' : 'Inactive',
+              			activeClass = ${account.active} ? badge-success : badge-danger">
+                  <i class="mdi mdi-email-box"></i>[[${account.email}]]<br />
+                  <i class="mdi mdi-cellphone"></i><a href="">[[${account.phone}]]</a><br />
                   <i class="mdi mdi-calendar" th:if="${registerdate != null}">[[*{#dates.format(registerdate, 'dd/MM/yyyy')}]]</i>
-	              <span th:if="*{account.roles[0].name == 'PERSONNEL'}"  th:classappend="'badge ' + ${activeClass}" style="color:white" th:text="#{__${activeLabel}__}">Enabled</span>
+	              <span th:if="${account.roles[0].name == 'PERSONNEL'}"  th:classappend="'badge ' + ${activeClass}" style="color:white" th:text="#{__${activeLabel}__}">Enabled</span>
 					
                   </p>
               </div>

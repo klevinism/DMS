@@ -8,8 +8,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.entity.Business;
+import com.o2dent.lib.accounts.helpers.exceptions.SubdomainExistsException;
+import com.o2dent.lib.accounts.persistence.AccountService;
+import com.o2dent.lib.accounts.persistence.BusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,15 +31,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.visionous.dms.configuration.helpers.AccountUtil;
-import com.visionous.dms.exception.SubdomainExistsException;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.Business;
 import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.pojo.SubscriptionHistory;
 import com.visionous.dms.rest.response.ResponseBody;
-import com.visionous.dms.service.AccountService;
-import com.visionous.dms.service.BusinessService;
 import com.visionous.dms.service.GlobalSettingsService;
 import com.visionous.dms.service.PersonnelService;
 import com.visionous.dms.service.SubscriptionHistoryService;
@@ -136,11 +136,9 @@ public class BusinessRestController {
 		        newAccount.ifPresent(account -> {
 			        Personnel newPersonnel = new Personnel();
 			        newPersonnel.setType("ADMIN");
-			        
-			        account.setPersonnel(newPersonnel);
-			        newPersonnel.setAccount(account);
-
 			        personnelService.update(newPersonnel);
+
+					AccountUtil.currentLoggedInUser().setPersonnel(true);
 		        });
 				
 
@@ -155,14 +153,14 @@ public class BusinessRestController {
 		        	globalSettingsDraft.setSubscriptions(new HashSet<>());
 		        }
 		        
-		        globalSettingsDraft.setBusiness(business);
-	        	
+		        globalSettingsDraft.setBusinessId(business.getId());
+
 		        GlobalSettings newGlobalSettings = this.globalSettingsService.update(globalSettingsDraft);
 	        	
 		        SubscriptionHistory subscriptionHistoryDraft = new SubscriptionHistory();
 		        subscriptionHistoryDraft.setActive(true);
 		        subscriptionHistoryDraft.setAddeddate(LocalDateTime.now());
-		        subscriptionHistoryDraft.setBusiness(business);
+		        subscriptionHistoryDraft.setBusinessId(business.getId());
 		        subscriptionHistoryDraft.setSubscriptionStartDate(LocalDateTime.now());
 		        subscriptionHistoryDraft.setSubscriptionEndDate(LocalDateTime.now().plusDays(31));
 		        
@@ -174,7 +172,10 @@ public class BusinessRestController {
 		        newGlobalSettings.getSubscriptions().add(subscriptionHistoryDraft);
 		        
 		        SubscriptionHistory subscriptionHistory = this.subscriptionHistoryService.update(subscriptionHistoryDraft);
-		        
+
+				AccountUtil.setCurrentLoggedInBusiness(business);
+				AccountUtil.currentLoggedInUser().setCurrentBusinessSettings(newGlobalSettings);
+
 		        result.addResult(newBusiness);
 		        
 			} catch (SubdomainExistsException e) {

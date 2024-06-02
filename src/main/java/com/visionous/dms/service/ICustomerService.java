@@ -1,16 +1,13 @@
-/**
- * 
- */
 package com.visionous.dms.service;
+
+import com.o2dent.lib.accounts.helpers.exceptions.EmailExistsException;
+import com.o2dent.lib.accounts.helpers.exceptions.PhoneNumberExistsException;
+import com.o2dent.lib.accounts.helpers.exceptions.UsernameExistsException;
+import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.History;
 
 import java.util.List;
 import java.util.Optional;
-
-import com.visionous.dms.exception.EmailExistsException;
-import com.visionous.dms.exception.PhoneNumberExistsException;
-import com.visionous.dms.exception.UsernameExistsException;
-import com.visionous.dms.pojo.Customer;
-import com.visionous.dms.pojo.History;
 
 /**
  * @author delimeta
@@ -24,7 +21,7 @@ public interface ICustomerService {
 	 * @throws UsernameExistsException
 	 */
 	Customer create(Customer customer) throws EmailExistsException, UsernameExistsException, PhoneNumberExistsException;
-	
+
 	/**
 	 * @param id
 	 * @return
@@ -76,22 +73,9 @@ public interface ICustomerService {
 	Customer update(Customer customer);
 
 	/**
-	 * @param id
+	 *
+	 * @param ids
 	 * @return
 	 */
-	Object findAllByAccount_Businesses_Id(Long id);
-
-	/**
-	 * @param customerId
-	 * @param currentBusinessId
-	 * @return
-	 */
-	Optional<Customer> findByIdAndAccount_Businesses_Id(Long customerId, Long currentBusinessId);
-
-	/**
-	 * @param id
-	 * @param currentBusinessId
-	 */
-	void deleteByIdAndAccount_Businesses_Id(Long id, long currentBusinessId);
-
+	List<Customer> findAllByIdIn(List<Long> ids);
 }

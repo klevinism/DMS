@@ -1,14 +1,10 @@
 package com.visionous.dms.pojo;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-
-import javax.persistence.Entity;
-import javax.validation.constraints.NotEmpty;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
 
 public class IaoAccount {
 

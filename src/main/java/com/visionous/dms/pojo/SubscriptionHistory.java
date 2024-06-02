@@ -6,21 +6,9 @@ package com.visionous.dms.pojo;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-
+import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
@@ -37,7 +25,7 @@ public class SubscriptionHistory implements Serializable{
 
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SUBSCRIPTION_HISTORY_SEQ")
-    @SequenceGenerator(sequenceName = "subscription_history_seq", allocationSize = 1, name = "SUBSCRIPTION_HISTORY_SEQ")    
+    @SequenceGenerator(sequenceName = "subscription_history_seq", allocationSize = 1, name = "SUBSCRIPTION_HISTORY_SEQ")
     private Long id;
 	
 	@Column(name = "subscription_id", updatable = false, insertable = false)
@@ -67,11 +55,6 @@ public class SubscriptionHistory implements Serializable{
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH )
 	@JoinColumn(name = "subscription_id")
 	private Subscription subscription;
-	
-	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.REFRESH )
-	@JoinColumn(name = "business_id")
-	private Business business;
 
 	/**
 	 * @return the id
@@ -172,17 +155,18 @@ public class SubscriptionHistory implements Serializable{
 	}
 
 	/**
+	 *
 	 * @return
 	 */
-	public Business getBusiness() {
-		return business;
+	public Long getBusinessId() {
+		return businessId;
 	}
 
 	/**
-	 * @param business
+	 *
+	 * @param businessId
 	 */
-	public void setBusiness(Business business) {
-		this.business = business;
+	public void setBusinessId(Long businessId) {
+		this.businessId = businessId;
 	}
-	
 }

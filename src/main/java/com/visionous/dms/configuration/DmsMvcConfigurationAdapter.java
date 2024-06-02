@@ -4,16 +4,24 @@
 package com.visionous.dms.configuration;
 
 import java.util.Locale;
+
+import com.o2dent.lib.accounts.Configurations;
 import com.visionous.dms.rest.EmailProperties;
+import jakarta.mail.Authenticator;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -23,9 +31,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
-import javax.mail.Authenticator;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
 
 /**
  * @author delimeta
@@ -33,13 +38,15 @@ import javax.mail.Session;
  */
 @Configuration
 @EnableWebMvc
-public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
+@Import(Configurations.class)
+@ComponentScan(basePackages = { "com.o2dent.lib" })
+@EntityScan("com.*")
+public class DmsMvcConfigurationAdapter implements WebMvcConfigurer {
 	private SubscriptionInterceptor subscriptionInterceptor;
 	
 	/**
 	 * 
 	 */
-	@Autowired
 	public DmsMvcConfigurationAdapter(SubscriptionInterceptor subscriptionInterceptor) {
 		this.subscriptionInterceptor = subscriptionInterceptor;
 	}
@@ -60,12 +67,8 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
 	}
 
 	@Override
-	public Validator getValidator() {
-	     return validator();
-	}
-	
-	@Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    @Lazy
+    public void addResourceHandlers(@Lazy ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/static/assets/");
         registry.addResourceHandler("/resources/records/img/**").addResourceLocations("file:tmp/records/");
         registry.addResourceHandler("/resources/personnel/img/**").addResourceLocations("file:tmp/personnel/");
@@ -87,12 +90,14 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
         lci.setParamName("lang");
         return lci;
     }
-    
-    
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
+
+    @Bean
+    @Order(100)
+    public InterceptorRegistry registry(){
+        InterceptorRegistry registry = new InterceptorRegistry();
         registry.addInterceptor(localeChangeInterceptor());
         registry.addInterceptor(subscriptionInterceptor);
+        return registry;
     }
 
 

@@ -20,7 +20,7 @@ public interface SubscriptionListRepository extends JpaRepository<Subscription, 
 	
 	public List<Subscription> findAllByOrderByIdAsc();
 
-	public List<Subscription> findAllBySubscriptionHistory_Business_IdOrderByIdAsc(Long businessId);
+	public List<Subscription> findAllBySubscriptionHistory_BusinessIdOrderByIdAsc(Long businessId);
 
 	public Optional<Subscription> findByName(String name);
 }

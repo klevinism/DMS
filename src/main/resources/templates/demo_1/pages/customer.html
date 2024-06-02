@@ -60,17 +60,17 @@
 	                          <th><!-- Actions column --></th>
 	                        </tr>
 	                      </thead>
-	                      <tbody>
-	                        <tr th:each="customer, stat: ${customerList}" 
-	                        	th:onclick="'javascript:selectPersonnel('+${customer.id}+')'"
-	                        	th:with="user = ${customer.account},
-	                        		lastVisitRecord = ${lastCustomerRecord != null ? lastCustomerRecord[stat.index] : null},
-	                        		enabledLabel = ${user.enabled} ? 'Enabled' : 'Disabled', 
+							<tbody>
+	                        <tr th:each="account, stat: ${accountList}"
+	                        	th:onclick="'javascript:selectPersonnel('+${account.id}+')'"
+	                        	th:with="user = ${account},
+									customer = ${customerList.?[id == __${account.id}__][0]},
+									lastVisitRecord = ${customer?.customerHistory?.lastRecord},
+	                        		enabledLabel = ${user.enabled} ? 'Enabled' : 'Disabled',
 	                        		enabledClass = ${user.enabled} ? badge-success : badge-danger,
 	                        		activeLabel = ${user.active} ? 'Active' : 'Inactive', 
 	                        		activeClass = ${user.active} ? badge-success : badge-danger,
 	                        		visits = #{NoVisit}">
-	                        		
 	                          <td width="1%">
 		                          <div class="form-radio">
 	                              	<label class="form-check-label">
@@ -86,7 +86,7 @@
 							  <td >
 							  	<h5 th:text="${#dates.format(customer.registerdate, 'dd-MM-YYYY')}"></h5>
 							  </td>
-							  
+
 	                          <td >
 							  	<h5 th:text="${lastVisitRecord != null ? #temporals.format(lastVisitRecord.servicedate, 'dd-MM-YYYY HH:mm') : ''}"></h5>							  	
 							  </td>

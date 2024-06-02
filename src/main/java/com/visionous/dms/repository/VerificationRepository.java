@@ -1,16 +1,13 @@
-/**
- * 
- */
 package com.visionous.dms.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import com.o2dent.lib.accounts.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Verification;
 
 /**

@@ -3,26 +3,14 @@
  */
 package com.visionous.dms.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.visionous.dms.configuration.helpers.DmsCore;
+import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
  * @author delimeta
@@ -67,7 +55,7 @@ public class Appointment implements Serializable{
 	@JoinColumn(name = "customerid")
 	private Customer customer;
 	
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH )
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH )
 	@JoinColumn(name = "personnelid")
 	private Personnel personnel;
 	

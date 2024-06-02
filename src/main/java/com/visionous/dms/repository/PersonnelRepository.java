@@ -25,61 +25,9 @@ public interface PersonnelRepository extends JpaRepository<Personnel, Long> {
 	void deleteById(Long id);
 
 	/**
-	 * @param b
-	 * @param c
-	 * @param string
+	 *
+	 * @param ids
 	 * @return
 	 */
-	List<Personnel> findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_Name(boolean b, boolean c, String roles_name);
-
-	/**
-	 * @param string
-	 * @return
-	 */
-	List<Personnel> findAllByAccount_Roles_Name(String roles_name);
-
-	/**
-	 * @param enabled
-	 * @param role_name
-	 * @return
-	 */
-	List<Personnel> findAllByAccount_EnabledAndAccount_Roles_Name(boolean enabled, String role_name);
-
-	
-	/**
-	 * @param roleName
-	 * @param businessId
-	 * @return
-	 */
-	List<Personnel> findAllByAccount_Roles_NameAndAccount_Businesses_Id(String roleName, long businessId);
-
-	/**
-	 * @param enabled
-	 * @param active
-	 * @param roleName
-	 * @param businessId
-	 * @return
-	 */
-	List<Personnel> findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_NameAndAccount_Businesses_Id(
-			boolean enabled, boolean active, String roleName, long businessId);
-
-	/**
-	 * @param personnelId
-	 * @param businessId
-	 * @return
-	 */
-	Optional<Personnel> findByIdAndAccount_Businesses_Id(Long personnelId, Long businessId);
-
-	/**
-	 * @param enabled
-	 * @param roleName
-	 * @param businessId
-	 * @return
-	 */
-	List<Personnel> findAllByAccount_EnabledAndAccount_Roles_NameAndAccount_Businesses_Id(boolean enabled,
-			String roleName, long businessId);
-
-	List<Personnel> findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_NameInAndAccount_Businesses_Id(boolean b,
-			boolean c, List<String> roles, Long id);
-	
+	List<Personnel> findByIdIn(List<Long> ids);
 }

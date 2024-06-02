@@ -65,7 +65,7 @@
 	                        <tr th:each="personnel, stat: ${personnelList}" 
 	                        	th:onclick="'javascript:selectPersonnel('+${personnel.id}+')'"
 	                        	th:with="
-	                        		user = ${personnel.account},
+	                        		user = ${personnel},
 	                        		monthlyGrowthObj = ${monthlyGrowth},
 	                        		enabledLabel = ${user.enabled} ? 'Enabled' : 'Disabled', 
 	                        		enabledClass = ${user.enabled} ? badge-success : badge-danger,
@@ -79,6 +79,7 @@
 	                              	</label>
 	                              </div>
 		                      </td>
+
 							  <td width="1%" th:text="${user.id}">id</td>
 	                          <td ><a th:href="'/admin'+${currentPage}+'/dashboard/'+${user.id}" th:text="${user.username}">username</a></td>
 	                          <td ><a th:href="'/admin'+${currentPage}+'/dashboard/'+${user.id}" th:text="${user.name}+', '+${user.surname}">name,Surname</a></td>

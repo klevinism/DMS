@@ -5,12 +5,13 @@ package com.visionous.dms.configuration;
 
 import java.util.Collection;
 
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.entity.Business;
+import com.visionous.dms.pojo.GlobalSettings;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.visionous.dms.configuration.helpers.DmsCore;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.Business;
 
 /**
  * @author delimeta
@@ -24,14 +25,14 @@ public class AccountUserDetail extends Account implements UserDetails{
 	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 	
 	private Account account;
-	
 	private Business currentBusiness;
-	
 	private boolean accountNonExpired;
 	private boolean credentialsNonExpired;
 	private Collection<? extends GrantedAuthority> authorities;
 	private boolean accountNonLocked;
-	
+	private GlobalSettings currentBusinessSettings;
+
+	private boolean isPersonnel;
 	
 	/**
 	 * @param account
@@ -41,7 +42,8 @@ public class AccountUserDetail extends Account implements UserDetails{
 	 * @param authorities
 	 */
 	public AccountUserDetail(Account account, boolean accountNonExpired, 
-			boolean credentialsNonExpired, boolean accountNonLocked, 
+			boolean credentialsNonExpired, boolean accountNonLocked,
+		 	GlobalSettings currentBusinessSettings,
 			Collection<? extends GrantedAuthority> authorities) {
 		
 		super(account);
@@ -53,6 +55,7 @@ public class AccountUserDetail extends Account implements UserDetails{
 		this.accountNonLocked = accountNonLocked;
 		this.accountNonLocked = accountNonExpired;
 		this.authorities = authorities;
+		this.currentBusinessSettings = currentBusinessSettings;
 	}
 	
 	/**
@@ -68,8 +71,6 @@ public class AccountUserDetail extends Account implements UserDetails{
 	public void setAccount(Account account) {
 		this.account = account;
 	}
-	
-	
 
 	/**
 	 * @return
@@ -79,7 +80,8 @@ public class AccountUserDetail extends Account implements UserDetails{
 	}
 
 	/**
-	 * @param currentBusinessId
+	 *
+	 * @param currentBusiness
 	 */
 	public void setCurrentBusiness(Business currentBusiness) {
 		this.currentBusiness = currentBusiness;
@@ -116,18 +118,36 @@ public class AccountUserDetail extends Account implements UserDetails{
 	public boolean isCredentialsNonExpired() {
 		return this.credentialsNonExpired;
 	}
-	
+
 	/**
+	 *
 	 * @return
 	 */
-	public boolean isPersonnel() {
-		return this.account.getPersonnel() != null;
+	public GlobalSettings getCurrentBusinessSettings() {
+		return currentBusinessSettings;
 	}
 
 	/**
-	 * @return
+	 *
+	 * @param currentBusinessSettings
 	 */
-	public boolean isCustomer() {
-		return this.account.getCustomer() != null;
+	public void setCurrentBusinessSettings(GlobalSettings currentBusinessSettings) {
+		this.currentBusinessSettings = currentBusinessSettings;
+	}
+
+	/**
+	 *
+	 * @return boolean
+	 */
+	public boolean isPersonnel() {
+		return isPersonnel;
+	}
+
+	/**
+	 *
+	 * @param isPersonnel boolean
+	 */
+	public void setPersonnel(boolean isPersonnel) {
+		isPersonnel = isPersonnel;
 	}
 }

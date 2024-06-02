@@ -167,8 +167,8 @@ function initEventOfSaveEdit(popUpElem$, i){
 
 function buildNewSchedule(data, calendarId){
 	
-	var dentistName = data.personnel.account.name+", "+data.personnel.account.surname;
-	var customerName = data.customer.account.name+", "+data.customer.account.surname;
+	var dentistName = data.personnelAccount.name+", "+data.personnelAccount.surname;
+	var customerName = data.customerAccount.name+", "+data.customerAccount.surname;
 	var serviceType = data.serviceType;
 	
 	var isReadOnly = data.personnel.id == accId ? false : true;
@@ -176,7 +176,8 @@ function buildNewSchedule(data, calendarId){
 		moment(new Date(data.appointmentDate)).format("HH:mm") + ' - ' + moment(new Date(data.appointmentEndDate)).format("HH:mm") + ' | ' +
     	(serviceType != null? data.serviceType.name : serviceDefaultName) + ' | '+ customerName;
     
-    
+    console.log("data", data)
+	console.log("title", title)
 	return {
 		id : data.id+'',
 		calendarId: calendarId+'',

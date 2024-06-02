@@ -6,13 +6,14 @@ package com.visionous.dms.configuration.helpers;
 import java.time.Period;
 import java.util.Date;
 
+import com.o2dent.lib.accounts.entity.Business;
+import com.visionous.dms.pojo.GlobalSettings;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.visionous.dms.configuration.AccountUserDetail;
-import com.visionous.dms.pojo.Business;
 
 /**
  * @author delimeta
@@ -27,14 +28,16 @@ public class AccountUtil {
 	
 	public static AccountUserDetail currentLoggedInUser(){
 		AccountUserDetail loggedIn = null;
-		
-		try {
-			loggedIn = (AccountUserDetail)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		}catch(Exception e) {
-//			e.printStackTrace();
-			logger.error(e.getMessage());
+		var ctx = SecurityContextHolder.getContext();
+		if(ctx.getAuthentication().isAuthenticated() && !ctx.getAuthentication().getPrincipal().equals("anonymousUser")){
+			try {
+				loggedIn = (AccountUserDetail)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			}catch(Exception e) {
+			// e.printStackTrace();
+				logger.error(e.getMessage());
+			}
 		}
-		
+
 		return loggedIn;
 	}
 	

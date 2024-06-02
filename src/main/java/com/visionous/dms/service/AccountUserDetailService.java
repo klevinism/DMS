@@ -1,13 +1,12 @@
 package com.visionous.dms.service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.entity.Business;
+import com.o2dent.lib.accounts.entity.Role;
+import com.o2dent.lib.accounts.persistence.AccountService;
+import com.visionous.dms.configuration.AccountUserDetail;
+import com.visionous.dms.configuration.helpers.AccountUtil;
+import com.visionous.dms.pojo.GlobalSettings;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +18,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import com.visionous.dms.configuration.AccountUserDetail;
-import com.visionous.dms.configuration.helpers.AccountUtil;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.Role;
-import com.visionous.dms.pojo.Subscription;
-import com.visionous.dms.pojo.SubscriptionHistory;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -37,20 +34,24 @@ public class AccountUserDetailService implements UserDetailsService{
 	
 	private AccountService accountService;
 	
-	private BusinessService businessService;
-	
 	private ApplicationContext context;
 	
 	private SubscriptionHistoryService subscriptionHistoryService;
+
+	private GlobalSettingsService globalSettingsService;
+
+	private RoleService roleService;
 	
 	
 	@Autowired
 	public AccountUserDetailService(AccountService accountService, ApplicationContext context,
-			SubscriptionHistoryService subscriptionHistoryService, BusinessService businessService) {
+									SubscriptionHistoryService subscriptionHistoryService, RoleService roleService,
+									GlobalSettingsService globalSettingsService) {
 		this.accountService = accountService;
 		this.context = context;
 		this.subscriptionHistoryService = subscriptionHistoryService;
-		this.businessService = businessService; 
+		this.roleService = roleService;
+		this.globalSettingsService = globalSettingsService;
 	}
 	
 	/**
@@ -59,26 +60,43 @@ public class AccountUserDetailService implements UserDetailsService{
 	@Override
 	public UserDetails loadUserByUsername(String username){
 		List<GrantedAuthority> authorities = new ArrayList<>();
-		AccountUserDetail accountUserDetail = null;
-		Optional<Account> acc = accountService.findByUsernameOrEmailOrPhoneNumber(username); 
+		AccountUserDetail accountUserDetail;
+		Optional<Account> acc = accountService.findByUsernameOrEmailOrPhoneNumber(username);
 		
 		if(acc.isPresent()) {
 			authorities.addAll(buildUserAuthority(acc.get().getRoles()));
 			accountUserDetail = buildUserForAuthentication(acc.get(), authorities);
-			
-			
+
+			acc.get().getRoles().forEach(role -> {
+				switch(role.getName()){
+					case "CUSTOMER": accountUserDetail.setPersonnel(false);break;
+					case "ADMIN":
+					case "PERSONNEL":
+					default: accountUserDetail.setPersonnel(true);break;
+				}
+			});
+
 			// TEMPorary implementation, current Business Id should come from another place not here.
 			// TODO fix it!
 			if(!acc.get().getBusinesses().isEmpty()) {
 				if(acc.get().getBusinesses().size() == new AtomicInteger(1).get()) {
 					accountUserDetail.setCurrentBusiness(acc.get().getBusinesses().stream().findFirst().get());
+					Business b = accountUserDetail.getCurrentBusiness();
+					Optional<GlobalSettings> businessSettings = globalSettingsService.findByBusinessId(b.getId());
+					businessSettings.ifPresentOrElse(settings -> {
+						accountUserDetail.setCurrentBusinessSettings(settings);
+					}, () -> {
+						System.out.println(" CANNOT FIND SETTINGS");
+					});
 				}
 			}
 			
 			// Update Subscription() bean after subscription expiration checks.
 //			updateBeanSubscription(); 
+		} else {
+			accountUserDetail = null;
 		}
-		
+
 		return accountUserDetail;
 	}
 	
@@ -106,7 +124,7 @@ public class AccountUserDetailService implements UserDetailsService{
      */
     private AccountUserDetail buildUserForAuthentication(Account user,
         List<GrantedAuthority> authorities) {
-    	return new AccountUserDetail(user, true, true, true, authorities);
+    	return new AccountUserDetail(user, true, true, true, null, authorities);
     }
 
     /**

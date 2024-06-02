@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.visionous.dms.model;
 
 import java.io.IOException;
@@ -93,7 +90,7 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 						if((imageName = uploadBusinessImage()) != null) {
 							globalSetting.setBusinessImage(imageName);
 						}else {
-							globalSetting.setBusinessImage(AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
+							globalSetting.setBusinessImage(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
 						}
 					} catch (IOException e) {
 							e.printStackTrace();
@@ -101,7 +98,7 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 				}
 
 				GlobalSettings newSetting = globalSettingsService.update(globalSetting);
-				AccountUtil.currentLoggedInBussines().setGlobalSettings(newSetting);
+				AccountUtil.currentLoggedInUser().setCurrentBusinessSettings(newSetting);
 			}
 			
 		}else if(action.equals(Actions.CREATE.getValue())) {
@@ -158,9 +155,9 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
 
 	}
 	

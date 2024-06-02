@@ -4,9 +4,8 @@
 package com.visionous.dms.configuration;
 
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -22,8 +21,11 @@ import com.visionous.dms.service.SubscriptionHistoryService;
  */
 @Component
 public class SubscriptionInterceptor implements HandlerInterceptor {
-	@Autowired
 	private SubscriptionHistoryService subscriptionHistoryService;
+
+	public SubscriptionInterceptor(SubscriptionHistoryService subscriptionHistoryService){
+		this.subscriptionHistoryService = subscriptionHistoryService;
+	}
 	
     @Override
     public void afterCompletion(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2, Exception arg3)

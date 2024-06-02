@@ -24,7 +24,6 @@ public class SubscriptionHistoryService implements ISubscriptionHistoryService {
 	/**
 	 * 
 	 */
-	@Autowired
 	public SubscriptionHistoryService(SubscriptionHistoryRepository subscriptionHistoryRepository) {
 		this.subscriptionHistoryRepository = subscriptionHistoryRepository;
 	}
@@ -59,6 +58,6 @@ public class SubscriptionHistoryService implements ISubscriptionHistoryService {
 	 * @return
 	 */
 	public List<SubscriptionHistory> findAllByBusinessIdOrderedBySubscriptionEndDateDesc(Long businessId) {
-		return this.subscriptionHistoryRepository.findAllByBusiness_IdOrderBySubscriptionEndDateDesc(businessId);
+		return this.subscriptionHistoryRepository.findAllByBusinessIdOrderBySubscriptionEndDateDesc(businessId);
 	}
 }

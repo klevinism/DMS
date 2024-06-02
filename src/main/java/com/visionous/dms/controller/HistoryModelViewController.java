@@ -6,6 +6,7 @@ package com.visionous.dms.controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +24,7 @@ import com.visionous.dms.pojo.History;
  * @author delimeta
  *
  */
-@Service
+@Controller
 @RequestMapping("/customer/{customerId}/history")
 public class HistoryModelViewController {
 	private final Log logger = LogFactory.getLog(HistoryModelViewController.class);

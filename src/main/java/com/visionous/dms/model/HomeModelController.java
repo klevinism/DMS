@@ -1,21 +1,18 @@
-/**
- * 
- */
 package com.visionous.dms.model;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.Period;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.persistence.AccountService;
+import com.visionous.dms.configuration.helpers.AccountUtil;
+import com.visionous.dms.configuration.helpers.Actions;
+import com.visionous.dms.configuration.helpers.DateUtil;
+import com.visionous.dms.configuration.helpers.LandingPages;
+import com.visionous.dms.pojo.Appointment;
+import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.Record;
+import com.visionous.dms.service.AppointmentService;
+import com.visionous.dms.service.CustomerService;
+import com.visionous.dms.service.PersonnelService;
+import com.visionous.dms.service.RecordService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +22,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.visionous.dms.configuration.helpers.AccountUtil;
-import com.visionous.dms.configuration.helpers.Actions;
-import com.visionous.dms.configuration.helpers.LandingPages;
-import com.visionous.dms.configuration.helpers.DateUtil;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.Appointment;
-import com.visionous.dms.pojo.Customer;
-import com.visionous.dms.pojo.Record;
-import com.visionous.dms.service.AccountService;
-import com.visionous.dms.service.AppointmentService;
-import com.visionous.dms.service.RecordService;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.Period;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * @author delimeta
@@ -50,21 +42,31 @@ public class HomeModelController extends ModelControllerImpl{
 	private RecordService recordService;
 	private AppointmentService appointmentService;
     private MessageSource messages;
+	private CustomerService customerService;
+	private PersonnelService personnelService;
 
-	
+
+
 	private static String currentPage = LandingPages.HOME.value();
 
 
 	/**
-	 * @param personnelRepository
+	 *
+	 * @param accountService
+	 * @param recordService
+	 * @param appointmentService
+	 * @param messages
 	 */
 	@Autowired
-	public HomeModelController(AccountService accountService, RecordService recordService, 
-			AppointmentService appointmentService, MessageSource messages){
+	public HomeModelController(AccountService accountService, RecordService recordService,
+							   AppointmentService appointmentService, MessageSource messages,
+							   CustomerService customerService, PersonnelService personnelService){
 		this.accountService = accountService;
 		this.recordService = recordService;
 		this.appointmentService = appointmentService;
 		this.messages = messages;
+		this.customerService = customerService;
+		this.personnelService = personnelService;
 	}
 	
 	/**
@@ -112,7 +114,7 @@ public class HomeModelController extends ModelControllerImpl{
 		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
 
-			String endTime = AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEndTime();
+			String endTime = AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessEndTime();
 
 			Date appointmentEndTime = DateUtil.getEndWorkingHr(endTime);
 
@@ -178,14 +180,14 @@ public class HomeModelController extends ModelControllerImpl{
 						Calendar startCalendar = DateUtil.getCalendarFromDate(startDate);
 						startCalendar.set(Calendar.HOUR_OF_DAY, 0);
 						
-						Integer records = recordService.countAllByBusinessIdAndPersonnelIdAndServicedateBetween(AccountUtil.currentLoggedInBussines().getId(), selectedPersonnel.getId(), 
+						Integer records = recordService.countByPersonnelIdAndServicedateBetween(selectedPersonnel.getId(),
 								new Timestamp(startCalendar.getTime().getTime()).toLocalDateTime(), new Timestamp(endCalendar.getTime().getTime()).toLocalDateTime());
 						
-						Integer appointments = appointmentService.findAllByCustomerBusinessIdAndPersonnelIdAndBetweenDateRange(AccountUtil.currentLoggedInBussines().getId(), selectedPersonnel.getId(), 
+						Integer appointments = appointmentService.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(selectedPersonnel.getId(),
 								new Timestamp(startCalendar.getTime().getTime()).toLocalDateTime(), new Timestamp(endCalendar.getTime().getTime()).toLocalDateTime()).size();
 						
 						Integer singlePersonnelRevenue = recordService.sumOfPersonnelReceiptsAndBusinessId(selectedPersonnel.getId(),
-								new Timestamp(startCalendar.getTime().getTime()).toLocalDateTime(), new Timestamp(endCalendar.getTime().getTime()).toLocalDateTime(), AccountUtil.currentLoggedInBussines().getId());
+								new Timestamp(startCalendar.getTime().getTime()).toLocalDateTime(), new Timestamp(endCalendar.getTime().getTime()).toLocalDateTime());
 						
 						dataForAppointment.add(appointments != null ? appointments : 0);
 						dataForRange.add(records != null ? records : 0);
@@ -202,8 +204,13 @@ public class HomeModelController extends ModelControllerImpl{
 				
 				Date endsDate = new Date();
 				Date startsDate = DateUtil.setDayToBegginingOfYear(endsDate);
-				
-				List<Record> allRecordsThisYear = recordService.findAllByBusinessIdAndServicedateBetween(AccountUtil.currentLoggedInBussines().getId(),
+
+				List<Account> personnelList = accountService.findAllByBusinessIdAndRoles_NameIn(
+						AccountUtil.currentLoggedInBussines().getId(),
+						List.of("ADMIN", "PERSONNEL"));
+
+				List<Record> allRecordsThisYear = recordService.findAllByPersonnelIdInAndServicedateBetween(
+						personnelList.stream().map(acc -> acc.getId()).collect(Collectors.toList()),
 						new Timestamp(startsDate.getTime()).toLocalDateTime(), 
 						new Timestamp(endsDate.getTime()).toLocalDateTime());
 				
@@ -227,7 +234,7 @@ public class HomeModelController extends ModelControllerImpl{
 				super.addModelCollectionToView("allCustomers", allNewAndOldCustomers);
 				
 				List<Date> lastWorkingDays = new ArrayList<>();
-				List<Integer> workingDays = AccountUtil.currentLoggedInBussines().getGlobalSettings().getWorkingBusinessDays();
+				List<Integer> workingDays = AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getWorkingBusinessDays();
 				
 				Calendar currentCalendar = DateUtil.getCalendarFromDate(DateUtil.subtractDays(new Date(), 1));
 				
@@ -260,28 +267,31 @@ public class HomeModelController extends ModelControllerImpl{
 						lastWorkingDates.add(new SimpleDateFormat(" dd MMMM ").format(startDate));
 					}
 					
-					nrOfVisitsForWorkingDays.add(recordService.countByBusinessIdAndServicedateBetween(AccountUtil.currentLoggedInBussines().getId(), new Timestamp(startDate.getTime()).toLocalDateTime(), new Timestamp(endDate.getTime()).toLocalDateTime()));
+					nrOfVisitsForWorkingDays.add(recordService.countByPersonnelIdAndServicedateBetween(AccountUtil.currentLoggedInBussines().getId(), new Timestamp(startDate.getTime()).toLocalDateTime(), new Timestamp(endDate.getTime()).toLocalDateTime()));
 					
 					Integer currentRevenue = recordService
-							.sumOfReceiptsByBusinessIdAndServiceDate(
-									AccountUtil.currentLoggedInBussines().getId(),
+							.sumOfReceiptsByPersonnelIdInAndServiceDate(
+									personnelList.stream().map(p -> p.getId()).collect(Collectors.toList()),
 									new Timestamp(startDate.getTime()).toLocalDateTime(), 
 									new Timestamp(endDate.getTime()).toLocalDateTime()); 
 					
 					nrOfRevenueForWorkingDays.add(currentRevenue == null ? 0 : currentRevenue);
-					
-					nrOfNewCustomersForWorkingDays.add(
-								accountService.countByBusinesses_IdAndEnabledAndActiveAndCustomer_RegisterdateBetween(AccountUtil.currentLoggedInBussines().getId(), true, true, startDate, endDate));
 
-					List<Appointment> allAppointmentsBtwDates = appointmentService.findAllByBusinessIdAndBetweenDateRange(
-							AccountUtil.currentLoggedInBussines().getId(), 
+
+					List<Customer> customerList = customerService.findAllByRegisterDateBetween(startDate, endDate);
+ 					List<Account> customerAccounts = accountService.findByBusinesses_IdAndIdIn(AccountUtil.currentLoggedInBussines().getId(), customerList.stream().map(c -> c.getId()).collect(Collectors.toList()));
+					List<Long> customerIds = customerAccounts.stream().map(c -> c.getId()).collect(Collectors.toList());
+					nrOfNewCustomersForWorkingDays.add(
+								accountService.countByBusinesses_IdAndEnabledAndActiveAndIdIn(AccountUtil.currentLoggedInBussines().getId(), true, true, customerIds));
+
+					List<Appointment> allAppointmentsBtwDates = appointmentService.findAllByPersonnelIdInAndBetweenDateRange(
+							personnelList.stream().map(p -> p.getId()).collect(Collectors.toList()),
 							new Timestamp(startDate.getTime()).toLocalDateTime(), 
 							new Timestamp(endDate.getTime()).toLocalDateTime());
 					
 					List<Appointment> noShowAppointmentsForDay = allAppointmentsBtwDates.stream().filter(appointment -> 
-					recordService.findAllByBusinessIdAndServicedateBetweenAndCustomerId(
-							AccountUtil.currentLoggedInBussines().getId(),
-							appointment.getAppointmentDate().withHour(0).withMinute(0), 
+					recordService.findAllByServicedateBetweenAndCustomerId(
+							appointment.getAppointmentDate().withHour(0).withMinute(0),
 							appointment.getAppointmentEndDate().withHour(23).withMinute(0),
 							appointment.getCustomerId()).isEmpty()
 						).collect(Collectors.toList());
@@ -386,24 +396,31 @@ public class HomeModelController extends ModelControllerImpl{
 								DateUtil.getCalendarFromDate(beginMonthDate).getActualMaximum(Calendar.DAY_OF_MONTH)
 						)
 				);
+				List<Account> personnelList = accountService.findAllByBusinessIdAndRoles_NameIn(AccountUtil.currentLoggedInBussines().getId(), List.of("ADMIN", "PERSONNEL"));
+
+				List<Customer> customerList = customerService.findAllByRegisterDateBetween(beginMonthDate, endMonthDate);
+				List<Account> accountList = accountService.findByBusinesses_IdAndIdIn(AccountUtil.currentLoggedInBussines().getId(), customerList.stream().map(c -> c.getId()).collect(Collectors.toList()));
+				List<Long> customerIds = accountList.stream().map(c -> c.getId()).collect(Collectors.toList());
 				
-				Integer countBetweenDates = accountService.countByBusinesses_IdAndEnabledAndActiveAndCustomer_RegisterdateBetween(AccountUtil.currentLoggedInBussines().getId(), true, true, beginMonthDate, endMonthDate);
+				Integer countBetweenDates = accountService.countByBusinesses_IdAndEnabledAndActiveAndIdIn(AccountUtil.currentLoggedInBussines().getId(), true, true, customerIds);
 				
-				Integer totalVisitBtwDates = recordService.countByBusinessIdAndServicedateBetween(AccountUtil.currentLoggedInBussines().getId(),
+				Integer totalVisitBtwDates = recordService.countAllByPersonnelIdInAndServicedateBetween(
+						personnelList.stream().map(p -> p.getId()).collect(Collectors.toList()),
 						new Timestamp(beginMonthDate.getTime()).toLocalDateTime(), new Timestamp(endMonthDate.getTime()).toLocalDateTime());
 				
-				Integer totalRevenueBtwDates = recordService.sumOfReceiptsByBusinessIdAndServiceDate( AccountUtil.currentLoggedInBussines().getId(), 
-						new Timestamp(beginMonthDate.getTime()).toLocalDateTime(), new Timestamp(endMonthDate.getTime()).toLocalDateTime());				
-				
-				List<Appointment> allAppointments= appointmentService.findAllByBusinessIdAndBetweenDateRange(
-						AccountUtil.currentLoggedInBussines().getId(),
+				Integer totalRevenueBtwDates = recordService.sumOfReceiptsByPersonnelIdInAndServiceDate(
+						personnelList.stream().map(p -> p.getId()).collect(Collectors.toList()),
+						new Timestamp(beginMonthDate.getTime()).toLocalDateTime(),
+						new Timestamp(endMonthDate.getTime()).toLocalDateTime());
+
+				List<Appointment> allAppointments= appointmentService.findAllByPersonnelIdInAndBetweenDateRange(
+						personnelList.stream().map(p->p.getId()).collect(Collectors.toList()),
 						new Timestamp(beginMonthDate.getTime()).toLocalDateTime(), 
 						new Timestamp(endMonthDate.getTime()).toLocalDateTime());
 				
 				List<Appointment> noShowAppointmentsBtwDates = allAppointments.stream().filter(appointment -> 
-				recordService.findAllByBusinessIdAndServicedateBetweenAndCustomerId(
-						AccountUtil.currentLoggedInBussines().getId(),
-						appointment.getAppointmentDate().withHour(0).withMinute(0), 
+				recordService.findAllByServicedateBetweenAndCustomerId(
+						appointment.getAppointmentDate().withHour(0).withMinute(0),
 						appointment.getAppointmentEndDate().withHour(23).withMinute(0),
 						appointment.getCustomerId()).isEmpty()
 				).collect(Collectors.toList());
@@ -462,10 +479,10 @@ public class HomeModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusiness().getGlobalSettings().getBusinessImage());
-		super.addModelCollectionToView("settings", AccountUtil.currentLoggedInUser().getCurrentBusiness().getGlobalSettings());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
+		super.addModelCollectionToView("settings", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings());
 		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusiness().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
 	}
 	
 	/**
