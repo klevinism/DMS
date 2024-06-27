@@ -3,17 +3,14 @@
  */
 package com.visionous.dms.configuration;
 
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.service.SubscriptionHistoryService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author delimeta
@@ -51,7 +48,7 @@ public class SubscriptionInterceptor implements HandlerInterceptor {
 	  		  return false;
 	  	  }else {
 	    	  if(request.getMethod().equals("GET") && path.contains("create") && !subscriptionHistoryService.findActiveSubscriptionByBusinessId(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId()).isPresent()) {
-	    		  if(AccountUtil.currentLoggedInUser().getRoles().stream().anyMatch(role -> role.getName().equals("ADMIN"))) {
+	    		  if(AccountUtil.currentLoggedInUser().getAccount().getRoles().stream().anyMatch(role -> role.getName().equals("ADMIN"))) {
 	    			  path = "/admin/subscription?status=expired";
 	    		  }else {
 	    			  path = "/subscription?status=expired";  

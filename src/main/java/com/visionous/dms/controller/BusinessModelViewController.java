@@ -42,7 +42,7 @@ public class BusinessModelViewController {
 		
 		
 		if(AccountUtil.currentLoggedInUser() != null) {
-			if(AccountUtil.currentLoggedInUser().getCurrentBusiness() != null) {
+			if(AccountUtil.currentLoggedInBussines() != null) {
 				return "redirect:/home";
 			}else {
 				return "redirect:/business/create";

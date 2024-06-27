@@ -10,6 +10,7 @@ import com.o2dent.lib.accounts.helpers.exceptions.EmailExistsException;
 import com.o2dent.lib.accounts.helpers.exceptions.UsernameExistsException;
 import com.o2dent.lib.accounts.persistence.AccountService;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.service.RoleService;
 import org.apache.commons.logging.Log;
@@ -203,13 +204,13 @@ public class AccountModelController extends ModelControllerImpl{
 				Long accountId = Long.valueOf(super.getAllControllerParams().get("id").toString());
 				Optional<Account> oldAccount = accountService.findByIdAndBusinesses_Id(accountId, AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
 
-				Role[] loggedInRoles = AccountUtil.currentLoggedInUser().getRoles().stream().toArray(Role[]::new);
+				Role[] loggedInRoles = AccountUtil.currentLoggedInUser().getAccount().getRoles().stream().toArray(Role[]::new);
 				
 				oldAccount.ifPresent(account -> {
 					super.addModelCollectionToView("account", account);
 					
 					if(!account.getRoles().isEmpty()) {
-						if(!account.getUsername().equals(AccountUtil.currentLoggedInUser().getUsername())) {
+						if(!account.getUsername().equals(AccountUtil.currentLoggedInUser().getAccount().getUsername())) {
 							if((loggedInRoles[0].getName().equals("CUSTOMER") && account.getRoles().get(0).getName().equals("CUSTOMER")) || 
 								(loggedInRoles[0].getName().equals("PERSONNEL") && (account.getRoles().get(0).getName().equals("ADMIN") || account.getRoles().get(0).getName().equals("PERSONNEL")))) {
 						        String errorEditingAccount = messageSource.getMessage("alert.errorEditingAccount", null, LocaleContextHolder.getLocale());
@@ -289,9 +290,9 @@ public class AccountModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBusinessSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription());
 
 	}
 	

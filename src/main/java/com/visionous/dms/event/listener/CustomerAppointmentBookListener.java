@@ -11,6 +11,7 @@ import java.util.Optional;
 import com.o2dent.lib.accounts.entity.Account;
 import com.o2dent.lib.accounts.persistence.AccountService;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.GlobalSettings;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
@@ -74,25 +75,24 @@ public class CustomerAppointmentBookListener implements ApplicationListener<OnCu
 		Map<String, Object> vars = new HashMap<>();
 		String emailTemplatePath = "demo_1/partials/emails/appointmentVerification.html";
 		String dentalAppointment = messages.getMessage("DentalAppointment", null, event.getLocale());
-		Customer customer = event.getAppointment().getCustomer();
-		Optional<Account> customerAccount = accountService.findById(customer.getId());
+		Optional<Account> customerAccount = accountService.findById(event.getAppointment().getCustomer().getId());
 		customerAccount.ifPresentOrElse(c -> {
 			String recipientAddress = c.getEmail();
-			String fromAddress = AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessEmail();
+			String fromAddress = AccountUtil.currentLoggedInBusinessSettings().getBusinessEmail();
 
 			vars.put("appointment", event.getAppointment());
-			vars.put("businessName", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessName());
+			vars.put("businessName", AccountUtil.currentLoggedInBusinessSettings().getBusinessName());
 
 			thymeleafContext.setVariables(vars);
 			String htmlBody = thymeleafTemplateEngine.process(emailTemplatePath, thymeleafContext);
 
 			JavaMailSenderImpl jMailSender = (JavaMailSenderImpl)mailSender;
-			jMailSender.setUsername(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessEmail());
-			jMailSender.setPassword(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessPassword());
+			jMailSender.setUsername(AccountUtil.currentLoggedInBusinessSettings().getBusinessEmail());
+			jMailSender.setPassword(AccountUtil.currentLoggedInBusinessSettings().getBusinessPassword());
 
 			MimeMessage mailMessage = mailSender.createMimeMessage();
 			try {
-				mailMessage.setSubject(dentalAppointment + " " + AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessName(), "UTF-8");
+				mailMessage.setSubject(dentalAppointment + " " + AccountUtil.currentLoggedInBusinessSettings().getBusinessName(), "UTF-8");
 
 				MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true, "UTF-8");
 				helper.setFrom(new InternetAddress(fromAddress.toString()));

@@ -8,6 +8,7 @@ import com.visionous.dms.configuration.helpers.DateUtil;
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.pojo.Appointment;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Record;
 import com.visionous.dms.service.AppointmentService;
 import com.visionous.dms.service.CustomerService;
@@ -114,11 +115,11 @@ public class HomeModelController extends ModelControllerImpl{
 		}else if(viewType.equals(Actions.DELETE.getValue()) || viewType.equals(Actions.EDIT.getValue())) {
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
 
-			String endTime = AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessEndTime();
+			String endTime = AccountUtil.currentLoggedInBusinessSettings().getBusinessEndTime();
 
 			Date appointmentEndTime = DateUtil.getEndWorkingHr(endTime);
 
-			Account account = AccountUtil.currentLoggedInUser();
+			Account account = AccountUtil.currentLoggedInUser().getAccount();
 
 			Period monthPeriodOfThisYear = DateUtil.getPeriodBetween(DateUtil.getBegginingOfYear(), new Date());
 			
@@ -234,7 +235,7 @@ public class HomeModelController extends ModelControllerImpl{
 				super.addModelCollectionToView("allCustomers", allNewAndOldCustomers);
 				
 				List<Date> lastWorkingDays = new ArrayList<>();
-				List<Integer> workingDays = AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getWorkingBusinessDays();
+				List<Integer> workingDays = AccountUtil.currentLoggedInBusinessSettings().getWorkingBusinessDays();
 				
 				Calendar currentCalendar = DateUtil.getCalendarFromDate(DateUtil.subtractDays(new Date(), 1));
 				
@@ -479,10 +480,9 @@ public class HomeModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
-		super.addModelCollectionToView("settings", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings());
-		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBusinessSettings().getBusinessImage());
+		super.addModelCollectionToView("settings", AccountUtil.currentLoggedInBusinessSettings());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription());
 	}
 	
 	/**

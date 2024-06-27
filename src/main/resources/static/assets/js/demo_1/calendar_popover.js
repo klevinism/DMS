@@ -121,7 +121,7 @@ function initEventOfSaveEdit(popUpElem$, i){
 
 					if(data.error != "error"){
 						var result = data.result[0];
-						var calendarId = data.result[0].personnel.id + '';
+						var calendarId = data.result[0].personnelAccount.id + '';
 			    		cal.updateSchedule(result.id+'', calendarId+'', buildNewSchedule(result, calendarId+''));
 			    		refreshScheduleVisibility();
 			    		dismissPopover();
@@ -139,8 +139,8 @@ function initEventOfSaveEdit(popUpElem$, i){
 				toggleLoadButton(e.target);
 				createAppointment(newSchedule, function(data, status){
 					if(data.error != "error"){
-						newSchedule.id = data.result[0].id+'';
-						newSchedule.calendarId = data.result[0].personnel.id + '';
+						newSchedule.id = data.result[0].appointment.id+'';
+						newSchedule.calendarId = data.result[0].personnelAccount.id + '';
 						newSchedule.raw.calendarCategory = 'appointment';
 						
 						if(newSchedule.calendarId == accId){
@@ -171,7 +171,7 @@ function buildNewSchedule(data, calendarId){
 	var customerName = data.customerAccount.name+", "+data.customerAccount.surname;
 	var serviceType = data.serviceType;
 	
-	var isReadOnly = data.personnel.id == accId ? false : true;
+	var isReadOnly = data.personnelAccount.id == accId ? false : true;
 	var title =  
 		moment(new Date(data.appointmentDate)).format("HH:mm") + ' - ' + moment(new Date(data.appointmentEndDate)).format("HH:mm") + ' | ' +
     	(serviceType != null? data.serviceType.name : serviceDefaultName) + ' | '+ customerName;
@@ -189,8 +189,8 @@ function buildNewSchedule(data, calendarId){
         isReadOnly: isReadOnly,
         raw : {
         	serviceId: data.serviceType != null? data.serviceType.id : null,
-        	personnelId: data.personnel.id,
-        	customerId: data.customer.id,
+        	personnelId: data.personnelAccount.id,
+        	customerId: data.customerAccount.id,
         	appointmentDate: new Date(data.appointmentDate).toISOString(),
         	appointmentEndDate: new Date(data.appointmentEndDate).toISOString(),
         	calendarCategory: 'appointment'
@@ -199,11 +199,11 @@ function buildNewSchedule(data, calendarId){
 }
 
 function buildNewVisitSchedule(data, calendarId){
-	var dentistName = data.personnel.account.name+", "+data.personnel.account.surname;
-	var customerName = data.history.customer.account.name+", "+data.history.customer.account.surname;
+	var dentistName = data.personnelAccount.name+", "+data.personnelAccount.surname;
+	var customerName = data.history.customerAccount.name+", "+data.history.customerAccount.surname;
 	var serviceType = data.serviceType;
 	
-	var isReadOnly = data.personnel.id == accId ? false : true;
+	var isReadOnly = data.personnelAccount.id == accId ? false : true;
 	var title =  
 		moment(new Date(data.servicedate)).format("HH:mm") + ' - ' + moment(new Date(data.servicedate).addMinutes(30)).format("HH:mm") + ' | ' +
     	(serviceType != null? data.serviceType.name : serviceDefaultName) + ' | '+ customerName;
@@ -219,8 +219,8 @@ function buildNewVisitSchedule(data, calendarId){
         isReadOnly: isReadOnly,
         raw : {
         	serviceId: data.serviceType != null? data.serviceType.id : null,
-        	personnelId: data.personnel.id,
-        	customerId: data.history.customer.id,
+        	personnelId: data.personnelAccount.id,
+        	customerId: data.history.customerAccount.id,
         	appointmentDate: new Date(data.servicedate).toISOString(),
         	appointmentEndDate: new Date(data.servicedate).addMinutes(30).toISOString(),
         	calendarCategory: 'visit'

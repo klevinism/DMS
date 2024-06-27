@@ -22,6 +22,7 @@ public class IaoAppointment {
     private LocalDateTime appointmentEndDate;
     @DateTimeFormat (pattern="dd-MM-YYYY")
     private Date addeddate;
+    private Appointment appointment;
     private Customer customer;
     private Personnel personnel;
     private Account customerAccount;
@@ -39,14 +40,13 @@ public class IaoAppointment {
         this.appointmentDate = appointmentDate;
         this.appointmentEndDate = appointmentEndDate;
         this.addeddate = addeddate;
-        this.customer = customer;
-        this.personnel = personnel;
         this.customerAccount = customerAccount;
         this.personnelAccount = personnelAccount;
         this.serviceType = serviceType;
     }
 
     public IaoAppointment(Appointment appointment) {
+        this.appointment = appointment;
         this.id = appointment.getId();
         this.customerId = appointment.getCustomerId();
         this.personnelId = appointment.getPersonnelId();
@@ -54,8 +54,6 @@ public class IaoAppointment {
         this.appointmentDate = appointment.getAppointmentDate();
         this.appointmentEndDate = appointment.getAppointmentEndDate();
         this.addeddate = appointment.getAddeddate();
-        this.customer = appointment.getCustomer();
-        this.personnel = appointment.getPersonnel();
         this.customerAccount = null;
         this.personnelAccount = null;
         this.serviceType = appointment.getServiceType();
@@ -73,6 +71,7 @@ public class IaoAppointment {
      */
     public void setId(Long id) {
         this.id = id;
+        this.appointment.setId(id);
     }
 
     /**
@@ -87,6 +86,7 @@ public class IaoAppointment {
      */
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
+        this.appointment.setCustomerId(customerId);
     }
 
     /**
@@ -101,6 +101,7 @@ public class IaoAppointment {
      */
     public void setPersonnelId(Long personnelId) {
         this.personnelId = personnelId;
+        this.appointment.setPersonnelId(personnelId);
     }
 
     /**
@@ -115,6 +116,15 @@ public class IaoAppointment {
      */
     public void setServiceTypeId(Long serviceTypeId) {
         this.serviceTypeId = serviceTypeId;
+        this.appointment.setServiceTypeId(serviceTypeId);
+    }
+
+    public Appointment getAppointment() {
+        return appointment;
+    }
+
+    public void setAppointment(Appointment appointment) {
+        this.appointment = appointment;
     }
 
     /**
@@ -126,10 +136,11 @@ public class IaoAppointment {
 
     /**
      *
-     * @param appointmetDate
+     * @param appointmentDate
      */
-    public void setAppointmentDate(LocalDateTime appointmetDate) {
-        this.appointmentDate = appointmetDate;
+    public void setAppointmentDate(LocalDateTime appointmentDate) {
+        this.appointmentDate = appointmentDate;
+        this.appointment.setAppointmentDate(appointmentDate);
     }
 
     /**
@@ -144,6 +155,7 @@ public class IaoAppointment {
      */
     public void setAddeddate(Date addeddate) {
         this.addeddate = addeddate;
+        this.appointment.setAddeddate(addeddate);
     }
 
     /**
@@ -158,6 +170,7 @@ public class IaoAppointment {
      */
     public void setAppointmentEndDate(LocalDateTime appointmentEndDate) {
         this.appointmentEndDate = appointmentEndDate;
+        this.appointment.setAppointmentEndDate(appointmentEndDate);
     }
 
     /**
@@ -172,6 +185,7 @@ public class IaoAppointment {
      */
     public void setCustomer(Customer customer) {
         this.customer = customer;
+        this.appointment.setCustomer(customer);
     }
 
     /**
@@ -186,6 +200,7 @@ public class IaoAppointment {
      */
     public void setPersonnel(Personnel personnel) {
         this.personnel = personnel;
+        this.appointment.setPersonnel(personnel);
     }
 
     /**
@@ -200,6 +215,7 @@ public class IaoAppointment {
      */
     public void setServiceType(ServiceType serviceType) {
         this.serviceType = serviceType;
+        this.appointment.setServiceType(serviceType);
     }
 
     public Account getCustomerAccount() {
@@ -220,7 +236,20 @@ public class IaoAppointment {
 
     @Override
     public String toString() {
-        return "Appointment [id=" + id + ", customerId=" + customerId + ", personnelId=" + personnelId
-                + ", appointmentDate=" + appointmentDate + ", addeddate=" + addeddate + "]";
+        return "IaoAppointment{" +
+                "id=" + id +
+                ", customerId=" + customerId +
+                ", personnelId=" + personnelId +
+                ", serviceTypeId=" + serviceTypeId +
+                ", appointmentDate=" + appointmentDate +
+                ", appointmentEndDate=" + appointmentEndDate +
+                ", addeddate=" + addeddate +
+                ", appointment=" + appointment +
+                ", customer=" + customer +
+                ", personnel=" + personnel +
+                ", customerAccount=" + customerAccount +
+                ", personnelAccount=" + personnelAccount +
+                ", serviceType=" + serviceType +
+                '}';
     }
 }

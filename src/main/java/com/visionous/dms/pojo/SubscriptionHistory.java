@@ -27,14 +27,14 @@ public class SubscriptionHistory implements Serializable{
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SUBSCRIPTION_HISTORY_SEQ")
     @SequenceGenerator(sequenceName = "subscription_history_seq", allocationSize = 1, name = "SUBSCRIPTION_HISTORY_SEQ")
     private Long id;
-	
+
 	@Column(name = "subscription_id", updatable = false, insertable = false)
 	private Long subscriptionId;
-	
+
 	@Column(name = "global_settings_id", updatable = false, insertable = false)
 	private Long globalSettingsId;
 	
-	@Column(name = "business_id", updatable = false, insertable = false)
+	@Column(name = "business_id")
 	private Long businessId;
 	
 	@Column(name = "subscription_start_date")
@@ -48,11 +48,11 @@ public class SubscriptionHistory implements Serializable{
 	
 	private boolean active;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL,  optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
 	@JoinColumn(name="global_settings_id")
 	private GlobalSettings globalSettings;
 	
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH )
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "subscription_id")
 	private Subscription subscription;
 
@@ -68,6 +68,22 @@ public class SubscriptionHistory implements Serializable{
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getSubscriptionId() {
+		return subscriptionId;
+	}
+
+	public void setSubscriptionId(Long subscriptionId) {
+		this.subscriptionId = subscriptionId;
+	}
+
+	public Long getGlobalSettingsId() {
+		return globalSettingsId;
+	}
+
+	public void setGlobalSettingsId(Long globalSettingsId) {
+		this.globalSettingsId = globalSettingsId;
 	}
 
 	/**

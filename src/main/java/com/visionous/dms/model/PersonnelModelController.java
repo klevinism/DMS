@@ -11,6 +11,7 @@ import com.o2dent.lib.accounts.persistence.BusinessService;
 import com.visionous.dms.configuration.helpers.*;
 import com.visionous.dms.event.OnRegistrationCompleteEvent;
 import com.visionous.dms.exception.SubscriptionException;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.Personnel;
 import com.visionous.dms.service.PersonnelService;
 import com.visionous.dms.service.RecordService;
@@ -197,12 +198,12 @@ public class PersonnelModelController extends ModelControllerImpl{
 	private boolean reachedSubscriptionLimit() {
 		int personnelSize = this.accountService.findAllByAccountBusinessIdAndActiveAndEnabledAndRoles_NameIn(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId(), true,true, List.of("PERSONNEL")).size();
 		
-		if(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription() == null) {
+		if(AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription() == null) {
 			return false;
 		}
 		
-		if(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription().hasRestrictionsByPageName(currentPage)) {
-			int subscriptionRestrictionSize = AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription().getSumOfRestrictionsAmountByPageName(currentPage);
+		if(AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription().hasRestrictionsByPageName(currentPage)) {
+			int subscriptionRestrictionSize = AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription().getSumOfRestrictionsAmountByPageName(currentPage);
 			return personnelSize >= subscriptionRestrictionSize;
 		}else {
 			return false;
@@ -212,12 +213,12 @@ public class PersonnelModelController extends ModelControllerImpl{
 	private boolean nearSubscriptionLimitBy(int count) {
 		int personnelSize = this.accountService.findAllByAccountBusinessIdAndActiveAndEnabledAndRoles_NameIn(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId(), true, true, List.of("PERSONNEL")).size();
 
-		if(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription() == null) {
+		if(AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription() == null) {
 			return false;
 		}
 		
-		if(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription().hasRestrictionsByPageName(currentPage)) {
-			int subscriptionRestrictionSize = AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription().getSumOfRestrictionsAmountByPageName(currentPage);
+		if(AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription().hasRestrictionsByPageName(currentPage)) {
+			int subscriptionRestrictionSize = AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription().getSumOfRestrictionsAmountByPageName(currentPage);
 			return (subscriptionRestrictionSize - personnelSize) == count;
 		}else {
 			return false;
@@ -312,7 +313,7 @@ public class PersonnelModelController extends ModelControllerImpl{
 				((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest())
 		);
 		super.addModelCollectionToView("currentPage", currentPage);
-		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getRoles());
+		super.addModelCollectionToView("currentRoles", AccountUtil.currentLoggedInUser().getAccount().getRoles());
 		
 		List<Account> accountList = accountService.findAllByBusinessIdAndRoles_Name(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId(), "PERSONNEL");
 		List<Personnel> personnelList = personnelService.findByIdIn(accountList.stream().map(a -> a.getId()).collect(Collectors.toList()));
@@ -356,11 +357,11 @@ public class PersonnelModelController extends ModelControllerImpl{
 	
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBusinessSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("settings", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings());
+		super.addModelCollectionToView("settings", AccountUtil.currentLoggedInBusinessSettings());
 
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription());
 
 	}
 	

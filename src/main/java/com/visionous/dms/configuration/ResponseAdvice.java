@@ -63,7 +63,7 @@ public class ResponseAdvice implements ResponseBodyAdvice {
 			bodyReplacing.setError("error");
 			
 			if(AccountUtil.currentLoggedInUser() != null ) {
-				bodyReplacing.setMessage(subscriptionExpired + " " + featureExcluded + " " + (AccountUtil.currentLoggedInUser().getRoles().stream().anyMatch(role -> role.getName().equals("PERSONNEL")) ? subscriptionExpiredPersonnel : subscriptionExpiredAdmin));
+				bodyReplacing.setMessage(subscriptionExpired + " " + featureExcluded + " " + (AccountUtil.currentLoggedInUser().getAccount().getRoles().stream().anyMatch(role -> role.getName().equals("PERSONNEL")) ? subscriptionExpiredPersonnel : subscriptionExpiredAdmin));
 			}
 			
 			return bodyReplacing;

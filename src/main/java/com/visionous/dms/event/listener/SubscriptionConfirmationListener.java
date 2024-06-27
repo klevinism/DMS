@@ -1,5 +1,7 @@
 package com.visionous.dms.event.listener;
 
+import com.visionous.dms.configuration.helpers.AccountUtil;
+import com.visionous.dms.pojo.GlobalSettings;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
@@ -62,13 +64,16 @@ public class SubscriptionConfirmationListener implements ApplicationListener<OnS
 		String emailTemplatePath = "demo_1/partials/emails/subscriptionConfirmation.html";
         Account account = event.getAccount();
         Business business = event.getBusiness();
+		GlobalSettings settings = event.getGlobalSettings();
         String recipientAddress = account.getEmail();
 
         String emailSubscriptionConfirmation = messageSource.getMessage("email.subject.subscriptionConfirmation", null, event.getLocale());
 
 		thymeleafContext.setVariable("account", account);
-
 		thymeleafContext.setVariable("business", business);
+		thymeleafContext.setVariable("activeSubscription", settings.getActiveSubscription());
+
+		AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription();
 	    
 	    String htmlBody = thymeleafTemplateEngine.process(emailTemplatePath, thymeleafContext);
 	     

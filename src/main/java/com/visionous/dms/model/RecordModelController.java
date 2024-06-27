@@ -190,7 +190,7 @@ public class RecordModelController extends ModelControllerImpl {
 					
 					customerHistory.ifPresent(history-> {
 						super.addModelCollectionToView("selectedHistory", history);
-						Optional<Personnel> personnel = personnelService.findById(AccountUtil.currentLoggedInUser().getId());
+						Optional<Personnel> personnel = personnelService.findById(AccountUtil.currentLoggedInUser().getAccount().getId());
 						personnel.ifPresent(personnelAcc -> {
 							Record record = new Record(history, personnelAcc);
 							List<Teeth> toothList = new ArrayList<>();
@@ -204,7 +204,7 @@ public class RecordModelController extends ModelControllerImpl {
 						});
 					});
 					
-					super.addModelCollectionToView("services", serviceTypeService.findAllByGlobalSettingsId(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getId()));
+					super.addModelCollectionToView("services", serviceTypeService.findAllByGlobalSettingsId(AccountUtil.currentLoggedInBusinessSettings().getId()));
 				});
 			}
 			
@@ -264,9 +264,9 @@ public class RecordModelController extends ModelControllerImpl {
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBusinessSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription());
 
 	}
 	

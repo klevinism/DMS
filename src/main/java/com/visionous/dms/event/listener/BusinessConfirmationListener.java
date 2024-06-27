@@ -1,11 +1,13 @@
 package com.visionous.dms.event.listener;
 
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
 import com.o2dent.lib.accounts.entity.Account;
 import com.o2dent.lib.accounts.entity.Business;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,12 +18,17 @@ import org.thymeleaf.context.Context;
 import com.visionous.dms.event.OnBusinessConfirmationEvent;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.util.Arrays;
+
 @Component
 public class BusinessConfirmationListener implements ApplicationListener<OnBusinessConfirmationEvent>{
 
     private SpringTemplateEngine springTemplateEngine;
     private JavaMailSender mailSender;
 	private MessageSource messageSource;
+
+	@Value("{spring.mail.properties.mail.smtp.from}")
+	private String from;
 
 	/**
 	 *
@@ -78,7 +85,9 @@ public class BusinessConfirmationListener implements ApplicationListener<OnBusin
     	mailMessage.setSubject(yourDentalClinic +" \""+ business.getName() +"\" "+ created.toLowerCase() + "!", "UTF-8");
     	
     	MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true, "UTF-8");
-    	helper.setTo(recipientAddress);
+		var fromAddr = (String)mailMessage.getSession().getProperties().get("mail.smtp.from");
+		helper.setFrom(new InternetAddress(fromAddr));
+		helper.setTo(recipientAddress);
         helper.setText(htmlBody, true);
         
         mailSender.send(mailMessage);

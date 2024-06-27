@@ -66,7 +66,12 @@ public class ServiceType implements Serializable{
     @JsonIgnore
 	@OneToMany(cascade = CascadeType.REFRESH, mappedBy="serviceType")
 	private List<RecordReceiptItem> receipts = new ArrayList<>();
-	
+
+	@JsonIgnore
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	@JoinColumn(name = "global_settings_id")
+	private GlobalSettings globalSettings;
+
 	/**
 	 * 
 	 */
@@ -190,5 +195,18 @@ public class ServiceType implements Serializable{
 	public void setReceipts(List<RecordReceiptItem> receipts) {
 		this.receipts = receipts;
 	}
-	
+
+	/**
+	 * @return
+	 */
+	public GlobalSettings getGlobalSettings() {
+		return this.globalSettings;
+	}
+
+	/**
+	 * @param globalSettings
+	 */
+	public void setGlobalSettings(GlobalSettings globalSettings) {
+		this.globalSettings = globalSettings;
+	}
 }

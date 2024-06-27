@@ -4,10 +4,13 @@
 package com.visionous.dms.rest;
 
 import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.entity.Business;
+import com.o2dent.lib.accounts.entity.Role;
 import com.o2dent.lib.accounts.persistence.AccountService;
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.DateUtil;
 import com.visionous.dms.configuration.helpers.DmsCore;
+import com.visionous.dms.event.OnBusinessConfirmationEvent;
 import com.visionous.dms.event.OnCustomerAppointmentBookEvent;
 import com.visionous.dms.event.OnRegistrationCompleteEvent;
 import com.visionous.dms.pojo.*;
@@ -81,7 +84,7 @@ public class AppointmentRestController {
     		@RequestParam(name = "serviceId", required = false) Long serviceId,
     		@RequestParam(name = "appointmentEndDate", required = false) Date appointmentEndDate) { 
 
-        ResponseBody<Appointment> result = new ResponseBody<>();
+        ResponseBody<IaoAppointment> result = new ResponseBody<>();
         
         List<Appointment> anyAppointment = appointmentService.findByAppointmentDate(new Timestamp(appointmentDate.getTime()).toLocalDateTime());
         
@@ -94,37 +97,46 @@ public class AppointmentRestController {
         	result.setError("error");
         	result.setMessage(noAppointmentSet + " " + new SimpleDateFormat("dd-MM-yy hh:mm").format(appointmentDate));
         }else {
-        	Appointment newAppointment = new Appointment();
+        	IaoAppointment iaoAppointment = new IaoAppointment(new Appointment());
         	Optional<Personnel> personnel = personnelService.findById(personnelId);
         	Optional<Customer> customer = customerService.findById(customerId);
         	
         	if(personnel.isPresent() && customer.isPresent()) {
-        		newAppointment.setPersonnel(personnel.get());
-        		newAppointment.setCustomer(customer.get());
+
+				Optional<Account> accountPersonnel = accountService.findById(personnelId);
+				accountPersonnel.ifPresent(a -> iaoAppointment.setPersonnelAccount(a));
+        		iaoAppointment.setPersonnel(personnel.get());
+				iaoAppointment.setPersonnelId(personnel.get().getId());
+
+				Optional<Account> accountCustomer = accountService.findById(customerId);
+				accountCustomer.ifPresent(a -> iaoAppointment.setCustomerAccount(a));
+        		iaoAppointment.setCustomer(customer.get());
+				iaoAppointment.setCustomerId(customer.get().getId());
         	}
-        	newAppointment.setAddeddate(new Date());
-        	newAppointment.setAppointmentDate(new Timestamp(appointmentDate.getTime()).toLocalDateTime());
+        	iaoAppointment.setAddeddate(new Date());
+        	iaoAppointment.setAppointmentDate(new Timestamp(appointmentDate.getTime()).toLocalDateTime());
         	
         	if(serviceId != null) {
         		Optional<ServiceType> serviceSelected = serviceTypeService.findById(serviceId);
         		serviceSelected.ifPresent(selected -> {
-        			newAppointment.setServiceType(selected);
-        			newAppointment.setServiceTypeId(selected.getId());
+        			iaoAppointment.setServiceType(selected);
+        			iaoAppointment.setServiceTypeId(selected.getId());
         		});
         	}
         	
         	if(appointmentEndDate != null) {
-        		newAppointment.setAppointmentEndDate(
+        		iaoAppointment.setAppointmentEndDate(
         				new Timestamp(appointmentEndDate.getTime()).toLocalDateTime());
         	}else {
-        		Date endingDate = DateUtil.addMinutes(appointmentDate, AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getAppointmentTimeSplit());
-        		newAppointment.setAppointmentEndDate(
+        		Date endingDate = DateUtil.addMinutes(appointmentDate, AccountUtil.currentLoggedInBusinessSettings().getAppointmentTimeSplit());
+        		iaoAppointment.setAppointmentEndDate(
         				new Timestamp(endingDate.getTime()).toLocalDateTime());
         	}
         	
-        	Appointment created = appointmentService.create(newAppointment);
+        	Appointment created = appointmentService.create(iaoAppointment.getAppointment());
+			iaoAppointment.setAppointment(created);
         	if(created.getId() != null) {
-        		result.addResult(created);
+        		result.addResult(iaoAppointment);
         		result.setError(success);
         		result.setMessage(appointmentset);
         	}else {
@@ -167,7 +179,7 @@ public class AppointmentRestController {
     		@RequestParam(name = "appointmentDate", required = false) Date appointmentDate,
     		@RequestParam(name = "appointmentEndDate", required = false) Date appointmentEndDate) { 
 
-        ResponseBody<Appointment> result = new ResponseBody<>();
+        ResponseBody<IaoAppointment> result = new ResponseBody<>();
         
         Optional<Appointment> selectedAppointment = appointmentService.findById(appointmentId);
         
@@ -180,7 +192,7 @@ public class AppointmentRestController {
         	result.setError("error");
         	result.setMessage(noAppointmentWithId + " " + appointmentId);
         }else {
-        	Appointment newAppointment = selectedAppointment.get();
+			IaoAppointment newAppointment = new IaoAppointment(selectedAppointment.get());
         	if(appointmentDate != null) {
         		newAppointment.setAppointmentDate(new Timestamp(appointmentDate.getTime()).toLocalDateTime());
         	}else {
@@ -206,6 +218,8 @@ public class AppointmentRestController {
         	if(customerId != null) {
         		Optional<Customer> customerSelected = customerService.findById(customerId);
         		customerSelected.ifPresent(customer -> {
+					Optional<Account> accountCustomer = accountService.findById(customerId);
+					accountCustomer.ifPresent(a -> newAppointment.setCustomerAccount(a));
         			newAppointment.setCustomer(customer);
         			newAppointment.setCustomerId(customer.getId());
         		});
@@ -213,17 +227,20 @@ public class AppointmentRestController {
         	
         	if(personnelId != null) {
         		Optional<Personnel> personnelSelected = personnelService.findById(personnelId);
-        		personnelSelected.ifPresent(customer -> {
-        			newAppointment.setPersonnel(customer);
-        			newAppointment.setPersonnelId(customer.getId());
+        		personnelSelected.ifPresent(personnel -> {
+					Optional<Account> accountPersonnel = accountService.findById(personnelId);
+					accountPersonnel.ifPresent(a -> newAppointment.setPersonnelAccount(a));
+        			newAppointment.setPersonnel(personnel);
+        			newAppointment.setPersonnelId(personnel.getId());
         		});
         	}
         	
         	newAppointment.setAddeddate(new Date());
         	
-        	Appointment created = appointmentService.create(newAppointment);
+        	Appointment created = appointmentService.create(newAppointment.getAppointment());
+			newAppointment.setAppointment(created);
         	if(created.getId() != null) {
-        		result.addResult(created);
+        		result.addResult(newAppointment);
         		result.setError(success);
         		result.setMessage(appointmentset);
         	}else {
@@ -512,7 +529,7 @@ public class AppointmentRestController {
     public ResponseEntity<?> getAutomaticAppointment() { 
         ResponseBody<Appointment> result = new ResponseBody<>();
         
-        int minSplit = AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getAppointmentTimeSplit();
+        int minSplit = AccountUtil.currentLoggedInBusinessSettings().getAppointmentTimeSplit();
 
         Date today = new Date();
         Calendar todayCalendar = DateUtil.getCalendarFromDate(today);
@@ -573,8 +590,8 @@ public class AppointmentRestController {
     }
 	
 	private Date searchForNewDay(Date date) {
-        int startDay = AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessStartDay();
-        int endDay = AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessEndDay();
+        int startDay = AccountUtil.currentLoggedInBusinessSettings().getBusinessStartDay();
+        int endDay = AccountUtil.currentLoggedInBusinessSettings().getBusinessEndDay();
                 
         Calendar calendar = DateUtil.getCalendarFromDate(date); 
         int todayDayNr = calendar.get(Calendar.DAY_OF_WEEK)-1;
@@ -589,11 +606,11 @@ public class AppointmentRestController {
 	
 	private Date nextAvailableBusinessAppointmentTime(Date date) {
 
-        int minSplit = AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getAppointmentTimeSplit();
+        int minSplit = AccountUtil.currentLoggedInBusinessSettings().getAppointmentTimeSplit();
 
         Date today = date;        
-        Date startTime = DateUtil.getStartWorkingHr(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessStartTime(), today);
-        Date endTime = DateUtil.getEndWorkingHr(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessEndTime(), today);
+        Date startTime = DateUtil.getStartWorkingHr(AccountUtil.currentLoggedInBusinessSettings().getBusinessStartTime(), today);
+        Date endTime = DateUtil.getEndWorkingHr(AccountUtil.currentLoggedInBusinessSettings().getBusinessEndTime(), today);
                 
 		while(today.before(startTime) || today.after(endTime)) {
 
@@ -810,6 +827,22 @@ public class AppointmentRestController {
 			result.setMessage("Subscription expired! from Mapping");
 		}
 		return ResponseEntity.ok(result);
+	}
+
+	@GetMapping("/test/email")
+	public ResponseEntity<?> sendTestEmail(){
+		String appUrl = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getContextPath();
+		Account account = new Account("klevindelimeta@gmail.com", "password", List.of(new Role()), true, true);
+		Business business = new Business();
+		business.setAccounts(Set.of(account));
+		business.setEnabled(true);
+		business.setBusinessUrl("url.com");
+		business.setName("New business");
+		business.setSubdomainUri("testsubdomainurl");
+
+		account.setEmail("klevindelimeta@gmail.com");
+		eventPublisher.publishEvent(new OnBusinessConfirmationEvent(account, business, LocaleContextHolder.getLocale(), appUrl));
+		return null;
 	}
 	
 	@PostMapping("/api/personnel/sendConfirmation")

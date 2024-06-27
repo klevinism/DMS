@@ -8,6 +8,7 @@ import com.o2dent.lib.accounts.persistence.AccountService;
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.configuration.helpers.LandingPages;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.ServiceType;
 import com.visionous.dms.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,9 +126,8 @@ public class ScheduleModelController extends ModelControllerImpl{
 
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
-		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBusinessSettings().getBusinessImage());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription());
 
 	}
 	

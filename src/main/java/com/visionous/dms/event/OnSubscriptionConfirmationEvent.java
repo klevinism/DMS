@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import com.o2dent.lib.accounts.entity.Account;
 import com.o2dent.lib.accounts.entity.Business;
+import com.visionous.dms.pojo.GlobalSettings;
 import org.springframework.context.ApplicationEvent;
 
 import com.visionous.dms.configuration.helpers.DmsCore;
@@ -19,13 +20,15 @@ public class OnSubscriptionConfirmationEvent extends ApplicationEvent{
     private Locale locale;
     private Account account;
 	private Business business;
+	private GlobalSettings globalSettings;
 
-    public OnSubscriptionConfirmationEvent(Account user, Business business,
+    public OnSubscriptionConfirmationEvent(Account user, Business business, GlobalSettings globalSettings,
 										   Locale locale, String appUrl) {
         super(user);
         
         this.account = user;
         this.business = business;
+		this.globalSettings = globalSettings;
         this.locale = locale;
         this.appUrl = appUrl;
     }
@@ -78,12 +81,12 @@ public class OnSubscriptionConfirmationEvent extends ApplicationEvent{
 	public Business getBusiness() {
 		return business;
 	}
-
 	/**
 	 * @param business
 	 */
 	public void setBusiness(Business business) {
 		this.business = business;
 	}
-	
+	public GlobalSettings getGlobalSettings() {return globalSettings;}
+	public void setGlobalSettings(GlobalSettings globalSettings) {this.globalSettings = globalSettings;}
 }

@@ -9,7 +9,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.visionous.dms.pojo.GlobalSettings;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
@@ -87,43 +89,23 @@ public class GreetingModelViewController {
         return "redirect:/home";
     }
 	
-	/**
-	 * @param model
-	 * @return
-	 */
-	@GetMapping("/logout")
-	public String logout(Model model) {
-		Boolean auth = SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
-		if(auth != null) {
-			SecurityContextHolder.getContext().setAuthentication(null);
-		}
-		
-		return "demo_1/index";
-	}
+//	/**
+//	 * @param model
+//	 * @return
+//	 */
+//	@GetMapping("/logout")
+//	public String logout(Model model, HttpServletRequest req) throws ServletException {
+//		Boolean auth = SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
+//		if(auth != null) {
+//			SecurityContextHolder.clearContext();
+//		}
+//
+//		return "demo_1/index";
+//	}
 	
 	@GetMapping("/index")
 	public String indexx(Model model) {
 		return "index";
-	}
-	
-	/**
-	 * @param error
-	 * @param model
-	 * @return
-	 */
-	@GetMapping("/login")
-	public String login(@RequestParam(name="error", required=false) String error, Model model) {
-		
-		if(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken) {
-			if(error != null) {
-		        String message = messages.getMessage("alert.usernameOrPasswordIncorrect", null, LocaleContextHolder.getLocale());
-				model.addAttribute("errorUsernamePassword", message);
-			}
-			
-			return "demo_1/pages/samples/login";
-		}else {
-			return "redirect:/home";
-		}
 	}
     
 	/**
@@ -177,9 +159,9 @@ public class GreetingModelViewController {
 		
 		model.addAttribute("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		model.addAttribute("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
-		model.addAttribute("settings", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings());
-		model.addAttribute("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
+		model.addAttribute("logo", (AccountUtil.currentLoggedInBusinessSettings()).getBusinessImage());
+		model.addAttribute("settings", (AccountUtil.currentLoggedInBusinessSettings()));
+		model.addAttribute("subscription", (AccountUtil.currentLoggedInBusinessSettings()).getActiveSubscription());
 		
 		return "demo_1/pages/expiredsubscription";
 	}
@@ -371,13 +353,13 @@ public class GreetingModelViewController {
 	    
 		localeResolver.setLocale(httpServletRequest, httpServletResponse, new Locale("al","sq"));
 		
-		model.addAttribute("disabledDays", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getNonBusinessDays());
-		model.addAttribute("bookingSplit", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getAppointmentTimeSplit());
-		model.addAttribute("startTime", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessStartTimes()[0]);
-		model.addAttribute("startMinute", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessStartTimes()[1]);
-		model.addAttribute("endTime", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessEndTimes()[0]);
-		model.addAttribute("endMinute", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessEndTimes()[1]);
-		model.addAttribute("businessName", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessName());
+		model.addAttribute("disabledDays", AccountUtil.currentLoggedInBusinessSettings().getNonBusinessDays());
+		model.addAttribute("bookingSplit", AccountUtil.currentLoggedInBusinessSettings().getAppointmentTimeSplit());
+		model.addAttribute("startTime", AccountUtil.currentLoggedInBusinessSettings().getBusinessStartTimes()[0]);
+		model.addAttribute("startMinute", AccountUtil.currentLoggedInBusinessSettings().getBusinessStartTimes()[1]);
+		model.addAttribute("endTime", AccountUtil.currentLoggedInBusinessSettings().getBusinessEndTimes()[0]);
+		model.addAttribute("endMinute", AccountUtil.currentLoggedInBusinessSettings().getBusinessEndTimes()[1]);
+		model.addAttribute("businessName", AccountUtil.currentLoggedInBusinessSettings().getBusinessName());
 		model.addAttribute("redirect", redirectUrl);
 		
 		return "demo_1/pages/new_appointment";

@@ -74,7 +74,7 @@ function book(){
 	 $("#hours").html("");
 	 $.post("/api/book", {"customerId" : customerId,"personnelId" : personnelId, "appointmentDate":appointmentDate}, function(data, status){
 		$("#loader").hide();
-		if(data.error != "error"){
+		if(data.error !== "error"){
 			$("#alert").addClass('alert-success');
 			$("#alert").html("<strong>"+ data.error+"</strong>"+ data.message);
 			$("#alert").show();

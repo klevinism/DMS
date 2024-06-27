@@ -74,7 +74,7 @@ public class HistoryModelController extends ModelControllerImpl{
 		}else if(action.equals(Actions.CREATE.getValue())) {
 			if(super.getAllControllerParams().get("id") != null) {
 				Long customerId = Long.valueOf(super.getAllControllerParams().get("id").toString());
-				Optional<Personnel> personnel = personnelService.findById(AccountUtil.currentLoggedInUser().getId());
+				Optional<Personnel> personnel = personnelService.findById(AccountUtil.currentLoggedInUser().getAccount().getId());
 				newHistory.setSupervisor(personnel.orElseThrow());
 				customerService.createNewHistoryForCustomerId(customerId, newHistory);
 			}
@@ -134,9 +134,9 @@ public class HistoryModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBusinessSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription());
 
 	}
 	

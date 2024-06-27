@@ -14,6 +14,7 @@ import com.o2dent.lib.accounts.helpers.exceptions.UsernameExistsException;
 import com.o2dent.lib.accounts.persistence.AccountService;
 import com.o2dent.lib.accounts.persistence.BusinessService;
 import com.visionous.dms.pojo.Customer;
+import com.visionous.dms.pojo.GlobalSettings;
 import com.visionous.dms.pojo.IaoAccount_Customer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -155,7 +156,6 @@ public class CustomerModelController extends ModelControllerImpl{
 				iao.getAccount().addBusiness(loggedInBusiness);
 				Account newAccount = accountService.create(iao.getAccount());
 
-				loggedInBusiness.getAccounts().add(newAccount);
 				Business updatedBusiness = businessService.update(loggedInBusiness);
 				AccountUtil.setCurrentLoggedInBusiness(updatedBusiness);
 
@@ -280,17 +280,17 @@ public class CustomerModelController extends ModelControllerImpl{
 
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		if(AccountUtil.currentLoggedInUser().getCurrentBusinessSettings() != null) {
-			super.addModelCollectionToView("disabledDays", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getNonBusinessDays());
-			super.addModelCollectionToView("bookingSplit", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getAppointmentTimeSplit());
-			super.addModelCollectionToView("startTime", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessStartTimes()[0]);
-			super.addModelCollectionToView("startMinute", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessStartTimes()[1]);
-			super.addModelCollectionToView("endTime", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessEndTimes()[0]);
-			super.addModelCollectionToView("endMinute", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessEndTimes()[1]);
-			super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
+		if(AccountUtil.currentLoggedInBusinessSettings() != null) {
+			super.addModelCollectionToView("disabledDays", AccountUtil.currentLoggedInBusinessSettings().getNonBusinessDays());
+			super.addModelCollectionToView("bookingSplit", AccountUtil.currentLoggedInBusinessSettings().getAppointmentTimeSplit());
+			super.addModelCollectionToView("startTime", AccountUtil.currentLoggedInBusinessSettings().getBusinessStartTimes()[0]);
+			super.addModelCollectionToView("startMinute", AccountUtil.currentLoggedInBusinessSettings().getBusinessStartTimes()[1]);
+			super.addModelCollectionToView("endTime", AccountUtil.currentLoggedInBusinessSettings().getBusinessEndTimes()[0]);
+			super.addModelCollectionToView("endMinute", AccountUtil.currentLoggedInBusinessSettings().getBusinessEndTimes()[1]);
+			super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBusinessSettings().getBusinessImage());
 		}
 		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription());
 
 	}
 	

@@ -7,21 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import com.o2dent.lib.accounts.entity.Business;
 import com.visionous.dms.configuration.helpers.annotations.ValidEmail;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -68,14 +55,16 @@ public class GlobalSettings implements Serializable{
 	@Column(name = "appointmentsTimesSplit")
 	private Integer appointmentTimeSplit;
 	
-	@Column(name = "business_id", updatable = false, insertable = false)
+	@Column(name = "business_id")
 	private Long businessId;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "globalSettingsId", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@PrimaryKeyJoinColumn
-	private Set<SubscriptionHistory> subscriptions;
-    
+	private Set<SubscriptionHistory> subscriptionHistorySet;
+
+	@OneToMany(mappedBy = "globalSettingsId", fetch = FetchType.EAGER)
+	private Set<ServiceType> serviceType;
 	/**
 	 * 
 	 */
@@ -310,15 +299,15 @@ public class GlobalSettings implements Serializable{
 	/**
 	 * @return the subscriptions
 	 */
-	public Set<SubscriptionHistory> getSubscriptions() {
-		return subscriptions;
+	public Set<SubscriptionHistory> getSubscriptionHistorySet() {
+		return subscriptionHistorySet;
 	}
 
 	/**
-	 * @param subscriptions the subscriptions to set
+	 * @param subscriptionHistorySet the subscriptions to set
 	 */
-	public void setSubscriptions(Set<SubscriptionHistory> subscriptions) {
-		this.subscriptions = subscriptions;
+	public void setSubscriptionHistorySet(Set<SubscriptionHistory> subscriptionHistorySet) {
+		this.subscriptionHistorySet = subscriptionHistorySet;
 	}
 
 	/**
@@ -326,7 +315,7 @@ public class GlobalSettings implements Serializable{
 	 */
 	@JsonIgnore
 	public Subscription getActiveSubscription() {
-		Optional<SubscriptionHistory> subscriptionHistory = this.getSubscriptions()
+		Optional<SubscriptionHistory> subscriptionHistory = this.getSubscriptionHistorySet()
 				.stream()
 				.filter(subscription -> subscription.isActive()
 						&& subscription.getSubscriptionEndDate().isAfter(LocalDateTime.now()))

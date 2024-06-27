@@ -71,7 +71,7 @@ public class CustomerRestController {
 
 		String messagePhoneNumberExists = messageSource.getMessage("alert.phoneNumberExists", null, LocaleContextHolder.getLocale());
 
-        ResponseBody<Customer> result = new ResponseBody<>();
+        ResponseBody<Account> result = new ResponseBody<>();
         
     	String pattern = "(\\w+)\\s+(\\w+)";
         
@@ -121,7 +121,7 @@ public class CustomerRestController {
 					Business updatedBusiness = businessService.update(loggedInBusiness);
 					AccountUtil.setCurrentLoggedInBusiness(updatedBusiness);
 
-					result.addResult(createdCustomer);
+					result.addResult(createdCustomerAccount);
 					
 				} catch (EmailExistsException e) {
 					result.setError(messageError);
@@ -161,14 +161,14 @@ public class CustomerRestController {
 	 * @param email
 	 * @param phoneNr
 	 */
-	private Customer findAccountByEmailOrPhone(String email, Long phoneNr) {
+	private Account findAccountByEmailOrPhone(String email, Long phoneNr) {
 		if(email != null) {
 			Optional<Account> findByEmail = accountService.findByUsernameOrEmail(email);
 
 			if(findByEmail.isPresent()) {
 				Optional<Customer> customer = customerService.findById(findByEmail.get().getId());
 				if(customer.isPresent()){
-					return customer.get();
+					return findByEmail.get();
 				}else{
 					return null;
 				}
@@ -179,7 +179,7 @@ public class CustomerRestController {
 			if(findByPhone.isPresent()) {
 				Optional<Customer> customer = customerService.findById(findByPhone.get().getId());
 				if(customer.isPresent()){
-					return customer.get();
+					return findByPhone.get();
 				}else{
 					return null;
 				}			}

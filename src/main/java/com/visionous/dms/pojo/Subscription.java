@@ -9,19 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -78,8 +66,8 @@ public class Subscription implements Serializable{
     private List<Restrictions> restrictions  = new ArrayList<>();
 
     @JsonIgnore
-    @OneToOne(mappedBy="subscription",  fetch = FetchType.LAZY)
-    private SubscriptionHistory subscriptionHistory;
+    @OneToMany(mappedBy="subscription",  fetch = FetchType.LAZY)
+    private List<SubscriptionHistory> subscriptionHistory;
 
 	/**
 	 * @return the id
@@ -224,14 +212,14 @@ public class Subscription implements Serializable{
 	/**
 	 * @return the subscriptionHistory
 	 */
-	public SubscriptionHistory getSubscriptionHistory() {
+	public List<SubscriptionHistory> getSubscriptionHistory() {
 		return subscriptionHistory;
 	}
 
 	/**
 	 * @param subscriptionHistory the subscriptionHistory to set
 	 */
-	public void setSubscriptionHistory(SubscriptionHistory subscriptionHistory) {
+	public void setSubscriptionHistory(List<SubscriptionHistory> subscriptionHistory) {
 		this.subscriptionHistory = subscriptionHistory;
 	}
 	

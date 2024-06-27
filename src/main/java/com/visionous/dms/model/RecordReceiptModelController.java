@@ -179,7 +179,7 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 			}
 		});
 		
-		super.addModelCollectionToView("global", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings());
+		super.addModelCollectionToView("global", AccountUtil.currentLoggedInBusinessSettings());
 	}
 	
 	/**
@@ -196,9 +196,9 @@ public class RecordReceiptModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBusinessSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInUser().getCurrentBusinessSettings().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription());
 
 	}
 	

@@ -132,12 +132,11 @@ public class BusinessRestController {
 
 		        Business newBusiness = businessService.create(business);
 
-		        Optional<Account> newAccount = accountService.findById(AccountUtil.currentLoggedInUser().getId());
+		        Optional<Account> newAccount = accountService.findById(AccountUtil.currentLoggedInUser().getAccount().getId());
 		        newAccount.ifPresent(account -> {
 			        Personnel newPersonnel = new Personnel();
 			        newPersonnel.setType("ADMIN");
 			        personnelService.update(newPersonnel);
-
 					AccountUtil.currentLoggedInUser().setPersonnel(true);
 		        });
 				
@@ -149,8 +148,8 @@ public class BusinessRestController {
 		        globalSettingsDraft.setBusinessName("MyDentalClinic");
 		        globalSettingsDraft.setBusinessTimes("07:00,18:00");
 		        
-		        if(Objects.isNull(globalSettingsDraft.getSubscriptions())) {
-		        	globalSettingsDraft.setSubscriptions(new HashSet<>());
+		        if(Objects.isNull(globalSettingsDraft.getSubscriptionHistorySet())) {
+		        	globalSettingsDraft.setSubscriptionHistorySet(new HashSet<>());
 		        }
 		        
 		        globalSettingsDraft.setBusinessId(business.getId());
@@ -169,7 +168,7 @@ public class BusinessRestController {
 		        });
 		        
 		        subscriptionHistoryDraft.setGlobalSettings(newGlobalSettings);
-		        newGlobalSettings.getSubscriptions().add(subscriptionHistoryDraft);
+		        newGlobalSettings.getSubscriptionHistorySet().add(subscriptionHistoryDraft);
 		        
 		        SubscriptionHistory subscriptionHistory = this.subscriptionHistoryService.update(subscriptionHistoryDraft);
 

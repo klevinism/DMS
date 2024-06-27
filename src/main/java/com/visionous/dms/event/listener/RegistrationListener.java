@@ -1,13 +1,11 @@
 package com.visionous.dms.event.listener;
 
+import java.nio.charset.Charset;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
 import com.o2dent.lib.accounts.entity.Account;
@@ -102,11 +100,10 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 	    String htmlBody = thymeleafTemplateEngine.process(emailTemplatePath, thymeleafContext);
 	     
 	    MimeMessage mailMessage = mailSender.createMimeMessage();
-	    
     	mailMessage.setSubject("Registration Confirmation", "UTF-8");
     	
     	MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true, "UTF-8");
-    	helper.setTo(recipientAddress);
+		helper.setTo(recipientAddress);
         helper.setText(htmlBody, true);
         	
         
