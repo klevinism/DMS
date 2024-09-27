@@ -54,7 +54,7 @@ public class ResponseAdvice implements ResponseBodyAdvice {
 		ResponseBody<String> bodyReplacing = new ResponseBody<>();
 		if(AccountUtil.currentLoggedInUser() != null 
 				&& Objects.nonNull(AccountUtil.currentLoggedInUser().getCurrentBusiness())
-				&& request.getMethodValue().equals("POST") 
+				&& request.getMethod().name().equals("POST")
 				&& !subscriptionHistoryService.findActiveSubscriptionByBusinessId(
 						AccountUtil.currentLoggedInUser()
 						.getCurrentBusiness()
@@ -63,7 +63,7 @@ public class ResponseAdvice implements ResponseBodyAdvice {
 			bodyReplacing.setError("error");
 			
 			if(AccountUtil.currentLoggedInUser() != null ) {
-				bodyReplacing.setMessage(subscriptionExpired + " " + featureExcluded + " " + (AccountUtil.currentLoggedInUser().getRoles().stream().anyMatch(role -> role.getName().equals("PERSONNEL")) ? subscriptionExpiredPersonnel : subscriptionExpiredAdmin));
+				bodyReplacing.setMessage(subscriptionExpired + " " + featureExcluded + " " + (AccountUtil.currentLoggedInUser().getAccount().getRoles().stream().anyMatch(role -> role.getName().equals("PERSONNEL")) ? subscriptionExpiredPersonnel : subscriptionExpiredAdmin));
 			}
 			
 			return bodyReplacing;

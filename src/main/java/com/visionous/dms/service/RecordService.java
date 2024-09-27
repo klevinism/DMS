@@ -102,17 +102,11 @@ public class RecordService implements IRecordService{
 		return this.recordRepository.countByPersonnelIdAndServicedateBetween(personnelId, beginDate, endDate);
 	}
 
-	/**
-	 * @param personnelId
-	 * @param beginDate
-	 * @param endDate
-	 * @return all records of personnel serviced between dates
-	 */
 	@Override
-	public Integer countAllByPersonnelIdAndServicedateBetween(Long personnelId, LocalDateTime beginDate, LocalDateTime endDate) {
-		return this.recordRepository.countByPersonnelIdAndServicedateBetween(personnelId, beginDate, endDate);
+	public Integer countAllByPersonnelIdInAndServicedateBetween(List<Long> personnelIds, LocalDateTime beginDate, LocalDateTime endDate) {
+		return this.recordRepository.countByPersonnelIdInAndServicedateBetween(personnelIds, beginDate, endDate);
 	}
-	
+
 	/**
 	 * @param personnelId
 	 * @param beginDate
@@ -122,6 +116,17 @@ public class RecordService implements IRecordService{
 	@Override
 	public List<Record> findAllByPersonnelIdAndServicedateBetween(Long personnelId, LocalDateTime beginDate, LocalDateTime endDate) {
 		return this.recordRepository.findAllByPersonnelIdAndServicedateBetween(personnelId, beginDate, endDate);
+	}
+
+	/**
+	 *
+	 * @param personnelIds
+	 * @param beginDate
+	 * @param endDate
+	 * @return
+	 */
+	public List<Record> findAllByPersonnelIdInAndServicedateBetween(List<Long> personnelIds, LocalDateTime beginDate, LocalDateTime endDate) {
+		return this.recordRepository.findAllByPersonnelIdInAndServicedateBetween(personnelIds, beginDate, endDate);
 	}
 
 	/**
@@ -188,11 +193,12 @@ public class RecordService implements IRecordService{
 	public List<Record> findAllByServicedateBetweenAndCustomerId(LocalDateTime startDate, LocalDateTime endDate, Long customerId) {
 		return this.recordRepository.findAllByServicedateBetweenAndHistory_customerId(startDate, endDate, customerId);
 	}
-    
+
 	/**
+	 *
 	 * @param id
-	 * @param localDateTime
-	 * @param localDateTime2
+	 * @param startDate
+	 * @param endDate
 	 * @return
 	 */
 	@Override
@@ -208,66 +214,19 @@ public class RecordService implements IRecordService{
 	}
 
 	/**
-	 * @param currentBusinessId
+	 * @param ids
 	 * @param localDateTime
 	 * @param localDateTime2
 	 * @return
 	 */
-	@Override
-	public Integer countByBusinessIdAndServicedateBetween(Long currentBusinessId, LocalDateTime localDateTime,
-			LocalDateTime localDateTime2) {
-		return this.recordRepository.countByHistory_Customer_Account_BusinessesIdAndServicedateBetween(AccountUtil.currentLoggedInBussines().getId(), localDateTime, localDateTime2);
-	}
-
-	/**
-	 * @param id
-	 * @param localDateTime
-	 * @param localDateTime2
-	 * @return
-	 */
-	public Integer sumOfReceiptsByBusinessIdAndServiceDate(Long id, LocalDateTime localDateTime, LocalDateTime localDateTime2) {
-		return this.recordRepository.sumOfAllReceiptsByBusinessId(id, localDateTime, localDateTime2);
-	}
-
-	/**
-	 * @param id
-	 * @param localDateTime
-	 * @param localDateTime2
-	 * @param customerId
-	 * @return
-	 */
-	public List<Record> findAllByBusinessIdAndServicedateBetweenAndCustomerId(Long id, LocalDateTime localDateTime,
-			LocalDateTime localDateTime2, Long customerId) {
-		return this.recordRepository.findAllByHistory_Customer_Account_BusinessesIdAndServicedateBetweenAndHistory_customerId(id, localDateTime, localDateTime2, customerId);
-	}
-
-	/**
-	 * @param id
-	 * @param localDateTime
-	 * @param localDateTime2
-	 * @return
-	 */
-	public List<Record> findAllByBusinessIdAndServicedateBetween(Long id, LocalDateTime localDateTime,
-			LocalDateTime localDateTime2) {
-		return this.recordRepository.findAllByHistory_Customer_Account_BusinessesIdAndServicedateBetween(id, localDateTime, localDateTime2);
-	}
-
-	/**
-	 * @param businessId
-	 * @param personnelId
-	 * @param localDateTime
-	 * @param localDateTime2
-	 * @return
-	 */
-	public Integer countAllByBusinessIdAndPersonnelIdAndServicedateBetween(Long businessId, Long personnelId,
-			LocalDateTime localDateTime, LocalDateTime localDateTime2) {
-		return this.recordRepository.countByHistory_Customer_Account_Businesses_IdAndPersonnelIdAndServicedateBetween(AccountUtil.currentLoggedInBussines().getId(), personnelId, localDateTime, localDateTime2);
+	public Integer sumOfReceiptsByPersonnelIdInAndServiceDate(List<Long> ids, LocalDateTime localDateTime, LocalDateTime localDateTime2) {
+		return this.recordRepository.sumOfAllReceiptsByPersonnelIdIn(ids, localDateTime, localDateTime2);
 	}
 
 	public Integer sumOfPersonnelReceiptsAndBusinessId(Long id, LocalDateTime localDateTime,
-			LocalDateTime localDateTime2, Long customerBusinessId) {
+			LocalDateTime localDateTime2) {
 		// TODO Auto-generated method stub
-		return this.recordRepository.findSumOfAllReceiptsByPersonnelIdAndBusinessIdAndPayed(id, localDateTime, localDateTime2, customerBusinessId, true);
+		return this.recordRepository.findSumOfAllReceiptsByPersonnelIdAndPayed(id, localDateTime, localDateTime2, true);
 	}
 
 }

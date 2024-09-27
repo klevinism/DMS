@@ -4,21 +4,9 @@
 package com.visionous.dms.pojo;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SequenceGenerator;
+import jakarta.persistence.*;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -51,7 +39,7 @@ public class History implements Serializable{
 	@DateTimeFormat (pattern="dd-MMM-YYYY")
 	private Date startdate;
 
-	@OneToOne(optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	@ManyToOne(optional = false, cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "supervisorid")
 	private Personnel supervisor;
 
@@ -169,6 +157,18 @@ public class History implements Serializable{
 		this.customer = customer;
 	}
 
-	
+	public Record getLastRecord(){
+		List<Record> tempList = new ArrayList<>(this.records);
+		Collections.sort(tempList, new Comparator<Record>() {
+			public int compare(Record o1, Record o2) {
+				if (o1.getServicedate() == null || o2.getServicedate() == null)
+					return 0;
+				return o1.getServicedate().compareTo(o2.getServicedate());
+			}
+		});
+
+		if(tempList.size() > 0 ) return tempList.get(0);
+		return null;
+	}
 
 }

@@ -6,10 +6,10 @@ package com.visionous.dms.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.o2dent.lib.accounts.entity.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.visionous.dms.pojo.Role;
 import com.visionous.dms.repository.RoleRepository;
 
 /**

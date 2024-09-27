@@ -3,18 +3,20 @@
  */
 package com.visionous.dms.rest;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.entity.Business;
+import com.o2dent.lib.accounts.entity.Role;
+import com.o2dent.lib.accounts.persistence.AccountService;
+import com.visionous.dms.configuration.helpers.AccountUtil;
+import com.visionous.dms.configuration.helpers.DateUtil;
+import com.visionous.dms.configuration.helpers.DmsCore;
+import com.visionous.dms.event.OnBusinessConfirmationEvent;
+import com.visionous.dms.event.OnCustomerAppointmentBookEvent;
+import com.visionous.dms.event.OnRegistrationCompleteEvent;
+import com.visionous.dms.pojo.*;
+import com.visionous.dms.rest.response.ResponseBody;
+import com.visionous.dms.service.*;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
@@ -28,25 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.visionous.dms.configuration.helpers.AccountUtil;
-import com.visionous.dms.configuration.helpers.DateUtil;
-import com.visionous.dms.configuration.helpers.DmsCore;
-import com.visionous.dms.event.OnCustomerAppointmentBookEvent;
-import com.visionous.dms.event.OnRegistrationCompleteEvent;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.Appointment;
-import com.visionous.dms.pojo.Customer;
-import com.visionous.dms.pojo.GlobalSettings;
-import com.visionous.dms.pojo.Personnel;
-import com.visionous.dms.pojo.Record;
-import com.visionous.dms.pojo.ServiceType;
-import com.visionous.dms.rest.response.ResponseBody;
-import com.visionous.dms.service.AccountService;
-import com.visionous.dms.service.AppointmentService;
-import com.visionous.dms.service.CustomerService;
-import com.visionous.dms.service.PersonnelService;
-import com.visionous.dms.service.RecordService;
-import com.visionous.dms.service.ServiceTypeService;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author delimeta
@@ -95,7 +84,7 @@ public class AppointmentRestController {
     		@RequestParam(name = "serviceId", required = false) Long serviceId,
     		@RequestParam(name = "appointmentEndDate", required = false) Date appointmentEndDate) { 
 
-        ResponseBody<Appointment> result = new ResponseBody<>();
+        ResponseBody<IaoAppointment> result = new ResponseBody<>();
         
         List<Appointment> anyAppointment = appointmentService.findByAppointmentDate(new Timestamp(appointmentDate.getTime()).toLocalDateTime());
         
@@ -108,37 +97,46 @@ public class AppointmentRestController {
         	result.setError("error");
         	result.setMessage(noAppointmentSet + " " + new SimpleDateFormat("dd-MM-yy hh:mm").format(appointmentDate));
         }else {
-        	Appointment newAppointment = new Appointment();
+        	IaoAppointment iaoAppointment = new IaoAppointment(new Appointment());
         	Optional<Personnel> personnel = personnelService.findById(personnelId);
         	Optional<Customer> customer = customerService.findById(customerId);
         	
         	if(personnel.isPresent() && customer.isPresent()) {
-        		newAppointment.setPersonnel(personnel.get());
-        		newAppointment.setCustomer(customer.get());
+
+				Optional<Account> accountPersonnel = accountService.findById(personnelId);
+				accountPersonnel.ifPresent(a -> iaoAppointment.setPersonnelAccount(a));
+        		iaoAppointment.setPersonnel(personnel.get());
+				iaoAppointment.setPersonnelId(personnel.get().getId());
+
+				Optional<Account> accountCustomer = accountService.findById(customerId);
+				accountCustomer.ifPresent(a -> iaoAppointment.setCustomerAccount(a));
+        		iaoAppointment.setCustomer(customer.get());
+				iaoAppointment.setCustomerId(customer.get().getId());
         	}
-        	newAppointment.setAddeddate(new Date());
-        	newAppointment.setAppointmentDate(new Timestamp(appointmentDate.getTime()).toLocalDateTime());
+        	iaoAppointment.setAddeddate(new Date());
+        	iaoAppointment.setAppointmentDate(new Timestamp(appointmentDate.getTime()).toLocalDateTime());
         	
         	if(serviceId != null) {
         		Optional<ServiceType> serviceSelected = serviceTypeService.findById(serviceId);
         		serviceSelected.ifPresent(selected -> {
-        			newAppointment.setServiceType(selected);
-        			newAppointment.setServiceTypeId(selected.getId());
+        			iaoAppointment.setServiceType(selected);
+        			iaoAppointment.setServiceTypeId(selected.getId());
         		});
         	}
         	
         	if(appointmentEndDate != null) {
-        		newAppointment.setAppointmentEndDate(
+        		iaoAppointment.setAppointmentEndDate(
         				new Timestamp(appointmentEndDate.getTime()).toLocalDateTime());
         	}else {
-        		Date endingDate = DateUtil.addMinutes(appointmentDate, AccountUtil.currentLoggedInBussines().getGlobalSettings().getAppointmentTimeSplit());
-        		newAppointment.setAppointmentEndDate(
+        		Date endingDate = DateUtil.addMinutes(appointmentDate, AccountUtil.currentLoggedInBusinessSettings().getAppointmentTimeSplit());
+        		iaoAppointment.setAppointmentEndDate(
         				new Timestamp(endingDate.getTime()).toLocalDateTime());
         	}
         	
-        	Appointment created = appointmentService.create(newAppointment);
+        	Appointment created = appointmentService.create(iaoAppointment.getAppointment());
+			iaoAppointment.setAppointment(created);
         	if(created.getId() != null) {
-        		result.addResult(created);
+        		result.addResult(iaoAppointment);
         		result.setError(success);
         		result.setMessage(appointmentset);
         	}else {
@@ -181,7 +179,7 @@ public class AppointmentRestController {
     		@RequestParam(name = "appointmentDate", required = false) Date appointmentDate,
     		@RequestParam(name = "appointmentEndDate", required = false) Date appointmentEndDate) { 
 
-        ResponseBody<Appointment> result = new ResponseBody<>();
+        ResponseBody<IaoAppointment> result = new ResponseBody<>();
         
         Optional<Appointment> selectedAppointment = appointmentService.findById(appointmentId);
         
@@ -194,7 +192,7 @@ public class AppointmentRestController {
         	result.setError("error");
         	result.setMessage(noAppointmentWithId + " " + appointmentId);
         }else {
-        	Appointment newAppointment = selectedAppointment.get();
+			IaoAppointment newAppointment = new IaoAppointment(selectedAppointment.get());
         	if(appointmentDate != null) {
         		newAppointment.setAppointmentDate(new Timestamp(appointmentDate.getTime()).toLocalDateTime());
         	}else {
@@ -220,6 +218,8 @@ public class AppointmentRestController {
         	if(customerId != null) {
         		Optional<Customer> customerSelected = customerService.findById(customerId);
         		customerSelected.ifPresent(customer -> {
+					Optional<Account> accountCustomer = accountService.findById(customerId);
+					accountCustomer.ifPresent(a -> newAppointment.setCustomerAccount(a));
         			newAppointment.setCustomer(customer);
         			newAppointment.setCustomerId(customer.getId());
         		});
@@ -227,17 +227,20 @@ public class AppointmentRestController {
         	
         	if(personnelId != null) {
         		Optional<Personnel> personnelSelected = personnelService.findById(personnelId);
-        		personnelSelected.ifPresent(customer -> {
-        			newAppointment.setPersonnel(customer);
-        			newAppointment.setPersonnelId(customer.getId());
+        		personnelSelected.ifPresent(personnel -> {
+					Optional<Account> accountPersonnel = accountService.findById(personnelId);
+					accountPersonnel.ifPresent(a -> newAppointment.setPersonnelAccount(a));
+        			newAppointment.setPersonnel(personnel);
+        			newAppointment.setPersonnelId(personnel.getId());
         		});
         	}
         	
         	newAppointment.setAddeddate(new Date());
         	
-        	Appointment created = appointmentService.create(newAppointment);
+        	Appointment created = appointmentService.create(newAppointment.getAppointment());
+			newAppointment.setAppointment(created);
         	if(created.getId() != null) {
-        		result.addResult(created);
+        		result.addResult(newAppointment);
         		result.setError(success);
         		result.setMessage(appointmentset);
         	}else {
@@ -319,7 +322,7 @@ public class AppointmentRestController {
 							endingDate = DateUtil.addDays(start, daysToAdd);
 						} 
 						
-						Integer records = recordService.countAllByBusinessIdAndPersonnelIdAndServicedateBetween(AccountUtil.currentLoggedInBussines().getId(), singlePersonnel.get().getId(), new Timestamp(startingDate.getTime()).toLocalDateTime(), 
+						Integer records = recordService.countByPersonnelIdAndServicedateBetween(singlePersonnel.get().getId(), new Timestamp(startingDate.getTime()).toLocalDateTime(),
 								new Timestamp(endingDate.getTime()).toLocalDateTime());
 
 						start = DateUtil.addDays(start, daysToAdd);
@@ -386,7 +389,7 @@ public class AppointmentRestController {
 				} 
 				
 				Integer revenueForPeriod = recordService.sumOfPersonnelReceiptsAndBusinessId(personnelId, new Timestamp(startingDate.getTime()).toLocalDateTime(), 
-						new Timestamp(endingDate.getTime()).toLocalDateTime(), AccountUtil.currentLoggedInBussines().getId());
+						new Timestamp(endingDate.getTime()).toLocalDateTime());
 				
 				revenueForPersonnel.add(revenueForPeriod != null ? revenueForPeriod : 0);
 
@@ -444,7 +447,7 @@ public class AppointmentRestController {
 						Date startingDate = setDayToBegginingOfPeriod(start, daysToAdd);
 						Date endingDate = setDayToEndingOfPeriod(start, daysToAdd);
 						
-						List<Appointment> appointmentsList = appointmentService.findAllByCustomerBusinessIdAndPersonnelIdAndBetweenDateRange(AccountUtil.currentLoggedInBussines().getId(), singlePersonnel.get().getId(), new Timestamp(startingDate.getTime()).toLocalDateTime(), new Timestamp(endingDate.getTime()).toLocalDateTime());
+						List<Appointment> appointmentsList = appointmentService.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(singlePersonnel.get().getId(), new Timestamp(startingDate.getTime()).toLocalDateTime(), new Timestamp(endingDate.getTime()).toLocalDateTime());
 						
 						start = DateUtil.addDays(start, daysToAdd);
 						recordsForPersonnel.add(appointmentsList.size());
@@ -466,10 +469,11 @@ public class AppointmentRestController {
 
         return ResponseEntity.ok(result);
     }
-	
+
 	/**
-	 * @param Date startDate
-	 * @param int daysToAdd
+	 *
+	 * @param start
+	 * @param daysToAdd
 	 * @return
 	 */
 	private Date setDayToBegginingOfPeriod(Date start,int daysToAdd) {
@@ -483,10 +487,11 @@ public class AppointmentRestController {
 		} 
 		return date;
 	}
-	
+
 	/**
-	 * @param Date startDate
-	 * @param int daysToAdd
+	 *
+	 * @param start
+	 * @param daysToAdd
 	 * @return
 	 */
 	private Date setDayToEndingOfPeriod(Date start,int daysToAdd) {
@@ -504,8 +509,8 @@ public class AppointmentRestController {
 	@GetMapping("/api/availableAppointments")
     public ResponseEntity<?> getSearchResultViaAjax(@RequestParam(name = "personnelId", required = true) Long personnelId) { 
         ResponseBody<Appointment> result = new ResponseBody<>();
-        
-        List<Appointment> appointments = appointmentService.findByBusinessIdAndPersonnelId(AccountUtil.currentLoggedInBussines().getId(), personnelId);
+        List<Account> accounts = accountService.findByBusinesses_IdAndIdIn(AccountUtil.currentLoggedInBussines().getId(), List.of(personnelId));
+        List<Appointment> appointments = appointmentService.findByPersonnelIdIn(accounts.stream().map(a -> a.getId()).collect(Collectors.toList()));
         
         if (appointments.isEmpty()) {
 			String messageNoUserFound = messageSource.getMessage("alert.noUserFound", null, LocaleContextHolder.getLocale());
@@ -524,7 +529,7 @@ public class AppointmentRestController {
     public ResponseEntity<?> getAutomaticAppointment() { 
         ResponseBody<Appointment> result = new ResponseBody<>();
         
-        int minSplit = AccountUtil.currentLoggedInBussines().getGlobalSettings().getAppointmentTimeSplit();
+        int minSplit = AccountUtil.currentLoggedInBusinessSettings().getAppointmentTimeSplit();
 
         Date today = new Date();
         Calendar todayCalendar = DateUtil.getCalendarFromDate(today);
@@ -532,7 +537,8 @@ public class AppointmentRestController {
         todayCalendar.set(Calendar.SECOND, 0);
         todayCalendar.set(Calendar.MILLISECOND, 0);
         
-        List<Personnel> allPersonnel = this.personnelService.findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_Name(true, true, "PERSONNEL");
+        List<Account> allAccount = this.accountService.findAllByEnabledAndActiveAndRoles_Name(true, true, "PERSONNEL");
+		List<Personnel> allPersonnel = this.personnelService.findByIdIn(allAccount.stream().map(a -> a.getId()).collect(Collectors.toList()));
 
     	Appointment autoAppointed = null;
     	boolean found = false;
@@ -584,8 +590,8 @@ public class AppointmentRestController {
     }
 	
 	private Date searchForNewDay(Date date) {
-        int startDay = AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessStartDay();
-        int endDay = AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEndDay();
+        int startDay = AccountUtil.currentLoggedInBusinessSettings().getBusinessStartDay();
+        int endDay = AccountUtil.currentLoggedInBusinessSettings().getBusinessEndDay();
                 
         Calendar calendar = DateUtil.getCalendarFromDate(date); 
         int todayDayNr = calendar.get(Calendar.DAY_OF_WEEK)-1;
@@ -600,11 +606,11 @@ public class AppointmentRestController {
 	
 	private Date nextAvailableBusinessAppointmentTime(Date date) {
 
-        int minSplit = AccountUtil.currentLoggedInBussines().getGlobalSettings().getAppointmentTimeSplit();
+        int minSplit = AccountUtil.currentLoggedInBusinessSettings().getAppointmentTimeSplit();
 
         Date today = date;        
-        Date startTime = DateUtil.getStartWorkingHr(AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessStartTime(), today);
-        Date endTime = DateUtil.getEndWorkingHr(AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessEndTime(), today);
+        Date startTime = DateUtil.getStartWorkingHr(AccountUtil.currentLoggedInBusinessSettings().getBusinessStartTime(), today);
+        Date endTime = DateUtil.getEndWorkingHr(AccountUtil.currentLoggedInBusinessSettings().getBusinessEndTime(), today);
                 
 		while(today.before(startTime) || today.after(endTime)) {
 
@@ -640,19 +646,27 @@ public class AppointmentRestController {
     		@RequestParam(name = "end", required = true) Date endRange) {
 		
         ResponseBody<Appointment> result = new ResponseBody<>();
-        List<Appointment> appointments = appointmentService.findAllByCustomerBusinessIdAndPersonnelIdAndBetweenDateRange(AccountUtil.currentLoggedInBussines().getId(), personnelId, new Timestamp(startRange.getTime()).toLocalDateTime(), new Timestamp(endRange.getTime()).toLocalDateTime());
 
-        if (appointments.isEmpty()) {
-			String messageNoUserFound = messageSource.getMessage("alert.noUpcomingAppointments", null, LocaleContextHolder.getLocale());
-            result.setMessage(messageNoUserFound); 
-        } else {
-			String messageSuccess = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
-            result.setMessage(messageSuccess);
-        }
-        result.setResult(appointments); 
-        
-        return ResponseEntity.ok(result);
+		Optional<Account> account = accountService.findById(personnelId);
 
+		if(account.isPresent()){
+			List<Appointment> appointments = appointmentService.findAllByPersonnelIdInAndBetweenDateRange(List.of(account.get().getId()), new Timestamp(startRange.getTime()).toLocalDateTime(), new Timestamp(endRange.getTime()).toLocalDateTime());
+
+			if (appointments.isEmpty()) {
+				String messageNoUserFound = messageSource.getMessage("alert.noUpcomingAppointments", null, LocaleContextHolder.getLocale());
+				result.setMessage(messageNoUserFound);
+			} else {
+				String messageSuccess = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
+				result.setMessage(messageSuccess);
+			}
+			result.setResult(appointments);
+			return ResponseEntity.ok(result);
+
+		}else{
+			var response = new ResponseBody<>();
+			response.setError("Cannot find personnel with id ["+ personnelId +"]");
+			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(response);
+		}
     }
 	
 	@GetMapping("/api/allAppointmentsByDateRange")
@@ -660,12 +674,16 @@ public class AppointmentRestController {
     		@RequestParam(name = "start", required = true) Date startRange,
     		@RequestParam(name = "end", required = true) Date endRange) {
 		
-        ResponseBody<Appointment> result = new ResponseBody<>();
+        ResponseBody<IaoAppointment> result = new ResponseBody<>();
         
         if(personnelId != null) {
         	return this.getAvailableAppointments(personnelId, startRange, endRange);
         }else {
-        	List<Appointment> appointments = appointmentService.findAllByBusinessIdAndBetweenDateRange(AccountUtil.currentLoggedInBussines().getId(), new Timestamp(startRange.getTime()).toLocalDateTime(), new Timestamp(endRange.getTime()).toLocalDateTime());
+			List<Account> personnelList = accountService.findAllByBusinessIdAndRoles_NameIn(AccountUtil.currentLoggedInBussines().getId(), List.of("ADMIN","PERSONNEL"));
+			List<Appointment> appointments = appointmentService.findAllByPersonnelIdInAndBetweenDateRange(
+					personnelList.stream().map(p->p.getId()).collect(Collectors.toList()),
+					new Timestamp(startRange.getTime()).toLocalDateTime(),
+					new Timestamp(endRange.getTime()).toLocalDateTime());
 
             if (appointments.isEmpty()) {
     			String messageNoUserFound = messageSource.getMessage("alert.noUpcomingAppointments", null, LocaleContextHolder.getLocale());
@@ -674,7 +692,22 @@ public class AppointmentRestController {
     			String messageSuccess = messageSource.getMessage("alert.success", null, LocaleContextHolder.getLocale());
                 result.setMessage(messageSuccess);
             }
-            result.setResult(appointments); 
+
+			List<IaoAppointment> iaoAppointments = appointments.stream().map(a -> {
+				IaoAppointment iao = new IaoAppointment(a);
+
+				Optional<Account> personnelAccount = accountService.findById(a.getPersonnelId());
+				personnelAccount.ifPresent(acc -> iao.setPersonnelAccount(acc));
+
+				Optional<Account> customerAccount = accountService.findById(a.getCustomerId());
+				customerAccount.ifPresent(acc -> iao.setCustomerAccount(acc));
+
+				return iao;
+			}).collect(Collectors.toList());
+
+
+
+            result.setResult(iaoAppointments);
             
             return ResponseEntity.ok(result);
         }
@@ -684,13 +717,15 @@ public class AppointmentRestController {
 	@GetMapping("/api/getAvailablePersonnel")
     public ResponseEntity<?> getAvailablePersonnel() {
 		
-        ResponseBody<Personnel> result = new ResponseBody<>();
+        ResponseBody<Account> result = new ResponseBody<>();
         List<String> roles = new ArrayList<>();
         roles.add("PERSONNEL");
         roles.add("ADMIN");
-        List<Personnel> personnel = personnelService.findAllByAccount_EnabledAndAccount_ActiveAndAccount_Roles_NameInAndAccount_Businesses_Id(true, true, roles, AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
+        List<Account> accounts = accountService.findAllByAccountBusinessIdAndActiveAndEnabledAndRoles_NameIn(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId(), true, true, roles);
+		List<Personnel> personnel = personnelService.findByIdIn(accounts.stream().map(a->a.getId()).collect(Collectors.toList()));
+
         if(personnel.size() != 0) {
-        	result.setResult(personnel);
+        	result.setResult(accounts);
         }
 
         return ResponseEntity.ok(result);
@@ -699,11 +734,12 @@ public class AppointmentRestController {
 	@GetMapping("/api/getAvailableCustomers")
     public ResponseEntity<?> getAvailableCustomer() {
 		
-        ResponseBody<Customer> result = new ResponseBody<>();
+        ResponseBody<Account> result = new ResponseBody<>();
 
-        List<Customer> customer = customerService.findAllByAccount_Businesses_Id(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId());
+		List<Account> accountList = accountService.findAllByBusinessIdAndRoles_Name(AccountUtil.currentLoggedInUser().getCurrentBusiness().getId(), "CUSTOMER");
+        List<Customer> customer = customerService.findAllByIdIn(accountList.stream().map(a -> a.getId()).collect(Collectors.toList()));
         if(customer.size() != 0) {
-        	result.setResult(customer);
+        	result.setResult(accountList);
         }
 
         return ResponseEntity.ok(result);
@@ -718,7 +754,9 @@ public class AppointmentRestController {
 
 		Optional<Account> acc = accountService.findById(accountId);
 		acc.ifPresent(account->{
-			if((account.getPersonnel() != null) || (account.getCustomer() != null)){
+			Optional<Customer> customer = customerService.findById(account.getId());
+			Optional<Personnel> personnel = personnelService.findById(account.getId());
+			if((personnel.isPresent()) || (customer.isPresent())){
 				BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 				if(encoder.matches(oldPassword, account.getPassword())) {
 					String pass = new BCryptPasswordEncoder().encode(newPassword);					
@@ -747,16 +785,14 @@ public class AppointmentRestController {
 
 		Optional<Account> acc = accountService.findById(accountId);
 		acc.ifPresent(account->{
-			
-			if((account.getPersonnel() != null) || (account.getCustomer() != null)){
-				
+			Optional<Customer> customer = customerService.findById(account.getId());
+			Optional<Personnel> personnel = personnelService.findById(account.getId());
+			if((personnel.isPresent()) || (customer.isPresent())){
 				Date start = startDate;
 				Date end = DateUtil.addMinutes(start, 30);
 				
 				List<Appointment> all = appointmentService.findByPersonnelIdAndAppointmentDateBetweenOrderByAppointmentDateAsc(accountId, 
 						new Timestamp(start.getTime()).toLocalDateTime(), new Timestamp(end.getTime()).toLocalDateTime());
-				
-				all.stream().forEach(appointment -> appointment.getPersonnel().getAccount().setPassword(""));
 
 				if(all.isEmpty()) {
 			        String messageError = messageSource.getMessage("alert.error", null, LocaleContextHolder.getLocale());
@@ -791,6 +827,22 @@ public class AppointmentRestController {
 			result.setMessage("Subscription expired! from Mapping");
 		}
 		return ResponseEntity.ok(result);
+	}
+
+	@GetMapping("/test/email")
+	public ResponseEntity<?> sendTestEmail(){
+		String appUrl = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getContextPath();
+		Account account = new Account("klevindelimeta@gmail.com", "password", List.of(new Role()), true, true);
+		Business business = new Business();
+		business.setAccounts(Set.of(account));
+		business.setEnabled(true);
+		business.setBusinessUrl("url.com");
+		business.setName("New business");
+		business.setSubdomainUri("testsubdomainurl");
+
+		account.setEmail("klevindelimeta@gmail.com");
+		eventPublisher.publishEvent(new OnBusinessConfirmationEvent(account, business, LocaleContextHolder.getLocale(), appUrl));
+		return null;
 	}
 	
 	@PostMapping("/api/personnel/sendConfirmation")

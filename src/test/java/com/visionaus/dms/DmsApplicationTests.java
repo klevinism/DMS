@@ -1,24 +1,16 @@
 package com.visionaus.dms;
 
-import java.util.Objects;
-import java.util.regex.Pattern;
+import com.o2dent.lib.accounts.helpers.validators.UrlValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
-import javax.validation.ConstraintValidatorContext;
-
-import org.assertj.core.api.AssertJProxySetup;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber.CountryCodeSource;
-import com.visionous.dms.configuration.validators.UrlValidator;
-import com.visionous.dms.repository.AccountRepository;
 
 class DmsApplicationTests {
 //	@Autowired
@@ -54,7 +46,7 @@ class DmsApplicationTests {
 	@Test
 	public void testEmailValidation() {
 		ConstraintValidatorContext cvc = Mockito.mock(ConstraintValidatorContext.class);
-		Assert.isTrue(new UrlValidator().isValid("google.com", cvc));
+		Assert.isTrue(new UrlValidator().isValid("google.com", cvc), "true");
 	}
 
 }

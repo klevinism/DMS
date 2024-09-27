@@ -1,32 +1,19 @@
-/**
- * 
- */
 package com.visionous.dms.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.o2dent.lib.accounts.entity.Account;
+import com.visionous.dms.configuration.helpers.DmsCore;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapsId;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.validation.Valid;
-
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.visionous.dms.configuration.helpers.DmsCore;
+import java.util.Set;
 
 /**
  * @author delimeta
@@ -41,18 +28,10 @@ public class Customer implements Serializable{
 	private static final long serialVersionUID = DmsCore.SERIAL_VERSION_UID;
 	
 	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CUSTOMER_SEQ2")
-    @SequenceGenerator(sequenceName = "customer_seq2", allocationSize = 1, name = "CUSTOMER_SEQ2")
     private Long id;
 	
 	@DateTimeFormat(iso = ISO.DATE)
 	private Date registerdate;
-
-	@Valid
-	@MapsId
-	@OneToOne(mappedBy = "customer", optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name="id")
-	private Account account;
     
 	@JsonIgnore
     @OneToOne(mappedBy="customer")
@@ -64,7 +43,7 @@ public class Customer implements Serializable{
     
 	@JsonIgnore
     @OneToMany(mappedBy="customer")
-    private List<Appointment> appointment;
+    private Set<Appointment> appointment;
     
 	/**
 	 * @return the id
@@ -85,20 +64,6 @@ public class Customer implements Serializable{
 	 */
 	public Date getRegisterdate() {
 		return registerdate;
-	}
-
-	/**
-	 * @return the account
-	 */
-	public Account getAccount() {
-		return account;
-	}
-
-	/**
-	 * @param account the account to set
-	 */
-	public void setAccount(Account account) {
-		this.account = account;
 	}
 
 	/**
@@ -151,14 +116,14 @@ public class Customer implements Serializable{
 	/**
 	 * @return the appointment
 	 */
-	public List<Appointment> getAppointment() {
+	public Set<Appointment> getAppointment() {
 		return appointment;
 	}
 
 	/**
 	 * @param appointment the appointment to set
 	 */
-	public void setAppointment(List<Appointment> appointment) {
+	public void setAppointment(Set<Appointment> appointment) {
 		this.appointment = appointment;
 	}
 

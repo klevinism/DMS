@@ -1,12 +1,10 @@
-/**
- * 
- */
 package com.visionous.dms.model;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import com.visionous.dms.pojo.IaoBusiness_GlobalSettings;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +62,7 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 					super.setControllerParam("viewType", super.getAllControllerParams().get("action").toString().toLowerCase());
 				}else {
 					persistModelAttributes(
-						(GlobalSettings) super.getAllControllerParams().get("modelAttribute"), 
+						(IaoBusiness_GlobalSettings) super.getAllControllerParams().get("modelAttribute"),
 						super.getAllControllerParams().get("action").toString().toLowerCase()
 						);					
 				}
@@ -80,28 +78,31 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 	/**
 	 * 
 	 */
-	private void persistModelAttributes(GlobalSettings settings, String action) {
-		GlobalSettings globalSetting = settings;
+	private void persistModelAttributes(IaoBusiness_GlobalSettings settings, String action) {
+		IaoBusiness_GlobalSettings iaoBusinessGlobalSettings = settings;
 		
 		if(action.equals(Actions.DELETE.getValue())) {
 		}else if(action.equals(Actions.EDIT.getValue()) ) {
 			
-			if(globalSetting.getId() != null) {
+			if(iaoBusinessGlobalSettings.getGlobalSettings().getId() != null) {
 				if(super.getAllControllerParams().containsKey("businessImage")) {
 					try {
 						String imageName = null;
 						if((imageName = uploadBusinessImage()) != null) {
-							globalSetting.setBusinessImage(imageName);
+							iaoBusinessGlobalSettings.getGlobalSettings().setBusinessImage(imageName);
 						}else {
-							globalSetting.setBusinessImage(AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
+							iaoBusinessGlobalSettings.getGlobalSettings().setBusinessImage(AccountUtil.currentLoggedInBusinessSettings().getBusinessImage());
 						}
 					} catch (IOException e) {
 							e.printStackTrace();
 					}						
 				}
 
-				GlobalSettings newSetting = globalSettingsService.update(globalSetting);
-				AccountUtil.currentLoggedInBussines().setGlobalSettings(newSetting);
+				iaoBusinessGlobalSettings.getGlobalSettings().setBusinessId(AccountUtil.currentLoggedInBussines().getId());
+				iaoBusinessGlobalSettings.getGlobalSettings().setSubscriptionHistorySet(AccountUtil.currentLoggedInBusinessSettings().getSubscriptionHistorySet());
+
+				GlobalSettings newSetting = globalSettingsService.update(iaoBusinessGlobalSettings.getGlobalSettings());
+				AccountUtil.currentLoggedInUser().setCurrentBusinessSettings(newSetting);
 			}
 			
 		}else if(action.equals(Actions.CREATE.getValue())) {
@@ -127,9 +128,10 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 		}else if (viewType.equals(Actions.EDIT.getValue())) {
 			if(!super.hasResultBindingError()) {
 				Optional<GlobalSettings> globalSettings = globalSettingsService.findByBusinessId(AccountUtil.currentLoggedInBussines().getId());
-				
 				globalSettings.ifPresent(setting -> {
-					super.addModelCollectionToView("globalSettings", setting);
+					IaoBusiness_GlobalSettings iaoBusinessGlobalSettings = new IaoBusiness_GlobalSettings();
+					iaoBusinessGlobalSettings.setGlobalSettings(setting);
+					super.addModelCollectionToView("iaoBusinessGlobalSettings", iaoBusinessGlobalSettings);
 					List<ServiceType> serviceTypes = serviceTypeService.findAllByGlobalSettingsId(setting.getId());
 					if(!serviceTypes.isEmpty()) {
 						super.addModelCollectionToView("services", serviceTypes);
@@ -158,9 +160,9 @@ public class GlobalSettingsModelController extends ModelControllerImpl{
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBusinessSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription());
 
 	}
 	

@@ -6,6 +6,7 @@ package com.visionous.dms.rest;
 import java.util.List;
 import java.util.Optional;
 
+import com.visionous.dms.pojo.GlobalSettings;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class ServiceTypeRestController {
 
         ResponseBody<ServiceType> result = new ResponseBody<>();
         ServiceType service = new ServiceType(serviceTypeName);
-        service.setGlobalSettings(AccountUtil.currentLoggedInBussines().getGlobalSettings());
+        service.setGlobalSettings(AccountUtil.currentLoggedInBusinessSettings());
         service.setPrice(serviceTypePrice);
         
         ServiceType savedService = serviceTypeService.create(service);
@@ -62,7 +63,8 @@ public class ServiceTypeRestController {
     }
 
 	@PostMapping("/api/serviceType/edit")
-    public ResponseEntity<?> editService(@RequestParam(name = "id", required = true) Long currentServiceId, 
+    public ResponseEntity<?> editService(
+            @RequestParam(name = "id", required = true) Long currentServiceId,
     		@RequestParam(name = "newName", required = true) String newName,
     		@RequestParam(name = "price", required = true) int serviceTypePrice) { 
 
@@ -72,7 +74,7 @@ public class ServiceTypeRestController {
         
         ResponseBody<ServiceType> result = new ResponseBody<>();
         
-        Optional<ServiceType> oldService = serviceTypeService.findByIdAndGlobalSettingsId(currentServiceId, AccountUtil.currentLoggedInBussines().getGlobalSettings().getId());
+        Optional<ServiceType> oldService = serviceTypeService.findByIdAndGlobalSettingsId(currentServiceId, AccountUtil.currentLoggedInBusinessSettings().getId());
         
         if(oldService.isPresent()) {
         	oldService.get().setName(newName);
@@ -125,7 +127,7 @@ public class ServiceTypeRestController {
 
         ResponseBody<ServiceType> result = new ResponseBody<>();
         
-        List<ServiceType> allServices = serviceTypeService.findAllByGlobalSettingsId(AccountUtil.currentLoggedInBussines().getGlobalSettings().getId());
+        List<ServiceType> allServices = serviceTypeService.findAllByGlobalSettingsId(AccountUtil.currentLoggedInBusinessSettings().getId());
         
         if(!allServices.isEmpty()) {
 			result.setError(success);
@@ -145,7 +147,7 @@ public class ServiceTypeRestController {
         String error = messageSource.getMessage("alert.errorGeneric", null, LocaleContextHolder.getLocale());
 
         ResponseBody<ServiceType> result = new ResponseBody<>();
-        Optional<ServiceType> selectedService = serviceTypeService.findByIdAndGlobalSettingsId(selectedServiceId, AccountUtil.currentLoggedInBussines().getGlobalSettings().getId());
+        Optional<ServiceType> selectedService = serviceTypeService.findByIdAndGlobalSettingsId(selectedServiceId, AccountUtil.currentLoggedInBusinessSettings().getId());
         
         if(selectedService.isPresent()) {
 			result.setError(success);

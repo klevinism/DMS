@@ -3,12 +3,11 @@
  */
 package com.visionous.dms.event.listener;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.mail.internet.MimeMessage;
-
+import com.o2dent.lib.accounts.entity.Account;
+import com.visionous.dms.configuration.helpers.LandingPages;
+import com.visionous.dms.event.OnResetPasswordEvent;
+import com.visionous.dms.pojo.Reset;
+import com.visionous.dms.service.ResetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -17,13 +16,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import com.visionous.dms.configuration.helpers.LandingPages;
-import com.visionous.dms.event.OnResetPasswordEvent;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.Reset;
-import com.visionous.dms.service.ResetService;
+import jakarta.mail.internet.MimeMessage;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author delimeta

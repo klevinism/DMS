@@ -147,7 +147,7 @@
 										<b>[[#{SubscriptionName}]]</b>
                                     </td>
                                     <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 20px 30px;">
-										[[${business.activeSubscription.name}]]
+										[[${activeSubscription.name}]]
                                     </td>
                                 </tr>
                                 <tr>
@@ -171,7 +171,7 @@
 										<b>[[#{DateOfPurchase}]]</b>
                                     </td>
                                     <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 20px 30px;" 
-                                    	th:text="${#temporals.format(business.activeSubscription.addeddate, 'HH:mm, dd-MM-yyyy')}">
+                                    	th:text="${#temporals.format(activeSubscription.addeddate, 'HH:mm, dd-MM-yyyy')}">
                                     </td>
                                 </tr>
                                 <tr>
@@ -195,7 +195,7 @@
 										<b>[[#{Price}]]</b>
                                     </td>
                                     <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 20px 30px;">
-										[[${business.activeSubscription.price}]] ALL
+										[[${activeSubscription.price}]] ALL
                                     </td>
                                 </tr>
                                 <tr>

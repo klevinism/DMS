@@ -1,32 +1,18 @@
-/**
- * 
- */
 package com.visionous.dms.pojo;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
+import com.visionous.dms.configuration.helpers.annotations.ValidEmail;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.visionous.dms.configuration.helpers.DmsCore;
-import com.visionous.dms.configuration.helpers.annotations.ValidEmail;
 
 /**
  * @author delimeta
@@ -69,22 +55,16 @@ public class GlobalSettings implements Serializable{
 	@Column(name = "appointmentsTimesSplit")
 	private Integer appointmentTimeSplit;
 	
-	@Column(name = "business_id", updatable = false, insertable = false)
+	@Column(name = "business_id")
 	private Long businessId;
-	
-	@JsonIgnore
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH )
-	@JoinColumn(name = "business_id")
-	private Business business;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "globalSettingsId", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@PrimaryKeyJoinColumn
-	private Set<SubscriptionHistory> subscriptions;
-	
-    @OneToMany(mappedBy = "globalSettingsId", fetch = FetchType.EAGER)
-    private Set<ServiceType> serviceType;
-    
+	private Set<SubscriptionHistory> subscriptionHistorySet;
+
+	@OneToMany(mappedBy = "globalSettingsId", fetch = FetchType.EAGER)
+	private Set<ServiceType> serviceType;
 	/**
 	 * 
 	 */
@@ -317,45 +297,34 @@ public class GlobalSettings implements Serializable{
 	}
 
 	/**
-	 * @return business Business
-	 */
-	public Business getBusiness() {
-		return business;
-	}
-
-	/**
-	 * @param business Business
-	 */
-	public void setBusiness(Business business) {
-		this.business = business;
-	}
-
-	/**
 	 * @return the subscriptions
 	 */
-	public Set<SubscriptionHistory> getSubscriptions() {
-		return subscriptions;
+	public Set<SubscriptionHistory> getSubscriptionHistorySet() {
+		return subscriptionHistorySet;
 	}
 
 	/**
-	 * @param subscriptions the subscriptions to set
+	 * @param subscriptionHistorySet the subscriptions to set
 	 */
-	public void setSubscriptions(Set<SubscriptionHistory> subscriptions) {
-		this.subscriptions = subscriptions;
+	public void setSubscriptionHistorySet(Set<SubscriptionHistory> subscriptionHistorySet) {
+		this.subscriptionHistorySet = subscriptionHistorySet;
 	}
 
 	/**
 	 * @return
 	 */
-	public Set<ServiceType> getServiceType() {
-		return serviceType;
-	}
+	@JsonIgnore
+	public Subscription getActiveSubscription() {
+		Optional<SubscriptionHistory> subscriptionHistory = this.getSubscriptionHistorySet()
+				.stream()
+				.filter(subscription -> subscription.isActive()
+						&& subscription.getSubscriptionEndDate().isAfter(LocalDateTime.now()))
+				.findFirst();
 
-	/**
-	 * @param serviceType
-	 */
-	public void setServiceType(Set<ServiceType> serviceType) {
-		this.serviceType = serviceType;
+		if(subscriptionHistory.isPresent()) {
+			return subscriptionHistory.get().getSubscription();
+		}else {
+			return null;
+		}
 	}
-
 }

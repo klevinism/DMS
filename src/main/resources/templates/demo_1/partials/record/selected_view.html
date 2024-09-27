@@ -1,7 +1,7 @@
 <div class="row" th:fragment="view">
             				<div class=" ml-lg-1">
 						<div class="d-flex justify-content-between">
-	                         <h4 class="card-title">[[#{DentalRecord}]] [[*{id}]] [[#{For}]] [[*{history.customer.account.name}]], [[*{history.customer.account.surname}]]</h4>
+	                         <h4 class="card-title">[[#{DentalRecord}]] [[*{id}]] [[#{For}]] [[${account.name}]], [[${account.surname}]]</h4>
 	                         	
                    		</div> 
                    		</div>

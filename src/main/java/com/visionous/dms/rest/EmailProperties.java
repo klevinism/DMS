@@ -20,7 +20,7 @@ public class EmailProperties {
     private String protocol;
     private String defaultEncoding;
     @Autowired
-    private MailConfigurations mailConfigurations;
+    private MailConfigurations properties;
 
     public String getHost() {
         return host;
@@ -70,22 +70,22 @@ public class EmailProperties {
         this.defaultEncoding = defaultEncoding;
     }
 
-    public MailConfigurations getMailConfigurations() {
-        return mailConfigurations;
+    public MailConfigurations getProperties() {
+        return properties;
     }
 
-    public void setMailConfigurations(MailConfigurations mailConfigurations) {
-        this.mailConfigurations = mailConfigurations;
+    public void setProperties(MailConfigurations properties) {
+        this.properties = properties;
     }
 
     public Properties getAdditionalMailProperties(){
         Properties props = new Properties();
-        props.put("mail.smtp.from", mailConfigurations.getFrom());
-        props.put("mail.smtp.auth", mailConfigurations.getAuth());
-        props.put("mail.smtp.socketFactory.port", mailConfigurations.getSocketFactoryPort());
-        props.put("mail.smtp.ssl.enabled", mailConfigurations.getEnableSsl());
-        props.put("mail.smtp.starttls.enable", mailConfigurations.getEnableStartTls());
-        props.put("mail.smtp.starttls.required", mailConfigurations.getRequiredStartTls());
+        props.put("mail.smtp.from", properties.getFrom());
+        props.put("mail.smtp.auth", properties.getAuth());
+        props.put("mail.smtp.socketFactory.port", properties.getSocketFactoryPort());
+        props.put("mail.smtp.ssl.enabled", properties.getEnableSsl());
+        props.put("mail.smtp.starttls.enable", properties.getEnableStartTls());
+        props.put("mail.smtp.starttls.required", properties.getRequiredStartTls());
         return props;
     }
 }

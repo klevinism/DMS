@@ -45,7 +45,10 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 	private static String currentPage = LandingPages.QUESTIONNAIRE.value();
 
 	/**
-	 * @param personnelRepository
+	 *
+	 * @param questionnaireFormRepository
+	 * @param questionnaireService
+	 * @param customerService
 	 */
 	@Autowired
 	public QuestionnaireModelController(QuestionnaireFormRepository questionnaireFormRepository,
@@ -182,9 +185,9 @@ public class QuestionnaireModelController extends ModelControllerImpl{
 	
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBusinessSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription());
 
 	}
 	

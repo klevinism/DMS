@@ -29,7 +29,7 @@
             <!-- Page Title Header Ends-->
             <div class="row">
               <div class="col-md-8 ">
-               <div class="card"> 
+               <div class="card">
               		<div class="card-body"  th:with="recordUrl = 'demo_1/partials/record/selected_'+${viewType}+' :: '+ ${viewType}">
 		              	<form th:action="@{/admin/history}" th:object="${selectedRecord}" method="post" >
 		              		<section th:replace="__${recordUrl}__">

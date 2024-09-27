@@ -1,18 +1,14 @@
-/**
- * 
- */
 package com.visionous.dms.event.listener;
 
+import java.nio.charset.Charset;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
+import com.o2dent.lib.accounts.entity.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,11 +17,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import com.visionous.dms.configuration.helpers.LandingPages;
 import com.visionous.dms.event.OnRegistrationCompleteEvent;
-import com.visionous.dms.pojo.Account;
 import com.visionous.dms.pojo.Verification;
 import com.visionous.dms.service.VerificationService;
 
@@ -39,9 +34,12 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     private SpringTemplateEngine thymeleafTemplateEngine;
     private VerificationService verificationService;
     private JavaMailSender mailSender;
+
 	/**
-	 * @param verificationRepository
-	 * @param messages
+	 *
+	 * @param verificationService
+	 * @param mailSender
+	 * @param thymeleafTemplateEngine
 	 */
 	@Autowired
 	public RegistrationListener(VerificationService verificationService, 
@@ -51,9 +49,10 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 		this.verificationService = verificationService;
 		this.thymeleafTemplateEngine = thymeleafTemplateEngine;
 	}
-	
+
 	/**
-	 * @param OnRegistrationCompleteEvent event
+	 *
+	 * @param event
 	 */
 	@Override
 	public void onApplicationEvent(OnRegistrationCompleteEvent event) {
@@ -101,11 +100,10 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 	    String htmlBody = thymeleafTemplateEngine.process(emailTemplatePath, thymeleafContext);
 	     
 	    MimeMessage mailMessage = mailSender.createMimeMessage();
-	    
     	mailMessage.setSubject("Registration Confirmation", "UTF-8");
     	
     	MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true, "UTF-8");
-    	helper.setTo(recipientAddress);
+		helper.setTo(recipientAddress);
         helper.setText(htmlBody, true);
         	
         

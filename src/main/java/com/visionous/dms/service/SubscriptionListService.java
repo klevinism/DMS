@@ -44,7 +44,7 @@ public class SubscriptionListService implements ISubscriptionListService {
 
 	@Override
 	public List<Subscription> findAllByBusinessIdOrderedByIdAsc(Long businessId) {
-		return this.subscriptionListRepository.findAllBySubscriptionHistory_Business_IdOrderByIdAsc(businessId);
+		return this.subscriptionListRepository.findAllBySubscriptionHistory_BusinessIdOrderByIdAsc(businessId);
 	}
 
 	@Override

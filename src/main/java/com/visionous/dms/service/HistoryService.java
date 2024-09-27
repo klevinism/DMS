@@ -43,9 +43,11 @@ public class HistoryService implements IHistoryService{
 	public History create(History history){
 		return this.historyRepository.saveAndFlush(history);
 	}
-	
+
 	/**
-	 * @param newHistory
+	 *
+	 * @param history
+	 * @return
 	 */
 	@Override
 	public History createNewHistory(History history) {

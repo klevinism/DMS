@@ -1,8 +1,12 @@
 package com.visionous.dms.event.listener;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import com.visionous.dms.configuration.helpers.AccountUtil;
+import com.visionous.dms.pojo.GlobalSettings;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.entity.Business;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
@@ -10,11 +14,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import com.visionous.dms.event.OnSubscriptionConfirmationEvent;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.Business;
 
 @Component
 public class SubscriptionConfirmationListener implements ApplicationListener<OnSubscriptionConfirmationEvent>{
@@ -22,10 +24,12 @@ public class SubscriptionConfirmationListener implements ApplicationListener<OnS
     private SpringTemplateEngine thymeleafTemplateEngine;
     private JavaMailSender mailSender;
 	private MessageSource messageSource;
-    
+
 	/**
-	 * @param verificationRepository
-	 * @param messages
+	 *
+	 * @param mailSender
+	 * @param thymeleafTemplateEngine
+	 * @param messageSource
 	 */
 	@Autowired
 	public SubscriptionConfirmationListener(JavaMailSender mailSender, SpringTemplateEngine thymeleafTemplateEngine,
@@ -35,9 +39,10 @@ public class SubscriptionConfirmationListener implements ApplicationListener<OnS
 		this.messageSource = messageSource;
 		this.thymeleafTemplateEngine = thymeleafTemplateEngine;
 	}
-	
+
 	/**
-	 * @param OnRegistrationCompleteEvent event
+	 *
+	 * @param event
 	 */
 	@Override
 	public void onApplicationEvent(OnSubscriptionConfirmationEvent event) {
@@ -59,13 +64,16 @@ public class SubscriptionConfirmationListener implements ApplicationListener<OnS
 		String emailTemplatePath = "demo_1/partials/emails/subscriptionConfirmation.html";
         Account account = event.getAccount();
         Business business = event.getBusiness();
+		GlobalSettings settings = event.getGlobalSettings();
         String recipientAddress = account.getEmail();
 
         String emailSubscriptionConfirmation = messageSource.getMessage("email.subject.subscriptionConfirmation", null, event.getLocale());
 
 		thymeleafContext.setVariable("account", account);
-
 		thymeleafContext.setVariable("business", business);
+		thymeleafContext.setVariable("activeSubscription", settings.getActiveSubscription());
+
+		AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription();
 	    
 	    String htmlBody = thymeleafTemplateEngine.process(emailTemplatePath, thymeleafContext);
 	     

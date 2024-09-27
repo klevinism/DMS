@@ -3,17 +3,19 @@
  */
 package com.visionous.dms.configuration;
 
-import java.util.Locale;
+import com.o2dent.lib.accounts.Configurations;
 import com.visionous.dms.rest.EmailProperties;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.mail.Authenticator;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.annotation.Order;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -23,9 +25,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
-import javax.mail.Authenticator;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
+import java.util.Locale;
+
 
 /**
  * @author delimeta
@@ -33,13 +34,15 @@ import javax.mail.Session;
  */
 @Configuration
 @EnableWebMvc
-public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
+@Import(Configurations.class)
+@ComponentScan(basePackages = { "com.o2dent.*" })
+@EntityScan("com.*")
+public class DmsMvcConfigurationAdapter implements WebMvcConfigurer {
 	private SubscriptionInterceptor subscriptionInterceptor;
 	
 	/**
 	 * 
 	 */
-	@Autowired
 	public DmsMvcConfigurationAdapter(SubscriptionInterceptor subscriptionInterceptor) {
 		this.subscriptionInterceptor = subscriptionInterceptor;
 	}
@@ -60,12 +63,8 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
 	}
 
 	@Override
-	public Validator getValidator() {
-	     return validator();
-	}
-	
-	@Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    @Lazy
+    public void addResourceHandlers(@Lazy ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/static/assets/");
         registry.addResourceHandler("/resources/records/img/**").addResourceLocations("file:tmp/records/");
         registry.addResourceHandler("/resources/personnel/img/**").addResourceLocations("file:tmp/personnel/");
@@ -79,7 +78,7 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
         resolver.setDefaultLocale(Locale.US);
         resolver.setCookieName("myI18N_cookie");
         return resolver;
-    } 
+    }
 
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
@@ -87,8 +86,7 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
         lci.setParamName("lang");
         return lci;
     }
-    
-    
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor());
@@ -96,27 +94,28 @@ public class DmsMvcConfigurationAdapter implements WebMvcConfigurer  {
     }
 
 
-    @RefreshScope
-    @Bean
-    public JavaMailSender javaMailSender(EmailProperties properties) {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setUsername(properties.getUsername());
-        mailSender.setPassword(properties.getPassword());
-        mailSender.setHost(properties.getHost());
-        mailSender.setPort(Integer.parseInt(properties.getPort()));
-        mailSender.setProtocol(properties.getProtocol());
-        mailSender.setDefaultEncoding(properties.getDefaultEncoding());
-        mailSender.setJavaMailProperties(properties.getAdditionalMailProperties());
 
-        Session session = Session.getInstance(mailSender.getJavaMailProperties(), new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(mailSender.getUsername(), mailSender.getPassword());
-            }
-        });
-
-        mailSender.setSession(session);
-        return mailSender;
-    }
+//    @RefreshScope
+//    @Bean
+//    public JavaMailSender javaMailSender(EmailProperties properties) {
+//        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+//        mailSender.setUsername(properties.getUsername());
+//        mailSender.setPassword(properties.getPassword());
+//        mailSender.setHost(properties.getHost());
+//        mailSender.setPort(Integer.parseInt(properties.getPort()));
+//        mailSender.setProtocol(properties.getProtocol());
+//        mailSender.setDefaultEncoding(properties.getDefaultEncoding());
+//        mailSender.setJavaMailProperties(properties.getAdditionalMailProperties());
+//
+//        Session session = Session.getInstance(mailSender.getJavaMailProperties(), new Authenticator() {
+//            @Override
+//            protected PasswordAuthentication getPasswordAuthentication() {
+//                return new PasswordAuthentication(mailSender.getUsername(), mailSender.getPassword());
+//            }
+//        });
+//
+//        mailSender.setSession(session);
+//        return mailSender;
+//    }
 
 }

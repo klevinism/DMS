@@ -4,7 +4,11 @@
 package com.visionous.dms.controller;
 
 import java.util.Objects;
+import java.util.Optional;
 
+import com.visionous.dms.pojo.GlobalSettings;
+import com.visionous.dms.repository.GlobalSettingsRepository;
+import com.visionous.dms.service.GlobalSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,15 +27,18 @@ import com.visionous.dms.model.HomeModelController;
 @Controller
 @RequestMapping("/home")
 public class HomeModelViewController {
-	
-	private HomeModelController homeModelController;
-	
+	private final HomeModelController homeModelController;
+	private final GlobalSettingsService globalSettingsService;
+
 	/**
-	 * 
+	 *
+	 * @param homeModelController
+	 * @param globalSettingsService
 	 */
 	@Autowired
-	public HomeModelViewController(HomeModelController homeModelController) {
+	public HomeModelViewController(HomeModelController homeModelController, GlobalSettingsService globalSettingsService) {
 		this.homeModelController = homeModelController;
+		this.globalSettingsService = globalSettingsService;
 	}
 	
 	/**
@@ -42,17 +49,14 @@ public class HomeModelViewController {
 	public String homeDefault(Model model) {
 		
 		if(Objects.isNull(AccountUtil.currentLoggedInBussines())) {
-			return "redirect:/business";
+			return "redirect:/business/create";
 		}
-		
+
 		homeModelController.init()
 			.addControllerParam("viewType", Actions.VIEW)
 			.setViewModel(model)
 			.run(); // GetValuesForView
-		
-		
+
 		return "demo_1/index";
 	}
-	
-	
 }

@@ -3,21 +3,22 @@
  */
 package com.visionous.dms.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.persistence.AccountService;
+import com.visionous.dms.configuration.helpers.AccountUtil;
+import com.visionous.dms.configuration.helpers.Actions;
+import com.visionous.dms.configuration.helpers.LandingPages;
+import com.visionous.dms.pojo.GlobalSettings;
+import com.visionous.dms.pojo.ServiceType;
+import com.visionous.dms.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.visionous.dms.configuration.helpers.AccountUtil;
-import com.visionous.dms.configuration.helpers.Actions;
-import com.visionous.dms.configuration.helpers.LandingPages;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.ServiceType;
-import com.visionous.dms.service.AppointmentService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author delimeta
@@ -28,12 +29,16 @@ public class ScheduleModelController extends ModelControllerImpl{
 	private static String currentPage = LandingPages.AGENDA.value();
 	
 	private AppointmentService appointmentService;
+
+	private AccountService accountService;
+
 	/**
 	 * 
 	 */
 	@Autowired
-	public ScheduleModelController(AppointmentService appointmentService) {
+	public ScheduleModelController(AppointmentService appointmentService, AccountService accountService) {
 		this.appointmentService = appointmentService;
+		this.accountService = accountService;
 	}
 	
 	/**
@@ -85,9 +90,13 @@ public class ScheduleModelController extends ModelControllerImpl{
 		}else if(viewType.equals(Actions.EDIT.getValue())) {
 			
 		}else if(viewType.equals(Actions.VIEW.getValue())) {
+
+			List<Account> personnelIds = accountService.findAllByBusinessIdAndRoles_NameIn(
+					AccountUtil.currentLoggedInBussines().getId(), List.of("ADMIN","PERSONNEL"));
+
 			List<Object[]> mostUsedFromServiceType = appointmentService
-					.findTopAppointmentsByMostUsedServiceTypeAndCustomerBusinessId(
-							AccountUtil.currentLoggedInBussines().getId());
+					.findTopAppointmentsByMostUsedServiceTypeAndPersonnelIdIn(
+							personnelIds.stream().map(p -> p.getId()).collect(Collectors.toList()));
 			
 			List<ServiceType> servicesMostUsed = new ArrayList<>(); 
 			servicesMostUsed.addAll(
@@ -117,9 +126,8 @@ public class ScheduleModelController extends ModelControllerImpl{
 
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
-		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBusinessSettings().getBusinessImage());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription());
 
 	}
 	

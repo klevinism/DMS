@@ -33,7 +33,7 @@ public interface IRecordService {
 	void deleteBatch(Set<Record> records);
 
 	/**
-	 * @param id
+	 * @param personnelId
 	 * @return
 	 */
 	List<Record> findFirst10ByPersonnelIdOrderByServicedateDesc(Long personnelId);
@@ -47,18 +47,13 @@ public interface IRecordService {
 	Integer countByPersonnelIdAndServicedateBetween(Long personnelId, LocalDateTime beginDate, LocalDateTime endDate);
 
 	/**
-	 * @param personnelId
+	 * @param personnelIds
 	 * @param beginDate
 	 * @param endDate
 	 * @return
 	 */
-	Integer countAllByPersonnelIdAndServicedateBetween(Long personnelId, LocalDateTime beginDate, LocalDateTime endDate);
+	Integer countAllByPersonnelIdInAndServicedateBetween(List<Long> personnelIds, LocalDateTime beginDate, LocalDateTime endDate);
 
-	/**
-	 * @param beginDate
-	 * @param endDate
-	 * @return
-	 */
 	List<Record> findAllByServicedateBetween(LocalDateTime beginDate, LocalDateTime endDate);
 
 	/**
@@ -99,15 +94,6 @@ public interface IRecordService {
 	 * @return
 	 */
 	Integer sumOfPersonnelReceipts(Long id, LocalDateTime startDate, LocalDateTime endDate);
-
-	/**
-	 * @param currentBusinessId
-	 * @param localDateTime
-	 * @param localDateTime2
-	 * @return
-	 */
-	Integer countByBusinessIdAndServicedateBetween(Long currentBusinessId, LocalDateTime localDateTime,
-			LocalDateTime localDateTime2);
 
 	/**
 	 * @param personnelId

@@ -55,15 +55,15 @@
 			             <div class="row mb-4">
 			                 <div class="col-sm-6 ">
 			                     <h5 class="mb-3">[[#{Personnel}]]:</h5>
-			                     <h3 class="text-dark mb-1">[[#{prefix.title.dr}]] [[*{record.personnel.account.name} + ' ' + *{record.personnel.account.surname}]]</h3>
-			                     <div><i class="mdi mdi-email-box"> </i> [[*{record.personnel.account.email}]]</div>
-			                     <div><i class="mdi mdi-cellphone"> </i> [[*{record.personnel.account.phone}]]</div>
+			                     <h3 class="text-dark mb-1">[[#{prefix.title.dr}]] [[${performer.name} + ' ' + ${performer.surname}]]</h3>
+			                     <div><i class="mdi mdi-email-box"> </i> [[${performer.email}]]</div>
+			                     <div><i class="mdi mdi-cellphone"> </i> [[${performer.phone}]]</div>
 			                 </div>
 			                 <div class="col-sm-6 text-right">
 			                     <h5 class="mb-3">[[#{Customer}]]:</h5>
-			                     <h3 class="text-dark mb-1">[[*{record.history.customer.account.name} + ' ' + *{record.history.customer.account.surname}]]</h3>
-			                     <div> [[*{record.history.customer.account.email}]] <i class="mdi mdi-email-box"> </i></div>
-			                     <div>[[*{record.history.customer.account.phone}]] <i class="mdi mdi-cellphone"> </i> </div>
+			                     <h3 class="text-dark mb-1">[[${account.name} + ' ' + ${account.surname}]]</h3>
+			                     <div> [[${account.email}]] <i class="mdi mdi-email-box"> </i></div>
+			                     <div>[[${account.phone}]] <i class="mdi mdi-cellphone"> </i> </div>
 			                 </div>
 			             </div>
 			             <div class="table-responsive-sm">

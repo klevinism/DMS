@@ -1,42 +1,53 @@
 package com.visionous.dms.event.listener;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.entity.Business;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import com.visionous.dms.event.OnBusinessConfirmationEvent;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.Business;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+
+import java.util.Arrays;
 
 @Component
 public class BusinessConfirmationListener implements ApplicationListener<OnBusinessConfirmationEvent>{
 
-    private SpringTemplateEngine thymeleafTemplateEngine;
+    private SpringTemplateEngine springTemplateEngine;
     private JavaMailSender mailSender;
 	private MessageSource messageSource;
+
+	@Value("{spring.mail.properties.mail.smtp.from}")
+	private String from;
+
 	/**
-	 * @param verificationRepository
-	 * @param messages
+	 *
+	 * @param mailSender
+	 * @param springTemplateEngine
+	 * @param messageSource
 	 */
 	@Autowired
-	public BusinessConfirmationListener(JavaMailSender mailSender, SpringTemplateEngine thymeleafTemplateEngine,
+	public BusinessConfirmationListener(JavaMailSender mailSender, SpringTemplateEngine springTemplateEngine,
 			MessageSource messageSource) {
 		
 		this.mailSender = mailSender;
 		this.messageSource = messageSource;
-		this.thymeleafTemplateEngine = thymeleafTemplateEngine;
+		this.springTemplateEngine = springTemplateEngine;
 	}
-	
+
 	/**
-	 * @param OnRegistrationCompleteEvent event
+	 *
+	 * @param event the event to respond to
 	 */
 	@Override
 	public void onApplicationEvent(OnBusinessConfirmationEvent event) {
@@ -67,14 +78,16 @@ public class BusinessConfirmationListener implements ApplicationListener<OnBusin
 		
 		thymeleafContext.setVariable("business", business);
 	    
-	    String htmlBody = thymeleafTemplateEngine.process(emailTemplatePath, thymeleafContext);
+	    String htmlBody = springTemplateEngine.process(emailTemplatePath, thymeleafContext);
 	     
 	    MimeMessage mailMessage = mailSender.createMimeMessage();
 	    
     	mailMessage.setSubject(yourDentalClinic +" \""+ business.getName() +"\" "+ created.toLowerCase() + "!", "UTF-8");
     	
     	MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true, "UTF-8");
-    	helper.setTo(recipientAddress);
+		var fromAddr = (String)mailMessage.getSession().getProperties().get("mail.smtp.from");
+		helper.setFrom(new InternetAddress(fromAddr));
+		helper.setTo(recipientAddress);
         helper.setText(htmlBody, true);
         
         mailSender.send(mailMessage);

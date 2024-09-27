@@ -3,10 +3,10 @@
  */
 package com.visionous.dms.service;
 
+import com.o2dent.lib.accounts.entity.Role;
+
 import java.util.List;
 import java.util.Optional;
-
-import com.visionous.dms.pojo.Role;
 
 /**
  * @author delimeta

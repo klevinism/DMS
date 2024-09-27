@@ -9,19 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.*;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -29,8 +17,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.visionous.dms.configuration.helpers.DmsCore;
-
-import net.bytebuddy.description.ModifierReviewable.OfAbstraction;
 
 /**
  * @author delimeta
@@ -80,8 +66,8 @@ public class Subscription implements Serializable{
     private List<Restrictions> restrictions  = new ArrayList<>();
 
     @JsonIgnore
-    @OneToOne(mappedBy="subscription",  fetch = FetchType.LAZY)
-    private SubscriptionHistory subscriptionHistory;
+    @OneToMany(mappedBy="subscription",  fetch = FetchType.LAZY)
+    private List<SubscriptionHistory> subscriptionHistory;
 
 	/**
 	 * @return the id
@@ -226,14 +212,14 @@ public class Subscription implements Serializable{
 	/**
 	 * @return the subscriptionHistory
 	 */
-	public SubscriptionHistory getSubscriptionHistory() {
+	public List<SubscriptionHistory> getSubscriptionHistory() {
 		return subscriptionHistory;
 	}
 
 	/**
 	 * @param subscriptionHistory the subscriptionHistory to set
 	 */
-	public void setSubscriptionHistory(SubscriptionHistory subscriptionHistory) {
+	public void setSubscriptionHistory(List<SubscriptionHistory> subscriptionHistory) {
 		this.subscriptionHistory = subscriptionHistory;
 	}
 	

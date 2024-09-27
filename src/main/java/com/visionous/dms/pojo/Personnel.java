@@ -3,22 +3,14 @@
  */
 package com.visionous.dms.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.o2dent.lib.accounts.entity.Account;
+import com.visionous.dms.configuration.helpers.DmsCore;
+
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import java.io.Serializable;
 import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapsId;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.validation.Valid;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.visionous.dms.configuration.helpers.DmsCore;
 
 /**
  * @author delimeta
@@ -34,24 +26,19 @@ public class Personnel implements Serializable{
 	
 	private String type;
 	
-	@Valid
-	@MapsId
-	@OneToOne(mappedBy = "personnel", optional = true, fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
-    @JoinColumn(name="id")
-	private Account account;
-	
 	@JsonIgnore
-    @OneToOne(mappedBy="supervisor", optional = true)
-    private History customerHistory;
+    @OneToMany(mappedBy="supervisor")
+    private Set<History> customerHistory;
     
     @JsonIgnore
-    @OneToMany(mappedBy = "personnel", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "personnel", fetch = FetchType.LAZY)
 	@PrimaryKeyJoinColumn
 	private Set<Record> records;
 
     @JsonIgnore
-    @OneToOne(mappedBy="personnel",  fetch = FetchType.LAZY)
-    private Appointment appointment;
+    @OneToMany(mappedBy="personnel",  fetch = FetchType.LAZY)
+    private Set<Appointment> appointments;
+
     
 	/**
 	 * @return the id
@@ -82,30 +69,16 @@ public class Personnel implements Serializable{
 	}
 
 	/**
-	 * @return the account
-	 */
-	public Account getAccount() {
-		return account;
-	}
-
-	/**
-	 * @param account the account to set
-	 */
-	public void setAccount(Account account) {
-		this.account = account;
-	}
-
-	/**
 	 * @return the customerHistory
 	 */
-	public History getCustomerHistory() {
+	public Set<History> getCustomerHistory() {
 		return customerHistory;
 	}
 
 	/**
 	 * @param customerHistory the customerHistory to set
 	 */
-	public void setCustomerHistory(History customerHistory) {
+	public void setCustomerHistory(Set<History> customerHistory) {
 		this.customerHistory = customerHistory;
 	}
 
@@ -126,14 +99,15 @@ public class Personnel implements Serializable{
 	/**
 	 * @return the appointment
 	 */
-	public Appointment getAppointment() {
-		return appointment;
+	public Set<Appointment> getAppointments() {
+		return appointments;
 	}
 
 	/**
-	 * @param appointment the appointment to set
+	 * @param appointments the appointment to set
 	 */
-	public void setAppointment(Appointment appointment) {
-		this.appointment = appointment;
+	public void setAppointments(Set<Appointment> appointments) {
+		this.appointments = appointments;
 	}
+
 }

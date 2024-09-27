@@ -40,6 +40,6 @@ public interface SubscriptionHistoryRepository extends JpaRepository<Subscriptio
 	 * @param businessId
 	 * @return
 	 */
-	List<SubscriptionHistory> findAllByBusiness_IdOrderBySubscriptionEndDateDesc(Long businessId);
+	List<SubscriptionHistory> findAllByBusinessIdOrderBySubscriptionEndDateDesc(Long businessId);
 
 }

@@ -5,30 +5,27 @@ package com.visionous.dms.rest;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.entity.Business;
+import com.o2dent.lib.accounts.entity.Role;
+import com.o2dent.lib.accounts.helpers.exceptions.EmailExistsException;
+import com.o2dent.lib.accounts.helpers.exceptions.PhoneNumberExistsException;
+import com.o2dent.lib.accounts.helpers.exceptions.UsernameExistsException;
+import com.o2dent.lib.accounts.persistence.AccountService;
+import com.o2dent.lib.accounts.persistence.BusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.visionous.dms.configuration.helpers.AccountUtil;
-import com.visionous.dms.exception.EmailExistsException;
-import com.visionous.dms.exception.PhoneNumberExistsException;
-import com.visionous.dms.exception.UsernameExistsException;
-import com.visionous.dms.pojo.Account;
-import com.visionous.dms.pojo.Business;
 import com.visionous.dms.pojo.Customer;
-import com.visionous.dms.pojo.Role;
 import com.visionous.dms.rest.response.ResponseBody;
-import com.visionous.dms.service.AccountService;
-import com.visionous.dms.service.BusinessService;
 import com.visionous.dms.service.CustomerService;
 import com.visionous.dms.service.RoleService;
 
@@ -74,7 +71,7 @@ public class CustomerRestController {
 
 		String messagePhoneNumberExists = messageSource.getMessage("alert.phoneNumberExists", null, LocaleContextHolder.getLocale());
 
-        ResponseBody<Customer> result = new ResponseBody<>();
+        ResponseBody<Account> result = new ResponseBody<>();
         
     	String pattern = "(\\w+)\\s+(\\w+)";
         
@@ -107,35 +104,31 @@ public class CustomerRestController {
 	        	acc.setEmail(email);
 	        	acc.setGender(gender);
         		acc.setPhone(phoneNr);
-
-	        	acc.setPersonnel(null);
-	        	
 	        	customerRole.ifPresent(role -> acc.addRole(role));
-	        	
-				
-	        	Customer newCustomer = new Customer();
-	        	newCustomer.setAccount(acc);
 	        	
 	        	try {
 
-					
+					Account createdCustomerAccount = accountService.create(acc);
 
 		        	Business loggedInBusiness = AccountUtil.currentLoggedInBussines();
-		        	loggedInBusiness.getAccounts().add(newCustomer.getAccount());
-		        	newCustomer.getAccount().addBusiness(loggedInBusiness);
+		        	loggedInBusiness.getAccounts().add(createdCustomerAccount);
+					createdCustomerAccount.addBusiness(loggedInBusiness);
+
+					Customer newCustomer = new Customer();
+					newCustomer.setId(createdCustomerAccount.getId());
 					Customer createdCustomer = customerService.create(newCustomer);
 
 					Business updatedBusiness = businessService.update(loggedInBusiness);
 					AccountUtil.setCurrentLoggedInBusiness(updatedBusiness);
 
-					result.addResult(createdCustomer);
+					result.addResult(createdCustomerAccount);
 					
 				} catch (EmailExistsException e) {
 					result.setError(messageError);
 					result.setMessage(messageCustomerExists);
 
 					result.addResult(findAccountByEmailOrPhone(email, phoneNr));
-					
+
 				} catch (UsernameExistsException e) {
 					result.setError(messageError);
 					result.setMessage(messageCustomerExists);
@@ -168,19 +161,28 @@ public class CustomerRestController {
 	 * @param email
 	 * @param phoneNr
 	 */
-	private Customer findAccountByEmailOrPhone(String email, Long phoneNr) {
+	private Account findAccountByEmailOrPhone(String email, Long phoneNr) {
 		if(email != null) {
 			Optional<Account> findByEmail = accountService.findByUsernameOrEmail(email);
 
 			if(findByEmail.isPresent()) {
-				return findByEmail.get().getCustomer();
+				Optional<Customer> customer = customerService.findById(findByEmail.get().getId());
+				if(customer.isPresent()){
+					return findByEmail.get();
+				}else{
+					return null;
+				}
 			}
 		}else if(phoneNr != null) {
 			Optional<Account> findByPhone = accountService.findByPhoneNr(phoneNr);
 
 			if(findByPhone.isPresent()) {
-				return findByPhone.get().getCustomer();
-			}
+				Optional<Customer> customer = customerService.findById(findByPhone.get().getId());
+				if(customer.isPresent()){
+					return findByPhone.get();
+				}else{
+					return null;
+				}			}
 		}
 		return null;
 	}

@@ -5,7 +5,9 @@ package com.visionous.dms.controller;
 
 import java.util.Date;
 
-import javax.validation.Valid;
+import com.o2dent.lib.accounts.entity.Account;
+import com.visionous.dms.pojo.IaoAccount_Customer;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -99,17 +101,17 @@ public class CustomerModelViewController {
 	 * @return
 	 */
 	@PostMapping("")
-	public String customerPost(@Valid Customer customer, BindingResult errors, 
-			@RequestParam(name = "profileimage", required =false) MultipartFile profileImage, 
-			@RequestParam(required = false) String action,
-			Model model) {
+	public String customerPost(@Valid IaoAccount_Customer account, BindingResult errors,
+							   @RequestParam(name = "profileimage", required =false) MultipartFile profileImage,
+							   @RequestParam(required = false) String action,
+							   Model model) {
 		
 		customerModelController.init()
 			.addControllerParam("profileimage", profileImage)
 			.addControllerParam("action", action)
 			.addControllerParam("viewType", Actions.VIEW)
 			.addBindingResult(errors)
-			.addModelAttributes(customer)
+			.addModelAttributes(account)
 			.setViewModel(model)
 			.run(); // GetValuesForView
 		

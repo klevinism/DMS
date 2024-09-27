@@ -7,10 +7,10 @@
 		    <input type="checkbox" class="form-check-inputform-control-lg" onchange="oldCustomer(this)"> [[#{OldCustomer}]] ?</label>
 		</div>
 	</div>
-      <div class="form-group" th:if="${loggedInAccount.roles[0].name == 'ADMIN'}">      
+      <div class="form-group" th:if="${loggedInAccount.roles[0].name == 'ADMIN'}">
 		<div class="form-group" id="registerDayCalendarDiv" style="display:none">
 		  <label for="Birthday">[[#{InitialRegisterDate}]]</label>
-		  <input type="date" class="form-control form-control-lg"  id="registerDayCalendarDiv" th:placeholder="*{registerdate}"  th:field="*{registerdate}" disabled>
+		  <input type="date" class="form-control form-control-lg" id="registerDayCalendarDiv" th:placeholder="*{customer.registerdate}"  th:field="*{customer.registerdate}" disabled>
 		</div>
       </div>
   

@@ -59,6 +59,15 @@ public interface RecordRepository extends JpaRepository<Record, Long>{
 	Integer countByPersonnelIdAndServicedateBetween(Long personnelId, LocalDateTime beginDate, LocalDateTime endDate);
 
 	/**
+	 *
+	 * @param personnelIds
+	 * @param beginDate
+	 * @param endDate
+	 * @return
+	 */
+	Integer countByPersonnelIdInAndServicedateBetween(List<Long> personnelIds, LocalDateTime beginDate, LocalDateTime endDate);
+
+	/**
 	 * @param id
 	 * @param startDate
 	 * @param oneWeekBefore
@@ -126,77 +135,35 @@ public interface RecordRepository extends JpaRepository<Record, Long>{
 	Integer findSumOfAllReceiptsByPersonnelId(Long id, LocalDateTime startDate, LocalDateTime endDate);
 
 	/**
-	 * @param id
-	 * @param localDateTime2
-	 * @return
-	 */
-	@Query("SELECT count(*) from Record e JOIN e.history.customer.account.businesses b WHERE b.id = ?1 AND e.servicedate BETWEEN ?2 AND ?3 ")
-	Integer countByHistory_Customer_Account_BusinessesIdAndServicedateBetween(Long id, LocalDateTime localDateTime, LocalDateTime localDateTime2);
-
-	/**
 	 * @param localDateTime
 	 * @param localDateTime2
-	 * @param id
+	 * @param ids
 	 * @return
 	 */
-	@Query("SELECT sum(e.receipt.total) from Record e JOIN e.history.customer.account.businesses b WHERE b.id = ?1 AND e.servicedate BETWEEN ?2 AND ?3 ")
-	Integer sumOfAllReceiptsByBusinessId(Long id, LocalDateTime localDateTime, LocalDateTime localDateTime2);
-
-
-	/**
-	 * @param id
-	 * @param localDateTime
-	 * @param localDateTime2
-	 * @param customerId
-	 * @return
-	 */
-	@Query("SELECT e from Record e "
-			+ "JOIN e.history.customer c "
-			+ "JOIN e.history.customer.account.businesses b "
-			+ "WHERE c.id = ?4 AND b.id = ?1 AND e.servicedate BETWEEN ?2 AND ?3 ")
-	List<Record> findAllByHistory_Customer_Account_BusinessesIdAndServicedateBetweenAndHistory_customerId(Long id,
-			LocalDateTime localDateTime, LocalDateTime localDateTime2, Long customerId);
+	@Query("SELECT sum(e.receipt.total) from Record e WHERE e.personnel.id IN (?1) AND e.servicedate BETWEEN ?2 AND ?3 ")
+	Integer sumOfAllReceiptsByPersonnelIdIn(List<Long> ids, LocalDateTime localDateTime, LocalDateTime localDateTime2);
 
 	/**
-	 * @param id
-	 * @param localDateTime
-	 * @param localDateTime2
-	 * @return
-	 */
-	@Query("SELECT e from Record e "
-			+ "JOIN e.history.customer.account.businesses b "
-			+ "WHERE b.id = ?1 AND e.servicedate BETWEEN ?2 AND ?3 ")
-	List<Record> findAllByHistory_Customer_Account_BusinessesIdAndServicedateBetween(Long id,
-			LocalDateTime localDateTime, LocalDateTime localDateTime2);
-
-	/**
-	 * @param id
+	 *
 	 * @param personnelId
 	 * @param localDateTime
 	 * @param localDateTime2
-	 * @return
-	 */
-	@Query("SELECT count(e) from Record e "
-			+ "JOIN e.personnel p "
-			+ "JOIN e.history.customer.account.businesses b "
-			+ "WHERE b.id = ?1 AND p.id = ?2 AND e.servicedate BETWEEN ?3 AND ?4 ")
-	Integer countByHistory_Customer_Account_Businesses_IdAndPersonnelIdAndServicedateBetween(Long id, Long personnelId,
-			LocalDateTime localDateTime, LocalDateTime localDateTime2);
-
-	/**
-	 * @param id
-	 * @param localDateTime
-	 * @param localDateTime2
-	 * @param customerBusinessId
+	 * @param payed
 	 * @return
 	 */
 	@Query("SELECT sum(e.receipt.total) from Record e "
-			+ "JOIN e.history.customer.account.businesses b "
-			+ "JOIN e.personnel p "
-			+ "WHERE b.id = ?4 AND p.id = ?1 AND e.receipt.payed = ?5 AND e.servicedate BETWEEN ?2 AND ?3 ")
-	Integer findSumOfAllReceiptsByPersonnelIdAndBusinessIdAndPayed(Long id, LocalDateTime localDateTime,
-			LocalDateTime localDateTime2, Long customerBusinessId, Boolean payed);
-	
-	
+			+ "WHERE e.personnel.id = ?1 AND e.receipt.payed = ?4 AND e.servicedate BETWEEN ?2 AND ?3 ")
+	Integer findSumOfAllReceiptsByPersonnelIdAndPayed(Long personnelId, LocalDateTime localDateTime,
+			LocalDateTime localDateTime2, Boolean payed);
+
+
+	/**
+	 *
+	 * @param personnelIds
+	 * @param beginDate
+	 * @param endDate
+	 * @return
+	 */
+	List<Record> findAllByPersonnelIdInAndServicedateBetween(List<Long> personnelIds, LocalDateTime beginDate, LocalDateTime endDate);
 }
 

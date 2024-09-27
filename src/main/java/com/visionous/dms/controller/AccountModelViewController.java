@@ -3,15 +3,14 @@
  */
 package com.visionous.dms.controller;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
+import com.o2dent.lib.accounts.entity.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.model.AccountModelController;
-import com.visionous.dms.pojo.Account;
 
 /**
  * @author delimeta
@@ -48,9 +46,9 @@ public class AccountModelViewController {
 	 * @return
 	 */
 	@PostMapping("") 
-	public String accountPost(@Valid Account account, BindingResult bindingResult, @RequestParam(name = "profileimage", required =false) MultipartFile profileImage, 
-			@RequestParam(required = false) String action,
-			Model model) {
+	public String accountPost(@Valid Account account, BindingResult bindingResult, @RequestParam(name = "profileimage", required =false) MultipartFile profileImage,
+							  @RequestParam(required = false) String action,
+							  Model model) {
 		
 		accountModelController.init()
 			.addControllerParam("profileimage", profileImage)
@@ -66,9 +64,9 @@ public class AccountModelViewController {
 		}
 		
 		if(!account.getId().equals(AccountUtil.currentLoggedInUser().getAccount().getId())) {
-			if(account.getCustomer() != null) {
+			if(!AccountUtil.currentLoggedInUser().isPersonnel()) {
 				return "redirect:/customer/dashboard/"+account.getId();
-			}else if(account.getPersonnel() != null) {
+			}else if(AccountUtil.currentLoggedInUser().isPersonnel()) {
 				return "redirect:/admin/personnel/dashboard/"+account.getId();
 			}else {
 				return "/";

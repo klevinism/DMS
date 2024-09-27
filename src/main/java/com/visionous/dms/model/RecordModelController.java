@@ -10,6 +10,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.persistence.AccountService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,7 @@ public class RecordModelController extends ModelControllerImpl {
 	private ServiceTypeService serviceTypeService;
 	private PersonnelService personnelService;
 	private CustomerService customerService;
+	private AccountService accountService;
 	private HistoryService historyService;
 	private RecordService recordService;
 	private RecordReceiptService recordReceiptService;
@@ -69,7 +72,8 @@ public class RecordModelController extends ModelControllerImpl {
 	public RecordModelController(QuestionnaireResponseService questionnaireResponseService, 
 			ServiceTypeService serviceTypeService, PersonnelService personnelService,
 			CustomerService customerService, HistoryService historyService, RecordService recordService, TeethService teethService,
-			RecordReceiptService recordReceiptService, RecordReceiptItemService recordReceiptItemService) {
+			RecordReceiptService recordReceiptService, RecordReceiptItemService recordReceiptItemService,
+								 AccountService accountService) {
 		
 		this.questionnaireResponseService = questionnaireResponseService;
 		this.serviceTypeService = serviceTypeService;
@@ -80,6 +84,7 @@ public class RecordModelController extends ModelControllerImpl {
 		this.recordReceiptItemService = recordReceiptItemService;
 		this.recordReceiptService = recordReceiptService;
 		this.teethService = teethService;
+		this.accountService = accountService;
 	}
 	
 	/**
@@ -185,14 +190,21 @@ public class RecordModelController extends ModelControllerImpl {
 					
 					customerHistory.ifPresent(history-> {
 						super.addModelCollectionToView("selectedHistory", history);
-						Record record = new Record(history, AccountUtil.currentLoggedInUser().getPersonnel());
-						List<Teeth> toothList = new ArrayList<>();
-						toothList.add(new Teeth());
-						record.setVisitedTeeth(toothList);
-						super.addModelCollectionToView("selected", record);
+						Optional<Personnel> personnel = personnelService.findById(AccountUtil.currentLoggedInUser().getAccount().getId());
+						personnel.ifPresent(personnelAcc -> {
+							Record record = new Record(history, personnelAcc);
+							List<Teeth> toothList = new ArrayList<>();
+							toothList.add(new Teeth());
+							record.setVisitedTeeth(toothList);
+							super.addModelCollectionToView("selected", record);
+							Optional<Account> customerAccount = accountService.findById(customer.getId());
+							customerAccount.ifPresent(acc -> {
+								super.addModelCollectionToView("account", acc);
+							});
+						});
 					});
 					
-					super.addModelCollectionToView("services", serviceTypeService.findAllByGlobalSettingsId(AccountUtil.currentLoggedInBussines().getGlobalSettings().getId()));
+					super.addModelCollectionToView("services", serviceTypeService.findAllByGlobalSettingsId(AccountUtil.currentLoggedInBusinessSettings().getId()));
 				});
 			}
 			
@@ -218,6 +230,9 @@ public class RecordModelController extends ModelControllerImpl {
 			
 			Optional<Customer> customer = customerService.findById(customerId);
 			customer.ifPresent(selectedCustomer -> super.addModelCollectionToView("currentCustomer", selectedCustomer));
+
+			Optional<Account> customerAccount = accountService.findById(customerId);
+			customerAccount.ifPresent( acc -> super.addModelCollectionToView("account", acc));
 		}
 		
 		super.addModelCollectionToView("listTeeth", teethService.findAll());
@@ -249,9 +264,9 @@ public class RecordModelController extends ModelControllerImpl {
 		
 		super.addModelCollectionToView("locale", AccountUtil.getCurrentLocaleLanguageAndCountry());
 		
-		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBussines().getGlobalSettings().getBusinessImage());
+		super.addModelCollectionToView("logo", AccountUtil.currentLoggedInBusinessSettings().getBusinessImage());
 		
-		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBussines().getActiveSubscription());
+		super.addModelCollectionToView("subscription", AccountUtil.currentLoggedInBusinessSettings().getActiveSubscription());
 
 	}
 	

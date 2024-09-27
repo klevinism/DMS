@@ -3,20 +3,20 @@
  */
 package com.visionous.dms.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.visionous.dms.exception.EmailExistsException;
-import com.visionous.dms.exception.PhoneNumberExistsException;
-import com.visionous.dms.exception.UsernameExistsException;
-import com.visionous.dms.pojo.Account;
+import com.o2dent.lib.accounts.entity.Account;
+import com.o2dent.lib.accounts.helpers.exceptions.EmailExistsException;
+import com.o2dent.lib.accounts.helpers.exceptions.PhoneNumberExistsException;
+import com.o2dent.lib.accounts.helpers.exceptions.UsernameExistsException;
+import com.o2dent.lib.accounts.persistence.AccountService;
 import com.visionous.dms.pojo.Customer;
 import com.visionous.dms.pojo.History;
 import com.visionous.dms.repository.CustomerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author delimeta
@@ -30,7 +30,6 @@ public class CustomerService implements ICustomerService{
 	private AppointmentService appointmentService;
 	private QuestionnaireService questionnaireService;	
 	private RecordService recordService;
-	
 	private CustomerRepository customerRepository;
 	
 	/**
@@ -51,18 +50,10 @@ public class CustomerService implements ICustomerService{
 	
 	@Override
 	public Customer create(Customer newCustomer) throws EmailExistsException, UsernameExistsException, PhoneNumberExistsException {
-		newCustomer.getAccount().setCustomer(null);
 
 		if(newCustomer.getRegisterdate() == null) {
 			newCustomer.setRegisterdate(new Date(System.currentTimeMillis()));
 		}
-		
-		newCustomer.getAccount().setActive(true);
-		newCustomer.getAccount().setEnabled(true);
-
-		Account newAccount = accountService.create(newCustomer.getAccount());
-		
-		newCustomer.setAccount(newAccount);
 		
 		return this.update(newCustomer);
 	}
@@ -79,14 +70,12 @@ public class CustomerService implements ICustomerService{
 			newCustomer.setRegisterdate(new Date(System.currentTimeMillis()));
 		}
 		
-		oldCustomer.getAccount().setCustomer(newCustomer);
+		oldCustomer.setCustomerHistory(newCustomer.getCustomerHistory());
+		oldCustomer.setRegisterdate(newCustomer.getRegisterdate());
+		oldCustomer.setAppointment(newCustomer.getAppointment());
+		oldCustomer.setQuestionnaire(newCustomer.getQuestionnaire());
 		
-		Account updated = accountService.update(oldCustomer.getAccount());
-		if(updated != null) {
-			return updated.getCustomer();
-		}
-		
-		return null;
+		return this.update(oldCustomer);
 	}
 	
 	/**
@@ -97,13 +86,23 @@ public class CustomerService implements ICustomerService{
 		return this.customerRepository.saveAndFlush(customer);
 	}
 
+	/**
+	 *
+	 * @param ids
+	 * @return
+	 */
+	@Override
+	public List<Customer> findAllByIdIn(List<Long> ids) {
+		return this.customerRepository.findAllByIdIn(ids);
+	}
+
 	@Override
 	public List<Customer> findAll() {
 		return this.customerRepository.findAll();
 	}
 
 	/**
-	 * @param newCustomer
+	 * @param customer
 	 */
 	@Override
 	public void delete(Customer customer) {
@@ -127,7 +126,7 @@ public class CustomerService implements ICustomerService{
 			customer.setAppointment(null);
 		}
 
-		accountService.delete(customer.getAccount());
+		accountService.disableById(customer.getId());
 	}
 	
 	/**
@@ -164,32 +163,8 @@ public class CustomerService implements ICustomerService{
 		customer.ifPresent(selected -> delete(selected));
 	}
 
-	/**
-	 * @param id
-	 * @return
-	 */
-	@Override
-	public List<Customer> findAllByAccount_Businesses_Id(Long id) {
-		return this.customerRepository.findAllByAccount_Businesses_Id(id);
-	}
-
-	/**
-	 * @param customerId
-	 * @param currentBusinessId
-	 * @return
-	 */
-	@Override
-	public Optional<Customer> findByIdAndAccount_Businesses_Id(Long customerId, Long currentBusinessId) {
-		return this.customerRepository.findByIdAndAccount_Businesses_Id(customerId, currentBusinessId);
-	}
-
-	/**
-	 * @param id
-	 * @param currentBusinessId
-	 */
-	@Override
-	public void deleteByIdAndAccount_Businesses_Id(Long id, long currentBusinessId) {
-		this.customerRepository.deleteByIdAndAccount_Businesses_Id(id, currentBusinessId);
+	public List<Customer> findAllByRegisterDateBetween(Date start, Date end){
+		return this.customerRepository.findAllByRegisterdateBetween(start, end);
 	}
 
 }

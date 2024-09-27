@@ -1,7 +1,8 @@
 package com.visionous.dms.controller;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
+import com.o2dent.lib.accounts.entity.Business;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.visionous.dms.configuration.helpers.AccountUtil;
 import com.visionous.dms.configuration.helpers.Actions;
 import com.visionous.dms.model.BusinessModelController;
-import com.visionous.dms.pojo.Business;
 
 @Controller
 @RequestMapping("/business")
@@ -42,7 +42,7 @@ public class BusinessModelViewController {
 		
 		
 		if(AccountUtil.currentLoggedInUser() != null) {
-			if(AccountUtil.currentLoggedInUser().getCurrentBusiness() != null) {
+			if(AccountUtil.currentLoggedInBussines() != null) {
 				return "redirect:/home";
 			}else {
 				return "redirect:/business/create";
@@ -68,8 +68,8 @@ public class BusinessModelViewController {
 	}
 	
 	@PostMapping("/create")
-	public String createBusiness(@Valid @ModelAttribute Business business, BindingResult errors, 
-			@RequestParam(name = "action", required = true) String action, Model model) {
+	public String createBusiness(@Valid @ModelAttribute Business business, BindingResult errors,
+								 @RequestParam(name = "action", required = true) String action, Model model) {
 		
 		businessModelController.init()
 			.addControllerParam("viewType", Actions.VIEW.getValue())

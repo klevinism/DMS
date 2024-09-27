@@ -25,7 +25,7 @@ import com.visionous.dms.pojo.RecordReceipt;
 @RequestMapping("/customer/{customerId}/history/{historyId}/record/{recordId}/record_receipt")
 public class RecordReceiptModelViewController {
 
-	private RecordReceiptModelController recordReceiptModelController;
+	private RecordReceiptModelController  recordReceiptModelController;
 	
 	/**
 	 * 
